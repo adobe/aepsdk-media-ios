@@ -17,14 +17,14 @@ import AEPServices
 @objc public extension Media {
     private static let LOG_TAG = "Media"
 
-    @objc(createTracker:)
-    static func createTracker(completion: @escaping (AEPError) -> Void) -> MediaTracker {
+    @objc(createTracker)
+    static func createTracker() -> MediaTracker {
         //TODO
         return MediaTracker()
     }
 
-    @objc(createTrackerWithConfig:completion:)
-    static func createTrackerWith(config: [String: Any]?, completion: @escaping (AEPError) -> Void) -> MediaTracker {
+    @objc(createTrackerWithConfig:)
+    static func createTrackerWith(config: [String: Any]?) -> MediaTracker {
         //TODO
         return MediaTracker()
     }
