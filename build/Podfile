@@ -1,0 +1,20 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '10.0'
+use_frameworks!
+
+workspace 'AEPMedia'
+project 'AEPMedia.xcodeproj'
+
+target 'AEPMedia' do
+  pod 'AEPCore'
+  pod 'AEPServices'
+  pod 'AEPIdentity'
+  pod 'AEPRulesEngine'
+
+target 'AEPMediaTests' do
+  pod 'AEPCore'
+  pod 'AEPServices'
+  pod 'AEPRulesEngine'
+end
+
+end
