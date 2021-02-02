@@ -8,16 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		2EFF1B5B25BF57FC00375965 /* AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EFF1B5125BF57FC00375965 /* AEPMedia.framework */; };
-		2EFF1B7825BF592400375965 /* AEPMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EFF1B7425BF592300375965 /* AEPMedia.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		2EFF1B7F25BF6A6900375965 /* MediaConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1B7E25BF6A6900375965 /* MediaConstants.swift */; };
-		2EFF1B8325BF6A8B00375965 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1B8225BF6A8B00375965 /* Media.swift */; };
-		2EFF1B8725BF6AA300375965 /* Media+PublicAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1B8625BF6AA300375965 /* Media+PublicAPI.swift */; };
-		2EFF1B8C25BF75BA00375965 /* TestableExtensionRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1B8B25BF75B900375965 /* TestableExtensionRuntime.swift */; };
-		2EFF1B9025BF75EE00375965 /* MediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1B8F25BF75EE00375965 /* MediaTests.swift */; };
-		2EFF1BDF25BF91AE00375965 /* MediaTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1BDE25BF91AE00375965 /* MediaTracker.swift */; };
-		2EFF1BEB25C0BFE000375965 /* MediaRuleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1BEA25C0BFDF00375965 /* MediaRuleEngine.swift */; };
-		2EFF1BEF25C0C04700375965 /* MediaRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1BEE25C0C04500375965 /* MediaRule.swift */; };
 		7104D52FCE7CD4FBED7235C4 /* Pods_AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13F8B2DE1682787F0FD4D771 /* Pods_AEPMedia.framework */; };
+		AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3525C9F11E00A37345 /* MediaTracker.swift */; };
+		AC36EC4025C9F11E00A37345 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3625C9F11E00A37345 /* Media.swift */; };
+		AC36EC4125C9F11E00A37345 /* AEPMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = AC36EC3725C9F11E00A37345 /* AEPMedia.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AC36EC4225C9F11E00A37345 /* Media+PublicAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3825C9F11E00A37345 /* Media+PublicAPI.swift */; };
+		AC36EC4325C9F11E00A37345 /* MediaConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3925C9F11E00A37345 /* MediaConstants.swift */; };
+		AC36EC4925C9F12D00A37345 /* MediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3025C9F11E00A37345 /* MediaTests.swift */; };
+		AC36EC4E25C9F13100A37345 /* TestableExtensionRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3225C9F11E00A37345 /* TestableExtensionRuntime.swift */; };
 		E2683CEE7CCC1BB92D69FC07 /* Pods_AEPMedia_AEPMediaTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81B6B11A87DE4E2228FA46FB /* Pods_AEPMedia_AEPMediaTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -36,19 +34,24 @@
 		2E5A32F865BD4CB1D4FACE3F /* Pods-AEPMedia.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia.release.xcconfig"; path = "Target Support Files/Pods-AEPMedia/Pods-AEPMedia.release.xcconfig"; sourceTree = "<group>"; };
 		2EFF1B5125BF57FC00375965 /* AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EFF1B5A25BF57FC00375965 /* AEPMediaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPMediaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		2EFF1B7425BF592300375965 /* AEPMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEPMedia.h; sourceTree = "<group>"; };
-		2EFF1B7525BF592300375965 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2EFF1B7725BF592300375965 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2EFF1B7E25BF6A6900375965 /* MediaConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaConstants.swift; sourceTree = "<group>"; };
-		2EFF1B8225BF6A8B00375965 /* Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
-		2EFF1B8625BF6AA300375965 /* Media+PublicAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Media+PublicAPI.swift"; sourceTree = "<group>"; };
-		2EFF1B8B25BF75B900375965 /* TestableExtensionRuntime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableExtensionRuntime.swift; sourceTree = "<group>"; };
-		2EFF1B8F25BF75EE00375965 /* MediaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTests.swift; sourceTree = "<group>"; };
-		2EFF1BDE25BF91AE00375965 /* MediaTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTracker.swift; sourceTree = "<group>"; };
-		2EFF1BEA25C0BFDF00375965 /* MediaRuleEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRuleEngine.swift; sourceTree = "<group>"; };
-		2EFF1BEE25C0C04500375965 /* MediaRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRule.swift; sourceTree = "<group>"; };
 		81B6B11A87DE4E2228FA46FB /* Pods_AEPMedia_AEPMediaTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPMedia_AEPMediaTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7EED2E95CAF988912D5E599 /* Pods-AEPMedia.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia.debug.xcconfig"; path = "Target Support Files/Pods-AEPMedia/Pods-AEPMedia.debug.xcconfig"; sourceTree = "<group>"; };
+		AC36EC2E25C9F11E00A37345 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AC36EC3025C9F11E00A37345 /* MediaTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaTests.swift; sourceTree = "<group>"; };
+		AC36EC3225C9F11E00A37345 /* TestableExtensionRuntime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableExtensionRuntime.swift; sourceTree = "<group>"; };
+		AC36EC3325C9F11E00A37345 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AC36EC3525C9F11E00A37345 /* MediaTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaTracker.swift; sourceTree = "<group>"; };
+		AC36EC3625C9F11E00A37345 /* Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
+		AC36EC3725C9F11E00A37345 /* AEPMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEPMedia.h; sourceTree = "<group>"; };
+		AC36EC3825C9F11E00A37345 /* Media+PublicAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Media+PublicAPI.swift"; sourceTree = "<group>"; };
+		AC36EC3925C9F11E00A37345 /* MediaConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaConstants.swift; sourceTree = "<group>"; };
+		AC36EC3A25C9F11E00A37345 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AC36EC6325C9F2CD00A37345 /* AEPMedia.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AEPMedia.podspec; path = ../AEPMedia.podspec; sourceTree = "<group>"; };
+		AC36EC6425C9F2CD00A37345 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		AC36EC6525C9F2CD00A37345 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../Makefile; sourceTree = "<group>"; };
+		AC36EC6625C9F2CD00A37345 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		AC36EC6725C9F2CD00A37345 /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CODE_OF_CONDUCT.md; path = ../CODE_OF_CONDUCT.md; sourceTree = "<group>"; };
+		AC36EC6825C9F2CD00A37345 /* COPYRIGHT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYRIGHT; path = ../COPYRIGHT; sourceTree = "<group>"; };
 		AE4C842E765A1CAD32D46871 /* Pods-AEPMedia-AEPMediaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.release.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.release.xcconfig"; sourceTree = "<group>"; };
 		E8A954C12C9495CABE12814A /* Pods-AEPMedia-AEPMediaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -86,10 +89,13 @@
 		2EFF1B4725BF57FB00375965 = {
 			isa = PBXGroup;
 			children = (
-				2EFF1B7225BF592300375965 /* Mocks */,
-				2EFF1B7325BF592300375965 /* Sources */,
-				2EFF1B7625BF592300375965 /* Tests */,
-				2EFF1B7D25BF5B8400375965 /* test */,
+				AC36EC6325C9F2CD00A37345 /* AEPMedia.podspec */,
+				AC36EC6625C9F2CD00A37345 /* README.md */,
+				AC36EC6725C9F2CD00A37345 /* CODE_OF_CONDUCT.md */,
+				AC36EC6825C9F2CD00A37345 /* COPYRIGHT */,
+				AC36EC6425C9F2CD00A37345 /* LICENSE */,
+				AC36EC6525C9F2CD00A37345 /* Makefile */,
+				AC36EC2C25C9F11E00A37345 /* AEPMedia */,
 				2EFF1B5225BF57FC00375965 /* Products */,
 				9598EB9A2980A6BD84A67D20 /* Pods */,
 				012233C380482B1DAB5BD92D /* Frameworks */,
@@ -105,57 +111,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		2EFF1B7225BF592300375965 /* Mocks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Mocks;
-			path = ../AEPMedia/Mocks;
-			sourceTree = "<group>";
-		};
-		2EFF1B7325BF592300375965 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				2EFF1B7425BF592300375965 /* AEPMedia.h */,
-				2EFF1B7525BF592300375965 /* Info.plist */,
-				2EFF1B7E25BF6A6900375965 /* MediaConstants.swift */,
-				2EFF1B8225BF6A8B00375965 /* Media.swift */,
-				2EFF1B8625BF6AA300375965 /* Media+PublicAPI.swift */,
-				2EFF1BDE25BF91AE00375965 /* MediaTracker.swift */,
-				2EFF1BEA25C0BFDF00375965 /* MediaRuleEngine.swift */,
-				2EFF1BEE25C0C04500375965 /* MediaRule.swift */,
-			);
-			name = Sources;
-			path = ../AEPMedia/Sources;
-			sourceTree = "<group>";
-		};
-		2EFF1B7625BF592300375965 /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				2EFF1B8A25BF75B900375965 /* TestHelpers */,
-				2EFF1B7725BF592300375965 /* Info.plist */,
-				2EFF1B8F25BF75EE00375965 /* MediaTests.swift */,
-			);
-			name = Tests;
-			path = ../AEPMedia/Tests;
-			sourceTree = "<group>";
-		};
-		2EFF1B7D25BF5B8400375965 /* test */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = test;
-			path = ../test;
-			sourceTree = "<group>";
-		};
-		2EFF1B8A25BF75B900375965 /* TestHelpers */ = {
-			isa = PBXGroup;
-			children = (
-				2EFF1B8B25BF75B900375965 /* TestableExtensionRuntime.swift */,
-			);
-			path = TestHelpers;
-			sourceTree = "<group>";
-		};
 		9598EB9A2980A6BD84A67D20 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -167,6 +122,56 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		AC36EC2C25C9F11E00A37345 /* AEPMedia */ = {
+			isa = PBXGroup;
+			children = (
+				AC36EC2D25C9F11E00A37345 /* Mocks */,
+				AC36EC2F25C9F11E00A37345 /* Tests */,
+				AC36EC3425C9F11E00A37345 /* Sources */,
+			);
+			name = AEPMedia;
+			path = ../AEPMedia;
+			sourceTree = "<group>";
+		};
+		AC36EC2D25C9F11E00A37345 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				AC36EC2E25C9F11E00A37345 /* Info.plist */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
+		AC36EC2F25C9F11E00A37345 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				AC36EC3025C9F11E00A37345 /* MediaTests.swift */,
+				AC36EC3125C9F11E00A37345 /* TestHelpers */,
+				AC36EC3325C9F11E00A37345 /* Info.plist */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		AC36EC3125C9F11E00A37345 /* TestHelpers */ = {
+			isa = PBXGroup;
+			children = (
+				AC36EC3225C9F11E00A37345 /* TestableExtensionRuntime.swift */,
+			);
+			path = TestHelpers;
+			sourceTree = "<group>";
+		};
+		AC36EC3425C9F11E00A37345 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				AC36EC3525C9F11E00A37345 /* MediaTracker.swift */,
+				AC36EC3625C9F11E00A37345 /* Media.swift */,
+				AC36EC3725C9F11E00A37345 /* AEPMedia.h */,
+				AC36EC3825C9F11E00A37345 /* Media+PublicAPI.swift */,
+				AC36EC3925C9F11E00A37345 /* MediaConstants.swift */,
+				AC36EC3A25C9F11E00A37345 /* Info.plist */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -174,7 +179,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2EFF1B7825BF592400375965 /* AEPMedia.h in Headers */,
+				AC36EC4125C9F11E00A37345 /* AEPMedia.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,13 +349,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2EFF1B8725BF6AA300375965 /* Media+PublicAPI.swift in Sources */,
-				2EFF1B8325BF6A8B00375965 /* Media.swift in Sources */,
-				2EFF1BEF25C0C04700375965 /* MediaRule.swift in Sources */,
-				2EFF1BEB25C0BFE000375965 /* MediaRuleEngine.swift in Sources */,
-				2EFF1B8C25BF75BA00375965 /* TestableExtensionRuntime.swift in Sources */,
-				2EFF1B7F25BF6A6900375965 /* MediaConstants.swift in Sources */,
-				2EFF1BDF25BF91AE00375965 /* MediaTracker.swift in Sources */,
+				AC36EC4325C9F11E00A37345 /* MediaConstants.swift in Sources */,
+				AC36EC4025C9F11E00A37345 /* Media.swift in Sources */,
+				AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */,
+				AC36EC4225C9F11E00A37345 /* Media+PublicAPI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,7 +360,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2EFF1B9025BF75EE00375965 /* MediaTests.swift in Sources */,
+				AC36EC4E25C9F13100A37345 /* TestableExtensionRuntime.swift in Sources */,
+				AC36EC4925C9F12D00A37345 /* MediaTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
