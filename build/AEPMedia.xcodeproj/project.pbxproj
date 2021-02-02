@@ -1,0 +1,625 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2EFF1B5B25BF57FC00375965 /* AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EFF1B5125BF57FC00375965 /* AEPMedia.framework */; };
+		2EFF1B7825BF592400375965 /* AEPMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EFF1B7425BF592300375965 /* AEPMedia.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2EFF1B7F25BF6A6900375965 /* AEPMediaConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1B7E25BF6A6900375965 /* AEPMediaConstants.swift */; };
+		2EFF1B8325BF6A8B00375965 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1B8225BF6A8B00375965 /* Media.swift */; };
+		2EFF1B8725BF6AA300375965 /* Media+PublicAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1B8625BF6AA300375965 /* Media+PublicAPI.swift */; };
+		2EFF1B8C25BF75BA00375965 /* TestableExtensionRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1B8B25BF75B900375965 /* TestableExtensionRuntime.swift */; };
+		2EFF1B9025BF75EE00375965 /* MediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1B8F25BF75EE00375965 /* MediaTests.swift */; };
+		2EFF1BDF25BF91AE00375965 /* MediaTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1BDE25BF91AE00375965 /* MediaTracker.swift */; };
+		2EFF1BEB25C0BFE000375965 /* MediaRuleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1BEA25C0BFDF00375965 /* MediaRuleEngine.swift */; };
+		2EFF1BEF25C0C04700375965 /* MediaRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EFF1BEE25C0C04500375965 /* MediaRule.swift */; };
+		7104D52FCE7CD4FBED7235C4 /* Pods_AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13F8B2DE1682787F0FD4D771 /* Pods_AEPMedia.framework */; };
+		E2683CEE7CCC1BB92D69FC07 /* Pods_AEPMedia_AEPMediaTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81B6B11A87DE4E2228FA46FB /* Pods_AEPMedia_AEPMediaTests.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2EFF1B5C25BF57FC00375965 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2EFF1B4825BF57FB00375965 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2EFF1B5025BF57FC00375965;
+			remoteInfo = AEPMedia;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		13F8B2DE1682787F0FD4D771 /* Pods_AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E5A32F865BD4CB1D4FACE3F /* Pods-AEPMedia.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia.release.xcconfig"; path = "Target Support Files/Pods-AEPMedia/Pods-AEPMedia.release.xcconfig"; sourceTree = "<group>"; };
+		2EFF1B5125BF57FC00375965 /* AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2EFF1B5A25BF57FC00375965 /* AEPMediaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPMediaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2EFF1B7425BF592300375965 /* AEPMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AEPMedia.h; sourceTree = "<group>"; };
+		2EFF1B7525BF592300375965 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2EFF1B7725BF592300375965 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2EFF1B7E25BF6A6900375965 /* AEPMediaConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEPMediaConstants.swift; sourceTree = "<group>"; };
+		2EFF1B8225BF6A8B00375965 /* Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
+		2EFF1B8625BF6AA300375965 /* Media+PublicAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Media+PublicAPI.swift"; sourceTree = "<group>"; };
+		2EFF1B8B25BF75B900375965 /* TestableExtensionRuntime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableExtensionRuntime.swift; sourceTree = "<group>"; };
+		2EFF1B8F25BF75EE00375965 /* MediaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTests.swift; sourceTree = "<group>"; };
+		2EFF1BDE25BF91AE00375965 /* MediaTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTracker.swift; sourceTree = "<group>"; };
+		2EFF1BEA25C0BFDF00375965 /* MediaRuleEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRuleEngine.swift; sourceTree = "<group>"; };
+		2EFF1BEE25C0C04500375965 /* MediaRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRule.swift; sourceTree = "<group>"; };
+		81B6B11A87DE4E2228FA46FB /* Pods_AEPMedia_AEPMediaTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPMedia_AEPMediaTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7EED2E95CAF988912D5E599 /* Pods-AEPMedia.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia.debug.xcconfig"; path = "Target Support Files/Pods-AEPMedia/Pods-AEPMedia.debug.xcconfig"; sourceTree = "<group>"; };
+		AE4C842E765A1CAD32D46871 /* Pods-AEPMedia-AEPMediaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.release.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.release.xcconfig"; sourceTree = "<group>"; };
+		E8A954C12C9495CABE12814A /* Pods-AEPMedia-AEPMediaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2EFF1B4E25BF57FC00375965 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7104D52FCE7CD4FBED7235C4 /* Pods_AEPMedia.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2EFF1B5725BF57FC00375965 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2EFF1B5B25BF57FC00375965 /* AEPMedia.framework in Frameworks */,
+				E2683CEE7CCC1BB92D69FC07 /* Pods_AEPMedia_AEPMediaTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		012233C380482B1DAB5BD92D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				13F8B2DE1682787F0FD4D771 /* Pods_AEPMedia.framework */,
+				81B6B11A87DE4E2228FA46FB /* Pods_AEPMedia_AEPMediaTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2EFF1B4725BF57FB00375965 = {
+			isa = PBXGroup;
+			children = (
+				2EFF1B7225BF592300375965 /* Mocks */,
+				2EFF1B7325BF592300375965 /* Sources */,
+				2EFF1B7625BF592300375965 /* Tests */,
+				2EFF1B7D25BF5B8400375965 /* test */,
+				2EFF1B5225BF57FC00375965 /* Products */,
+				9598EB9A2980A6BD84A67D20 /* Pods */,
+				012233C380482B1DAB5BD92D /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		2EFF1B5225BF57FC00375965 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2EFF1B5125BF57FC00375965 /* AEPMedia.framework */,
+				2EFF1B5A25BF57FC00375965 /* AEPMediaTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2EFF1B7225BF592300375965 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Mocks;
+			path = ../AEPMedia/Mocks;
+			sourceTree = "<group>";
+		};
+		2EFF1B7325BF592300375965 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				2EFF1B7425BF592300375965 /* AEPMedia.h */,
+				2EFF1B7525BF592300375965 /* Info.plist */,
+				2EFF1B7E25BF6A6900375965 /* AEPMediaConstants.swift */,
+				2EFF1B8225BF6A8B00375965 /* Media.swift */,
+				2EFF1B8625BF6AA300375965 /* Media+PublicAPI.swift */,
+				2EFF1BDE25BF91AE00375965 /* MediaTracker.swift */,
+				2EFF1BEA25C0BFDF00375965 /* MediaRuleEngine.swift */,
+				2EFF1BEE25C0C04500375965 /* MediaRule.swift */,
+			);
+			name = Sources;
+			path = ../AEPMedia/Sources;
+			sourceTree = "<group>";
+		};
+		2EFF1B7625BF592300375965 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				2EFF1B8A25BF75B900375965 /* TestHelpers */,
+				2EFF1B7725BF592300375965 /* Info.plist */,
+				2EFF1B8F25BF75EE00375965 /* MediaTests.swift */,
+			);
+			name = Tests;
+			path = ../AEPMedia/Tests;
+			sourceTree = "<group>";
+		};
+		2EFF1B7D25BF5B8400375965 /* test */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = test;
+			path = ../test;
+			sourceTree = "<group>";
+		};
+		2EFF1B8A25BF75B900375965 /* TestHelpers */ = {
+			isa = PBXGroup;
+			children = (
+				2EFF1B8B25BF75B900375965 /* TestableExtensionRuntime.swift */,
+			);
+			path = TestHelpers;
+			sourceTree = "<group>";
+		};
+		9598EB9A2980A6BD84A67D20 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A7EED2E95CAF988912D5E599 /* Pods-AEPMedia.debug.xcconfig */,
+				2E5A32F865BD4CB1D4FACE3F /* Pods-AEPMedia.release.xcconfig */,
+				E8A954C12C9495CABE12814A /* Pods-AEPMedia-AEPMediaTests.debug.xcconfig */,
+				AE4C842E765A1CAD32D46871 /* Pods-AEPMedia-AEPMediaTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		2EFF1B4C25BF57FC00375965 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2EFF1B7825BF592400375965 /* AEPMedia.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		2EFF1B5025BF57FC00375965 /* AEPMedia */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2EFF1B6525BF57FC00375965 /* Build configuration list for PBXNativeTarget "AEPMedia" */;
+			buildPhases = (
+				A0FBFB41F3D955BB0B22329A /* [CP] Check Pods Manifest.lock */,
+				2EFF1B4C25BF57FC00375965 /* Headers */,
+				2EFF1B4D25BF57FC00375965 /* Sources */,
+				2EFF1B4E25BF57FC00375965 /* Frameworks */,
+				2EFF1B4F25BF57FC00375965 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AEPMedia;
+			productName = AEPMedia;
+			productReference = 2EFF1B5125BF57FC00375965 /* AEPMedia.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		2EFF1B5925BF57FC00375965 /* AEPMediaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2EFF1B6825BF57FC00375965 /* Build configuration list for PBXNativeTarget "AEPMediaTests" */;
+			buildPhases = (
+				0250F975A6892FF39F704B3C /* [CP] Check Pods Manifest.lock */,
+				2EFF1B5625BF57FC00375965 /* Sources */,
+				2EFF1B5725BF57FC00375965 /* Frameworks */,
+				2EFF1B5825BF57FC00375965 /* Resources */,
+				C0F838CDA3D8E89DAA2124F4 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2EFF1B5D25BF57FC00375965 /* PBXTargetDependency */,
+			);
+			name = AEPMediaTests;
+			productName = AEPMediaTests;
+			productReference = 2EFF1B5A25BF57FC00375965 /* AEPMediaTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2EFF1B4825BF57FB00375965 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1200;
+				LastUpgradeCheck = 1200;
+				TargetAttributes = {
+					2EFF1B5025BF57FC00375965 = {
+						CreatedOnToolsVersion = 12.0.1;
+						LastSwiftMigration = 1200;
+					};
+					2EFF1B5925BF57FC00375965 = {
+						CreatedOnToolsVersion = 12.0.1;
+						LastSwiftMigration = 1200;
+					};
+				};
+			};
+			buildConfigurationList = 2EFF1B4B25BF57FB00375965 /* Build configuration list for PBXProject "AEPMedia" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2EFF1B4725BF57FB00375965;
+			productRefGroup = 2EFF1B5225BF57FC00375965 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2EFF1B5025BF57FC00375965 /* AEPMedia */,
+				2EFF1B5925BF57FC00375965 /* AEPMediaTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2EFF1B4F25BF57FC00375965 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2EFF1B5825BF57FC00375965 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0250F975A6892FF39F704B3C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AEPMedia-AEPMediaTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A0FBFB41F3D955BB0B22329A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AEPMedia-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C0F838CDA3D8E89DAA2124F4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2EFF1B4D25BF57FC00375965 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2EFF1B8725BF6AA300375965 /* Media+PublicAPI.swift in Sources */,
+				2EFF1B8325BF6A8B00375965 /* Media.swift in Sources */,
+				2EFF1BEF25C0C04700375965 /* MediaRule.swift in Sources */,
+				2EFF1BEB25C0BFE000375965 /* MediaRuleEngine.swift in Sources */,
+				2EFF1B8C25BF75BA00375965 /* TestableExtensionRuntime.swift in Sources */,
+				2EFF1B7F25BF6A6900375965 /* AEPMediaConstants.swift in Sources */,
+				2EFF1BDF25BF91AE00375965 /* MediaTracker.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2EFF1B5625BF57FC00375965 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2EFF1B9025BF75EE00375965 /* MediaTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2EFF1B5D25BF57FC00375965 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2EFF1B5025BF57FC00375965 /* AEPMedia */;
+			targetProxy = 2EFF1B5C25BF57FC00375965 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2EFF1B6325BF57FC00375965 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		2EFF1B6425BF57FC00375965 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		2EFF1B6625BF57FC00375965 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A7EED2E95CAF988912D5E599 /* Pods-AEPMedia.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Sources/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.mobile.AEPMedia;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2EFF1B6725BF57FC00375965 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2E5A32F865BD4CB1D4FACE3F /* Pods-AEPMedia.release.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Sources/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.mobile.AEPMedia;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		2EFF1B6925BF57FC00375965 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E8A954C12C9495CABE12814A /* Pods-AEPMedia-AEPMediaTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = NO;
+				INFOPLIST_FILE = AEPMediaTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.mobile.AEPMediaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		2EFF1B6A25BF57FC00375965 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AE4C842E765A1CAD32D46871 /* Pods-AEPMedia-AEPMediaTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = NO;
+				INFOPLIST_FILE = AEPMediaTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.mobile.AEPMediaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2EFF1B4B25BF57FB00375965 /* Build configuration list for PBXProject "AEPMedia" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2EFF1B6325BF57FC00375965 /* Debug */,
+				2EFF1B6425BF57FC00375965 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2EFF1B6525BF57FC00375965 /* Build configuration list for PBXNativeTarget "AEPMedia" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2EFF1B6625BF57FC00375965 /* Debug */,
+				2EFF1B6725BF57FC00375965 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2EFF1B6825BF57FC00375965 /* Build configuration list for PBXNativeTarget "AEPMediaTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2EFF1B6925BF57FC00375965 /* Debug */,
+				2EFF1B6A25BF57FC00375965 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2EFF1B4825BF57FB00375965 /* Project object */;
+}
