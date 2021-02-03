@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2E20D4A625CA154C00B5CCB8 /* MediaRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E20D4A425CA154C00B5CCB8 /* MediaRule.swift */; };
+		2E20D4A725CA154C00B5CCB8 /* MediaRuleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */; };
+		2E20D4AB25CA544000B5CCB8 /* MediaRuleEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E20D4AA25CA544000B5CCB8 /* MediaRuleEngineTests.swift */; };
 		2EFF1B5B25BF57FC00375965 /* AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EFF1B5125BF57FC00375965 /* AEPMedia.framework */; };
 		7104D52FCE7CD4FBED7235C4 /* Pods_AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13F8B2DE1682787F0FD4D771 /* Pods_AEPMedia.framework */; };
 		AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3525C9F11E00A37345 /* MediaTracker.swift */; };
@@ -31,6 +34,9 @@
 
 /* Begin PBXFileReference section */
 		13F8B2DE1682787F0FD4D771 /* Pods_AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E20D4A425CA154C00B5CCB8 /* MediaRule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaRule.swift; sourceTree = "<group>"; };
+		2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaRuleEngine.swift; sourceTree = "<group>"; };
+		2E20D4AA25CA544000B5CCB8 /* MediaRuleEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRuleEngineTests.swift; sourceTree = "<group>"; };
 		2E5A32F865BD4CB1D4FACE3F /* Pods-AEPMedia.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia.release.xcconfig"; path = "Target Support Files/Pods-AEPMedia/Pods-AEPMedia.release.xcconfig"; sourceTree = "<group>"; };
 		2EFF1B5125BF57FC00375965 /* AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EFF1B5A25BF57FC00375965 /* AEPMediaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPMediaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -147,6 +153,7 @@
 				AC36EC3025C9F11E00A37345 /* MediaTests.swift */,
 				AC36EC3125C9F11E00A37345 /* TestHelpers */,
 				AC36EC3325C9F11E00A37345 /* Info.plist */,
+				2E20D4AA25CA544000B5CCB8 /* MediaRuleEngineTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -162,6 +169,8 @@
 		AC36EC3425C9F11E00A37345 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				2E20D4A425CA154C00B5CCB8 /* MediaRule.swift */,
+				2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */,
 				AC36EC3525C9F11E00A37345 /* MediaTracker.swift */,
 				AC36EC3625C9F11E00A37345 /* Media.swift */,
 				AC36EC3725C9F11E00A37345 /* AEPMedia.h */,
@@ -351,7 +360,9 @@
 			files = (
 				AC36EC4325C9F11E00A37345 /* MediaConstants.swift in Sources */,
 				AC36EC4025C9F11E00A37345 /* Media.swift in Sources */,
+				2E20D4A725CA154C00B5CCB8 /* MediaRuleEngine.swift in Sources */,
 				AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */,
+				2E20D4A625CA154C00B5CCB8 /* MediaRule.swift in Sources */,
 				AC36EC4225C9F11E00A37345 /* Media+PublicAPI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -362,6 +373,7 @@
 			files = (
 				AC36EC4E25C9F13100A37345 /* TestableExtensionRuntime.swift in Sources */,
 				AC36EC4925C9F12D00A37345 /* MediaTests.swift in Sources */,
+				2E20D4AB25CA544000B5CCB8 /* MediaRuleEngineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -557,7 +569,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = NO;
-				INFOPLIST_FILE = AEPMediaTests/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -579,7 +591,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = NO;
-				INFOPLIST_FILE = AEPMediaTests/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
