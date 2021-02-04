@@ -177,11 +177,11 @@ class MediaTests: XCTestCase {
         
         testRule.addAction { (rule, context) -> Bool in
             self.actionHelper1(rule: rule, context: context)
-            return true
+            return false
         }
         
         testRule.addAction { (rule, context) -> Bool in
-            self.actionHelper1(rule: rule, context: context)
+            self.actionHelper2(rule: rule, context: context)
             return true
         }
         
@@ -191,7 +191,7 @@ class MediaTests: XCTestCase {
         let res = ruleEngine.processRule(ruleName: 1, context: [:])
         
         //verify
-        XCTAssertEqual(2, action1CalledCount)
+        XCTAssertEqual(1, action1CalledCount)
         XCTAssertEqual(0, action2CalledCount)
         XCTAssertTrue(res.0)
     }
