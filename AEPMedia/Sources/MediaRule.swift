@@ -10,11 +10,12 @@
  */
 
 import Foundation
+typealias RuleFn = (MediaRule, [String: Any]) -> Bool
 
 class MediaRule {
     let name: Int
     let description: String
-    var predicateList: [((MediaRule, [String: Any]) -> Bool, Bool, String)] = []
+    var predicateList: [(fn: RuleFn, expectedResult: Bool, errorMsg: String)] = []
     var actionList: [(MediaRule, [String: Any]) -> Bool] = []
 
     init(name: Int, description: String) {
@@ -22,22 +23,22 @@ class MediaRule {
         self.description = description
     }
 
-    func addPredicate(predicateFn: @escaping (MediaRule, [String: Any]) -> Bool, expectedValue: Bool, errorMsg: String) {
+    func addPredicate(predicateFn: @escaping RuleFn, expectedValue: Bool, errorMsg: String) {
         let predicateTuple = (predicateFn, expectedValue, errorMsg)
         predicateList.append(predicateTuple)
     }
 
-    func addAction(actionFn: @escaping (MediaRule, [String: Any]) -> Bool) {
+    func addAction(actionFn: @escaping RuleFn) {
         actionList.append(actionFn)
     }
 
     func runPredicates(context: [String: Any]) -> (Bool, String) {
         for predicate in predicateList {
-            let predicateFn = predicate.0
-            let expectedValue = predicate.1
+            let predicateFn = predicate.fn
+            let expectedValue = predicate.expectedResult
 
             if predicateFn(self, context) != expectedValue {
-                return (false, predicate.2)
+                return (false, predicate.errorMsg)
             }
         }
         return (true, "")
