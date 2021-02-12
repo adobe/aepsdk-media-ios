@@ -11,6 +11,9 @@
 
 import Foundation
 
+typealias CurrentPosition = Int16
+typealias SessionId = Int8
+
 enum MediaConstants {
     static let EXTENSION_NAME                           = "com.adobe.module.media"
     static let FRIENDLY_NAME                            = "Media Analytics"
