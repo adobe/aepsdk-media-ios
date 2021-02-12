@@ -10,9 +10,9 @@
  */
 
 import Foundation
-typealias RuleFn = (MediaRule, [String: Any]) -> Bool
 
 class MediaRule {
+    typealias RuleFn = (MediaRule, [String: Any]) -> Bool
     let name: Int
     let description: String
     var predicateList: [(fn: RuleFn, expectedResult: Bool, errorMsg: String)] = []

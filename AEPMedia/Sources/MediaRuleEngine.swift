@@ -48,7 +48,7 @@ class MediaRuleEngine {
         }
 
         // pass if no enterFn or if enterFn is a success
-        guard enterFn == nil || enterFn!(rule, context) else {
+        if let enterFn=enterFn, !enterFn(rule, context) {
             Log.debug(label: "\(LOG_TAG):\(#function)", "Enter action prevents further processing for Rule \(rule.description)")
             return predicateResult
         }
@@ -58,8 +58,8 @@ class MediaRuleEngine {
             return predicateResult
         }
 
-        if exitFn != nil {
-            exitFn!(rule, context)
+        if let exitFn=exitFn, !exitFn(rule, context) {
+            Log.trace(label: "\(LOG_TAG):\(#function)", "Exit action not found or resulted in a failure for Rule \(rule.description)")
         }
 
         return predicateResult
