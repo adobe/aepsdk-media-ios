@@ -14,7 +14,7 @@ import AEPCore
 @testable import AEPMedia
 
 class MediaTrackerTests: XCTestCase {
-    let testConig: [String: Any] = ["test":"value"]
+    let testConfig: [String: Any] = ["test":"value"]
     var capturedEvent: Event?
    
     
@@ -33,7 +33,7 @@ class MediaTrackerTests: XCTestCase {
         capturedEvent = event
     }
     
-    //MARK: MediaTrackerAPI Unit Tests
+    //MARK: MediaTracker Unit Tests
     // ==========================================================================
     // create
     // ==========================================================================
@@ -50,7 +50,7 @@ class MediaTrackerTests: XCTestCase {
     }
     
     func testCreateTrackerWithConfig() {
-        let tracker = MediaTracker.create(dispatch: dispatch(event:), config: testConig)
+        let tracker = MediaTracker.create(dispatch: dispatch(event:), config: testConfig)
         
         XCTAssertNotNil(tracker)
         XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, capturedEvent?.source)

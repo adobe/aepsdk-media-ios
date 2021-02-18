@@ -209,7 +209,7 @@ class MediaObjectTests: XCTestCase {
         XCTAssertFalse(mediaInfo?.isGranularAdTrackingEnabled() ?? true)
     }
     
-    func testCreateMediaObjectWithGranularAdTrackingValueDisbaled() {
+    func testCreateMediaObjectWithGranularAdTrackingValueDisabled() {
         let mediaInfo = MediaInfo.create(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0, granularAdTracking: false)
         
         XCTAssertFalse(mediaInfo?.isGranularAdTrackingEnabled() ?? true)

@@ -41,13 +41,12 @@ public class MediaTracker: NSObject {
         self.sessionId = MediaTracker.getUniqueId()
 
     }
+
     static func create(dispatch: @escaping DispatchFn, config: [String: Any]?) -> MediaTracker {
         let trackerId = getUniqueId()
         let eventData: [String: Any] = [MediaConstants.Tracker.ID: trackerId, MediaConstants.Tracker.EVENT_PARAM: config ?? [:]]
-        let eventType = MediaConstants.Media.EVENT_TYPE
-        let eventSourceTrackerRequest = MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST
 
-        let event = Event(name: "Media::CreateTrackerRequest", type: eventType, source: eventSourceTrackerRequest, data: eventData)
+        let event = Event(name: "Media::CreateTrackerRequest", type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
         dispatch(event)
         Log.debug(label: LOG_TAG, "\(#function): Tracker request event was sent to event hub.")
 
@@ -110,7 +109,7 @@ public class MediaTracker: NSObject {
         }
     }
 
-    func trackInternal(eventName: String, params: [String: Any]? = nil, metadata: [String: String]? = nil, internalEvent: Bool = false) {
+    private func trackInternal(eventName: String, params: [String: Any]? = nil, metadata: [String: String]? = nil, internalEvent: Bool = false) {
         if eventName == MediaConstants.EventName.SESSION_START {
             // Internal Tracker starts a new session only when we are not in an active session and we follow the same.
             if params != nil {
@@ -150,10 +149,7 @@ public class MediaTracker: NSObject {
         let ts = MediaTracker.getCurrentTimeStamp()
         eventData[MediaConstants.Tracker.EVENT_TIMESTAMP] = ts
 
-        let mediaEventType = MediaConstants.Media.EVENT_TYPE
-        let mediaEventSource = MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA
-
-        let event = Event(name: "Media::TrackMedia", type: mediaEventType, source: mediaEventSource, data: eventData)
+        let event = Event(name: "Media::TrackMedia", type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA, data: eventData)
 
         dispatch?(event)
 
@@ -163,7 +159,7 @@ public class MediaTracker: NSObject {
         }
     }
 
-    func tick() {
+    private func tick() {
         dispatchQueue.async {
             guard self.inSession else {
                 return
@@ -178,7 +174,7 @@ public class MediaTracker: NSObject {
         }
     }
 
-    func startTimer() {
+    private func startTimer() {
         if timer == nil {
             timer = Timer.scheduledTimer(withTimeInterval: TICK_INTERVAL, repeats: true, block: { (_) in
                 self.tick()
@@ -187,15 +183,15 @@ public class MediaTracker: NSObject {
         }
     }
 
-    func stopTimer() {
+    private func stopTimer() {
         timer?.invalidate()
     }
 
-    static func getCurrentTimeStamp() -> TimeInterval {
+    private static func getCurrentTimeStamp() -> TimeInterval {
         return Date().timeIntervalSince1970
     }
 
-    static func getUniqueId() -> String {
+    private static func getUniqueId() -> String {
         return UUID().uuidString
     }
 }
