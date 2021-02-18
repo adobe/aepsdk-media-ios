@@ -11,22 +11,10 @@
 
 import Foundation
 
-class MediaHitProcessor {
-    let LOG_TAG = "MediaHitProcessor"
+class MediaHit {
     
     // TODO: stub
-    func startSession() -> Int {
-        return 1234567890
-    }
-    
-    // TODO: stub
-    func endSession(sessionID: Int) {
+    init(eventType: String, params: [String: Any]?, metadata: [String: String]?, qoeData: [String: Any]?, playhead: Double, ts: Double) {
         
     }
-    
-    // TODO: stub
-    func processHit(sessionID: Int, hit: MediaHit) {
-        
-    }
-    
 }
