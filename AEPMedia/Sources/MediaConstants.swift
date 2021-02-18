@@ -30,6 +30,8 @@ enum MediaConstants {
         static let MEDIA_PLAYER_NAME = "media.playerName"
         static let MEDIA_APP_VERSION = "media.appVersion"
         static let MEDIA_DEBUG_LOGGING = "media.debugLogging"
+        static let CHANNEL = "config.channel"
+        static let DOWNLOADED_CONTENT = "config.downloadedcontent"
     }
 
     enum Identity {
@@ -51,6 +53,7 @@ enum MediaConstants {
         static let SESSION_START = "sessionstart"
         static let SESSION_END = "sessionend"
         static let PLAY = "play"
+        static let PING = "ping"
         static let PAUSE = "pause"
         static let COMPLETE = "mediacomplete"
         static let BUFFER_START = "bufferstart"
@@ -82,6 +85,7 @@ enum MediaConstants {
         static let RESUMED  = "media.resumed"
         static let PREROLL_TRACKING_WAITING_TIME  = "media.prerollwaitingtime"
         static let GRANULAR_AD_TRACKING  = "media.granularadtracking"
+        static let DOWNLOADED = "media.downloaded"
     }
 
     enum AdBreakInfo {
@@ -153,5 +157,24 @@ enum MediaConstants {
         static let PLACEMENT_ID = "a.media.ad.placement"
         static let SITE_ID = "a.media.ad.site"
         static let CREATIVE_URL = "a.media.ad.creativeURL"
+    }
+
+    enum PingInterval {
+        static let DEFAULT_OFFLINE = TimeInterval(50)
+        static let DEFAULT_ONLINE = TimeInterval(10)
+        static let GRANULAR_AD = TimeInterval(1)
+    }
+
+    enum MediaCollection {
+        enum QoE {
+            static let BITRATE = "media.qoe.bitrate"
+            static let DROPPED_FRAMES = "media.qoe.droppedFrames"
+            static let FPS = "media.qoe.framesPerSecond"
+            static let STARTUP_TIME = "media.qoe.timeToStart"
+            static let ERROR_ID = "media.qoe.errorID"
+            static let ERROR_SOURCE = "media.qoe.errorSource"
+            static let ERROR_SOURCE_PLAYER = "player"
+            static let ERROR_SOURCE_EXTERNAL = "external"
+        }
     }
 }
