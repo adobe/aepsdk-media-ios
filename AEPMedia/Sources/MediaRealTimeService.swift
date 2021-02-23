@@ -48,14 +48,22 @@ class MediaRealTimeService {
     }
     
     
-    func processHit(sessionId: SessionId, hit : MediaHit) {
+    func processHit(sessionId: String, hit : MediaHit) {
         
         
     }
     
-    func stopSession(sessionId : SessionId) -> Bool{
-        timer?.cancelTimer()
-        return false;
+    func endSession(sessionId : String?) {
+        
+        guard let sessionId = sessionId, !sessionId.isEmpty else {
+            Log.debug(label: LOG_TAG, "Null or empty session id passed.")
+            return
+        }
+        
+        let session = mediaSessions[sessionId]
+        session?.end()
+        Log.trace(LOG_TAG, "endSession - Session \(sessionId) ended.")
+
     }
     
     func startTick() {
@@ -65,6 +73,16 @@ class MediaRealTimeService {
     
     func processMediaSession() {
         
+        guard !mediaSessions.isEmpty else {
+            Log.trace(label: LOG_TAG, "\(#function) - No Media sessions to process.")
+            return
+        }
+        
+        mediaSessions.forEach { sessionId, mediaSession in
+            mediaSession.process()
+            mediaSessions.removeValue(forKey: sessionId)
+        }
+        Log.trace(label: LOG_TAG, "Completed processing all media sessions.")
     }
     
     func stopTimer() {

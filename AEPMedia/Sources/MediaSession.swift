@@ -12,5 +12,9 @@ class MediaSession {
     func end() {
 
     }
+    
+    func process(){
+        
+    }
 
 }
