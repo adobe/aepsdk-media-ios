@@ -53,7 +53,6 @@ enum MediaConstants {
         static let SESSION_START = "sessionstart"
         static let SESSION_END = "sessionend"
         static let PLAY = "play"
-        static let PING = "ping"
         static let PAUSE = "pause"
         static let COMPLETE = "mediacomplete"
         static let BUFFER_START = "bufferstart"
@@ -85,7 +84,6 @@ enum MediaConstants {
         static let RESUMED  = "media.resumed"
         static let PREROLL_TRACKING_WAITING_TIME  = "media.prerollwaitingtime"
         static let GRANULAR_AD_TRACKING  = "media.granularadtracking"
-        static let DOWNLOADED = "media.downloaded"
     }
 
     enum AdBreakInfo {
