@@ -11,10 +11,46 @@
 
 import Foundation
 
-class MediaHit {
-    
-    // TODO: stub
-    init(eventType: String, params: [String: Any]?, metadata: [String: String]?, qoeData: [String: Any]?, playhead: Double, ts: Double) {
-        
+class MediaHit: Equatable {
+    /// Media Analytics Tracking Event Type
+    private (set) var eventType: String
+
+    /// Media Analytics parameters
+    private (set) var params: [String: Any]
+
+    /// Media Analytics metadata
+    private (set) var metadata: [String: String]
+
+    /// Media Analytics QoE data
+    private (set) var qoeData: [String: Any]
+
+    /// The current playhead
+    private (set) var playhead: Double = 0
+
+    /// The current timestamp
+    private (set) var timestamp: TimeInterval
+
+    static func == (lhs: MediaHit, rhs: MediaHit) -> Bool {
+        return  lhs.eventType == rhs.eventType &&
+            NSDictionary(dictionary: lhs.params).isEqual(to: rhs.params) &&
+            lhs.metadata == rhs.metadata &&
+            NSDictionary(dictionary: lhs.qoeData).isEqual(to: rhs.qoeData)  &&
+            lhs.playhead.equalTo(rhs.playhead) &&
+            lhs.timestamp.equalTo(rhs.timestamp)
+    }
+
+    init(eventType: String, params: [String: Any], metadata: [String: String], qoeData: [String: Any], playhead: Double, ts: TimeInterval) {
+        self.eventType = eventType
+        self.params = params
+        self.metadata = metadata
+        self.qoeData = qoeData
+        self.playhead = playhead
+        self.timestamp = ts
+    }
+}
+
+extension Double {
+    func equalTo(_ doubleToCompare: Double) -> Bool {
+        return Int(self - doubleToCompare) == 0
     }
 }

@@ -10,49 +10,182 @@
  */
 
 import Foundation
+import AEPServices
+
+enum MediaPlaybackState {
+    case Init // First play / pause has not happened
+    case Play
+    case Pause
+    case Buffer
+    case Seek
+    case Stall
+}
 
 class MediaContext {
+    private var mediaInfo: MediaInfo
+    private var chapterInfo: ChapterInfo?
+    private var adInfo: AdInfo?
+    private var adBreakInfo: AdBreakInfo?
+    private var qoeInfo: QoEInfo?
+    private var metadata: [String: String]?
+    private var adMetadata: [String: String]?
+    private var chapterMetadata: [String: String]?
+    private var playState: MediaPlaybackState?
+    private var states: [String: Bool] = [:]
+    private var buffering = false
+    private var seeking = false
+    
+    init(mediaInfo: MediaInfo, metadata: [String: String]) {
+        self.mediaInfo = mediaInfo
+        self.metadata = metadata
+    }
+    
     let LOG_TAG = "MediaContext"
 
     // TODO: stub
-    func getMediaInfo() -> [String: Any] {
-        return [:]
+    func getMediaInfo() -> MediaInfo {
+        return mediaInfo
     }
     
     // TODO: stub
-    func getMediaMetadata() -> [String: Any] {
-        return [:]
+    func getMediaMetadata() -> [String: String] {
+        return metadata ?? [:]
     }
     
     // TODO: stub
     func getPlayhead() -> Double {
-        return 1234567890
+        return 50
     }
     
     // TODO: stub
     func isInChapter() -> Bool {
-        return true
+        return chapterInfo != nil
     }
     
     // TODO: stub
     func isInAdBreak() -> Bool {
-        return true
+        return adBreakInfo != nil
     }
     
     // TODO: stub
     func isInAd() -> Bool {
-        return true
+        return adInfo != nil
+    }
+    
+    // TODO: stub
+    func setAdInfo(adInfo: AdInfo?, metadata: [String: String]?) {
+        if adInfo != nil {
+            self.adInfo = adInfo
+        }
+
+        if metadata != nil {
+            self.adMetadata = metadata
+        }
+    }
+
+    // TODO: stub
+    func setAdBreakInfo(adBreakInfo: AdBreakInfo?) {
+        if adBreakInfo != nil {
+            self.adBreakInfo = adBreakInfo
+        }
+    }
+
+    // TODO: stub
+    func setChapterInfo(chapterInfo: ChapterInfo?, metadata: [String: String]?) {
+        if chapterInfo != nil {
+            self.chapterInfo = chapterInfo
+        }
+
+        if metadata != nil {
+            self.chapterMetadata = metadata
+        }
+    }
+
+    // TODO: stub
+    func setQoEInfo(qoeInfo: QoEInfo?) {
+        if qoeInfo != nil {
+            self.qoeInfo = qoeInfo
+        }
     }
     
     // TODO: stub
     func getActiveTrackedStates() -> [StateInfo] {
-        return []
+        var activeStates: [StateInfo] = []
+        
+        for state in states {
+            let activeState = StateInfo()
+            activeState.create(name: state.key)
+            activeStates.append(activeState)
+        }
+        
+        return activeStates
+    }
+    
+    // TODO: stub
+    func isInState(_ state: StateInfo) -> Bool {
+        let stateName = state.getStateName()
+        return states[stateName] != nil
     }
     
     // TODO: stub
     func isInState(_ state: MediaPlaybackState) -> Bool {
         var retVal = false
         
+        switch state {
+        case .Init, .Play, .Pause, .Stall:
+            retVal = playState == state
+        case .Buffer:
+            retVal = buffering
+        case .Seek:
+            retVal = seeking
+        }
+        
         return retVal
+    }
+    
+    // TODO: stub
+    func enterState(_ state: MediaPlaybackState) {
+        switch state {
+        case .Play, .Pause, .Stall:
+            playState = state
+        case .Buffer:
+            buffering = true
+        case .Seek:
+            seeking = true
+        default:
+            Log.debug(label: LOG_TAG, "\(#function) - Invalid state passed to enterState: \(state)")
+        }
+    }
+    
+    // TODO: stub
+    func exitState(_ state: MediaPlaybackState) {
+        switch state {
+        case .Buffer:
+            buffering = false
+        case .Seek:
+            seeking = false
+        default:
+            break
+        }
+    }
+    
+    // TODO: stub
+    func startState(_ stateInfo: StateInfo) -> Bool {
+        // TODO: check if (!hasTrackedState(stateInfo) && hasReachedStateLimit()) { then return false
+        if isInState(stateInfo) {
+            return false
+        }
+        states[stateInfo.getStateName()] = true
+        return true
+    }
+    
+    // TODO: stub
+    func endState(_ stateInfo: StateInfo) -> Bool {
+        if !isInState(stateInfo) {
+            return false
+        }
+        
+        states[stateInfo.getStateName()] = false
+        return true
     }
 }

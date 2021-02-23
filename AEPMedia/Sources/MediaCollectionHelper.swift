@@ -14,59 +14,151 @@ import Foundation
 class MediaCollectionHelper {
     let LOG_TAG = "MediaCollectionHelper"
 
-    // TODO: stub
-    static func extractMediaParams(mediaContext: MediaContext) -> [String: Any] {
-        var retMap = [String: Any]()
+    private static let standardMediaMetadataMapping = [ MediaConstants.StandardMediaMetadata.SHOW:
+        MediaConstants.MediaCollection.StandardMediaMetadata.SHOW, MediaConstants.StandardMediaMetadata.SEASON: MediaConstants.MediaCollection.StandardMediaMetadata.SEASON,
+        MediaConstants.MediaCollection.StandardMediaMetadata.EPISODE:
+            MediaConstants.MediaCollection.StandardMediaMetadata.EPISODE,
+        MediaConstants.MediaCollection.StandardMediaMetadata.ASSET_ID:
+            MediaConstants.MediaCollection.StandardMediaMetadata.ASSET_ID,
+        MediaConstants.MediaCollection.StandardMediaMetadata.GENRE:
+            MediaConstants.MediaCollection.StandardMediaMetadata.GENRE,
+        MediaConstants.MediaCollection.StandardMediaMetadata.FIRST_AIR_DATE:
+            MediaConstants.MediaCollection.StandardMediaMetadata.FIRST_AIR_DATE,
+        MediaConstants.MediaCollection.StandardMediaMetadata.FIRST_DIGITAL_DATE:
+            MediaConstants.MediaCollection.StandardMediaMetadata.FIRST_DIGITAL_DATE,
+        MediaConstants.MediaCollection.StandardMediaMetadata.RATING:
+            MediaConstants.MediaCollection.StandardMediaMetadata.RATING,
+        MediaConstants.MediaCollection.StandardMediaMetadata.ORIGINATOR:
+            MediaConstants.MediaCollection.StandardMediaMetadata.ORIGINATOR,
+        MediaConstants.MediaCollection.StandardMediaMetadata.NETWORK:
+            MediaConstants.MediaCollection.StandardMediaMetadata.NETWORK,
+        MediaConstants.MediaCollection.StandardMediaMetadata.SHOW_TYPE:
+            MediaConstants.MediaCollection.StandardMediaMetadata.SHOW_TYPE,
+        MediaConstants.MediaCollection.StandardMediaMetadata.AD_LOAD:
+            MediaConstants.MediaCollection.StandardMediaMetadata.AD_LOAD,
+        MediaConstants.MediaCollection.StandardMediaMetadata.MVPD:
+            MediaConstants.MediaCollection.StandardMediaMetadata.MVPD,
+        MediaConstants.MediaCollection.StandardMediaMetadata.AUTH:
+            MediaConstants.MediaCollection.StandardMediaMetadata.AUTH,
+        MediaConstants.MediaCollection.StandardMediaMetadata.DAY_PART:
+            MediaConstants.MediaCollection.StandardMediaMetadata.DAY_PART,
+        MediaConstants.MediaCollection.StandardMediaMetadata.FEED:
+            MediaConstants.MediaCollection.StandardMediaMetadata.FEED,
+        MediaConstants.MediaCollection.StandardMediaMetadata.STREAM_FORMAT:
+            MediaConstants.MediaCollection.StandardMediaMetadata.STREAM_FORMAT,
+        MediaConstants.MediaCollection.StandardMediaMetadata.ARTIST:
+            MediaConstants.MediaCollection.StandardMediaMetadata.ARTIST,
+        MediaConstants.MediaCollection.StandardMediaMetadata.ALBUM:
+            MediaConstants.MediaCollection.StandardMediaMetadata.ALBUM,
+        MediaConstants.MediaCollection.StandardMediaMetadata.LABEL:
+            MediaConstants.MediaCollection.StandardMediaMetadata.LABEL,
+        MediaConstants.MediaCollection.StandardMediaMetadata.AUTHOR:
+            MediaConstants.MediaCollection.StandardMediaMetadata.AUTHOR,
+        MediaConstants.MediaCollection.StandardMediaMetadata.STATION:
+            MediaConstants.MediaCollection.StandardMediaMetadata.STATION,
+        MediaConstants.MediaCollection.StandardMediaMetadata.PUBLISHER:
+            MediaConstants.MediaCollection.StandardMediaMetadata.PUBLISHER
+    ]
 
-        return retMap
+    private static let standardAdMetadataMapping = [ MediaConstants.StandardAdMetadata.ADVERTISER: MediaConstants.MediaCollection.StandardAdMetadata.ADVERTISER,
+                                                     MediaConstants.StandardAdMetadata.CAMPAIGN_ID:
+                                                         MediaConstants.MediaCollection.StandardAdMetadata.CAMPAIGN_ID,
+                                                     MediaConstants.StandardAdMetadata.CREATIVE_ID:
+                                                         MediaConstants.MediaCollection.StandardAdMetadata.CREATIVE_ID,
+                                                     MediaConstants.StandardAdMetadata.PLACEMENT_ID:
+                                                         MediaConstants.MediaCollection.StandardAdMetadata.PLACEMENT_ID,
+                                                     MediaConstants.StandardAdMetadata.SITE_ID:
+                                                         MediaConstants.MediaCollection.StandardAdMetadata.SITE_ID,
+                                                     MediaConstants.StandardAdMetadata.CREATIVE_URL:
+                                                         MediaConstants.MediaCollection.StandardAdMetadata.CREATIVE_URL
+    ]
+
+    class func extractMediaParams(mediaContext: MediaContext) -> [String: Any] {
+        var retDict = [String: Any]()
+
+        let mediaInfo = mediaContext.getMediaInfo()
+
+        if !mediaInfo.toMap().isEmpty {
+            retDict[MediaConstants.MediaCollection.Media.ID] = mediaInfo.getId()
+            retDict[MediaConstants.MediaCollection.Media.NAME] = mediaInfo.getName()
+            retDict[MediaConstants.MediaCollection.Media.LENGTH] = mediaInfo.getLength()
+            retDict[MediaConstants.MediaCollection.Media.CONTENT_TYPE] = mediaInfo.getStreamType()
+            retDict[MediaConstants.MediaCollection.Media.STREAM_TYPE] = mediaInfo.getMediaType()
+            retDict[MediaConstants.MediaCollection.Media.RESUME] = mediaInfo.isResumed()
+        }
+
+        let metadata = mediaContext.getMediaMetadata()
+
+        for entry in metadata {
+            if standardMediaMetadataMapping[entry.key] != nil {
+                let newKey = getMediaCollectionKey(key: entry.key)
+                retDict[newKey] = entry.value
+            }
+        }
+
+        return retDict
+    }
+
+    class func getMediaCollectionKey(key: String) -> String {
+        if standardMediaMetadataMapping[key] != nil {
+            return standardMediaMetadataMapping[key] ?? key
+        }
+
+        return key
+    }
+
+    class func extractMediaMetadata(mediaContext: MediaContext) -> [String: String] {
+        var retDict = [String: String]()
+
+        let metadata = mediaContext.getMediaMetadata()
+
+        for entry in metadata {
+            if standardMediaMetadataMapping[entry.key] == nil {
+                retDict[entry.key] = entry.value
+            }
+        }
+
+        return retDict
     }
 
     // TODO: stub
-    static func extractMediaMetadata(mediaContext: MediaContext) -> [String: String] {
-        var retMap = [String: String]()
+    class func extractQoeData(mediaContext: MediaContext) -> [String: Any] {
+        var retDict = [String: Any]()
 
-        return retMap
+        return retDict
+    }
+
+    class func extractAdBreakParams(mediaContext: MediaContext) -> [String: Any] {
+        var retDict = [String: Any]()
+
+        return retDict
     }
 
     // TODO: stub
-    static func extractQoeData(mediaContext: MediaContext) -> [String: Any] {
-        var retMap = [String: Any]()
+    class func extractAdParams(mediaContext: MediaContext) -> [String: Any] {
+        var retDict = [String: Any]()
 
-        return retMap
+        return retDict
     }
 
     // TODO: stub
-    static func extractAdBreakParams(mediaContext: MediaContext) -> [String: Any] {
-        var retMap = [String: Any]()
+    class func extractAdMetadata(mediaContext: MediaContext) -> [String: String] {
+        var retDict = [String: String]()
 
-        return retMap
+        return retDict
     }
 
     // TODO: stub
-    static func extractAdParams(mediaContext: MediaContext) -> [String: Any] {
-        var retMap = [String: Any]()
+    class func extractChapterParams(mediaContext: MediaContext) -> [String: Any] {
+        var retDict = [String: Any]()
 
-        return retMap
+        return retDict
     }
 
     // TODO: stub
-    static func extractAdMetadata(mediaContext: MediaContext) -> [String: String] {
-        var retMap = [String: String]()
+    class func extractChapterMetadata(mediaContext: MediaContext) -> [String: String] {
+        var retDict = [String: String]()
 
-        return retMap
-    }
-
-    // TODO: stub
-    static func extractChapterParams(mediaContext: MediaContext) -> [String: Any] {
-        var retMap = [String: Any]()
-
-        return retMap
-    }
-
-    // TODO: stub
-    static func extractChapterMetadata(mediaContext: MediaContext) -> [String: String] {
-        var retMap = [String: String]()
-
-        return retMap
+        return retDict
     }
 }
