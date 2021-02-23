@@ -180,6 +180,7 @@ public class MediaTracker: NSObject, MediaUtil {
 
     private func stopTimer() {
         timer?.invalidate()
+        timer = nil
     }
 
     static func getCurrentTimeStamp() -> TimeInterval {
