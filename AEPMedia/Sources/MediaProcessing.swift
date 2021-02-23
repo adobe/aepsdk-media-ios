@@ -13,10 +13,10 @@ import Foundation
 
 protocol MediaProcessing {
     
-    func startSession() -> SessionId
+    func startSession() -> UInt
     
-    func processHit(sessionId: SessionId, hit: MediaHit)
+    func processHit(sessionId: UInt, hit: MediaHit)
     
-    func endSession(sessionId: SessionId)
+    func endSession(sessionId: UInt)
     
 }

@@ -13,7 +13,7 @@ import Foundation
 
 protocol MediaHit {
     
-    init(eventType: String, params: [String: Any], metaData: [String:String], qoeData: [String:Any], playHead: CurrentPosition, timeInterval: TimeInterval)
+    init(eventType: String, params: [String: Any], metaData: [String:String], qoeData: [String:Any], playHead: Double, timeInterval: TimeInterval)
     
     func getEventType() -> [String:Any]
     
@@ -23,7 +23,7 @@ protocol MediaHit {
     
     func getQoeData() -> [String:Any]
     
-    func getPlayHead() -> CurrentPosition
+    func getPlayHead() -> Double
     
     func getTimeStamp() -> TimeInterval
 
