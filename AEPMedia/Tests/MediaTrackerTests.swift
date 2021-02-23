@@ -38,7 +38,7 @@ class MediaTrackerTests: XCTestCase {
     // create
     // ==========================================================================
     func testCreateTracker() {
-        let tracker = MediaTracker.create(dispatch: dispatch(event:), config: nil)
+        let tracker = MediaTracker(dispatch: dispatch(event:), config: nil)
         
         XCTAssertNotNil(tracker)
         XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, capturedEvent?.source)
@@ -50,7 +50,7 @@ class MediaTrackerTests: XCTestCase {
     }
     
     func testCreateTrackerWithConfig() {
-        let tracker = MediaTracker.create(dispatch: dispatch(event:), config: testConfig)
+        let tracker = MediaTracker(dispatch: dispatch(event:), config: testConfig)
         
         XCTAssertNotNil(tracker)
         XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, capturedEvent?.source)

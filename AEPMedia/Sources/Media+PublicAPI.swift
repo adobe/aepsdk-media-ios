@@ -24,12 +24,12 @@ import AEPServices
 
     @objc(createTrackerWithConfig:)
     static func createTrackerWith(config: [String: Any]?) -> MediaTracker? {
-        return MediaTracker.create(dispatch: MobileCore.dispatch(event:), config: config)
+        return MediaTracker(dispatch: MobileCore.dispatch(event:), config: config)
     }
 
     @objc(createMediaObjectWith:id:length:streamType:mediaType:)
     static func createMediaObjectWith(name: String, id: String, length: Double, streamType: String, mediaType: MediaType) -> [String: Any]? {
-        guard let mediaInfo = MediaInfo.create(id: id, name: name, streamType: streamType, mediaType: mediaType, length: length) else {
+        guard let mediaInfo = MediaInfo(id: id, name: name, streamType: streamType, mediaType: mediaType, length: length) else {
             Log.error(label: LOG_TAG, "\(#function) Error creating media Object")
             return nil
         }

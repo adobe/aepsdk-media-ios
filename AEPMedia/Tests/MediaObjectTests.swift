@@ -84,21 +84,21 @@ class MediaObjectTests: XCTestCase {
     // MediaInfo
     // ==========================================================================
     func testMediaInfo_NilInfo() {
-        XCTAssertNil(MediaInfo.createFrom(info: nil))
+        XCTAssertNil(MediaInfo(info: nil))
     }
     
     func testMediaInfoValid() {
-        let mediaInfo = MediaInfo.createFrom(info: MediaObjectTests.validMediaInfo)
+        let mediaInfo = MediaInfo(info: MediaObjectTests.validMediaInfo)
         
         XCTAssertNotNil(mediaInfo)
-        XCTAssertEqual("testId", mediaInfo?.getId())
-        XCTAssertEqual("testName", mediaInfo?.getName())
-        XCTAssertEqual(10.0, mediaInfo?.getLength())
-        XCTAssertEqual("aod", mediaInfo?.getStreamType())
-        XCTAssertEqual(MediaType.Audio, mediaInfo?.getMediaType())
-        XCTAssertEqual(true, mediaInfo?.isResumed())
-        XCTAssertEqual(TimeInterval(2), mediaInfo?.getPrerollWaitingTime())
-        XCTAssertEqual(true, mediaInfo?.isGranularAdTrackingEnabled())
+        XCTAssertEqual("testId", mediaInfo?.id)
+        XCTAssertEqual("testName", mediaInfo?.name)
+        XCTAssertEqual(10.0, mediaInfo?.length)
+        XCTAssertEqual("aod", mediaInfo?.streamType)
+        XCTAssertEqual(MediaType.Audio, mediaInfo?.mediaType)
+        XCTAssertEqual(true, mediaInfo?.resumed)
+        XCTAssertEqual(TimeInterval(2), mediaInfo?.prerollWaitingTime)
+        XCTAssertEqual(true, mediaInfo?.granularAdTracking)
     }
     
     func testMediaInfoMissingData() {
@@ -113,7 +113,7 @@ class MediaObjectTests: XCTestCase {
         for key in requiredKeys {
             var info = MediaObjectTests.validMediaInfo
             info.removeValue(forKey: key)
-            XCTAssertNil(MediaInfo.createFrom(info: info))
+            XCTAssertNil(MediaInfo(info: info))
         }
     }
     
@@ -121,7 +121,7 @@ class MediaObjectTests: XCTestCase {
         for v in MediaObjectTests.valuesOtherThanString {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.ID] = v
-            XCTAssertNil(MediaInfo.createFrom(info: info))
+            XCTAssertNil(MediaInfo(info: info))
         }
     }
     
@@ -129,7 +129,7 @@ class MediaObjectTests: XCTestCase {
         for v in MediaObjectTests.valuesOtherThanString {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.NAME] = v
-            XCTAssertNil(MediaInfo.createFrom(info: info))
+            XCTAssertNil(MediaInfo(info: info))
         }
     }
     
@@ -137,13 +137,13 @@ class MediaObjectTests: XCTestCase {
         for v in MediaObjectTests.valuesOtherThanDouble {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.LENGTH] = v
-            XCTAssertNil(MediaInfo.createFrom(info: info))
+            XCTAssertNil(MediaInfo(info: info))
         }
         
         for v in MediaObjectTests.numberLessThan0 {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.LENGTH] = v
-            XCTAssertNil(MediaInfo.createFrom(info: info))
+            XCTAssertNil(MediaInfo(info: info))
         }
     }
     
@@ -151,7 +151,7 @@ class MediaObjectTests: XCTestCase {
         for v in MediaObjectTests.valuesOtherThanString {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.STREAM_TYPE] = v
-            XCTAssertNil(MediaInfo.createFrom(info: info))
+            XCTAssertNil(MediaInfo(info: info))
         }
     }
     
@@ -160,7 +160,7 @@ class MediaObjectTests: XCTestCase {
         for v in MediaObjectTests.values {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.MEDIA_TYPE] = v
-            XCTAssertNil(MediaInfo.createFrom(info: info))
+            XCTAssertNil(MediaInfo(info: info))
         }
     }
     
@@ -168,8 +168,8 @@ class MediaObjectTests: XCTestCase {
         for v in MediaObjectTests.valuesOtherThanBool {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.RESUMED] = v
-            let mediaInfo = MediaInfo.createFrom(info: info)
-            XCTAssertFalse(mediaInfo?.isResumed() ?? true)
+            let mediaInfo = MediaInfo(info: info)
+            XCTAssertFalse(mediaInfo?.resumed ?? true)
         }
     }
     
@@ -177,8 +177,8 @@ class MediaObjectTests: XCTestCase {
         for v in MediaObjectTests.valuesOtherThanDouble {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME] = v
-            let mediaInfo = MediaInfo.createFrom(info: info)
-            XCTAssertEqual(MediaInfo.DEFAULT_PREROLL_WAITING_TIME_IN_MS/1000, mediaInfo?.getPrerollWaitingTime())
+            let mediaInfo = MediaInfo(info: info)
+            XCTAssertEqual(MediaInfo.DEFAULT_PREROLL_WAITING_TIME_IN_MS/1000, mediaInfo?.prerollWaitingTime)
         }
     }
     
@@ -186,59 +186,59 @@ class MediaObjectTests: XCTestCase {
         for v in MediaObjectTests.valuesOtherThanBool {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.GRANULAR_AD_TRACKING] = v
-            let mediaInfo = MediaInfo.createFrom(info: info)
-            XCTAssertFalse(mediaInfo?.isGranularAdTrackingEnabled() ?? true)
+            let mediaInfo = MediaInfo(info: info)
+            XCTAssertFalse(mediaInfo?.granularAdTracking ?? true)
         }
     }
     
     func testCreateMediaObjectWithPrerollWaitTimeDefault() {
-        let mediaInfo = MediaInfo.create(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0)
+        let mediaInfo = MediaInfo(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0)
         
-        XCTAssertEqual(MediaInfo.DEFAULT_PREROLL_WAITING_TIME_IN_MS/1000, mediaInfo?.getPrerollWaitingTime())
+        XCTAssertEqual(MediaInfo.DEFAULT_PREROLL_WAITING_TIME_IN_MS/1000, mediaInfo?.prerollWaitingTime)
     }
     
     func testCreateMediaObjectWithGranularAdTrackingValueCustom() {
-        let mediaInfo = MediaInfo.create(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0, prerollWaitingTime: 2000)
+        let mediaInfo = MediaInfo(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0, prerollWaitingTime: 2000)
         
-        XCTAssertEqual(2000/1000, mediaInfo?.getPrerollWaitingTime())
+        XCTAssertEqual(2000/1000, mediaInfo?.prerollWaitingTime)
     }
     
     func testCreateMediaObjectWithGranularAdTrackingValueDefault() {
-        let mediaInfo = MediaInfo.create(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0)
+        let mediaInfo = MediaInfo(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0)
         
-        XCTAssertFalse(mediaInfo?.isGranularAdTrackingEnabled() ?? true)
+        XCTAssertFalse(mediaInfo?.granularAdTracking ?? true)
     }
     
     func testCreateMediaObjectWithGranularAdTrackingValueDisabled() {
-        let mediaInfo = MediaInfo.create(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0, granularAdTracking: false)
+        let mediaInfo = MediaInfo(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0, granularAdTracking: false)
         
-        XCTAssertFalse(mediaInfo?.isGranularAdTrackingEnabled() ?? true)
+        XCTAssertFalse(mediaInfo?.granularAdTracking ?? true)
     }
     
     
     func testCreateMediaObjectWithDefaultGranularAdTrackingValue() {
-        let mediaInfo = MediaInfo.create(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0, granularAdTracking: true)
+        let mediaInfo = MediaInfo(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0, granularAdTracking: true)
         
-        XCTAssertTrue(mediaInfo?.isGranularAdTrackingEnabled() ?? false)
+        XCTAssertTrue(mediaInfo?.granularAdTracking ?? false)
     }
     
     func testMediaInfoValidMediaType() {
         var info = MediaObjectTests.validMediaInfo
-        let audioInfo = MediaInfo.createFrom(info: info)
+        let audioInfo = MediaInfo(info: info)
         
-        XCTAssertEqual(MediaType.Audio, audioInfo?.getMediaType() ?? MediaType.Video)
+        XCTAssertEqual(MediaType.Audio, audioInfo?.mediaType ?? MediaType.Video)
         
-        info[MediaConstants.MediaInfo.MEDIA_TYPE] = MediaInfo.MEDIA_TYPE_VIDEO
+        info[MediaConstants.MediaInfo.MEDIA_TYPE] = MediaType.Video.rawValue
         
-        let videoInfo = MediaInfo.createFrom(info: info)
+        let videoInfo = MediaInfo(info: info)
         
-        XCTAssertEqual(MediaType.Video, videoInfo?.getMediaType() ?? MediaType.Audio)
+        XCTAssertEqual(MediaType.Video, videoInfo?.mediaType ?? MediaType.Audio)
     }
     
     func testMediaInfoEqual() {
-        let mediaInfo1 = MediaInfo.createFrom(info: MediaObjectTests.validMediaInfo)
+        let mediaInfo1 = MediaInfo(info: MediaObjectTests.validMediaInfo)
         
-        let mediaInfo2 = MediaInfo.create(id: "testId", name: "testName", streamType: "aod", mediaType: MediaType.Audio, length: 10.0, resumed: true, prerollWaitingTime: 2000, granularAdTracking: true)
+        let mediaInfo2 = MediaInfo(id: "testId", name: "testName", streamType: "aod", mediaType: MediaType.Audio, length: 10.0, resumed: true, prerollWaitingTime: 2000, granularAdTracking: true)
         
         XCTAssertEqual(mediaInfo1, mediaInfo2)
     }

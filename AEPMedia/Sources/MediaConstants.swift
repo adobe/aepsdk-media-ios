@@ -52,6 +52,8 @@ enum MediaConstants {
         static let EVENT_SOURCE_TRACKER_REQUEST = "com.adobe.eventsource.media.requesttracker"
         static let EVENT_SOURCE_TRACKER_RESPONSE = "com.adobe.eventsource.media.responsetracker"
         static let EVENT_SOURCE_TRACK_MEDIA = "com.adobe.eventsource.media.trackmedia"
+        static let EVENT_NAME_CREATE_TRACKER = "Media::CreateTrackerRequest"
+        static let EVENT_NAME_TRACK_MEDIA = "Media::TrackMedia"
     }
 
     enum EventName {
