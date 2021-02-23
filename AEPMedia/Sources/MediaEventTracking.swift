@@ -10,12 +10,7 @@
  */
 import Foundation
 
-protocol MediaTracking {
+protocol MediaEventTracking {
     
-    //TODO Implement this init after MediaHitProcessor implementation.
-//    init(const std::shared_ptr<MediaHitProcessor>& hit_processor,
-//                 const std::map<std::string, std::shared_ptr<Variant>>& config);
-    
-    func track(eventData: [String:Any])
-    
+    func track(eventData: [String:Any]?)
 }

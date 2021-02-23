@@ -11,12 +11,11 @@
 
 import Foundation
 
-protocol MediaProcessing {
+protocol MediaSession {
+            
+    func processHit(hit: MediaHit)
     
-    func startSession() -> UInt
+    func endSession()
     
-    func processHit(sessionId: UInt, hit: MediaHit)
-    
-    func endSession(sessionId: UInt)
-    
+    func abort()
 }

@@ -11,13 +11,11 @@
 
 import Foundation
 
-protocol MediaServiceable : MediaProcessing {
+protocol MediaServiceable {
+    
+    func createSession() -> MediaSession
     
     func processSessions()
-    
-    func startTickTimer()
-    
-    func stopTickTimer()
-    
+            
     func abortAllSessions()
 }
