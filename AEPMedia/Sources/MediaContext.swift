@@ -133,7 +133,7 @@ class MediaContext {
         
         switch state {
         case .Init, .Play, .Pause, .Stall:
-            retVal = playState == state
+            retVal = (playState == state)
         case .Buffer:
             retVal = buffering
         case .Seek:

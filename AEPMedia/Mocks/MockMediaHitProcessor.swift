@@ -15,14 +15,14 @@ import Foundation
 class MockMediaHitProcessor: MediaHitProcessor {
     private var sessionEnded = false
     private var processedHits: [Int: [MediaHit]] = [:]
-    private var currentSessionId: Int = -1
+    private var currentSessionID: Int = -1
     private var isSessionStartCalled = false
     
     override func startSession() -> Int {
         isSessionStartCalled = true
-        currentSessionId += 1
-        processedHits[currentSessionId] = []
-        return currentSessionId
+        currentSessionID += 1
+        processedHits[currentSessionID] = []
+        return currentSessionID
     }
     
     override func endSession(sessionID: Int) {
@@ -34,11 +34,11 @@ class MockMediaHitProcessor: MediaHitProcessor {
     }
     
     func getHitFromActiveSession(index: Int) -> MediaHit? {
-        return getHit(sessionID: currentSessionId, index: index)
+        return getHit(sessionID: currentSessionID, index: index)
     }
     
     func getHitCountFromActiveSession() -> Int {
-        return getHitCount(sessionID: currentSessionId)
+        return getHitCount(sessionID: currentSessionID)
     }
     
     private func getHit(sessionID: Int, index: Int) -> MediaHit? {
@@ -58,8 +58,8 @@ class MockMediaHitProcessor: MediaHitProcessor {
     }
     
     func clearHitsFromActiveSession() {
-        if processedHits[currentSessionId] != nil {
-            processedHits[currentSessionId]?.removeAll()
+        if processedHits[currentSessionID] != nil {
+            processedHits[currentSessionID]?.removeAll()
         }
     }
 }

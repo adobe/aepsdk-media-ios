@@ -22,7 +22,7 @@ class MediaHit: Equatable {
     private (set) var metadata: [String: String]
 
     /// Media Analytics QoE data
-    private (set) var qoeData: [String: Any]
+    private (set) var QOEData: [String: Any]
 
     /// The current playhead
     private (set) var playhead: Double = 0
@@ -34,16 +34,16 @@ class MediaHit: Equatable {
         return  lhs.eventType == rhs.eventType &&
             NSDictionary(dictionary: lhs.params).isEqual(to: rhs.params) &&
             lhs.metadata == rhs.metadata &&
-            NSDictionary(dictionary: lhs.qoeData).isEqual(to: rhs.qoeData)  &&
+            NSDictionary(dictionary: lhs.QOEData).isEqual(to: rhs.QOEData)  &&
             lhs.playhead.equalTo(rhs.playhead) &&
             lhs.timestamp.equalTo(rhs.timestamp)
     }
 
-    init(eventType: String, params: [String: Any], metadata: [String: String], qoeData: [String: Any], playhead: Double, ts: TimeInterval) {
+    init(eventType: String, params: [String: Any], metadata: [String: String], QOEData: [String: Any], playhead: Double, ts: TimeInterval) {
         self.eventType = eventType
         self.params = params
         self.metadata = metadata
-        self.qoeData = qoeData
+        self.QOEData = QOEData
         self.playhead = playhead
         self.timestamp = ts
     }

@@ -19,7 +19,7 @@ class MediaCollectionHitGenerator {
     private let mediaHitProcessor: MediaHitProcessor
     private let mediaConfig: [String: Any]
     private let downloadedContent: Bool
-    private var lastQoeData: [String: Any] = [:]
+    private var lastQOEData: [String: Any] = [:]
     private var sessionID: Int
     private var isTracking: Bool
     private var interval: TimeInterval
@@ -146,7 +146,7 @@ class MediaCollectionHitGenerator {
         previousState = MediaPlaybackState.Init
         previousStateTS = refTS
 
-        lastQoeData.removeAll()
+        lastQOEData.removeAll()
 
         sessionID = mediaHitProcessor.startSession()
         isTracking = true
@@ -174,16 +174,16 @@ class MediaCollectionHitGenerator {
 
 
     func processBitrateChange() {
-        let qoeData = MediaCollectionHelper.extractQoeData(mediaContext: mediaContext)
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.BITRATE_CHANGE, params: nil, metadata: nil, qoeData: qoeData)
+        let QOEData = MediaCollectionHelper.extractQoeData(mediaContext: mediaContext)
+        generateHit(eventType: MediaConstants.MediaCollection.EventType.BITRATE_CHANGE, params: nil, metadata: nil, QOEData: QOEData)
     }
 
     func processError(errorId: String) {
-        var qoeData = MediaCollectionHelper.extractQoeData(mediaContext: mediaContext)
-        qoeData[MediaConstants.MediaCollection.QoE.ERROR_ID] = errorId
-        qoeData[MediaConstants.MediaCollection.QoE.ERROR_SOURCE] = MediaConstants.MediaCollection.QoE.ERROR_SOURCE_PLAYER
+        var QOEData = MediaCollectionHelper.extractQoeData(mediaContext: mediaContext)
+        QOEData[MediaConstants.MediaCollection.QoE.ERROR_ID] = errorId
+        QOEData[MediaConstants.MediaCollection.QoE.ERROR_SOURCE] = MediaConstants.MediaCollection.QoE.ERROR_SOURCE_PLAYER
 
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.ERROR, params: nil, metadata: nil, qoeData: qoeData)
+        generateHit(eventType: MediaConstants.MediaCollection.EventType.ERROR, params: nil, metadata: nil, QOEData: QOEData)
     }
 
     func setRefTS(ts: Double) {
@@ -235,25 +235,25 @@ class MediaCollectionHitGenerator {
     }
 
     func generateHit(eventType: String, params: [String: Any]?, metadata: [String: String]?) {
-        let qoeData = MediaCollectionHelper.extractQoeData(mediaContext: mediaContext)
+        let QOEData = MediaCollectionHelper.extractQoeData(mediaContext: mediaContext)
         // TODO: replace with lhs rhs comparison after QoeInfo class is created
-        let qoeInfoUpdated = self.lastQoeData as NSDictionary != qoeData as NSDictionary
+        let QOEInfoUpdated = self.lastQOEData as NSDictionary != QOEData as NSDictionary
 
-        if qoeInfoUpdated {
-            generateHit(eventType: eventType, params: params, metadata: metadata, qoeData: qoeData)
+        if QOEInfoUpdated {
+            generateHit(eventType: eventType, params: params, metadata: metadata, QOEData: QOEData)
         } else {
-            generateHit(eventType: eventType, params: params, metadata: metadata, qoeData: nil)
+            generateHit(eventType: eventType, params: params, metadata: metadata, QOEData: nil)
         }
     }
 
-    func generateHit(eventType: String, params: [String: Any]?, metadata: [String: String]?, qoeData: [String: Any]?) {
+    func generateHit(eventType: String, params: [String: Any]?, metadata: [String: String]?, QOEData: [String: Any]?) {
         let params = params ?? [:]
         let metadata = metadata ?? [:]
-        let qoeData = qoeData ?? [:]
+        let QOEData = QOEData ?? [:]
 
         // Update the lastQoeData so we don't resend it with the next ping
-        if !qoeData.isEmpty {
-            self.lastQoeData = qoeData
+        if !QOEData.isEmpty {
+            self.lastQOEData = QOEData
         }
 
         if !isTracking {
@@ -264,7 +264,7 @@ class MediaCollectionHitGenerator {
         let playhead = mediaContext.getPlayhead()
         let ts = refTS
 
-        let hit = MediaHit.init(eventType: eventType, params: params, metadata: metadata, qoeData: qoeData, playhead: playhead, ts: ts)
+        let hit = MediaHit.init(eventType: eventType, params: params, metadata: metadata, QOEData: QOEData, playhead: playhead, ts: ts)
         mediaHitProcessor.processHit(sessionID: sessionID, hit: hit)
     }
 

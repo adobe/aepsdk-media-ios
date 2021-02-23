@@ -14,7 +14,7 @@ import XCTest
 
 class MediaCollectionHitGeneratorTests: XCTestCase {
     private let emptyParams:[String: Any] = [:]
-    private let emptyQoeData:[String: Any] = [:]
+    private let emptyQOEData:[String: Any] = [:]
     private let emptyMetadata:[String: String] = [:]
     private var mediaInfo: MediaInfo!
     private var hitProcessor: MockMediaHitProcessor!
@@ -39,6 +39,15 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         self.hitProcessor = nil
         self.hitGenerator = nil
     }
+    
+    // TODO: add QoEInfo tests
+    // add test testProcessStateStartShouldNotSendQoEData
+    // add test testProcessStateStartShouldSendQoEDataInNextPingAfterStateStart
+    // add test for testProcessError
+    // add test for testGenerateHitProcessQoEChange
+    // add test for testGenerateHitUpdatedQoEInfo
+    // add test testProcessStateEndShouldNotSendQoEData
+    // add test testProcessStateEndShouldSendQoEDataInNextPingAfterStateStart
 
     //MARK: MediaCollectionHitGenerator Unit Tests
     func testMediaStart() {
@@ -48,8 +57,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
         params[MediaConstants.MediaCollection.Media.DOWNLOADED] = true
         let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
-        let expectedHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -64,8 +72,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
         params[MediaConstants.MediaCollection.Media.DOWNLOADED] = false
         let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
-        let expectedHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -81,8 +88,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         params[MediaConstants.MediaCollection.Media.DOWNLOADED] = true
         params[MediaConstants.MediaCollection.Media.CHANNEL] = "test-channel"
         let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
-        let expectedHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -95,8 +101,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         params[MediaConstants.MediaCollection.Media.DOWNLOADED] = true
         params[MediaConstants.MediaCollection.Media.RESUME] = true
         let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
-        let expectedHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -105,8 +110,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processMediaComplete()
         // verify
-        let expectedHit = MediaHit.init(eventType: "sessionComplete", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "sessionComplete", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -115,8 +119,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processMediaSkip()
         // verify
-        let expectedHit = MediaHit.init(eventType: "sessionEnd", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "sessionEnd", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -125,8 +128,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processAdBreakStart()
         // verify
-        let expectedHit = MediaHit.init(eventType: "adBreakStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "adBreakStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -135,8 +137,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processAdBreakComplete()
         // verify
-        let expectedHit = MediaHit.init(eventType: "adBreakComplete", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "adBreakComplete", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -145,8 +146,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processAdBreakSkip()
         // verify
-        let expectedHit = MediaHit.init(eventType: "adBreakComplete", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "adBreakComplete", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -155,8 +155,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processAdStart()
         // verify
-        let expectedHit = MediaHit.init(eventType: "adStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "adStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -165,8 +164,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processAdComplete()
         // verify
-        let expectedHit = MediaHit.init(eventType: "adComplete", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "adComplete", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -175,8 +173,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processAdSkip()
         // verify
-        let expectedHit = MediaHit.init(eventType: "adSkip", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "adSkip", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -185,8 +182,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processChapterStart()
         // verify
-        let expectedHit = MediaHit.init(eventType: "chapterStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "chapterStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -195,8 +191,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processChapterComplete()
         // verify
-        let expectedHit = MediaHit.init(eventType: "chapterComplete", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "chapterComplete", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -205,8 +200,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processChapterSkip()
         // verify
-        let expectedHit = MediaHit.init(eventType: "chapterSkip", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "chapterSkip", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -215,8 +209,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processSessionAbort()
         // verify
-        let expectedHit = MediaHit.init(eventType: "sessionEnd", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
-        
+        let expectedHit = MediaHit.init(eventType: "sessionEnd", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -246,26 +239,25 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processSessionRestart()
         // verify number hits
-        
         XCTAssertEqual(5, hitProcessor.getHitCountFromActiveSession())
         // verify media start hit
-        let expectedMediaStartHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedMediaStartHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let mediaStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedMediaStartHit, mediaStartHit)
         // verify chapter start hit
-        let expectedChapterStartHit = MediaHit.init(eventType: "chapterStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedChapterStartHit = MediaHit.init(eventType: "chapterStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let chapterStartHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedChapterStartHit, chapterStartHit)
         // verify ad break start hit
-        let expectedAdBreakStartHit = MediaHit.init(eventType: "adBreakStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedAdBreakStartHit = MediaHit.init(eventType: "adBreakStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let adBreakStartHit = hitProcessor.getHitFromActiveSession(index: 2)
         XCTAssertEqual(adBreakStartHit, expectedAdBreakStartHit)
         // verify ad start
-        let expectedAdStartHit = MediaHit.init(eventType: "adStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedAdStartHit = MediaHit.init(eventType: "adStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let adStartHit = hitProcessor.getHitFromActiveSession(index: 3)
         XCTAssertEqual(adStartHit, expectedAdStartHit)
         // verify play
-        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let playHit = hitProcessor.getHitFromActiveSession(index: 4)
         XCTAssertEqual(expectedPlayHit, playHit)
     }
@@ -293,26 +285,25 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processSessionRestart()
         // verify number hits
-        
         XCTAssertEqual(5, hitProcessor.getHitCountFromActiveSession())
         // verify media start hit
-        let expectedMediaStartHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedMediaStartHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let mediaStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedMediaStartHit, mediaStartHit)
         // verify chapter start hit
-        let expectedChapterStartHit = MediaHit.init(eventType: "chapterStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedChapterStartHit = MediaHit.init(eventType: "chapterStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let chapterStartHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedChapterStartHit, chapterStartHit)
         // verify ad break start hit
-        let expectedAdBreakStartHit = MediaHit.init(eventType: "adBreakStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedAdBreakStartHit = MediaHit.init(eventType: "adBreakStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let adBreakStartHit = hitProcessor.getHitFromActiveSession(index: 2)
         XCTAssertEqual(adBreakStartHit, expectedAdBreakStartHit)
         // verify ad start
-        let expectedAdStartHit = MediaHit.init(eventType: "adStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedAdStartHit = MediaHit.init(eventType: "adStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let adStartHit = hitProcessor.getHitFromActiveSession(index: 3)
         XCTAssertEqual(adStartHit, expectedAdStartHit)
         // verify play
-        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let playHit = hitProcessor.getHitFromActiveSession(index: 4)
         XCTAssertEqual(expectedPlayHit, playHit)
     }
@@ -332,19 +323,18 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processSessionRestart()
         // verify number hits
-        
         XCTAssertEqual(3, hitProcessor.getHitCountFromActiveSession())
         // verify media start hit
-        let expectedMediaStartHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedMediaStartHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let mediaStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedMediaStartHit, mediaStartHit)
         // verify state start hit
         let startParams = ["state.name": "fullscreen"]
-        let expectedStateStartHit = MediaHit.init(eventType: "stateStart", params: startParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedStateStartHit = MediaHit.init(eventType: "stateStart", params: startParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let stateStartHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedStateStartHit, stateStartHit)
         // verify play
-        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let playHit = hitProcessor.getHitFromActiveSession(index: 2)
         XCTAssertEqual(expectedPlayHit, playHit)
     }
@@ -363,11 +353,11 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // verify number hits
         XCTAssertEqual(2, hitProcessor.getHitCountFromActiveSession())
         // verify media start hit
-        let expectedMediaStartHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedMediaStartHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let mediaStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedMediaStartHit, mediaStartHit)
         // verify play
-        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let playHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedPlayHit, playHit)
     }
@@ -391,16 +381,16 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // verify number hits
         XCTAssertEqual(3, hitProcessor.getHitCountFromActiveSession())
         // verify media start hit
-        let expectedMediaStartHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedMediaStartHit = MediaHit.init(eventType: "sessionStart", params: params, metadata: metadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let mediaStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedMediaStartHit, mediaStartHit)
         // verify state start hit
         let startParams = ["state.name": "fullscreen"]
-        let expectedStateStartHit = MediaHit.init(eventType: "stateStart", params: startParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedStateStartHit = MediaHit.init(eventType: "stateStart", params: startParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let stateStartHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedStateStartHit, stateStartHit)
         // verify play
-        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let playHit = hitProcessor.getHitFromActiveSession(index: 2)
         XCTAssertEqual(expectedPlayHit, playHit)
     }
@@ -412,65 +402,59 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         params[MediaConstants.MediaCollection.Media.RESUME] = true
         let config = [MediaConstants.Configuration.DOWNLOADED_CONTENT: true]
         self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, timestamp: expectedTimestamp)
-        // tests
+        // test
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(0, hitProcessor.getHitCount(sessionID: self.expectedSessionId))
-        
         // play hit
         mediaContext.enterState(MediaPlaybackState.Play)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let playHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPlayHit, playHit)
         hitProcessor.clearHitsFromActiveSession()
-        
         // buffer start hit
         mediaContext.enterState(MediaPlaybackState.Buffer)
         hitGenerator.setMediaContext(mediaContext)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedBufferStartHit = MediaHit.init(eventType: "bufferStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedBufferStartHit = MediaHit.init(eventType: "bufferStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let bufferStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedBufferStartHit, bufferStartHit)
         hitProcessor.clearHitsFromActiveSession()
-        
         // buffer end hit (will be play)
         mediaContext.exitState(MediaPlaybackState.Buffer)
         hitGenerator.setMediaContext(mediaContext)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedBufferEndHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedBufferEndHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let bufferEndHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedBufferEndHit, bufferEndHit)
         hitProcessor.clearHitsFromActiveSession()
-        
         // start seek hit
         mediaContext.enterState(MediaPlaybackState.Seek)
         hitGenerator.setMediaContext(mediaContext)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedSeekStartHit = MediaHit.init(eventType: "pauseStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedSeekStartHit = MediaHit.init(eventType: "pauseStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let seekStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedSeekStartHit, seekStartHit)
         hitProcessor.clearHitsFromActiveSession()
-        
         // exit seek hit
         mediaContext.exitState(MediaPlaybackState.Seek)
         hitGenerator.setMediaContext(mediaContext)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedSeekExitHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedSeekExitHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let seekExitHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedSeekExitHit, seekExitHit)
         hitProcessor.clearHitsFromActiveSession()
-        
         // pause hit
         mediaContext.enterState(MediaPlaybackState.Pause)
         hitGenerator.setMediaContext(mediaContext)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedPauseHit = MediaHit.init(eventType: "pauseStart", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedPauseHit = MediaHit.init(eventType: "pauseStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let pauseHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPauseHit, pauseHit)
         hitProcessor.clearHitsFromActiveSession()
@@ -483,16 +467,12 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processStateStart(stateInfo: stateInfo)
         // verify state start hit
-        
         XCTAssertEqual(1, hitProcessor.getHitCount(sessionID: self.expectedSessionId))
         let startParams = ["state.name": "fullscreen"]
-        let expectedStateStartHit = MediaHit.init(eventType: "stateStart", params: startParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedStateStartHit = MediaHit.init(eventType: "stateStart", params: startParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let stateStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedStateStartHit, stateStartHit)
     }
-    
-    // TODO: add test testProcessStateStartShouldNotSendQoEData
-    // TODO: add test testProcessStateStartShouldSendQoEDataInNextPingAfterStateStart
     
     func testProcessStateEndFullscreen() {
         // setup
@@ -503,13 +483,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // verify state start hit
         XCTAssertEqual(1, hitProcessor.getHitCount(sessionID: self.expectedSessionId))
         let startParams = ["state.name": "fullscreen"]
-        let expectedStateEndHit = MediaHit.init(eventType: "stateEnd", params: startParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedStateEndHit = MediaHit.init(eventType: "stateEnd", params: startParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let stateEndHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedStateEndHit, stateEndHit)
     }
-    
-    // TODO: add test testProcessStateEndShouldNotSendQoEData
-    // TODO: add test testProcessStateEndShouldSendQoEDataInNextPingAfterStateStart
     
     func testProcessPlaybackStateSameStateOnline() {
         // setup
@@ -521,15 +498,13 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // verify play hit
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: expectedTimestamp)
+        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
         let playHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPlayHit, playHit)
         hitProcessor.clearHitsFromActiveSession()
-        
         // second play hit should not be sent
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(0, hitProcessor.getHitCount(sessionID: self.expectedSessionId))
-        
         // set timestamp greater than session interval to allow a new play hit to be sent
         hitGenerator.setRefTS(ts: 100)
         hitGenerator.processPlayback(doFlush: false)
@@ -548,7 +523,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitGenerator.setRefTS(ts: 50)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedPingHit = MediaHit.init(eventType: "ping", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: 50)
+        let expectedPingHit = MediaHit.init(eventType: "ping", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: 50)
         let pingHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPingHit, pingHit)
     }
@@ -564,14 +539,14 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitGenerator.setRefTS(ts: 10)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        var expectedPingHit = MediaHit.init(eventType: "ping", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: 10)
+        var expectedPingHit = MediaHit.init(eventType: "ping", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: 10)
         var pingHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPingHit, pingHit)
         // expect another hit due to timestamp >= the default online ping interval
         hitGenerator.setRefTS(ts: 50)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(2, hitProcessor.getHitCountFromActiveSession())
-        expectedPingHit = MediaHit.init(eventType: "ping", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: 50)
+        expectedPingHit = MediaHit.init(eventType: "ping", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: 50)
         pingHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedPingHit, pingHit)
     }
@@ -581,7 +556,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         mediaContext.enterState(MediaPlaybackState.Play)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: 0)
+        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: 0)
         let playHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPlayHit, playHit)
         hitProcessor.clearHitsFromActiveSession()
@@ -589,7 +564,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitGenerator.setRefTS(ts: 51)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedPingHit = MediaHit.init(eventType: "ping", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: 51)
+        let expectedPingHit = MediaHit.init(eventType: "ping", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: 51)
         let pingHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPingHit, pingHit)
     }
@@ -599,7 +574,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         mediaContext.enterState(MediaPlaybackState.Play)
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: 0)
+        let expectedPlayHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: 0)
         let playHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPlayHit, playHit)
         hitProcessor.clearHitsFromActiveSession()
@@ -607,7 +582,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitGenerator.setRefTS(ts: 10)
         hitGenerator.processPlayback(doFlush: true)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedPlayHit2 = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: 10)
+        let expectedPlayHit2 = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: 10)
         let playHit2 = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPlayHit2, playHit2)
     }
@@ -617,19 +592,23 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitGenerator.processBitrateChange()
         // verify
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedHit = MediaHit.init(eventType: "bitrateChange", params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData, playhead: expectedPlayhead, ts: 0)
+        let expectedHit = MediaHit.init(eventType: "bitrateChange", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: 0)
         let hit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, hit)
     }
     
-    // TODO: add test for testProcessError (QoE test)
-    // TODO: add test for testGenerateHitProcessQoEChange
-    // TODO: add test for testGenerateHitUpdatedQoEInfo
-    
     func testGenerateHitAfterMediaSession() {
         // test
         hitGenerator.endMediaSession()
-        hitGenerator.generateHit(eventType: MediaConstants.EventName.PLAY, params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData)
+        hitGenerator.processPlayback(doFlush: false)
+        // verify no hit because tracking is stopped
+        XCTAssertEqual(0, hitProcessor.getHitCountFromActiveSession())
+    }
+    
+    func testGenerateHitAfterMediaSession2() {
+        // test
+        hitGenerator.endMediaSession()
+        hitGenerator.generateHit(eventType: MediaConstants.EventName.PLAY, params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData)
         // verify no hit because tracking is stopped
         XCTAssertEqual(0, hitProcessor.getHitCountFromActiveSession())
     }

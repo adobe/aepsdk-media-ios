@@ -128,6 +128,7 @@ class MediaCollectionHelper {
         return retDict
     }
 
+    // TODO: stub
     class func extractAdBreakParams(mediaContext: MediaContext) -> [String: Any] {
         var retDict = [String: Any]()
 
