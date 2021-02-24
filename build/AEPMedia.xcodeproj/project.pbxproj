@@ -8,15 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		2EFF1B5B25BF57FC00375965 /* AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EFF1B5125BF57FC00375965 /* AEPMedia.framework */; };
-		3D2C831425DE65C70064E0D4 /* MediaRealTimeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831325DE65C70064E0D4 /* MediaRealTimeService.swift */; };
-		3D2C831825DE65EF0064E0D4 /* MediaOfflineService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831725DE65EF0064E0D4 /* MediaOfflineService.swift */; };
+		3D2C831425DE65C70064E0D4 /* MediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831325DE65C70064E0D4 /* MediaService.swift */; };
+		3D2C831825DE65EF0064E0D4 /* MediaOfflineSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831725DE65EF0064E0D4 /* MediaOfflineSession.swift */; };
 		3D2C831C25DE6C130064E0D4 /* MediaState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831B25DE6C130064E0D4 /* MediaState.swift */; };
 		3D2C832025DEFFEA0064E0D4 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831F25DEFFEA0064E0D4 /* Timer.swift */; };
-		3D2C833725E4932A0064E0D4 /* MediaSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C833625E4932A0064E0D4 /* MediaSession.swift */; };
-		3D9D530B25D4AFB000F33EB7 /* MediaHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D530A25D4AFB000F33EB7 /* MediaHit.swift */; };
-		3D9D531725D5E73100F33EB7 /* MediaProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531625D5E73100F33EB7 /* MediaProcessing.swift */; };
-		3D9D531B25D5E75B00F33EB7 /* MediaTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531A25D5E75B00F33EB7 /* MediaTracking.swift */; };
-		3D9D531F25D5ED3E00F33EB7 /* MediaServiceable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531E25D5ED3E00F33EB7 /* MediaServiceable.swift */; };
+		3D2C833725E4932A0064E0D4 /* MediaRealTimeSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C833625E4932A0064E0D4 /* MediaRealTimeSession.swift */; };
 		8C5E99545029552DC5DE0FE4 /* Pods_AEPMedia_AEPMediaTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0A85E36311E99ABB18705A /* Pods_AEPMedia_AEPMediaTests.framework */; };
 		A6F93E8E4AB0BA688875C886 /* Pods_AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA0EE6BFA3507E5A81F88B59 /* Pods_AEPMedia.framework */; };
 		AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3525C9F11E00A37345 /* MediaTracker.swift */; };
@@ -43,15 +39,11 @@
 		2EFF1B5125BF57FC00375965 /* AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EFF1B5A25BF57FC00375965 /* AEPMediaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPMediaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		35B3854C17ADDAF465AF0F9B /* Pods-AEPMedia.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia.release.xcconfig"; path = "Target Support Files/Pods-AEPMedia/Pods-AEPMedia.release.xcconfig"; sourceTree = "<group>"; };
-		3D2C831325DE65C70064E0D4 /* MediaRealTimeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRealTimeService.swift; sourceTree = "<group>"; };
-		3D2C831725DE65EF0064E0D4 /* MediaOfflineService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaOfflineService.swift; sourceTree = "<group>"; };
+		3D2C831325DE65C70064E0D4 /* MediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaService.swift; sourceTree = "<group>"; };
+		3D2C831725DE65EF0064E0D4 /* MediaOfflineSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaOfflineSession.swift; sourceTree = "<group>"; };
 		3D2C831B25DE6C130064E0D4 /* MediaState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaState.swift; sourceTree = "<group>"; };
 		3D2C831F25DEFFEA0064E0D4 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Timer.swift; path = ../Timer.swift; sourceTree = "<group>"; };
-		3D2C833625E4932A0064E0D4 /* MediaSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSession.swift; sourceTree = "<group>"; };
-		3D9D530A25D4AFB000F33EB7 /* MediaHit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaHit.swift; sourceTree = "<group>"; };
-		3D9D531625D5E73100F33EB7 /* MediaProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaProcessing.swift; sourceTree = "<group>"; };
-		3D9D531A25D5E75B00F33EB7 /* MediaTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTracking.swift; sourceTree = "<group>"; };
-		3D9D531E25D5ED3E00F33EB7 /* MediaServiceable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaServiceable.swift; sourceTree = "<group>"; };
+		3D2C833625E4932A0064E0D4 /* MediaRealTimeSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRealTimeSession.swift; sourceTree = "<group>"; };
 		4EBD63FBC8DD58887371136D /* Pods-AEPMedia-AEPMediaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.release.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.release.xcconfig"; sourceTree = "<group>"; };
 		8C373D62D6A01E198A3F92AB /* Pods-AEPMedia-AEPMediaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		AA0EE6BFA3507E5A81F88B59 /* Pods_AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -178,14 +170,10 @@
 				AC36EC3825C9F11E00A37345 /* Media+PublicAPI.swift */,
 				AC36EC3925C9F11E00A37345 /* MediaConstants.swift */,
 				AC36EC3A25C9F11E00A37345 /* Info.plist */,
-				3D9D530A25D4AFB000F33EB7 /* MediaHit.swift */,
-				3D9D531625D5E73100F33EB7 /* MediaProcessing.swift */,
-				3D9D531A25D5E75B00F33EB7 /* MediaTracking.swift */,
-				3D9D531E25D5ED3E00F33EB7 /* MediaServiceable.swift */,
-				3D2C831325DE65C70064E0D4 /* MediaRealTimeService.swift */,
-				3D2C831725DE65EF0064E0D4 /* MediaOfflineService.swift */,
+				3D2C831325DE65C70064E0D4 /* MediaService.swift */,
+				3D2C831725DE65EF0064E0D4 /* MediaOfflineSession.swift */,
 				3D2C831B25DE6C130064E0D4 /* MediaState.swift */,
-				3D2C833625E4932A0064E0D4 /* MediaSession.swift */,
+				3D2C833625E4932A0064E0D4 /* MediaRealTimeSession.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -379,16 +367,12 @@
 				3D2C831C25DE6C130064E0D4 /* MediaState.swift in Sources */,
 				AC36EC4325C9F11E00A37345 /* MediaConstants.swift in Sources */,
 				AC36EC4025C9F11E00A37345 /* Media.swift in Sources */,
-				3D2C833725E4932A0064E0D4 /* MediaSession.swift in Sources */,
+				3D2C833725E4932A0064E0D4 /* MediaRealTimeSession.swift in Sources */,
 				3D2C832025DEFFEA0064E0D4 /* Timer.swift in Sources */,
 				AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */,
-				3D2C831425DE65C70064E0D4 /* MediaRealTimeService.swift in Sources */,
-				3D9D531B25D5E75B00F33EB7 /* MediaTracking.swift in Sources */,
+				3D2C831425DE65C70064E0D4 /* MediaService.swift in Sources */,
 				AC36EC4225C9F11E00A37345 /* Media+PublicAPI.swift in Sources */,
-				3D2C831825DE65EF0064E0D4 /* MediaOfflineService.swift in Sources */,
-				3D9D530B25D4AFB000F33EB7 /* MediaHit.swift in Sources */,
-				3D9D531F25D5ED3E00F33EB7 /* MediaServiceable.swift in Sources */,
-				3D9D531725D5E73100F33EB7 /* MediaProcessing.swift in Sources */,
+				3D2C831825DE65EF0064E0D4 /* MediaOfflineSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

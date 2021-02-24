@@ -7,7 +7,7 @@
 
 import Foundation
 
-class MediaOfflineService {
+class MediaOfflineSession {
     
     func startSession() -> String {
         return UUID.init().uuidString;

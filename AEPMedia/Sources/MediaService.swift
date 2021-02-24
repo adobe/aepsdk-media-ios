@@ -9,14 +9,14 @@ import Foundation
 import AEPCore
 import AEPServices
 
-class MediaRealTimeService {
+class MediaService {
     
     private let LOG_TAG = "MediaRealTimeService"
     private let TIMER_REPEAT_INTERVAL = 0.25
     
     private var mediaState: MediaState
     private var timer: Timer?
-    private var mediaSessions: [String: MediaSession] = [:]
+    private var mediaSessions: [String: MediaRealTimeSession] = [:]
     
     
     init(mediaState: MediaState) {
@@ -31,7 +31,7 @@ class MediaRealTimeService {
         }
         
         let sessionId = UUID().uuidString
-        mediaSessions[sessionId] = MediaSession()
+        mediaSessions[sessionId] = MediaRealTimeSession()
         Log.trace(label: LOG_TAG, "Started new media session  \(sessionId).")
         return sessionId
     }
@@ -48,7 +48,21 @@ class MediaRealTimeService {
     }
     
     
-    func processHit(sessionId: String, hit : MediaHit) {
+    func processHit(sessionId: String?, hit : MediaHit) {
+        
+        guard let sessionId = sessionId, !sessionId.isEmpty else {
+            Log.debug(label: LOG_TAG, "\(#function) Null or empty session id passed.")
+            return
+        }
+        
+        guard mediaSessions.keys.contains(sessionId) else {
+            Log.debug(label: LOG_TAG, "\(#function) Could not end media session. Invalid session id \(sessionId).")
+            return
+        }
+        
+        Log.trace(label: LOG_TAG, "\(#function) - Session (\(sessionId) Queueing hit %s.")
+        let session = mediaSessions[sessionId]
+        session?.queue(hit: hit)
         
         
     }
@@ -62,7 +76,7 @@ class MediaRealTimeService {
         
         let session = mediaSessions[sessionId]
         session?.end()
-        Log.trace(LOG_TAG, "endSession - Session \(sessionId) ended.")
+        Log.trace(label: LOG_TAG, "endSession - Session \(sessionId) ended.")
 
     }
     
@@ -88,5 +102,11 @@ class MediaRealTimeService {
     func stopTimer() {
         timer?.cancelTimer()
         timer = nil
+    }
+    
+    func abortAllSession() {
+        for (_, session) in mediaSessions {
+            session.abort()
+        }
     }
 }
