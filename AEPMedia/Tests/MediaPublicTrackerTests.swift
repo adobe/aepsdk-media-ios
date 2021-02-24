@@ -13,6 +13,22 @@ import XCTest
 import AEPCore
 @testable import AEPMedia
 
+class MediaPublicTrackerMock: MediaPublicTracker {
+    var mockTimeStamp = TimeInterval()
+
+    override init(dispatch: @escaping dispatchFn, config: [String: Any]?) {
+        super.init(dispatch: dispatch, config: config)
+    }
+    
+    override func getCurrentTimeStamp() -> TimeInterval {
+        return mockTimeStamp;
+    }
+    
+    func setTimeStamp(value: TimeInterval) {
+        mockTimeStamp = value
+    }
+}
+
 class MediaPublicTrackerTests: XCTestCase {
     static let testConfig: [String: Any] = ["test":"value"]
     static let metadata: [String: String] = ["key": "value"]
@@ -61,7 +77,7 @@ class MediaPublicTrackerTests: XCTestCase {
     // create
     // ==========================================================================
     func testCreateTracker() {
-        let tracker = MediaPublicTracker(dispatch: dispatch(event:), config: nil)
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: nil)
         
         XCTAssertNotNil(tracker)
         XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, capturedEvent?.source)
@@ -73,7 +89,7 @@ class MediaPublicTrackerTests: XCTestCase {
     }
     
     func testCreateTrackerWithConfig() {
-        let tracker = MediaPublicTracker(dispatch: dispatch(event:), config: Self.testConfig)
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
         
         XCTAssertNotNil(tracker)
         XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, capturedEvent?.source)
@@ -89,7 +105,7 @@ class MediaPublicTrackerTests: XCTestCase {
     // sessionStart
     // ==========================================================================
     func testSessionStart() {
-        let tracker = MediaPublicTracker(dispatch: dispatch(event:), config: Self.testConfig)
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
         tracker.trackSessionStart(info: Self.validMediaInfo)
         
         sleep(1)
@@ -98,6 +114,7 @@ class MediaPublicTrackerTests: XCTestCase {
         let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any] ?? [:]
         let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String] ?? [:]
         let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
         let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
         
         XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
@@ -106,12 +123,13 @@ class MediaPublicTrackerTests: XCTestCase {
         XCTAssertEqual(MediaConstants.EventName.SESSION_START, actualEventName)
         XCTAssertTrue(isEqualMediaInfo(map1: Self.validMediaInfo, map2: actualInfo))
         XCTAssertEqual([:], actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
         XCTAssertEqual(false, actualEventInternal)
         
     }
     
     func testSessionStartWithMetadata() {
-        let tracker = MediaPublicTracker(dispatch: dispatch(event:), config: Self.testConfig)
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
         tracker.trackSessionStart(info: Self.validMediaInfo, metadata: Self.metadata)
         
         sleep(1)
@@ -120,6 +138,7 @@ class MediaPublicTrackerTests: XCTestCase {
         let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any] ?? [:]
         let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String] ?? [:]
         let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
         let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
         
         XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
@@ -128,6 +147,7 @@ class MediaPublicTrackerTests: XCTestCase {
         XCTAssertEqual(MediaConstants.EventName.SESSION_START, actualEventName)
         XCTAssertTrue(isEqualMediaInfo(map1: Self.validMediaInfo, map2: actualInfo))
         XCTAssertEqual(Self.metadata, actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
         XCTAssertEqual(false, actualEventInternal)
     }
     
@@ -135,7 +155,8 @@ class MediaPublicTrackerTests: XCTestCase {
     // sessionComplete
     // ==========================================================================
     func testComplete() {
-        let tracker = MediaPublicTracker(dispatch: dispatch(event:), config: Self.testConfig)
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.setTimeStamp(value: 100.0)
         tracker.trackComplete()
         
         sleep(1)
@@ -144,6 +165,7 @@ class MediaPublicTrackerTests: XCTestCase {
         let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
         let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
         let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
         let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
         
         XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
@@ -152,6 +174,7 @@ class MediaPublicTrackerTests: XCTestCase {
         XCTAssertEqual(MediaConstants.EventName.COMPLETE, actualEventName)
         XCTAssertNil(actualInfo)
         XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
         XCTAssertEqual(false, actualEventInternal)
     }
     
@@ -159,7 +182,7 @@ class MediaPublicTrackerTests: XCTestCase {
     // sessionEnd
     // ==========================================================================
     func testSessionEnd() {
-        let tracker = MediaPublicTracker(dispatch: dispatch(event:), config: Self.testConfig)
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
         tracker.trackSessionEnd()
         
         sleep(1)
@@ -168,6 +191,7 @@ class MediaPublicTrackerTests: XCTestCase {
         let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
         let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
         let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
         let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
         
         XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
@@ -176,6 +200,7 @@ class MediaPublicTrackerTests: XCTestCase {
         XCTAssertEqual(MediaConstants.EventName.SESSION_END, actualEventName)
         XCTAssertNil(actualInfo)
         XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
         XCTAssertEqual(false, actualEventInternal)
     }
     

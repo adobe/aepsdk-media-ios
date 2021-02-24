@@ -18,12 +18,12 @@ import AEPServices
     private static let LOG_TAG = "Media"
 
     @objc(createTracker)
-    static func createTracker() -> MediaPublicTracker? {
+    static func createTracker() -> MediaTracker? {
         return createTrackerWith(config: nil)
     }
 
     @objc(createTrackerWithConfig:)
-    static func createTrackerWith(config: [String: Any]?) -> MediaPublicTracker? {
+    static func createTrackerWith(config: [String: Any]?) -> MediaTracker? {
         return MediaPublicTracker(dispatch: MobileCore.dispatch(event:), config: config)
     }
 

@@ -13,8 +13,7 @@ import Foundation
 import AEPCore
 import AEPServices
 
-@objc(AEPMediaTracker)
-public class MediaPublicTracker: NSObject, MediaTracker {
+public class MediaPublicTracker: MediaTracker {
 
     static let LOG_TAG = "MediaTracker"
 
@@ -34,19 +33,12 @@ public class MediaPublicTracker: NSObject, MediaTracker {
     var lastPlayheadParams: [String: Any]?
     var timer: Timer?
 
-    // MediaTracker Protocol Impl
-
-    func getCurrentTimeStamp() -> TimeInterval {
-        return Date().timeIntervalSince1970
-    }
-
-    // MediaPublicTracker Impl
+    // MediaTracker Impl
     init(dispatch: @escaping dispatchFn, config: [String: Any]?) {
         self.dispatch = dispatch
         self.config = config
-        self.trackerId = MediaPublicTracker.getUniqueIdentifier()
-        self.sessionId = MediaPublicTracker.getUniqueIdentifier()
-        super.init()
+        self.trackerId = UUID().uuidString
+        self.sessionId = UUID().uuidString
 
         let eventData: [String: Any] = [MediaConstants.Tracker.ID: trackerId, MediaConstants.Tracker.EVENT_PARAM: config ?? [:]]
         let event = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
@@ -55,57 +47,58 @@ public class MediaPublicTracker: NSObject, MediaTracker {
         Log.debug(label: Self.LOG_TAG, "\(#function): Tracker request event was sent to event hub.")
     }
 
-    func trackSessionStart(info: [String: Any], metadata: [String: String] = [:]) {
+    public func trackSessionStart(info: [String: Any], metadata: [String: String] = [:]) {
         dispatchQueue.async {
             self.trackInternal(eventName: MediaConstants.EventName.SESSION_START, params: info, metadata: metadata)
+            self.startTimer()
         }
     }
 
-    func trackPlay() {
+    public func trackPlay() {
         dispatchQueue.async {
             self.trackInternal(eventName: MediaConstants.EventName.PLAY)
         }
     }
 
-    func trackPause() {
+    public func trackPause() {
         dispatchQueue.async {
             self.trackInternal(eventName: MediaConstants.EventName.PAUSE)
         }
     }
 
-    func trackComplete() {
+    public func trackComplete() {
         dispatchQueue.async {
             self.trackInternal(eventName: MediaConstants.EventName.COMPLETE)
         }
     }
 
-    func trackSessionEnd() {
+    public func trackSessionEnd() {
         dispatchQueue.async {
             self.trackInternal(eventName: MediaConstants.EventName.SESSION_END)
         }
     }
 
-    func trackError(errorId: String) {
+    public func trackError(errorId: String) {
         dispatchQueue.async {
             let params: [String: Any] = [MediaConstants.ErrorInfo.ID: errorId]
             self.trackInternal(eventName: MediaConstants.EventName.ERROR, params: params)
         }
     }
 
-    func trackEvent(event: String, info: [String: Any], metadata: [String: String]) {
+    public func trackEvent(event: String, info: [String: Any], metadata: [String: String]) {
         dispatchQueue.async {
             self.trackInternal(eventName: event, params: info, metadata: metadata)
         }
     }
 
-    func updateCurrentPlayhead(time: Double) {
+    public func updateCurrentPlayhead(time: Double) {
         dispatchQueue.async {
             let params: [String: Any] = [MediaConstants.Tracker.PLAYHEAD: time]
             self.trackInternal(eventName: MediaConstants.EventName.PLAYHEAD_UPDATE, params: params)
         }
     }
 
-    func updateQoEObject(qoe: [String: Any]) {
+    public func updateQoEObject(qoe: [String: Any]) {
         dispatchQueue.async {
             self.trackInternal(eventName: MediaConstants.EventName.QOE_UPDATE, params: qoe)
         }
@@ -118,7 +111,7 @@ public class MediaPublicTracker: NSObject, MediaTracker {
                 let validMediaParams = MediaInfo(info: params) != nil
                 if validMediaParams {
                     if resetSessionId {
-                        sessionId = MediaPublicTracker.getUniqueIdentifier()
+                        sessionId = UUID().uuidString
                         resetSessionId = false
                     }
 
@@ -190,7 +183,7 @@ public class MediaPublicTracker: NSObject, MediaTracker {
         timer = nil
     }
 
-    private static func getUniqueIdentifier() -> String {
-        return UUID().uuidString
+    func getCurrentTimeStamp() -> TimeInterval {
+        return Date().timeIntervalSince1970
     }
 }
