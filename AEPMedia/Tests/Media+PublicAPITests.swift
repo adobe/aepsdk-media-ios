@@ -47,4 +47,72 @@ class MediaPublicAPITests: XCTestCase {
         mediaTracker = Media.createTracker()
         XCTAssertNotNil(mediaTracker)
     }
+
+    func testCreateTrackerWithConfig() {
+        mediaTracker = Media.createTrackerWith(config: ["downloaded":true])
+        XCTAssertNotNil(mediaTracker)
+    }
+
+    // ==========================================================================
+    // createMediaObjects
+    // ==========================================================================
+    func testCreateMediaInfo() {
+        let infoMap = Media.createMediaObjectWith(name: "testName", id: "testId", length: 30, streamType: "aod", mediaType: MediaType.Audio)
+        XCTAssertFalse(infoMap?.isEmpty ?? true)
+        XCTAssertEqual("testId", infoMap?[MediaConstants.MediaInfo.ID] as? String ?? "")
+        XCTAssertEqual("testName", infoMap?[MediaConstants.MediaInfo.NAME] as? String ?? "")
+        XCTAssertEqual(30.0, infoMap?[MediaConstants.MediaInfo.LENGTH] as? Double ?? 0.0)
+        XCTAssertEqual("aod", infoMap?[MediaConstants.MediaInfo.STREAM_TYPE] as? String ?? "")
+        XCTAssertEqual(MediaType.Audio.rawValue, infoMap?[MediaConstants.MediaInfo.MEDIA_TYPE] as? String ?? "")
+        XCTAssertEqual(false, infoMap?[MediaConstants.MediaInfo.RESUMED] as? Bool ?? false)
+        XCTAssertEqual(250, infoMap?[MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME] as? Double ?? 0.0)
+        XCTAssertEqual(false, infoMap?[MediaConstants.MediaInfo.GRANULAR_AD_TRACKING] as? Bool ?? true)
+    }
+
+    func testCreateMediaInfo_Invalid() {
+        // empty name
+        var infoMap = Media.createMediaObjectWith(name: "", id: "testId", length: 30, streamType: "aod", mediaType: MediaType.Audio)
+        XCTAssertNil(infoMap)
+
+        // empty id
+        infoMap = Media.createMediaObjectWith(name: "testName", id: "", length: 30, streamType: "aod", mediaType: MediaType.Audio)
+        XCTAssertNil(infoMap)
+
+        // <=0 length
+        infoMap = Media.createMediaObjectWith(name: "testName", id: "testId", length: 0, streamType: "aod", mediaType: MediaType.Audio)
+        XCTAssertNil(infoMap)
+
+        infoMap = Media.createMediaObjectWith(name: "testName", id: "testId", length: -1, streamType: "aod", mediaType: MediaType.Audio)
+        XCTAssertNil(infoMap)
+
+        // empty streamType
+        infoMap = Media.createMediaObjectWith(name: "testName", id: "testId", length: 30, streamType: "", mediaType: MediaType.Audio)
+        XCTAssertNil(infoMap)
+    }
+
+    func testCreateAdBreakInfo() {
+        let infoMap = Media.createAdBreakObjectWith(name: "testName", position: 1, startTime: 1.1)
+        // TODO Assert
+    }
+
+    func testCreateAdInfo() {
+        let infoMap = Media.createAdObjectWith(name: "testName", id: "testId", position: 2, length: 10)
+        // TODO Assert
+    }
+
+    func testCreateChapterInfo() {
+        let infoMap = Media.createChapterObjectWith(name: "testName", position: 1, length: 15, startTime: 1.2)
+        // TODO Assert
+    }
+
+    func testCreateStateInfo() {
+        let infoMap = Media.createStateObjectWith(stateName: "testStateName")
+        // TODO Assert
+    }
+
+    func testCreateQoEInfo() {
+        let infoMap = Media.createQoEObjectWith(bitrate: 1.1, startTime: 2.2, fps: 3.3, droppedFrames: 4.4)
+        // TODO Assert
+    }
 }
+
