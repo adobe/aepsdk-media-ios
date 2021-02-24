@@ -9,13 +9,9 @@
  governing permissions and limitations under the License.
  */
 
+
 import Foundation
 
-protocol MediaSession {
-            
-    func processHit(hit: MediaHit)
-    
-    func end()
-    
-    func abort()
+class MediaHit {
+  //TODO: Implement class MediaHit.
 }
