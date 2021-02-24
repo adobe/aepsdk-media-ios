@@ -60,12 +60,12 @@ class MediaObjectTests: XCTestCase {
         -1
     ]
     
-    static let numberLessThan0 : [Any] = [
+    static let numberLessThan0 : [Double] = [
         -1,
         -1.0
     ]
     
-    static let numberLessThan1 : [Any] = [
+    static let numberLessThan1 : [Double] = [
         0.0,
         0,
         -1,
@@ -83,11 +83,40 @@ class MediaObjectTests: XCTestCase {
     // ==========================================================================
     // MediaInfo
     // ==========================================================================
-    func testMediaInfo_NilInfo() {
+    func testMediaInfo_ConvenienceInit_NilInfo() {
         XCTAssertNil(MediaInfo(info: nil))
     }
     
-    func testMediaInfoValid() {
+    func testMediaInfo_Init_Valid_WithAllRequiredParams_DefaultOptionalValues() {
+        let mediaInfo = MediaInfo(id: "testId", name: "testName", streamType: "aod", mediaType: MediaType.Audio, length: 10.1)
+        XCTAssertNotNil(mediaInfo)
+        
+        XCTAssertEqual("testId", mediaInfo?.id)
+        XCTAssertEqual("testName", mediaInfo?.name)
+        XCTAssertEqual(10.1, mediaInfo?.length)
+        XCTAssertEqual("aod", mediaInfo?.streamType)
+        XCTAssertEqual(MediaType.Audio, mediaInfo?.mediaType)
+        XCTAssertEqual(false, mediaInfo?.resumed)
+        XCTAssertEqual(MediaInfo.DEFAULT_PREROLL_WAITING_TIME_IN_MS, mediaInfo?.prerollWaitingTime)
+        XCTAssertEqual(false, mediaInfo?.granularAdTracking)
+    }
+    
+    func testMediaInfo_Init_Valid_WithAllParams() {
+        let mediaInfo = MediaInfo(id: "testId", name: "testName", streamType: "aod", mediaType: MediaType.Audio, length: 10.1, resumed: true, prerollWaitingTime: 2000, granularAdTracking: true)
+        XCTAssertNotNil(mediaInfo)
+        
+        XCTAssertNotNil(mediaInfo)
+        XCTAssertEqual("testId", mediaInfo?.id)
+        XCTAssertEqual("testName", mediaInfo?.name)
+        XCTAssertEqual(10.1, mediaInfo?.length)
+        XCTAssertEqual("aod", mediaInfo?.streamType)
+        XCTAssertEqual(MediaType.Audio, mediaInfo?.mediaType)
+        XCTAssertEqual(true, mediaInfo?.resumed)
+        XCTAssertEqual(2000, mediaInfo?.prerollWaitingTime)
+        XCTAssertEqual(true, mediaInfo?.granularAdTracking)
+    }
+    
+    func testMediaInfo_ConvenienceInit_Valid() {
         let mediaInfo = MediaInfo(info: MediaObjectTests.validMediaInfo)
         
         XCTAssertNotNil(mediaInfo)
@@ -101,7 +130,7 @@ class MediaObjectTests: XCTestCase {
         XCTAssertEqual(true, mediaInfo?.granularAdTracking)
     }
     
-    func testMediaInfoMissingData() {
+    func testMediaInfo_ConvenienceInit_MissingData() {
         let requiredKeys = [
             MediaConstants.MediaInfo.ID,
             MediaConstants.MediaInfo.NAME,
@@ -117,7 +146,12 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
-    func testMediaInfoInvalidID() {
+    func testMediaInfo_Init_Valid_WithAllRequiredParams_EmptyIdValue() {
+        let mediaInfo = MediaInfo(id: "", name: "testName", streamType: "aod", mediaType: MediaType.Audio, length: 10.1)
+        XCTAssertNil(mediaInfo)
+    }
+    
+    func testMediaInfo_ConvenienceInit_InvalidID() {
         for v in MediaObjectTests.valuesOtherThanString {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.ID] = v
@@ -125,7 +159,12 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
-    func testMediaInfoInvalidName() {
+    func testMediaInfo_Init_Valid_WithAllRequiredParams_EmptyNameValue() {
+        let mediaInfo = MediaInfo(id: "testId", name: "", streamType: "aod", mediaType: MediaType.Audio, length: 10.1)
+        XCTAssertNil(mediaInfo)
+    }
+    
+    func testMediaInfo_ConvenienceInit_InvalidName() {
         for v in MediaObjectTests.valuesOtherThanString {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.NAME] = v
@@ -133,7 +172,15 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
-    func testMediaInfoInvalidLength() {
+    func testMediaInfo_Init_Valid_WithAllRequiredParams_InvalidLength() {
+        for v in MediaObjectTests.numberLessThan0 {
+            let mediaInfo = MediaInfo(id: "testId", name: "testName", streamType: "", mediaType: MediaType.Audio, length: v)
+            XCTAssertNil(mediaInfo)
+        }
+        
+    }
+    
+    func testMediaInfo_ConvenienceInit_InvalidLength() {
         for v in MediaObjectTests.valuesOtherThanDouble {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.LENGTH] = v
@@ -147,7 +194,12 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
-    func testMediaInfoInvalidStreamType() {
+    func testMediaInfo_Init_Valid_WithAllRequiredParams_EmptyStreamTypeValue() {
+        let mediaInfo = MediaInfo(id: "testId", name: "testName", streamType: "", mediaType: MediaType.Audio, length: 10.1)
+        XCTAssertNil(mediaInfo)
+    }
+    
+    func testMediaInfo_ConvenienceInit_InvalidStreamType() {
         for v in MediaObjectTests.valuesOtherThanString {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.STREAM_TYPE] = v
@@ -155,7 +207,7 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
-    func testMediaInfoInvalidMediaType() {
+    func testMediaInfo_ConvenienceInit_InvalidMediaType() {
         // non empty string other than audio or video is not valid
         for v in MediaObjectTests.values {
             var info = MediaObjectTests.validMediaInfo
@@ -164,7 +216,7 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
-    func testMediaInfoInvalidResumed() {
+    func testMediaInfo_ConvenienceInit_InvalidResumed() {
         for v in MediaObjectTests.valuesOtherThanBool {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.RESUMED] = v
@@ -173,7 +225,7 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
-    func testMediaInfoInvalidPrerollTrackingWaitTime() {
+    func testMediaInfo_ConvenienceInit_InvalidPrerollTrackingWaitTime() {
         for v in MediaObjectTests.valuesOtherThanDouble {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME] = v
@@ -182,7 +234,7 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
-    func testMediaInfoInvalidGranularAdTracking() {
+    func testMediaInfo_ConvenienceInit_InvalidGranularAdTracking() {
         for v in MediaObjectTests.valuesOtherThanBool {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.GRANULAR_AD_TRACKING] = v
@@ -191,22 +243,10 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
-    func testCreateMediaObjectWithPrerollWaitTimeDefault() {
-        let mediaInfo = MediaInfo(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0)
-        
-        XCTAssertEqual(MediaInfo.DEFAULT_PREROLL_WAITING_TIME_IN_MS, mediaInfo?.prerollWaitingTime)
-    }
-    
     func testCreateMediaObjectWithGranularAdTrackingValueCustom() {
         let mediaInfo = MediaInfo(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0, prerollWaitingTime: 2000)
         
         XCTAssertEqual(2000.0, mediaInfo?.prerollWaitingTime)
-    }
-    
-    func testCreateMediaObjectWithGranularAdTrackingValueDefault() {
-        let mediaInfo = MediaInfo(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0)
-        
-        XCTAssertFalse(mediaInfo?.granularAdTracking ?? true)
     }
     
     func testCreateMediaObjectWithGranularAdTrackingValueDisabled() {
@@ -216,7 +256,7 @@ class MediaObjectTests: XCTestCase {
     }
     
     
-    func testCreateMediaObjectWithDefaultGranularAdTrackingValue() {
+    func testCreateMediaObjectWithGranularAdTrackingEnabled() {
         let mediaInfo = MediaInfo(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0, granularAdTracking: true)
         
         XCTAssertTrue(mediaInfo?.granularAdTracking ?? false)
