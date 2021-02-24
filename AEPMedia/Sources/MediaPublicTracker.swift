@@ -85,7 +85,7 @@ public class MediaPublicTracker: MediaTracker {
         }
     }
 
-    public func trackEvent(event: String, info: [String: Any], metadata: [String: String]) {
+    public func trackEvent(event: String, info: [String: Any]? = nil, metadata: [String: String]? = nil) {
         dispatchQueue.async {
             self.trackInternal(eventName: event, params: info, metadata: metadata)
         }

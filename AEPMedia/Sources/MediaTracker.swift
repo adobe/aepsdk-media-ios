@@ -22,7 +22,7 @@
 
     func trackError(errorId: String)
 
-    func trackEvent(event: String, info: [String: Any], metadata: [String: String])
+    func trackEvent(event: String, info: [String: Any]?, metadata: [String: String]?)
 
     func updateCurrentPlayhead(time: Double)
 

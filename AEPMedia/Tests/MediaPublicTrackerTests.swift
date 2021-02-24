@@ -43,6 +43,39 @@ class MediaPublicTrackerTests: XCTestCase {
         MediaConstants.MediaInfo.GRANULAR_AD_TRACKING : true
     ]
     
+    static let validQoeInfo : [String: Any] = [
+        MediaConstants.QoEInfo.BITRATE: 1.1,
+        MediaConstants.QoEInfo.DROPPED_FRAMES: 2.2,
+        MediaConstants.QoEInfo.FPS: 3.3,
+        MediaConstants.QoEInfo.STARTUP_TIME: 4.4
+    ]
+  
+    static let validAdBreakInfo : [String: Any] = [
+        MediaConstants.AdBreakInfo.NAME: "testAdBreakName",
+        MediaConstants.AdBreakInfo.POSITION: 2,
+        MediaConstants.AdBreakInfo.START_TIME: 1.1
+    ]
+    
+    static let validAdInfo : [String: Any] = [
+        MediaConstants.AdInfo.ID: "testAdId",
+        MediaConstants.AdInfo.NAME: "testAdName",
+        MediaConstants.AdInfo.POSITION: 1,
+        MediaConstants.AdInfo.LENGTH: 16.0
+        
+    ]
+    
+    static let validChapterInfo : [String: Any] = [
+        MediaConstants.ChapterInfo.NAME: "testChapterName",
+        MediaConstants.ChapterInfo.POSITION: 1,
+        MediaConstants.ChapterInfo.START_TIME: 0.2,
+        MediaConstants.ChapterInfo.LENGTH: 30.0
+    ]
+    
+    static let validStateInfo : [String: Any] = [
+        MediaConstants.StateInfo.STATE_NAME_KEY: "testStateName"
+        
+    ]
+    
     var capturedEvent: Event?
    
     
@@ -62,15 +95,71 @@ class MediaPublicTrackerTests: XCTestCase {
     }
     
     func isEqualMediaInfo(map1: [String:Any], map2: [String:Any]) -> Bool {
-        let mediaObject1 = MediaInfo(info: map1)
-        let mediaObject2 = MediaInfo(info: map2)
+        let object1 = MediaInfo(info: map1)
+        let object2 = MediaInfo(info: map2)
         
-        if(mediaObject1 == nil || mediaObject2 == nil) {
+        if(object1 == nil || object2 == nil) {
             return false
         }
         
-        return mediaObject1 == mediaObject2
+        return object1 == object2
     }
+    
+    // TODO
+//    func isEqualQoEInfo(map1: [String:Any], map2: [String:Any]) -> Bool {
+//        let object1 = QoEInfo(info: map1)
+//        let object2 = QoEInfo(info: map2)
+//
+//        if(object1 == nil || object2 == nil) {
+//            return false
+//        }
+//
+//        return object1 == object2
+//    }
+//
+//    func isEqualAdBreakInfo(map1: [String:Any], map2: [String:Any]) -> Bool {
+//        let object1 = AdBreakInfo(info: map1)
+//        let object2 = AdBreakInfo(info: map2)
+//
+//        if(object1 == nil || object2 == nil) {
+//            return false
+//        }
+//
+//        return object1 == object2
+//    }
+//
+//    func isEqualAdInfo(map1: [String:Any], map2: [String:Any]) -> Bool {
+//        let object1 = AdInfo(info: map1)
+//        let object2 = AdInfo(info: map2)
+//
+//        if(object1 == nil || object2 == nil) {
+//            return false
+//        }
+//
+//        return object1 == object2
+//    }
+//
+//    func isEqualChapterInfo(map1: [String:Any], map2: [String:Any]) -> Bool {
+//        let object1 = ChapterInfo(info: map1)
+//        let object2 = ChapterInfo(info: map2)
+//
+//        if(object1 == nil || object2 == nil) {
+//            return false
+//        }
+//
+//        return object1 == object2
+//    }
+//
+//    func isEqualStateInfo(map1: [String:Any], map2: [String:Any]) -> Bool {
+//        let object1 = StateInfo(info: map1)
+//        let object2 = StateInfo(info: map2)
+//
+//        if(object1 == nil || object2 == nil) {
+//            return false
+//        }
+//
+//        return object1 == object2
+//    }
     
     //MARK: MediaTracker Unit Tests
     // ==========================================================================
@@ -102,9 +191,9 @@ class MediaPublicTrackerTests: XCTestCase {
     
     
     // ==========================================================================
-    // sessionStart
+    // trackAPIs
     // ==========================================================================
-    func testSessionStart() {
+    func test_trackSessionStart() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
         tracker.trackSessionStart(info: Self.validMediaInfo)
         
@@ -128,7 +217,7 @@ class MediaPublicTrackerTests: XCTestCase {
         
     }
     
-    func testSessionStartWithMetadata() {
+    func test_trackSessionStartWithMetadata() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
         tracker.trackSessionStart(info: Self.validMediaInfo, metadata: Self.metadata)
         
@@ -151,10 +240,7 @@ class MediaPublicTrackerTests: XCTestCase {
         XCTAssertEqual(false, actualEventInternal)
     }
     
-    // ==========================================================================
-    // sessionComplete
-    // ==========================================================================
-    func testComplete() {
+    func test_trackComplete() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
         tracker.setTimeStamp(value: 100.0)
         tracker.trackComplete()
@@ -178,10 +264,7 @@ class MediaPublicTrackerTests: XCTestCase {
         XCTAssertEqual(false, actualEventInternal)
     }
     
-    // ==========================================================================
-    // sessionEnd
-    // ==========================================================================
-    func testSessionEnd() {
+    func testS_trackessionEnd() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
         tracker.trackSessionEnd()
         
@@ -203,5 +286,472 @@ class MediaPublicTrackerTests: XCTestCase {
         XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
         XCTAssertEqual(false, actualEventInternal)
     }
+
+    func test_trackPlay() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackPlay()
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.PLAY, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+
+    func test_trackPause() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackPause()
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.PAUSE, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
     
+    func test_trackError() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackError(errorId: "testError")
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.ERROR, actualEventName)
+        XCTAssertNotNil(actualInfo)
+        XCTAssertEqual("testError", actualInfo?[MediaConstants.ErrorInfo.ID] as? String ?? "")
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_updateCurrentPlayhead() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.updateCurrentPlayhead(time: 1.23)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.PLAYHEAD_UPDATE, actualEventName)
+        XCTAssertNotNil(actualInfo)
+        XCTAssertEqual(1.23, actualInfo?[MediaConstants.Tracker.PLAYHEAD] as? Double ?? 0.0)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_updateQoEObject() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.updateQoEObject(qoe: Self.validQoeInfo)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.QOE_UPDATE, actualEventName)
+        // TODO
+        //XCTAssertTrue(isEqualQoEInfo(map1: Self.validQoeInfo, map2: actualInfo))
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventAdBreakStart() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.ADBREAK_START, info: Self.validAdBreakInfo, metadata: Self.metadata)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.ADBREAK_START, actualEventName)
+        // TODO
+        //XCTAssertTrue(isEqualAdBreakInfo(map1: Self.validAdBreakInfo, map2: actualInfo))
+        XCTAssertEqual(Self.metadata, actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventAdBreakComplete() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.ADBREAK_COMPLETE)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any] 
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.ADBREAK_COMPLETE, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventAdStart() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.AD_START, info: Self.validAdInfo, metadata: Self.metadata)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.AD_START, actualEventName)
+        // TODO
+        //XCTAssertTrue(isEqualAdInfo(map1: Self.validAdInfo, map2: actualInfo))
+        XCTAssertEqual(Self.metadata, actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventAdComplete() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.AD_COMPLETE)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.AD_COMPLETE, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventAdSkip() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.AD_SKIP)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.AD_SKIP, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventChapterStart() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.CHAPTER_START, info: Self.validChapterInfo, metadata: Self.metadata)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.CHAPTER_START, actualEventName)
+        // TODO
+        //XCTAssertTrue(isEqualAdInfo(map1: Self.validChapterInfo, map2: actualInfo))
+        XCTAssertEqual(Self.metadata, actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventChapterCompelete() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.CHAPTER_COMPLETE)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.CHAPTER_COMPLETE, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventChapterSkip() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.CHAPTER_SKIP)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.CHAPTER_SKIP, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventStateStart() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.STATE_START, info: Self.validStateInfo)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.STATE_START, actualEventName)
+        // TODO
+        //XCTAssertTrue(isEqualQoEInfo(Self.validStateInfo, actualInfo))
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventStateCompelete() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.STATE_END, info: Self.validStateInfo)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.STATE_END, actualEventName)
+        // TODO
+        //XCTAssertTrue(isEqualQoEInfo(Self.validStateInfo, actualInfo))
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventBufferStart() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.BUFFER_START)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.BUFFER_START, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventBufferComplete() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.BUFFER_COMPLETE)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.BUFFER_COMPLETE, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventSeekStart() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.SEEK_START)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.SEEK_START, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventSeekComplete() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.SEEK_COMPLETE)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.SEEK_COMPLETE, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
+    
+    func test_trackEventBitrateChange() {
+        let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
+        tracker.trackEvent(event: MediaConstants.EventName.BITRATE_CHANGE)
+        
+        sleep(1)
+        
+        let data = capturedEvent?.data
+        let actualInfo = data?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+        let actualEventMetadata = data?[MediaConstants.Tracker.EVENT_METADATA] as? [String:String]
+        let actualEventName = data?[MediaConstants.Tracker.EVENT_NAME] as? String ?? ""
+        let actualEventTs = data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 1.0
+        let actualEventInternal = data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? true
+        
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertFalse((data?[MediaConstants.Tracker.SESSION_ID] as? String ?? "").isEmpty)
+        
+        XCTAssertEqual(MediaConstants.EventName.BITRATE_CHANGE, actualEventName)
+        XCTAssertNil(actualInfo)
+        XCTAssertNil(actualEventMetadata)
+        XCTAssertEqual(tracker.mockTimeStamp, actualEventTs)
+        XCTAssertEqual(false, actualEventInternal)
+    }
 }
