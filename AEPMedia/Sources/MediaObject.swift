@@ -64,7 +64,7 @@ class MediaInfo: Equatable {
         self.mediaType = mediaType
         self.length = length
         self.resumed = resumed
-        self.prerollWaitingTime = prerollWaitingTimeInSeconds
+        self.prerollWaitingTime = prerollWaitingTimeInSeconds * 1000
         self.granularAdTracking = granularAdTracking
     }
 
