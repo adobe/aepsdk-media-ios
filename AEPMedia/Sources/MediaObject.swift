@@ -20,7 +20,7 @@ class MediaInfo: Equatable {
     let mediaType: MediaType
     let length: Double
     let resumed: Bool
-    let prerollWaitingTime: TimeInterval
+    let prerollWaitingTime: Double
     let granularAdTracking: Bool
 
     static func == (lhs: MediaInfo, rhs: MediaInfo) -> Bool {
@@ -56,15 +56,13 @@ class MediaInfo: Equatable {
             return nil
         }
 
-        let prerollWaitingTimeInSeconds = prerollWaitingTime/1000 //convert to seconds
-
         self.id = id
         self.name = name
         self.streamType = streamType
         self.mediaType = mediaType
         self.length = length
         self.resumed = resumed
-        self.prerollWaitingTime = prerollWaitingTimeInSeconds * 1000
+        self.prerollWaitingTime = prerollWaitingTime
         self.granularAdTracking = granularAdTracking
     }
 
