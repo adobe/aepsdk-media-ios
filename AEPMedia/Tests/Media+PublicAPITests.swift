@@ -44,12 +44,47 @@ class MediaPublicAPITests: XCTestCase {
     // createTracker
     // ==========================================================================
     func testCreateTracker() {
+        let expectation = XCTestExpectation(description: "createTracker should dispatch createTracker request an event")
+        expectation.assertForOverFulfill = true
+
         mediaTracker = Media.createTracker()
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: MediaConstants.Media.EVENT_TYPE, source:  MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST) { (event) in
+            let eventData = event.data
+            let trackerId = eventData?[MediaConstants.Tracker.ID] as? String
+            let trackerConfig = eventData?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+
+            XCTAssertEqual(2, eventData?.count ?? 0)
+            XCTAssertFalse("" == trackerId)
+            XCTAssertEqual(0, trackerConfig?.count)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(mediaTracker)
     }
 
     func testCreateTrackerWithConfig() {
+        let expectation = XCTestExpectation(description: "createTracker should dispatch createTracker request an event")
+        expectation.assertForOverFulfill = true
+
         mediaTracker = Media.createTrackerWith(config: ["downloaded":true])
+
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: MediaConstants.Media.EVENT_TYPE, source:  MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST) { (event) in
+            let eventData = event.data
+            let trackerId = eventData?[MediaConstants.Tracker.ID] as? String
+            let trackerConfig = eventData?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+
+            XCTAssertEqual(2, eventData?.count ?? 0)
+            XCTAssertFalse("" == trackerId)
+            XCTAssertTrue(trackerConfig?["downloaded"] as? Bool ?? false)
+            XCTAssertNotNil(trackerConfig)
+            expectation.fulfill()
+        }
+
+        // verify
+        wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(mediaTracker)
     }
 
