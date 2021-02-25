@@ -103,7 +103,6 @@ class MediaObjectTests: XCTestCase {
     
     func testMediaInfo_Init_Valid_WithAllParams() {
         let mediaInfo = MediaInfo(id: "testId", name: "testName", streamType: "aod", mediaType: MediaType.Audio, length: 10.1, resumed: true, prerollWaitingTime: 2000, granularAdTracking: true)
-        XCTAssertNotNil(mediaInfo)
         
         XCTAssertNotNil(mediaInfo)
         XCTAssertEqual("testId", mediaInfo?.id)

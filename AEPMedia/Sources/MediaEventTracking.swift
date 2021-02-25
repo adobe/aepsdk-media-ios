@@ -11,6 +11,6 @@
 import Foundation
 
 protocol MediaEventTracking {
-    
-    func track(eventData: [String:Any]?)
+
+    func track(eventData: [String: Any]?)
 }

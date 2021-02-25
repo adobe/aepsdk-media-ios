@@ -12,10 +12,10 @@
 import Foundation
 
 protocol MediaSession {
-            
+
     func processHit(hit: MediaHit)
-    
+
     func end()
-    
+
     func abort()
 }
