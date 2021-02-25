@@ -15,8 +15,6 @@ import XCTest
 @testable import AEPMedia
 
 class MediaPublicAPITests: XCTestCase {
-    var capturedEvent: Event?
-    var mediaTracker: MediaTracker?
 
     override func setUp() {
         EventHub.reset()
@@ -34,10 +32,6 @@ class MediaPublicAPITests: XCTestCase {
         semaphore.wait()
     }
 
-    func dispatch(event: Event) {
-        capturedEvent = event
-    }
-
     //MARK: MediaPublicAPI Unit Tests
 
     // ==========================================================================
@@ -47,7 +41,7 @@ class MediaPublicAPITests: XCTestCase {
         let expectation = XCTestExpectation(description: "createTracker should dispatch createTracker request an event")
         expectation.assertForOverFulfill = true
 
-        mediaTracker = Media.createTracker()
+        let mediaTracker = Media.createTracker()
 
         EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: MediaConstants.Media.EVENT_TYPE, source:  MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST) { (event) in
             let eventData = event.data
@@ -69,7 +63,7 @@ class MediaPublicAPITests: XCTestCase {
         let expectation = XCTestExpectation(description: "createTracker should dispatch createTracker request an event")
         expectation.assertForOverFulfill = true
 
-        mediaTracker = Media.createTrackerWith(config: ["downloaded":true])
+        let mediaTracker = Media.createTrackerWith(config: ["downloaded":true])
 
         EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: MediaConstants.Media.EVENT_TYPE, source:  MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST) { (event) in
             let eventData = event.data
