@@ -119,29 +119,89 @@ class MediaPublicAPITests: XCTestCase {
         XCTAssertNil(infoMap)
     }
 
+    // ==========================================================================
+    // createAdBreakObjects
+    // ==========================================================================
     func testCreateAdBreakInfo() {
-        let infoMap = Media.createAdBreakObjectWith(name: "testName", position: 1, startTime: 1.1)
-        // TODO Assert
+        let infoMap = Media.createAdBreakObjectWith(name: "adBreakName", position: 5, startTime: 0)
+        XCTAssertFalse(infoMap?.isEmpty ?? true)
+        XCTAssertEqual("adBreakName", infoMap?[MediaConstants.AdBreakInfo.NAME] as? String ?? "")
+        XCTAssertEqual(5 , infoMap?[MediaConstants.AdBreakInfo.POSITION] as? Int ?? 0)
+        XCTAssertEqual(0.0 , infoMap?[MediaConstants.AdBreakInfo.START_TIME] as? Double ?? 0.0)
     }
+    
+    func testCreateAdBreakInfo_Invalid() {
+        // empty name
+        var infoMap = Media.createAdBreakObjectWith(name: "", position: 5.0, startTime: 2.0)
+        XCTAssertNil(infoMap)
 
+        // <=0 position
+        infoMap = Media.createAdBreakObjectWith(name: "adBreakName", position: 0, startTime: 2.0)
+        XCTAssertNil(infoMap)
+
+        // <=0 start time
+        infoMap = Media.createAdBreakObjectWith(name: "adBreakName", position: 5, startTime: -1)
+        XCTAssertNil(infoMap)
+    }
+    
+    // ==========================================================================
+    // createAdObjects
+    // ==========================================================================
     func testCreateAdInfo() {
-        let infoMap = Media.createAdObjectWith(name: "testName", id: "testId", position: 2, length: 10)
-        // TODO Assert
+        let infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 2, length: 20)
+        XCTAssertFalse(infoMap?.isEmpty ?? true)
+        XCTAssertEqual("adName", infoMap?[MediaConstants.AdInfo.NAME] as? String ?? "")
+        XCTAssertEqual("AdId", infoMap?[MediaConstants.AdInfo.ID] as? String ?? "")
+        XCTAssertEqual(2 , infoMap?[MediaConstants.AdInfo.POSITION] as? Int ?? 0)
+        XCTAssertEqual(20.0 , infoMap?[MediaConstants.AdInfo.LENGTH] as? Double ?? 0.0)
     }
+    
+    func testCreateAdInfo_Invalid() {
+        // empty name
+        var infoMap = Media.createAdObjectWith(name: "", adId: "AdId", position: 2, length: 20)
+        XCTAssertNil(infoMap)
+        
+        // empty id name
+        infoMap = Media.createAdObjectWith(name: "adName", adId: "", position: 2, length: 20)
+        XCTAssertNil(infoMap)
 
-    func testCreateChapterInfo() {
-        let infoMap = Media.createChapterObjectWith(name: "testName", position: 1, length: 15, startTime: 1.2)
-        // TODO Assert
-    }
+        // <=0 position
+        infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 0, length: 20)
+        XCTAssertNil(infoMap)
 
-    func testCreateStateInfo() {
-        let infoMap = Media.createStateObjectWith(stateName: "testStateName")
-        // TODO Assert
+        // <=0 length
+        infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 2, length: 0)
+        XCTAssertNil(infoMap)
     }
-
-    func testCreateQoEInfo() {
-        let infoMap = Media.createQoEObjectWith(bitrate: 1.1, startTime: 2.2, fps: 3.3, droppedFrames: 4.4)
-        // TODO Assert
-    }
+    
+    
+    // ==========================================================================
+    // createMediaObjects
+    // ==========================================================================
+    
+    
+    
+    
+    
+    
+//    func testCreateAdInfo() {
+//        let infoMap = Media.createAdObjectWith(name: "testName", id: "testId", position: 2, length: 10)
+//        // TODO Assert
+//    }
+//
+//    func testCreateChapterInfo() {
+//        let infoMap = Media.createChapterObjectWith(name: "testName", position: 1, length: 15, startTime: 1.2)
+//        // TODO Assert
+//    }
+//
+//    func testCreateStateInfo() {
+//        let infoMap = Media.createStateObjectWith(stateName: "testStateName")
+//        // TODO Assert
+//    }
+//
+//    func testCreateQoEInfo() {
+//        let infoMap = Media.createQoEObjectWith(bitrate: 1.1, startTime: 2.2, fps: 3.3, droppedFrames: 4.4)
+//        // TODO Assert
+//    }
 }
 
