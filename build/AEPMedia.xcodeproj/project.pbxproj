@@ -7,12 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2E20D4A625CA154C00B5CCB8 /* MediaRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E20D4A425CA154C00B5CCB8 /* MediaRule.swift */; };
+		2E20D4A725CA154C00B5CCB8 /* MediaRuleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */; };
+		2E20D4AB25CA544000B5CCB8 /* MediaRuleEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E20D4AA25CA544000B5CCB8 /* MediaRuleEngineTests.swift */; };
 		2EFF1B5B25BF57FC00375965 /* AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EFF1B5125BF57FC00375965 /* AEPMedia.framework */; };
 		3D2C831425DE65C70064E0D4 /* MediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831325DE65C70064E0D4 /* MediaService.swift */; };
 		3D2C831825DE65EF0064E0D4 /* MediaOfflineSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831725DE65EF0064E0D4 /* MediaOfflineSession.swift */; };
-		3D2C831C25DE6C130064E0D4 /* MediaState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831B25DE6C130064E0D4 /* MediaState.swift */; };
 		3D2C832025DEFFEA0064E0D4 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831F25DEFFEA0064E0D4 /* Timer.swift */; };
 		3D2C833725E4932A0064E0D4 /* MediaRealTimeSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C833625E4932A0064E0D4 /* MediaRealTimeSession.swift */; };
+		3D2C836325E5CADC0064E0D4 /* MediaState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C836225E5CADC0064E0D4 /* MediaState.swift */; };
+		3D2C836A25E5CFDF0064E0D4 /* MediaHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C836925E5CFDF0064E0D4 /* MediaHit.swift */; };
+		3D663A4525E71E4C00E96250 /* MediaSessionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D663A4425E71E4C00E96250 /* MediaSessionHelper.swift */; };
+		3D663A4925E9914900E96250 /* MediaDBService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D663A4825E9914900E96250 /* MediaDBService.swift */; };
+		3D9D531725D5E73100F33EB7 /* MediaSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531625D5E73100F33EB7 /* MediaSession.swift */; };
+		3D9D531B25D5E75B00F33EB7 /* MediaEventTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531A25D5E75B00F33EB7 /* MediaEventTracking.swift */; };
+		3D9D531F25D5ED3E00F33EB7 /* MediaProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */; };
 		8C5E99545029552DC5DE0FE4 /* Pods_AEPMedia_AEPMediaTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C0A85E36311E99ABB18705A /* Pods_AEPMedia_AEPMediaTests.framework */; };
 		A6F93E8E4AB0BA688875C886 /* Pods_AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA0EE6BFA3507E5A81F88B59 /* Pods_AEPMedia.framework */; };
 		AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3525C9F11E00A37345 /* MediaTracker.swift */; };
@@ -36,14 +45,23 @@
 
 /* Begin PBXFileReference section */
 		0C0A85E36311E99ABB18705A /* Pods_AEPMedia_AEPMediaTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPMedia_AEPMediaTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2E20D4A425CA154C00B5CCB8 /* MediaRule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaRule.swift; sourceTree = "<group>"; };
+		2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaRuleEngine.swift; sourceTree = "<group>"; };
+		2E20D4AA25CA544000B5CCB8 /* MediaRuleEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRuleEngineTests.swift; sourceTree = "<group>"; };
 		2EFF1B5125BF57FC00375965 /* AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EFF1B5A25BF57FC00375965 /* AEPMediaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPMediaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		35B3854C17ADDAF465AF0F9B /* Pods-AEPMedia.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia.release.xcconfig"; path = "Target Support Files/Pods-AEPMedia/Pods-AEPMedia.release.xcconfig"; sourceTree = "<group>"; };
 		3D2C831325DE65C70064E0D4 /* MediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaService.swift; sourceTree = "<group>"; };
 		3D2C831725DE65EF0064E0D4 /* MediaOfflineSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaOfflineSession.swift; sourceTree = "<group>"; };
-		3D2C831B25DE6C130064E0D4 /* MediaState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaState.swift; sourceTree = "<group>"; };
 		3D2C831F25DEFFEA0064E0D4 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Timer.swift; path = ../Timer.swift; sourceTree = "<group>"; };
 		3D2C833625E4932A0064E0D4 /* MediaRealTimeSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRealTimeSession.swift; sourceTree = "<group>"; };
+		3D2C836225E5CADC0064E0D4 /* MediaState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaState.swift; sourceTree = "<group>"; };
+		3D2C836925E5CFDF0064E0D4 /* MediaHit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaHit.swift; sourceTree = "<group>"; };
+		3D663A4425E71E4C00E96250 /* MediaSessionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MediaSessionHelper.swift; path = ../MediaSessionHelper.swift; sourceTree = "<group>"; };
+		3D663A4825E9914900E96250 /* MediaDBService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDBService.swift; sourceTree = "<group>"; };
+		3D9D531625D5E73100F33EB7 /* MediaSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSession.swift; sourceTree = "<group>"; };
+		3D9D531A25D5E75B00F33EB7 /* MediaEventTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaEventTracking.swift; sourceTree = "<group>"; };
+		3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaProcessor.swift; sourceTree = "<group>"; };
 		4EBD63FBC8DD58887371136D /* Pods-AEPMedia-AEPMediaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.release.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.release.xcconfig"; sourceTree = "<group>"; };
 		8C373D62D6A01E198A3F92AB /* Pods-AEPMedia-AEPMediaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; sourceTree = "<group>"; };
 		AA0EE6BFA3507E5A81F88B59 /* Pods_AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -112,6 +130,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		3D2C836625E5CFAA0064E0D4 /* mediacollection */ = {
+			isa = PBXGroup;
+			children = (
+				3D2C836925E5CFDF0064E0D4 /* MediaHit.swift */,
+			);
+			path = mediacollection;
+			sourceTree = "<group>";
+		};
 		9598EB9A2980A6BD84A67D20 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -148,6 +174,7 @@
 				AC36EC3025C9F11E00A37345 /* MediaTests.swift */,
 				AC36EC3125C9F11E00A37345 /* TestHelpers */,
 				AC36EC3325C9F11E00A37345 /* Info.plist */,
+				2E20D4AA25CA544000B5CCB8 /* MediaRuleEngineTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -163,7 +190,11 @@
 		AC36EC3425C9F11E00A37345 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				3D663A4425E71E4C00E96250 /* MediaSessionHelper.swift */,
 				3D2C831F25DEFFEA0064E0D4 /* Timer.swift */,
+				3D2C836625E5CFAA0064E0D4 /* mediacollection */,
+				2E20D4A425CA154C00B5CCB8 /* MediaRule.swift */,
+				2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */,
 				AC36EC3525C9F11E00A37345 /* MediaTracker.swift */,
 				AC36EC3625C9F11E00A37345 /* Media.swift */,
 				AC36EC3725C9F11E00A37345 /* AEPMedia.h */,
@@ -172,8 +203,12 @@
 				AC36EC3A25C9F11E00A37345 /* Info.plist */,
 				3D2C831325DE65C70064E0D4 /* MediaService.swift */,
 				3D2C831725DE65EF0064E0D4 /* MediaOfflineSession.swift */,
-				3D2C831B25DE6C130064E0D4 /* MediaState.swift */,
 				3D2C833625E4932A0064E0D4 /* MediaRealTimeSession.swift */,
+				3D9D531625D5E73100F33EB7 /* MediaSession.swift */,
+				3D9D531A25D5E75B00F33EB7 /* MediaEventTracking.swift */,
+				3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */,
+				3D2C836225E5CADC0064E0D4 /* MediaState.swift */,
+				3D663A4825E9914900E96250 /* MediaDBService.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -364,15 +399,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D2C831C25DE6C130064E0D4 /* MediaState.swift in Sources */,
 				AC36EC4325C9F11E00A37345 /* MediaConstants.swift in Sources */,
 				AC36EC4025C9F11E00A37345 /* Media.swift in Sources */,
+				3D663A4925E9914900E96250 /* MediaDBService.swift in Sources */,
 				3D2C833725E4932A0064E0D4 /* MediaRealTimeSession.swift in Sources */,
 				3D2C832025DEFFEA0064E0D4 /* Timer.swift in Sources */,
 				AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */,
 				3D2C831425DE65C70064E0D4 /* MediaService.swift in Sources */,
 				AC36EC4225C9F11E00A37345 /* Media+PublicAPI.swift in Sources */,
+				3D663A4525E71E4C00E96250 /* MediaSessionHelper.swift in Sources */,
 				3D2C831825DE65EF0064E0D4 /* MediaOfflineSession.swift in Sources */,
+				3D2C836325E5CADC0064E0D4 /* MediaState.swift in Sources */,
+				AC36EC4325C9F11E00A37345 /* MediaConstants.swift in Sources */,
+				AC36EC4025C9F11E00A37345 /* Media.swift in Sources */,
+				2E20D4A725CA154C00B5CCB8 /* MediaRuleEngine.swift in Sources */,
+				3D2C836A25E5CFDF0064E0D4 /* MediaHit.swift in Sources */,
+				AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */,
+				3D9D531B25D5E75B00F33EB7 /* MediaEventTracking.swift in Sources */,
+				2E20D4A625CA154C00B5CCB8 /* MediaRule.swift in Sources */,
+				AC36EC4225C9F11E00A37345 /* Media+PublicAPI.swift in Sources */,
+				3D9D531F25D5ED3E00F33EB7 /* MediaProcessor.swift in Sources */,
+				3D9D531725D5E73100F33EB7 /* MediaSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,6 +429,7 @@
 			files = (
 				AC36EC4E25C9F13100A37345 /* TestableExtensionRuntime.swift in Sources */,
 				AC36EC4925C9F12D00A37345 /* MediaTests.swift in Sources */,
+				2E20D4AB25CA544000B5CCB8 /* MediaRuleEngineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,7 +496,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -506,7 +554,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -577,7 +625,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = NO;
-				INFOPLIST_FILE = AEPMediaTests/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -599,7 +647,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = NO;
-				INFOPLIST_FILE = AEPMediaTests/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

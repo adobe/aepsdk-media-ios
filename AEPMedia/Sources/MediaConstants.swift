@@ -16,6 +16,11 @@ enum MediaConstants {
     static let FRIENDLY_NAME                            = "Media Analytics"
     static let EXTENSION_VERSION                        = "0.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
+    
+    enum Networking {
+        static let HTTP_TIMEOUT_SECONDS: TimeInterval = 5
+        static let HTTP_SUCCESS_RANGE = 200..<300
+    }
 
     enum Configuration {
         static let SHARED_STATE_NAME = "com.adobe.module.configuration"

@@ -8,26 +8,9 @@
  OF ANY KIND, either express or implied. See the License for the specific language
  governing permissions and limitations under the License.
  */
+import Foundation
 
-struct Timer {
+protocol MediaEventTracking {
     
-    private var timer: DispatchSourceTimer?
-    
-    init(label: String, event: (() -> Void)?) {
-        let queue = DispatchQueue(label: label)
-        timer = DispatchSource.makeTimerSource(queue: queue)
-        timer?.setEventHandler(handler: event)
-    }
-    
-    func startTimer(repeating interval: Double) {
-        timer?.schedule(deadline: .now(), repeating: interval)
-    }
-    
-    func cancelTimer() {
-        timer?.cancel()
-    }
-    
-    func isTimerRunning() -> Bool {
-        return (timer?.isCancelled ?? true) != true
-    }
+    func track(eventData: [String:Any]?)
 }

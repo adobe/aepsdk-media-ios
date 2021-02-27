@@ -9,25 +9,22 @@
  governing permissions and limitations under the License.
  */
 
-struct Timer {
+import Foundation
+
+struct MediaHit {
+    let eventType: String
+    let params: [String: Any]?
+    let customMetada: [String: String]?
+    let qoeData: [String: Any]?
+    let playhead: Double
+    let ts: TimeInterval
     
-    private var timer: DispatchSourceTimer?
-    
-    init(label: String, event: (() -> Void)?) {
-        let queue = DispatchQueue(label: label)
-        timer = DispatchSource.makeTimerSource(queue: queue)
-        timer?.setEventHandler(handler: event)
-    }
-    
-    func startTimer(repeating interval: Double) {
-        timer?.schedule(deadline: .now(), repeating: interval)
-    }
-    
-    func cancelTimer() {
-        timer?.cancel()
-    }
-    
-    func isTimerRunning() -> Bool {
-        return (timer?.isCancelled ?? true) != true
+    init(eventType: String, params: [String: Any]? = nil, customMetada: [String: String]? = nil, qoeData: [String: Any]? = nil, playhead: Double, ts: TimeInterval) {
+        self.eventType = eventType
+        self.params = params
+        self.customMetada = customMetada
+        self.qoeData = qoeData
+        self.playhead = playhead
+        self.ts = ts
     }
 }

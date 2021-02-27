@@ -9,25 +9,15 @@
  governing permissions and limitations under the License.
  */
 
-struct Timer {
+import Foundation
+
+protocol MediaSession {
     
-    private var timer: DispatchSourceTimer?
+    func queue(hit: MediaHit?)
+            
+    func process()
     
-    init(label: String, event: (() -> Void)?) {
-        let queue = DispatchQueue(label: label)
-        timer = DispatchSource.makeTimerSource(queue: queue)
-        timer?.setEventHandler(handler: event)
-    }
+    func end()
     
-    func startTimer(repeating interval: Double) {
-        timer?.schedule(deadline: .now(), repeating: interval)
-    }
-    
-    func cancelTimer() {
-        timer?.cancel()
-    }
-    
-    func isTimerRunning() -> Bool {
-        return (timer?.isCancelled ?? true) != true
-    }
+    func abort()
 }
