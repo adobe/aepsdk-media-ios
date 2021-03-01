@@ -144,4 +144,3 @@ class MediaPublicAPITests: XCTestCase {
         // TODO Assert
     }
 }
-

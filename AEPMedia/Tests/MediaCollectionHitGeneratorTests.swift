@@ -26,7 +26,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
 
     override func setUp() {
         let info = ["media.id":"testId", "media.name":"testName", "media.streamtype":"video", "media.contenttype":"vod", "media.type":"video", "media.length": 10.0, "media.resume": false] as [String : Any]
-        mediaInfo = MediaInfo.createFrom(info: info)
+        mediaInfo = MediaInfo.init(info: info)
         let metadata = ["k1": "v1", "a.media.show": "show"]
         let config = [MediaConstants.Configuration.DOWNLOADED_CONTENT: true]
         self.mediaContext = MediaContext(mediaInfo: mediaInfo, metadata: metadata)
@@ -310,8 +310,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     
     func testProcessIdleCompleteStateTrackingResumesAfterIdle() {
         // setup
-        let stateInfo = StateInfo()
-        stateInfo.create(name: "fullscreen")
+        let stateInfo = StateInfo(name: "fullscreen")
         mediaContext.enterState(MediaPlaybackState.Play)
         _ = mediaContext.startState(stateInfo)
         var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
@@ -364,8 +363,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     
     func testProcessIdleCompleteStateTrackingResumesAfterIdle2() {
         // setup
-        let stateInfo = StateInfo()
-        stateInfo.create(name: "fullscreen")
+        let stateInfo = StateInfo(name: "fullscreen")
         mediaContext.enterState(MediaPlaybackState.Play)
         _ = mediaContext.startState(stateInfo)
         _ = mediaContext.endState(stateInfo)
@@ -415,7 +413,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitProcessor.clearHitsFromActiveSession()
         // buffer start hit
         mediaContext.enterState(MediaPlaybackState.Buffer)
-        hitGenerator.setMediaContext(mediaContext)
+        hitGenerator.mediaContext = mediaContext
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
         let expectedBufferStartHit = MediaHit.init(eventType: "bufferStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
@@ -424,7 +422,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitProcessor.clearHitsFromActiveSession()
         // buffer end hit (will be play)
         mediaContext.exitState(MediaPlaybackState.Buffer)
-        hitGenerator.setMediaContext(mediaContext)
+        hitGenerator.mediaContext = mediaContext
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
         let expectedBufferEndHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
@@ -433,7 +431,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitProcessor.clearHitsFromActiveSession()
         // start seek hit
         mediaContext.enterState(MediaPlaybackState.Seek)
-        hitGenerator.setMediaContext(mediaContext)
+        hitGenerator.mediaContext = mediaContext
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
         let expectedSeekStartHit = MediaHit.init(eventType: "pauseStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
@@ -442,7 +440,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitProcessor.clearHitsFromActiveSession()
         // exit seek hit
         mediaContext.exitState(MediaPlaybackState.Seek)
-        hitGenerator.setMediaContext(mediaContext)
+        hitGenerator.mediaContext = mediaContext
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
         let expectedSeekExitHit = MediaHit.init(eventType: "play", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
@@ -451,7 +449,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitProcessor.clearHitsFromActiveSession()
         // pause hit
         mediaContext.enterState(MediaPlaybackState.Pause)
-        hitGenerator.setMediaContext(mediaContext)
+        hitGenerator.mediaContext = mediaContext
         hitGenerator.processPlayback(doFlush: false)
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
         let expectedPauseHit = MediaHit.init(eventType: "pauseStart", params: emptyParams, metadata: emptyMetadata, QOEData: emptyQOEData, playhead: expectedPlayhead, ts: expectedTimestamp)
@@ -462,8 +460,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     
     func testProcessStateStartFullscreen() {
         // setup
-        let stateInfo = StateInfo()
-        stateInfo.create(name: "fullscreen")
+        guard let stateInfo = StateInfo(name: "fullscreen") else {
+            XCTFail("state creation failed")
+            return
+        }
         // test
         hitGenerator.processStateStart(stateInfo: stateInfo)
         // verify state start hit
@@ -476,8 +476,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     
     func testProcessStateEndFullscreen() {
         // setup
-        let stateInfo = StateInfo()
-        stateInfo.create(name: "fullscreen")
+        guard let stateInfo = StateInfo(name: "fullscreen") else {
+            XCTFail("state creation failed")
+            return
+        }
         // test
         hitGenerator.processStateEnd(stateInfo: stateInfo)
         // verify state start hit
@@ -618,7 +620,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         
         for state in states {
             mediaContext.enterState(state)
-            hitGenerator.setMediaContext(mediaContext)
+            hitGenerator.mediaContext = mediaContext
             let playbackState = hitGenerator.getPlaybackState()
             XCTAssertEqual(state, playbackState)
             mediaContext.exitState(state)

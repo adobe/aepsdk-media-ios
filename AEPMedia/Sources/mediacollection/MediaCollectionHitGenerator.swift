@@ -15,7 +15,6 @@ import AEPServices
 class MediaCollectionHitGenerator {
     private let LOG_TAG = "MediaCollectionHitGenerator"
 
-    private var mediaContext: MediaContext
     private let mediaHitProcessor: MediaHitProcessor
     private let mediaConfig: [String: Any]
     private let downloadedContent: Bool
@@ -28,9 +27,9 @@ class MediaCollectionHitGenerator {
     private var previousStateTS: TimeInterval
 
     #if DEBUG
-        func setMediaContext(_ mediaContext: MediaContext) {
-            self.mediaContext = mediaContext
-        }
+        var mediaContext: MediaContext
+    #else
+        private var mediaContext: MediaContext
     #endif
 
     /// Initializes the Media Collection Hit Generator
@@ -95,7 +94,7 @@ class MediaCollectionHitGenerator {
 
     func processAdStart() {
         let mediaInfo = mediaContext.getMediaInfo()
-        let granularTrackingEnabled = mediaInfo.isGranularAdTrackingEnabled()
+        let granularTrackingEnabled = mediaInfo.granularAdTracking
 
         if downloadedContent {
             interval = MediaConstants.PingInterval.DEFAULT_OFFLINE
@@ -212,7 +211,7 @@ class MediaCollectionHitGenerator {
     func processStateStart(stateInfo: StateInfo) {
         var params = [String: Any]()
 
-        params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.getStateName()
+        params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.name
 
         generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_START, params: params, metadata: nil)
     }
@@ -220,7 +219,7 @@ class MediaCollectionHitGenerator {
     func processStateEnd(stateInfo: StateInfo) {
         var params = [String: Any]()
 
-        params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.getStateName()
+        params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.name
 
         generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_END, params: params, metadata: nil)
     }

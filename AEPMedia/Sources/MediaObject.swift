@@ -143,6 +143,16 @@ class QoEInfo {
 
 }
 
+// TODO: stub
 class StateInfo {
+    static let LOG_TAG = "StateInfo"
+    let name: String
 
+    init?(name: String) {
+        guard !name.isEmpty else {
+            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating StateInfo, name must not be Empty")
+            return nil
+        }
+        self.name = name
+    }
 }

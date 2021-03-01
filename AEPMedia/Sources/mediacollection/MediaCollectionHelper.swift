@@ -79,12 +79,12 @@ class MediaCollectionHelper {
         let mediaInfo = mediaContext.getMediaInfo()
 
         if !mediaInfo.toMap().isEmpty {
-            retDict[MediaConstants.MediaCollection.Media.ID] = mediaInfo.getId()
-            retDict[MediaConstants.MediaCollection.Media.NAME] = mediaInfo.getName()
-            retDict[MediaConstants.MediaCollection.Media.LENGTH] = mediaInfo.getLength()
-            retDict[MediaConstants.MediaCollection.Media.CONTENT_TYPE] = mediaInfo.getStreamType()
-            retDict[MediaConstants.MediaCollection.Media.STREAM_TYPE] = mediaInfo.getMediaType()
-            retDict[MediaConstants.MediaCollection.Media.RESUME] = mediaInfo.isResumed()
+            retDict[MediaConstants.MediaCollection.Media.ID] = mediaInfo.id
+            retDict[MediaConstants.MediaCollection.Media.NAME] = mediaInfo.name
+            retDict[MediaConstants.MediaCollection.Media.LENGTH] = mediaInfo.length
+            retDict[MediaConstants.MediaCollection.Media.CONTENT_TYPE] = mediaInfo.streamType
+            retDict[MediaConstants.MediaCollection.Media.STREAM_TYPE] = mediaInfo.mediaType
+            retDict[MediaConstants.MediaCollection.Media.RESUME] = mediaInfo.resumed
         }
 
         let metadata = mediaContext.getMediaMetadata()

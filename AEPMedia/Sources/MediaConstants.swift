@@ -273,4 +273,5 @@ enum MediaConstants {
             static let PUBLISHER = "media.publisher"
             static let SDK_VERSION = "media.sdkVersion"
         }
+    }
 }

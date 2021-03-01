@@ -113,9 +113,9 @@ class MediaContext {
         var activeStates: [StateInfo] = []
         
         for state in states {
-            let activeState = StateInfo()
-            activeState.create(name: state.key)
-            activeStates.append(activeState)
+            if let activeState = StateInfo(name: state.key) {
+                activeStates.append(activeState)
+            }
         }
         
         return activeStates
@@ -123,8 +123,7 @@ class MediaContext {
     
     // TODO: stub
     func isInState(_ state: StateInfo) -> Bool {
-        let stateName = state.getStateName()
-        return states[stateName] != nil
+        return states[state.name] != nil ? true : false
     }
     
     // TODO: stub
@@ -170,22 +169,37 @@ class MediaContext {
     }
     
     // TODO: stub
-    func startState(_ stateInfo: StateInfo) -> Bool {
+    func startState(_ stateInfo: StateInfo?) -> Bool {
         // TODO: check if (!hasTrackedState(stateInfo) && hasReachedStateLimit()) { then return false
-        if isInState(stateInfo) {
+        guard let stateInfo = stateInfo else {
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to start state, received nil StateInfo")
             return false
         }
-        states[stateInfo.getStateName()] = true
+        
+        if isInState(stateInfo) {
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to start state, state \(stateInfo.name) already started")
+            return false
+        }
+        
+        Log.trace(label: LOG_TAG, "\(#function) - Starting state \(stateInfo.name)")
+        states[stateInfo.name] = true
         return true
     }
     
     // TODO: stub
-    func endState(_ stateInfo: StateInfo) -> Bool {
-        if !isInState(stateInfo) {
+    func endState(_ stateInfo: StateInfo?) -> Bool {
+        guard let stateInfo = stateInfo else {
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to end state, received nil StateInfo")
             return false
         }
         
-        states[stateInfo.getStateName()] = false
+        if !isInState(stateInfo) {
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to end state, state \(stateInfo.name) has not been started")
+            return false
+        }
+        
+        Log.trace(label: LOG_TAG, "\(#function) - Ending state \(stateInfo.name)")
+        states[stateInfo.name] = false
         return true
     }
 }
