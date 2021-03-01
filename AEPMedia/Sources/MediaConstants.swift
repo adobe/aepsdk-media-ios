@@ -49,6 +49,15 @@ enum MediaConstants {
         static let ANALYTICS_VISITOR_ID = "aid"
     }
 
+    enum Media {
+        static let EVENT_TYPE = "com.adobe.eventtype.media"
+        static let EVENT_SOURCE_TRACKER_REQUEST = "com.adobe.eventsource.media.requesttracker"
+        static let EVENT_SOURCE_TRACKER_RESPONSE = "com.adobe.eventsource.media.responsetracker"
+        static let EVENT_SOURCE_TRACK_MEDIA = "com.adobe.eventsource.media.trackmedia"
+        static let EVENT_NAME_CREATE_TRACKER = "Media::CreateTrackerRequest"
+        static let EVENT_NAME_TRACK_MEDIA = "Media::TrackMedia"
+    }
+
     enum EventName {
         static let SESSION_START = "sessionstart"
         static let SESSION_END = "sessionend"
@@ -157,6 +166,18 @@ enum MediaConstants {
         static let CREATIVE_URL = "a.media.ad.creativeURL"
     }
 
+    enum Tracker {
+        static let ID = "trackerid"
+        static let SESSION_ID = "sessionid"
+        static let CREATED = "trackercreated"
+        static let EVENT_NAME = "event.name"
+        static let EVENT_PARAM = "event.param"
+        static let EVENT_METADATA = "event.metadata"
+        static let EVENT_TIMESTAMP = "event.timestamp"
+        static let EVENT_INTERNAL = "event.internal"
+        static let PLAYHEAD = "time.playhead"
+    }
+
     enum PingInterval {
         static let DEFAULT_OFFLINE = TimeInterval(50)
         static let DEFAULT_ONLINE = TimeInterval(10)
@@ -252,5 +273,4 @@ enum MediaConstants {
             static let PUBLISHER = "media.publisher"
             static let SDK_VERSION = "media.sdkVersion"
         }
-    }
 }

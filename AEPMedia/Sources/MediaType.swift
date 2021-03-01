@@ -9,22 +9,31 @@
  governing permissions and limitations under the License.
  */
 
-@objc public protocol MediaTracker {
-    func trackSessionStart(info: [String: Any], metadata: [String: String])
+import AEPServices
 
-    func trackPlay()
+@objc public enum MediaType: Int, RawRepresentable {
+    case Audio
+    case Video
 
-    func trackPause()
+    public typealias RawValue = String
 
-    func trackComplete()
+    public var rawValue: RawValue {
+        switch self {
+        case .Audio:
+            return "audio"
+        case .Video:
+            return "video"
+        }
+    }
 
-    func trackSessionEnd()
-
-    func trackError(errorId: String)
-
-    func trackEvent(event: String, info: [String: Any]?, metadata: [String: String]?)
-
-    func updateCurrentPlayhead(time: Double)
-
-    func updateQoEObject(qoe: [String: Any])
+    public init?(rawValue: RawValue) {
+        switch rawValue {
+        case "audio":
+            self = .Audio
+        case "video":
+            self = .Video
+        default:
+            return nil
+        }
+    }
 }

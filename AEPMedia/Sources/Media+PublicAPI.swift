@@ -19,20 +19,22 @@ import AEPServices
 
     @objc(createTracker)
     static func createTracker() -> MediaTracker {
-        //TODO
-        return MediaTracker()
+        return createTrackerWith(config: nil)
     }
 
     @objc(createTrackerWithConfig:)
     static func createTrackerWith(config: [String: Any]?) -> MediaTracker {
-        //TODO
-        return MediaTracker()
+        return MediaPublicTracker(dispatch: MobileCore.dispatch(event:), config: config)
     }
 
     @objc(createMediaObjectWith:id:length:streamType:mediaType:)
-    static func createMediaObjectWith(name: String, id: String, length: Double, streamType: String, mediaType: (String)) -> [String: Any]? {
-        //TODO
-        return [:]
+    static func createMediaObjectWith(name: String, id: String, length: Double, streamType: String, mediaType: MediaType) -> [String: Any]? {
+        guard let mediaInfo = MediaInfo(id: id, name: name, streamType: streamType, mediaType: mediaType, length: length) else {
+            Log.error(label: LOG_TAG, "\(#function) Error creating media Object")
+            return nil
+        }
+
+        return mediaInfo.toMap()
     }
 
     @objc(createAdBreakObjectWith:position:startTime:)
@@ -64,5 +66,42 @@ import AEPServices
         //TODO
         return [:]
     }
+}
 
+@objc public enum AEPMediaEvent: Int {
+    case AEPMediaEventAdBreakStart
+    case AEPMediaEventAdBreakComplete
+    case AEPMediaEventAdStart
+    case AEPMediaEventAdComplete
+    case AEPMediaEventAdSkip
+    case AEPMediaEventChapterStart
+    case AEPMediaEventChapterComplete
+    case AEPMediaEventChapterSkip
+    case AEPMediaEventSeekStart
+    case AEPMediaEventSeekComplete
+    case AEPMediaEventBufferStart
+    case AEPMediaEventBufferComplete
+    case AEPMediaEventBitrateChange
+    case AEPMediaEventStateStart
+    case AEPMediaEventStateEnd
+
+    func stringValue() -> String {
+        switch self {
+        case .AEPMediaEventAdBreakStart: return MediaConstants.EventName.ADBREAK_START
+        case .AEPMediaEventAdBreakComplete: return MediaConstants.EventName.ADBREAK_COMPLETE
+        case .AEPMediaEventAdStart: return MediaConstants.EventName.AD_START
+        case .AEPMediaEventAdComplete: return MediaConstants.EventName.AD_COMPLETE
+        case .AEPMediaEventAdSkip: return MediaConstants.EventName.AD_SKIP
+        case .AEPMediaEventChapterStart: return MediaConstants.EventName.CHAPTER_START
+        case .AEPMediaEventChapterComplete: return MediaConstants.EventName.CHAPTER_COMPLETE
+        case .AEPMediaEventChapterSkip: return MediaConstants.EventName.CHAPTER_SKIP
+        case .AEPMediaEventSeekStart: return MediaConstants.EventName.SEEK_START
+        case .AEPMediaEventSeekComplete: return MediaConstants.EventName.SEEK_COMPLETE
+        case .AEPMediaEventBufferStart: return MediaConstants.EventName.BUFFER_START
+        case .AEPMediaEventBufferComplete: return MediaConstants.EventName.BUFFER_COMPLETE
+        case .AEPMediaEventBitrateChange: return MediaConstants.EventName.BITRATE_CHANGE
+        case .AEPMediaEventStateStart: return MediaConstants.EventName.STATE_START
+        case .AEPMediaEventStateEnd: return MediaConstants.EventName.STATE_END
+        }
+    }
 }
