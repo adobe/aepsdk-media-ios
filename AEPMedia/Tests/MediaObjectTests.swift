@@ -53,7 +53,11 @@ class MediaObjectTests: XCTestCase {
     ]
     
     static let validStateInfo : [String : Any] = [
-        MediaConstants.StateInfo.STATE_NAME_KEY: "fullscreen"
+        MediaConstants.StateInfo.STATE_NAME_KEY: "fullscreen._"
+    ]
+    
+    static let validStateInfo64Long : [String : Any] = [
+        MediaConstants.StateInfo.STATE_NAME_KEY: "1234567890123456789012345678901234567890123456789012345678901234"
     ]
     
     static let values : [Any] = [
@@ -113,6 +117,15 @@ class MediaObjectTests: XCTestCase {
         0,
         -1,
         -1.0
+    ]
+    
+    static let invalidStateName : [String] = [
+        "fullscreen!!",
+        "fullscreen@",
+        "fullscreen/",
+        "fullscreen-",
+        "mu$$te",
+        "12345678901234567890123456789012345678901234567890123456789012345"
     ]
     
     override func setUp() {
@@ -445,10 +458,10 @@ class MediaObjectTests: XCTestCase {
     func testAdBreakInfoToMap() {
         let adBreakInfo = AdBreakInfo(info: MediaObjectTests.validAdbreakInfo)
         let adBreakInfoMap = adBreakInfo?.toMap()
-        
+
         XCTAssertEqual(Self.validAdbreakInfo[MediaConstants.AdBreakInfo.NAME] as! String, adBreakInfoMap?[MediaConstants.AdBreakInfo.NAME] as? String ?? "")
-        XCTAssertEqual(Self.validAdbreakInfo[MediaConstants.AdBreakInfo.POSITION] as! String, adBreakInfoMap?[MediaConstants.AdBreakInfo.POSITION] as? String ?? "")
-        XCTAssertEqual(Self.validAdbreakInfo[MediaConstants.AdBreakInfo.START_TIME] as! String, adBreakInfoMap?[MediaConstants.AdBreakInfo.POSITION] as? String ?? "")
+        XCTAssertEqual(Self.validAdbreakInfo[MediaConstants.AdBreakInfo.POSITION] as! Int, adBreakInfoMap?[MediaConstants.AdBreakInfo.POSITION] as? Int ?? 0)
+        XCTAssertEqual(Self.validAdbreakInfo[MediaConstants.AdBreakInfo.START_TIME] as! Double, adBreakInfoMap?[MediaConstants.AdBreakInfo.POSITION] as? Double ?? 0.0)
     }
     
     // ==========================================================================
@@ -499,6 +512,14 @@ class MediaObjectTests: XCTestCase {
         XCTAssertNil(adInfo)
     }
     
+    func testAdInfo_ConvenienceInit_InvalidId() {
+        for v in MediaObjectTests.valuesOtherThanString {
+            var info = MediaObjectTests.validAdInfo
+            info[MediaConstants.AdInfo.ID] = v
+            XCTAssertNil(AdInfo(info: info))
+        }
+    }
+    
     func testAdInfo_Init_Valid_WithAllRequiredParams_EmptyNameValue() {
         let adInfo = AdInfo(id: "AdId", name: "", position: 5, length: 60.0)
         XCTAssertNil(adInfo)
@@ -513,7 +534,7 @@ class MediaObjectTests: XCTestCase {
     }
     
     func testAdInfo_ConvenienceInit_InvalidPosition() {
-        for v in MediaObjectTests.valuesOtherThanDouble {
+        for v in MediaObjectTests.valuesOtherThanInt {
             var adinfo = MediaObjectTests.validAdInfo
             adinfo[MediaConstants.AdInfo.POSITION] = v
             XCTAssertNil(AdInfo(info: adinfo))
@@ -542,7 +563,7 @@ class MediaObjectTests: XCTestCase {
         
         for v in MediaObjectTests.numberLessThan0 {
             var adinfo = MediaObjectTests.validAdInfo
-            adinfo[MediaConstants.MediaInfo.LENGTH] = v
+            adinfo[MediaConstants.AdInfo.LENGTH] = v
             XCTAssertNil(AdInfo(info: adinfo))
         }
     }
@@ -550,26 +571,26 @@ class MediaObjectTests: XCTestCase {
     func testAdInfoEqual() {
         let adInfo1 = AdInfo(info: MediaObjectTests.validAdInfo)
 
-        let adInfo2 = AdInfo(id: "AdId", name: "adName", position: 5, length: 60.0)
+        let adInfo2 = AdInfo(id: "AdID", name: "AdName", position: 1, length: 2.5)
 
         XCTAssertEqual(adInfo1, adInfo2)
     }
-    
+
     func testAdInfoToMap() {
         let adInfo = AdInfo(info: MediaObjectTests.validAdInfo)
         let adInfoMap = adInfo?.toMap()
-        
+
         XCTAssertEqual(Self.validAdInfo[MediaConstants.AdInfo.ID] as! String, adInfoMap?[MediaConstants.AdInfo.ID] as? String ?? "")
         XCTAssertEqual(Self.validAdInfo[MediaConstants.AdInfo.NAME] as! String, adInfoMap?[MediaConstants.AdInfo.NAME] as? String ?? "")
-        XCTAssertEqual(Self.validAdInfo[MediaConstants.AdInfo.POSITION] as! String, adInfoMap?[MediaConstants.AdBreakInfo.POSITION] as? String ?? "")
-        XCTAssertEqual(Self.validAdInfo[MediaConstants.AdInfo.LENGTH] as! String, adInfoMap?[MediaConstants.AdInfo.LENGTH] as? String ?? "")
+        XCTAssertEqual(Self.validAdInfo[MediaConstants.AdInfo.POSITION] as! Int, adInfoMap?[MediaConstants.AdInfo.POSITION] as? Int ?? 0)
+        XCTAssertEqual(Self.validAdInfo[MediaConstants.AdInfo.LENGTH] as! Double, adInfoMap?[MediaConstants.AdInfo.LENGTH] as? Double ?? 0.0)
     }
     
     // ==========================================================================
     // ChapterInfo
     // ==========================================================================
     func testChapterInfo_ConvenienceInfo_NilInfo() {
-    XCTAssertNil(ChapterInfo(info: nil))
+        XCTAssertNil(ChapterInfo(info: nil))
     }
 
     func testChapterInfo_Init_Valid_WithAllRequiredParams() {
@@ -608,7 +629,7 @@ class MediaObjectTests: XCTestCase {
     }
     
     func testChapterInfo_Init_Valid_WithAllRequiredParams_EmptyNameValue() {
-        let chapterInfo = ChapterInfo(name: "chapterName", position: 2, startTime: 5.0, length: 60.0)
+        let chapterInfo = ChapterInfo(name: "", position: 2, startTime: 5.0, length: 60.0)
         XCTAssertNil(chapterInfo)
     }
     
@@ -624,7 +645,7 @@ class MediaObjectTests: XCTestCase {
         for v in MediaObjectTests.valuesOtherThanDouble {
             var chapterInfo = MediaObjectTests.validAdInfo
             chapterInfo[MediaConstants.ChapterInfo.POSITION] = v
-            XCTAssertNil(AdInfo(info: chapterInfo))
+            XCTAssertNil(ChapterInfo(info: chapterInfo))
         }
         
         for v in MediaObjectTests.numberLessThan0 {
@@ -651,8 +672,9 @@ class MediaObjectTests: XCTestCase {
         for v in MediaObjectTests.numberLessThan0 {
             var chapterinfo = MediaObjectTests.validAdInfo
             chapterinfo[MediaConstants.ChapterInfo.START_TIME] = v
-            XCTAssertNil(AdInfo(info: chapterinfo))
+            XCTAssertNil(ChapterInfo(info: chapterinfo))
         }
+    }
     
     func testChapterInfo_Init_Valid_WithAllRequiredParams_InvalidLength() {
         for v in MediaObjectTests.numberLessThan0 {
@@ -669,33 +691,25 @@ class MediaObjectTests: XCTestCase {
         }
         
         for v in MediaObjectTests.numberLessThan0 {
-            var chapterinfo = MediaObjectTests.validAdInfo
-            chapterinfo[MediaConstants.MediaInfo.LENGTH] = v
-            XCTAssertNil(AdInfo(info: chapterinfo))
+            var chapterinfo = MediaObjectTests.validChapterInfo
+            chapterinfo[MediaConstants.ChapterInfo.LENGTH] = v
+            XCTAssertNil(ChapterInfo(info: chapterinfo))
         }
     }
-    
-//    func testChapterInfoEqual() {
-//        let chapterInfo1 = ChapterInfo(info: MediaObjectTests.validChapterInfo)
-//
-//        let chapterInfo2 = ChapterInfo(name: "ChapterName", position: 3, startTime: 3.0, length: 5.0)
-//
-//        XCTAssertEqual(chapterInfo1, chapterInfo2)
-//    }
     
     func testChapterInfoToMap() {
         let chapterInfo = ChapterInfo(info: MediaObjectTests.validChapterInfo)
         let chapterInfoMap = chapterInfo?.toMap()
-        
-        XCTAssertEqual(Self.validAdInfo[MediaConstants.AdInfo.NAME] as! String, chapterInfoMap?[MediaConstants.AdInfo.NAME] as? String ?? "")
-        XCTAssertEqual(Self.validAdInfo[MediaConstants.AdInfo.POSITION] as! String, chapterInfoMap?[MediaConstants.AdBreakInfo.POSITION] as? String ?? "")
-        XCTAssertEqual(Self.validChapterInfo[MediaConstants.ChapterInfo.START_TIME] as! String, chapterInfoMap?[MediaConstants.AdInfo.ID] as? String ?? "")
-        XCTAssertEqual(Self.validAdInfo[MediaConstants.AdInfo.LENGTH] as! String, chapterInfoMap?[MediaConstants.AdInfo.LENGTH] as? String ?? "")
+
+        XCTAssertEqual(Self.validChapterInfo[MediaConstants.ChapterInfo.NAME] as! String, chapterInfoMap?[MediaConstants.ChapterInfo.NAME] as? String ?? "")
+        XCTAssertEqual(Self.validChapterInfo[MediaConstants.ChapterInfo.POSITION] as! Int, chapterInfoMap?[MediaConstants.ChapterInfo.POSITION] as? Int ?? 0)
+        XCTAssertEqual(Self.validChapterInfo[MediaConstants.ChapterInfo.START_TIME] as! Double, chapterInfoMap?[MediaConstants.ChapterInfo.START_TIME] as? Double ?? 0.0)
+        XCTAssertEqual(Self.validChapterInfo[MediaConstants.ChapterInfo.LENGTH] as! Double, chapterInfoMap?[MediaConstants.ChapterInfo.LENGTH] as? Double ?? 0.0)
     }
     
-//    // ==========================================================================
-//    // QoEInfo
-//    // ==========================================================================
+    // ==========================================================================
+    // QoEInfo
+    // ==========================================================================
     func testQoEInfo_ConvenienceInfo_NilInfo() {
         XCTAssertNil(QoEInfo(info: nil))
     }
@@ -736,6 +750,90 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
+    func testQoEInfo_Init_Valid_WithAllRequiredParams_InvalidBitrare() {
+        for v in MediaObjectTests.numberLessThan0 {
+            let qoeInfo = QoEInfo(bitrate: v, droppedFrames: 20.0, fps: 5.0, startupTime: 10.0)
+            XCTAssertNil(qoeInfo)
+        }
+    }
+    
+    func testQoEInfo_ConvenienceInit_InvalidBitrate() {
+        for v in MediaObjectTests.valuesOtherThanDouble {
+            var qoeInfo = MediaObjectTests.validQoEInfo
+            qoeInfo[MediaConstants.QoEInfo.BITRATE] = v
+            XCTAssertNil(QoEInfo(info: qoeInfo))
+        }
+
+        for v in MediaObjectTests.numberLessThan0 {
+            var qoeInfo = MediaObjectTests.validQoEInfo
+            qoeInfo[MediaConstants.QoEInfo.BITRATE] = v
+            XCTAssertNil(QoEInfo(info: qoeInfo))
+        }
+    }
+    
+    func testQoEInfo_Init_Valid_WithAllRequiredParams_InvalidDroppedFramaes() {
+        for v in MediaObjectTests.numberLessThan0 {
+            let qoeInfo = QoEInfo(bitrate: 30.0, droppedFrames: v, fps: 5.0, startupTime: 10.0)
+            XCTAssertNil(qoeInfo)
+        }
+    }
+    
+    func testQoEInfo_ConvenienceInit_InvalidDroppedFrames() {
+        for v in MediaObjectTests.valuesOtherThanDouble {
+            var qoeInfo = MediaObjectTests.validQoEInfo
+            qoeInfo[MediaConstants.QoEInfo.DROPPED_FRAMES] = v
+            XCTAssertNil(QoEInfo(info: qoeInfo))
+        }
+
+        for v in MediaObjectTests.numberLessThan0 {
+            var qoeInfo = MediaObjectTests.validQoEInfo
+            qoeInfo[MediaConstants.QoEInfo.DROPPED_FRAMES] = v
+            XCTAssertNil(QoEInfo(info: qoeInfo))
+        }
+    }
+    
+    func testQoEInfo_Init_Valid_WithAllRequiredParams_InvalidFPS() {
+        for v in MediaObjectTests.numberLessThan0 {
+            let qoeInfo = QoEInfo(bitrate: 30.0, droppedFrames: 20.0, fps: v, startupTime: 10.0)
+            XCTAssertNil(qoeInfo)
+        }
+    }
+    
+    func testQoEInfo_ConvenienceInit_InvalidDroppedFPS() {
+        for v in MediaObjectTests.valuesOtherThanDouble {
+            var qoeInfo = MediaObjectTests.validQoEInfo
+            qoeInfo[MediaConstants.QoEInfo.FPS] = v
+            XCTAssertNil(QoEInfo(info: qoeInfo))
+        }
+
+        for v in MediaObjectTests.numberLessThan0 {
+            var qoeInfo = MediaObjectTests.validQoEInfo
+            qoeInfo[MediaConstants.QoEInfo.FPS] = v
+            XCTAssertNil(QoEInfo(info: qoeInfo))
+        }
+    }
+    
+    func testQoEInfo_Init_Valid_WithAllRequiredParams_InvalidStartupTime() {
+        for v in MediaObjectTests.numberLessThan0 {
+            let qoeInfo = QoEInfo(bitrate: 30.0, droppedFrames: 20.0, fps: 5.0, startupTime: v)
+            XCTAssertNil(qoeInfo)
+        }
+    }
+    
+    func testQoEInfo_ConvenienceInit_InvalidStartupTime() {
+        for v in MediaObjectTests.valuesOtherThanDouble {
+            var qoeInfo = MediaObjectTests.validQoEInfo
+            qoeInfo[MediaConstants.QoEInfo.STARTUP_TIME] = v
+            XCTAssertNil(QoEInfo(info: qoeInfo))
+        }
+
+        for v in MediaObjectTests.numberLessThan0 {
+            var qoeInfo = MediaObjectTests.validQoEInfo
+            qoeInfo[MediaConstants.QoEInfo.STARTUP_TIME] = v
+            XCTAssertNil(QoEInfo(info: qoeInfo))
+        }
+    }
+    
     func testQoEInfoEqual() {
         let qoeInfo1 = QoEInfo(info: MediaObjectTests.validQoEInfo)
 
@@ -743,22 +841,20 @@ class MediaObjectTests: XCTestCase {
 
         XCTAssertEqual(qoeInfo1, qoeInfo2)
     }
-    
-//    func testQoEInfoToMap() {
-//        let qoeInfo = QoEInfo(info: MediaObjectTests.validQoEInfo)
-//        let qoeInfoMap = QoEInfo.toMap()
-//
-//        XCTAssertEqual(Self.validQoEInfo[MediaConstants.QoE..NAME] as! String, chapterInfoMap?[MediaConstants.ChapterInfo.NAME] as? String ?? "")
-//        XCTAssertEqual(Self.validChapterInfo[MediaConstants.AdInfo.POSITION] as! String, chapterInfoMap?[MediaConstants.AdBreakInfo.POSITION] as? String ?? "")
-//        XCTAssertEqual(Self.validChapterInfo[MediaConstants.ChapterInfo.START_TIME] as! String, chapterInfoMap?[MediaConstants.AdInfo.ID] as? String ?? "")
-//        XCTAssertEqual(Self.validAdInfo[MediaConstants.AdInfo.LENGTH] as! String, chapterInfoMap?[MediaConstants.AdInfo.LENGTH] as? String ?? "")
-//    }
-
         
-//
-//    // ==========================================================================
-//    // StateInfo
-//    // ==========================================================================
+    func testQoEInfoToMap() {
+        let qoeInfo = QoEInfo(info: MediaObjectTests.validQoEInfo)
+        let qoeInfoMap = qoeInfo?.toMap()
+        
+        XCTAssertEqual(Self.validQoEInfo[MediaConstants.QoEInfo.BITRATE] as! Double, qoeInfoMap?[MediaConstants.QoEInfo.BITRATE] as? Double ?? 0.0)
+        XCTAssertEqual(Self.validQoEInfo[MediaConstants.QoEInfo.DROPPED_FRAMES] as! Double, qoeInfoMap?[MediaConstants.QoEInfo.DROPPED_FRAMES] as? Double ?? 0.0)
+        XCTAssertEqual(Self.validQoEInfo[MediaConstants.QoEInfo.FPS] as! Double, qoeInfoMap?[MediaConstants.QoEInfo.FPS] as? Double ?? 0.0)
+        XCTAssertEqual(Self.validQoEInfo[MediaConstants.QoEInfo.STARTUP_TIME] as! Double, qoeInfoMap?[MediaConstants.QoEInfo.STARTUP_TIME] as? Double ?? 0.0)
+    }
+    
+    // ==========================================================================
+    // StateInfo
+    // ==========================================================================
     func testStateInfo_NilInfo() {
         XCTAssertNil(StateInfo(info: nil))
     }
@@ -774,7 +870,14 @@ class MediaObjectTests: XCTestCase {
         let stateInfo = StateInfo(info: MediaObjectTests.validStateInfo)
         
         XCTAssertNotNil(stateInfo)
-        XCTAssertEqual("fullscreen", stateInfo?.stateName)
+        XCTAssertEqual("fullscreen._", stateInfo?.stateName)
+    }
+    
+    func testStateInfo_ConvenienceInit_Valid64LongValue() {
+        let stateInfo = StateInfo(info: MediaObjectTests.validStateInfo64Long)
+        
+        XCTAssertNotNil(stateInfo)
+        XCTAssertEqual("1234567890123456789012345678901234567890123456789012345678901234", stateInfo?.stateName)
     }
     
     func testStateInfo_ConvenienceInit_MissingData() {
@@ -789,13 +892,31 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
-    //stateName: String
-//
-//    func testStateInfoValid() {
-//        let stateInfo = StateInfo.createFrom(info: MediaObjectTests.validStateInfo)
-//
-//        XCTAssertNotNil(stateInfo)
-//        XCTAssertEqual("fullscreen", stateInfo?.getStateName())
-}
-}
+    func testStateInfo_EmptyNameValue() {
+        let mediaInfo = StateInfo(stateName: "")
+        XCTAssertNil(mediaInfo)
+    }
 
+    func testStateInfo_InvalidName() {
+        for v in MediaObjectTests.invalidStateName {
+            var info = MediaObjectTests.validStateInfo
+            info[MediaConstants.StateInfo.STATE_NAME_KEY] = v
+            XCTAssertNil(StateInfo(info: info))
+        }
+    }
+    
+    func testStateInfoEqual() {
+        let stateInfo1 = StateInfo(info: MediaObjectTests.validStateInfo)
+
+        let stateInfo2 = StateInfo(stateName: "fullscreen._")
+
+        XCTAssertEqual(stateInfo1, stateInfo2)
+    }
+    
+    func testStateInfoToMap() {
+        let stateInfo = StateInfo(info: MediaObjectTests.validStateInfo)
+        let stateInfoMap = stateInfo?.toMap()
+        
+        XCTAssertEqual(Self.validStateInfo[MediaConstants.StateInfo.STATE_NAME_KEY] as! String, stateInfoMap?[MediaConstants.StateInfo.STATE_NAME_KEY] as? String ?? "")
+    }
+}

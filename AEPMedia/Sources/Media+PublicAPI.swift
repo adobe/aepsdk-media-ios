@@ -43,25 +43,27 @@ import AEPServices
         guard let adBreakInfo = AdBreakInfo(name: name, position: position, startTime: startTime) else {
             Log.error(label: LOG_TAG, "\(#function) Error creating adBreak Object")
             return nil
-       }
+        }
         return adBreakInfo.toMap()
     }
 
     @objc(createAdObjectWith:id:positon:length:)
-    static func createAdObjectWith(name: String, adId: String, position: Int, length: Double) -> [String: Any]? {
+    static func createAdObjectWith(name: String, adId: String, position: Double, length: Double) -> [String: Any]? {
+        let position = Int(position)
         guard let adInfo = AdInfo(id: adId, name: name, position: position, length: length) else {
             Log.error(label: LOG_TAG, "\(#function) Error creating ad Object")
             return nil
-       }
+        }
         return adInfo.toMap()
     }
 
     @objc(createChapterObjectWith:position:length:startTime:)
-    static func createChapterObjectWith(name: String, position: Int, length: Double, startTime: Double) -> [String: Any]? {
+    static func createChapterObjectWith(name: String, position: Double, length: Double, startTime: Double) -> [String: Any]? {
+        let position = Int(position)
         guard let chapterInfo = ChapterInfo(name: name, position: position,  startTime: startTime, length: length) else {
             Log.error(label: LOG_TAG, "\(#function) Error creating chapter Object")
             return nil
-       }
+        }
         return chapterInfo.toMap()
     }
 
@@ -73,14 +75,14 @@ import AEPServices
         }
         return qoeInfo.toMap()
     }
-    
+
     @objc(createStateObjectWith:)
     static func createStateObjectWith(stateName: String) -> [String: Any]? {
         guard let stateInfo = StateInfo(stateName: stateName) else {
-        Log.error(label: LOG_TAG, "\(#function) Error creating state Object")
-        return nil
-       }
-       return stateInfo.toMap()
+            Log.error(label: LOG_TAG, "\(#function) Error creating state Object")
+            return nil
+        }
+        return stateInfo.toMap()
     }
 }
 
