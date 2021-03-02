@@ -20,7 +20,7 @@ class MediaService : MediaProcessor {
     
     private var mediaSessions: [String: MediaSession] = [:]
     private var mediaState: MediaState
-    private var timer: Timer?
+    private var timer: MediaTimer?
     
     
     init(mediaState: MediaState) {
@@ -91,7 +91,7 @@ class MediaService : MediaProcessor {
     }
     
     func startTick() {
-        timer = Timer(label: "MediaSessionProcessingTimer", event: processMediaSession)
+        timer = MediaTimer(label: "MediaSessionProcessingTimer", event: processMediaSession)
         timer?.startTimer(repeating: TIMER_REPEAT_INTERVAL)
     }
     

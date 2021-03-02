@@ -16,7 +16,7 @@ enum MediaConstants {
     static let FRIENDLY_NAME                            = "Media Analytics"
     static let EXTENSION_VERSION                        = "0.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
-    
+
     enum Networking {
         static let HTTP_TIMEOUT_SECONDS: TimeInterval = 5
         static let HTTP_SUCCESS_RANGE = 200..<300
@@ -50,6 +50,15 @@ enum MediaConstants {
         static let SHARED_STATE_NAME = "com.adobe.module.analytics"
         static let VISITOR_ID = "vid"
         static let ANALYTICS_VISITOR_ID = "aid"
+    }
+
+    enum Media {
+        static let EVENT_TYPE = "com.adobe.eventtype.media"
+        static let EVENT_SOURCE_TRACKER_REQUEST = "com.adobe.eventsource.media.requesttracker"
+        static let EVENT_SOURCE_TRACKER_RESPONSE = "com.adobe.eventsource.media.responsetracker"
+        static let EVENT_SOURCE_TRACK_MEDIA = "com.adobe.eventsource.media.trackmedia"
+        static let EVENT_NAME_CREATE_TRACKER = "Media::CreateTrackerRequest"
+        static let EVENT_NAME_TRACK_MEDIA = "Media::TrackMedia"
     }
 
     enum EventName {
@@ -158,5 +167,17 @@ enum MediaConstants {
         static let PLACEMENT_ID = "a.media.ad.placement"
         static let SITE_ID = "a.media.ad.site"
         static let CREATIVE_URL = "a.media.ad.creativeURL"
+    }
+
+    enum Tracker {
+        static let ID = "trackerid"
+        static let SESSION_ID = "sessionid"
+        static let CREATED = "trackercreated"
+        static let EVENT_NAME = "event.name"
+        static let EVENT_PARAM = "event.param"
+        static let EVENT_METADATA = "event.metadata"
+        static let EVENT_TIMESTAMP = "event.timestamp"
+        static let EVENT_INTERNAL = "event.internal"
+        static let PLAYHEAD = "time.playhead"
     }
 }

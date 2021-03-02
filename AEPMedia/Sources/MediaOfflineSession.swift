@@ -16,17 +16,17 @@ import AEPServices
 class MediaOfflineSession : MediaSession {
     
     enum MediaSessionState {
-            // Session absent in our store / exceeded retries.
+        // Session absent in our store / exceeded retries.
         case Invalid
-            // Session is currently being tracked.
+        // Session is currently being tracked.
         case Active
-            // Session is complete and waiting to be reported.
+        // Session is complete and waiting to be reported.
         case Complete
-            // Session is reported to backend and we will clear the hits from db.
+        // Session is reported to backend and we will clear the hits from db.
         case Reported
-            // Session failed to report to backend. We will clear the hits from db if we exceed retries.
+        // Session failed to report to backend. We will clear the hits from db if we exceed retries.
         case Failed
-        }
+    }
     
     private let id: String
     private var state: MediaState
@@ -111,8 +111,8 @@ class MediaOfflineSession : MediaSession {
             if shouldClearSession() {
                 mediaDBService.deleteSessionHits(sessionId: id)
                 sessionState = .Invalid
-                return
             }
+            return
         }
         
         
@@ -121,35 +121,35 @@ class MediaOfflineSession : MediaSession {
             let networkService = ServiceProvider.shared.networkService
             let networkrequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: [String:String](), connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
          
-        networkService.connectAsync(networkRequest: networkrequest) { connection in
-            self.isReportingSession = false;
-            if connection.error == nil {
-                let statusCode = connection.response?.statusCode ?? -1
-                if MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
-                    Log.debug(label: self.LOG_TAG, "\(#function) - \(self.id) Http failed with response code (\(statusCode))")
+            networkService.connectAsync(networkRequest: networkrequest) { connection in
+                self.isReportingSession = false;
+                if connection.error == nil {
+                    let statusCode = connection.response?.statusCode ?? -1
+                    if MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
+                        Log.debug(label: self.LOG_TAG, "\(#function) - \(self.id) Http failed with response code (\(statusCode))")
                     
-                    self.sessionState = .Reported
+                        self.sessionState = .Reported
                     
                     
-                    if self.shouldClearSession() {
-                        Log.trace(label: self.LOG_TAG, "ReportSessions - Clearing persisted pings for session \(self.id).")
-                        self.mediaDBService.deleteSessionHits(sessionId: self.id)
-                        return
+                        if self.shouldClearSession() {
+                            Log.trace(label: self.LOG_TAG, "ReportSessions - Clearing persisted pings for session \(self.id).")
+                            self.mediaDBService.deleteSessionHits(sessionId: self.id)
+                            return
+                        }
                     }
-                }
                     
-                else {
-                    Log.trace(label: self.LOG_TAG, "\(#function) \(self.id) Media collection endpoint returns nil location header.")
+                    else {
+                        Log.trace(label: self.LOG_TAG, "\(#function) \(self.id) Media collection endpoint returns nil location header.")
+                    }
+                } else if let error = connection.error as? URLError, error.code == URLError.Code.notConnectedToInternet {
+                    self.sessionState = .Failed
+                    //TODO handle no internet connection here.
+                } else {
+                    self.sessionState = .Failed
+                    //TODO handle all other errors here.
                 }
-            } else if let error = connection.error as? URLError, error.code == URLError.Code.notConnectedToInternet {
-                self.sessionState = .Failed
-                //TODO handle no internet connection here.
-            } else {
-                self.sessionState = .Failed
-                //TODO handle all other errors here.
             }
         }
-    }
     }
     
     private func shouldClearSession() -> Bool {

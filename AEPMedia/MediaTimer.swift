@@ -9,7 +9,7 @@
  governing permissions and limitations under the License.
  */
 
-struct Timer {
+struct MediaTimer {
     
     private var timer: DispatchSourceTimer?
     
@@ -21,6 +21,7 @@ struct Timer {
     
     func startTimer(repeating interval: Double) {
         timer?.schedule(deadline: .now(), repeating: interval)
+        timer?.activate()
     }
     
     func cancelTimer() {

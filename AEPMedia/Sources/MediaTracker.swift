@@ -9,9 +9,22 @@
  governing permissions and limitations under the License.
  */
 
-import Foundation
+@objc public protocol MediaTracker {
+    func trackSessionStart(info: [String: Any], metadata: [String: String])
 
-@objc(AEPMediaTracker)
-public class MediaTracker: NSObject {
+    func trackPlay()
 
+    func trackPause()
+
+    func trackComplete()
+
+    func trackSessionEnd()
+
+    func trackError(errorId: String)
+
+    func trackEvent(event: String, info: [String: Any]?, metadata: [String: String]?)
+
+    func updateCurrentPlayhead(time: Double)
+
+    func updateQoEObject(qoe: [String: Any])
 }

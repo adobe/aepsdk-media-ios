@@ -9,22 +9,31 @@
  governing permissions and limitations under the License.
  */
 
+import AEPServices
 
-import Foundation
+@objc public enum MediaType: Int, RawRepresentable {
+    case Audio
+    case Video
 
-struct MediaDBService {
+    public typealias RawValue = String
 
-    func persistHit(hit: MediaHit, sessionId: String) {
-        //TODO implement this function.
+    public var rawValue: RawValue {
+        switch self {
+        case .Audio:
+            return "audio"
+        case .Video:
+            return "video"
+        }
     }
 
-    func deleteSessionHits(sessionId id: String) {
-        //TODO implement this function.
+    public init?(rawValue: RawValue) {
+        switch rawValue {
+        case "audio":
+            self = .Audio
+        case "video":
+            self = .Video
+        default:
+            return nil
+        }
     }
-
-    func getHits(sessionId id: String) -> [MediaHit] {
-        //TODO implement this function.
-        return [MediaHit]()
-    }
-
 }
