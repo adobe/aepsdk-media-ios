@@ -127,7 +127,7 @@ class MediaInfo: Equatable {
     }
 }
 
-class AdBreakInfo: Equatable{
+class AdBreakInfo: Equatable {
     static let LOG_TAG = "AdBreakInfo"
     let name: String
     let position: Int
@@ -194,7 +194,7 @@ class AdBreakInfo: Equatable{
     }
 }
 
-class AdInfo: Equatable{
+class AdInfo: Equatable {
     static let LOG_TAG = "AdInfo"
     let id: String
     let name: String
@@ -275,7 +275,7 @@ class AdInfo: Equatable{
     }
 }
 
-class ChapterInfo: Equatable{
+class ChapterInfo: Equatable {
     static let LOG_TAG = "ChapterInfo"
     let name: String
     let position: Int
@@ -356,7 +356,7 @@ class ChapterInfo: Equatable{
     }
 }
 
-class QoEInfo: Equatable{
+class QoEInfo: Equatable {
     static let LOG_TAG = "QoEInfo"
     let bitrate: Double
     let droppedFrames: Double
@@ -453,7 +453,7 @@ class StateInfo: Equatable {
         let pattern = "^[a-zA-Z0-9_\\.]{1,64}$"
         let s = try! NSRegularExpression(pattern: pattern, options: [])
         let matches = s.matches(in: stateName, options: [], range: NSRange(location: 0, length: stateName.count))
-        if matches.isEmpty{
+        if matches.isEmpty {
             Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating StateInfo, state name: \(stateName) with length: \(stateName.count)  cannot contain special characters and can only be 64 character long. Only alphabets, digits, '_' and '.' are allowed.")
             return nil
         }
@@ -471,7 +471,7 @@ class StateInfo: Equatable {
             return nil
         }
 
-        self.init(stateName:stateName)
+        self.init(stateName: stateName)
     }
 
     func toMap() -> [String: Any]? {
@@ -481,6 +481,3 @@ class StateInfo: Equatable {
         return stateInfoMap
     }
 }
-
-
-

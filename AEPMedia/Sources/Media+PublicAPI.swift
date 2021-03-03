@@ -60,7 +60,7 @@ import AEPServices
     @objc(createChapterObjectWith:position:length:startTime:)
     static func createChapterObjectWith(name: String, position: Double, length: Double, startTime: Double) -> [String: Any]? {
         let position = Int(position)
-        guard let chapterInfo = ChapterInfo(name: name, position: position,  startTime: startTime, length: length) else {
+        guard let chapterInfo = ChapterInfo(name: name, position: position, startTime: startTime, length: length) else {
             Log.error(label: LOG_TAG, "\(#function) Error creating chapter Object")
             return nil
         }
@@ -69,7 +69,7 @@ import AEPServices
 
     @objc(createQoEObjectWith:startTime:fps:droppedFrames:)
     static func createQoEObjectWith(bitrate: Double, startupTime: Double, fps: Double, droppedFrames: Double) -> [String: Any]? {
-        guard let qoeInfo = QoEInfo(bitrate: bitrate,droppedFrames: droppedFrames, fps: fps, startupTime: startupTime) else {
+        guard let qoeInfo = QoEInfo(bitrate: bitrate, droppedFrames: droppedFrames, fps: fps, startupTime: startupTime) else {
             Log.error(label: LOG_TAG, "\(#function) Error creating qoe Object")
             return nil
         }
