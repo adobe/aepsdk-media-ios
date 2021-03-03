@@ -697,6 +697,14 @@ class MediaObjectTests: XCTestCase {
         }
     }
     
+    func testChapterInfoEqual() {
+        let chapterInfo1 = ChapterInfo(info: MediaObjectTests.validChapterInfo)
+
+        let chapterInfo2 = ChapterInfo(name: "ChapterName", position: 3, startTime: 3.0, length: 5.0)
+
+        XCTAssertEqual(chapterInfo1, chapterInfo2)
+    }
+    
     func testChapterInfoToMap() {
         let chapterInfo = ChapterInfo(info: MediaObjectTests.validChapterInfo)
         let chapterInfoMap = chapterInfo?.toMap()
