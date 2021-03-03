@@ -11,16 +11,16 @@
 import Foundation
 
 class MediaCollectionEventTracking: MediaEventTracking {
-    
+
     private var session: MediaSession?
     private var mediaState: MediaState
-    
+
     init(session: MediaSession, state: MediaState) {
         self.session = session
         self.mediaState = state
     }
 
     func track(eventData: [String: Any]?) {
-    
+
     }
 }
