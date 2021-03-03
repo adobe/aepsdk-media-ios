@@ -10,12 +10,14 @@
  */
 
 import Foundation
+import AEPCore
 
 enum MediaConstants {
     static let EXTENSION_NAME                           = "com.adobe.module.media"
     static let FRIENDLY_NAME                            = "Media Analytics"
     static let EXTENSION_VERSION                        = "0.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
+    static let DEFAULT_PRIVACY_STATUS                   = PrivacyStatus.unknown
 
     enum Configuration {
         static let SHARED_STATE_NAME = "com.adobe.module.configuration"
@@ -54,6 +56,11 @@ enum MediaConstants {
         static let EVENT_SOURCE_TRACK_MEDIA = "com.adobe.eventsource.media.trackmedia"
         static let EVENT_NAME_CREATE_TRACKER = "Media::CreateTrackerRequest"
         static let EVENT_NAME_TRACK_MEDIA = "Media::TrackMedia"
+    }
+
+    enum MediaConfig {
+        static let CHANNEL = "config.channel"
+        static let DOWNLOADED_CONTENT = "config.downloadedcontent"
     }
 
     enum EventName {
