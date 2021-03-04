@@ -38,17 +38,17 @@ import AEPServices
     }
 
     @objc(createAdBreakObjectWith:position:startTime:)
-    static func createAdBreakObjectWith(name: String, position: Double, startTime: Double) -> [String: Any]? {
-        guard let adBreakInfo = AdBreakInfo(name: name, position: Int(position), startTime: startTime) else {
+    static func createAdBreakObjectWith(name: String, position: Int, startTime: Double) -> [String: Any]? {
+        guard let adBreakInfo = AdBreakInfo(name: name, position: position, startTime: startTime) else {
             Log.error(label: LOG_TAG, "\(#function) Error creating adBreak Object")
             return nil
         }
         return adBreakInfo.toMap()
     }
 
-    @objc(createAdObjectWith:id:positon:length:)
-    static func createAdObjectWith(name: String, adId: String, position: Double, length: Double) -> [String: Any]? {
-        guard let adInfo = AdInfo(id: adId, name: name, position: Int(position), length: length) else {
+    @objc(createAdObjectWith:id:position:length:)
+    static func createAdObjectWith(name: String, adId: String, position: Int, length: Double) -> [String: Any]? {
+        guard let adInfo = AdInfo(id: adId, name: name, position: position, length: length) else {
             Log.error(label: LOG_TAG, "\(#function) Error creating ad Object")
             return nil
         }
@@ -56,8 +56,8 @@ import AEPServices
     }
 
     @objc(createChapterObjectWith:position:length:startTime:)
-    static func createChapterObjectWith(name: String, position: Double, length: Double, startTime: Double) -> [String: Any]? {
-        guard let chapterInfo = ChapterInfo(name: name, position: Int(position), startTime: startTime, length: length) else {
+    static func createChapterObjectWith(name: String, position: Int, length: Double, startTime: Double) -> [String: Any]? {
+        guard let chapterInfo = ChapterInfo(name: name, position: position, startTime: startTime, length: length) else {
             Log.error(label: LOG_TAG, "\(#function) Error creating chapter Object")
             return nil
         }

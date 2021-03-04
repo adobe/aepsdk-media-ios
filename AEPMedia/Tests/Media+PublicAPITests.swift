@@ -129,7 +129,7 @@ class MediaPublicAPITests: XCTestCase {
 
     func testCreateAdBreakInfo_Invalid() {
         // empty name
-        var infoMap = Media.createAdBreakObjectWith(name: "", position: 5.0, startTime: 2.0)
+        var infoMap = Media.createAdBreakObjectWith(name: "", position: 5, startTime: 2.0)
         XCTAssertNil(infoMap)
 
         // <1 position
