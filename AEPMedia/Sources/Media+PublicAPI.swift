@@ -38,33 +38,48 @@ import AEPServices
     }
 
     @objc(createAdBreakObjectWith:position:startTime:)
-    static func createAdBreakObjectWith(name: String, position: Double, startTime: Double) -> [String: Any]? {
-        //TODO
-        return [:]
+    static func createAdBreakObjectWith(name: String, position: Int, startTime: Double) -> [String: Any]? {
+        guard let adBreakInfo = AdBreakInfo(name: name, position: position, startTime: startTime) else {
+            Log.error(label: LOG_TAG, "\(#function) Error creating adBreak Object")
+            return nil
+        }
+        return adBreakInfo.toMap()
     }
 
-    @objc(createAdObjectWith:id:positon:length:)
-    static func createAdObjectWith(name: String, id: String, position: Double, length: Double) -> [String: Any]? {
-        //TODO
-        return [:]
+    @objc(createAdObjectWith:id:position:length:)
+    static func createAdObjectWith(name: String, adId: String, position: Int, length: Double) -> [String: Any]? {
+        guard let adInfo = AdInfo(id: adId, name: name, position: position, length: length) else {
+            Log.error(label: LOG_TAG, "\(#function) Error creating ad Object")
+            return nil
+        }
+        return adInfo.toMap()
     }
 
     @objc(createChapterObjectWith:position:length:startTime:)
-    static func createChapterObjectWith(name: String, position: Double, length: Double, startTime: Double) -> [String: Any]? {
-        //TODO
-        return [:]
+    static func createChapterObjectWith(name: String, position: Int, length: Double, startTime: Double) -> [String: Any]? {
+        guard let chapterInfo = ChapterInfo(name: name, position: position, startTime: startTime, length: length) else {
+            Log.error(label: LOG_TAG, "\(#function) Error creating chapter Object")
+            return nil
+        }
+        return chapterInfo.toMap()
     }
 
     @objc(createQoEObjectWith:startTime:fps:droppedFrames:)
-    static func createQoEObjectWith(bitrate: Double, startTime: Double, fps: Double, droppedFrames: Double) -> [String: Any]? {
-        //TODO
-        return [:]
+    static func createQoEObjectWith(bitrate: Double, startupTime: Double, fps: Double, droppedFrames: Double) -> [String: Any]? {
+        guard let qoeInfo = QoEInfo(bitrate: bitrate, droppedFrames: droppedFrames, fps: fps, startupTime: startupTime) else {
+            Log.error(label: LOG_TAG, "\(#function) Error creating qoe Object")
+            return nil
+        }
+        return qoeInfo.toMap()
     }
 
     @objc(createStateObjectWith:)
     static func createStateObjectWith(stateName: String) -> [String: Any]? {
-        //TODO
-        return [:]
+        guard let stateInfo = StateInfo(stateName: stateName) else {
+            Log.error(label: LOG_TAG, "\(#function) Error creating state Object")
+            return nil
+        }
+        return stateInfo.toMap()
     }
 }
 

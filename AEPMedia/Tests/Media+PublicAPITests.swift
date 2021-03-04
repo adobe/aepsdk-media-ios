@@ -107,10 +107,7 @@ class MediaPublicAPITests: XCTestCase {
         infoMap = Media.createMediaObjectWith(name: "testName", id: "", length: 30, streamType: "aod", mediaType: MediaType.Audio)
         XCTAssertNil(infoMap)
 
-        // <=0 length
-        infoMap = Media.createMediaObjectWith(name: "testName", id: "testId", length: 0, streamType: "aod", mediaType: MediaType.Audio)
-        XCTAssertNil(infoMap)
-
+        // <0 length
         infoMap = Media.createMediaObjectWith(name: "testName", id: "testId", length: -1, streamType: "aod", mediaType: MediaType.Audio)
         XCTAssertNil(infoMap)
 
@@ -119,28 +116,141 @@ class MediaPublicAPITests: XCTestCase {
         XCTAssertNil(infoMap)
     }
 
+    // ==========================================================================
+    // createAdBreakObjects
+    // ==========================================================================
     func testCreateAdBreakInfo() {
-        let infoMap = Media.createAdBreakObjectWith(name: "testName", position: 1, startTime: 1.1)
-        // TODO Assert
+        let infoMap = Media.createAdBreakObjectWith(name: "adBreakName", position: 5, startTime: 0)
+        XCTAssertFalse(infoMap?.isEmpty ?? true)
+        XCTAssertEqual("adBreakName", infoMap?[MediaConstants.AdBreakInfo.NAME] as? String ?? "")
+        XCTAssertEqual(5 , infoMap?[MediaConstants.AdBreakInfo.POSITION] as? Int ?? 0)
+        XCTAssertEqual(0 , infoMap?[MediaConstants.AdBreakInfo.START_TIME] as? Double ?? 0.0)
     }
 
-    func testCreateAdInfo() {
-        let infoMap = Media.createAdObjectWith(name: "testName", id: "testId", position: 2, length: 10)
-        // TODO Assert
+    func testCreateAdBreakInfo_Invalid() {
+        // empty name
+        var infoMap = Media.createAdBreakObjectWith(name: "", position: 5, startTime: 2.0)
+        XCTAssertNil(infoMap)
+
+        // <1 position
+        infoMap = Media.createAdBreakObjectWith(name: "adBreakName", position: 0, startTime: 2.0)
+        XCTAssertNil(infoMap)
+
+        // <0 start time
+        infoMap = Media.createAdBreakObjectWith(name: "adBreakName", position: 5, startTime: -1)
+        XCTAssertNil(infoMap)
     }
+
+    // ==========================================================================
+    // createAdObjects
+    // ==========================================================================
+    func testCreateAdInfo() {
+        let infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 3 , length: 20)
+        XCTAssertFalse(infoMap?.isEmpty ?? true)
+        XCTAssertEqual("adName", infoMap?[MediaConstants.AdInfo.NAME] as? String ?? "")
+        XCTAssertEqual("AdId", infoMap?[MediaConstants.AdInfo.ID] as? String ?? "")
+        XCTAssertEqual(3, infoMap?[MediaConstants.AdInfo.POSITION] as? Int ?? 0)
+        XCTAssertEqual(20, infoMap?[MediaConstants.AdInfo.LENGTH] as? Double ?? 0.0)
+    }
+
+    func testCreateAdInfo_Invalid() {
+        // empty name
+        var infoMap = Media.createAdObjectWith(name: "", adId: "AdId", position: 2, length: 20)
+        XCTAssertNil(infoMap)
+
+        // empty id name
+        infoMap = Media.createAdObjectWith(name: "adName", adId: "", position: 2, length: 20)
+        XCTAssertNil(infoMap)
+
+        // < 1 position
+        infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 0, length: 20)
+        XCTAssertNil(infoMap)
+
+        // < 0 length
+        infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 2, length: -1)
+        XCTAssertNil(infoMap)
+    }
+
+    // ==========================================================================
+    // createChapterObjects
+    // ==========================================================================
 
     func testCreateChapterInfo() {
-        let infoMap = Media.createChapterObjectWith(name: "testName", position: 1, length: 15, startTime: 1.2)
-        // TODO Assert
+        let infoMap = Media.createChapterObjectWith(name: "chapterName", position: 2, length: 30, startTime: 5)
+        XCTAssertFalse(infoMap?.isEmpty ?? true)
+        XCTAssertEqual("chapterName", infoMap?[MediaConstants.ChapterInfo.NAME] as? String ?? "")
+        XCTAssertEqual(2, infoMap?[MediaConstants.ChapterInfo.POSITION] as? Int ?? 0)
+        XCTAssertEqual(30, infoMap?[MediaConstants.ChapterInfo.LENGTH] as? Double ?? 0.0)
+        XCTAssertEqual(5, infoMap?[MediaConstants.ChapterInfo.START_TIME] as? Double ?? 0.0)
     }
 
-    func testCreateStateInfo() {
-        let infoMap = Media.createStateObjectWith(stateName: "testStateName")
-        // TODO Assert
+    func testCreateChapterInfo_Invalid() {
+        // empty name
+        var infoMap = Media.createChapterObjectWith(name: "", position: 2, length: 30, startTime: 50)
+        XCTAssertNil(infoMap)
+
+        // < 1 position
+        infoMap = Media.createChapterObjectWith(name: "chapterName", position: 0, length: 0, startTime: 5)
+        XCTAssertNil(infoMap)
+
+        // < 0 length
+        infoMap = Media.createChapterObjectWith(name: "chapterName", position: 2, length: -1, startTime: 5 )
+        XCTAssertNil(infoMap)
+
+        // < 0 start time
+        infoMap = Media.createChapterObjectWith(name: "chapterName", position: 2, length: 30, startTime: -2)
+        XCTAssertNil(infoMap)
     }
+
+
+    // ==========================================================================
+    // createQoEObjects
+    // ==========================================================================
 
     func testCreateQoEInfo() {
-        let infoMap = Media.createQoEObjectWith(bitrate: 1.1, startTime: 2.2, fps: 3.3, droppedFrames: 4.4)
-        // TODO Assert
+        let infoMap = Media.createQoEObjectWith(bitrate: 24.0,  startupTime: 0.5, fps: 30.0 ,droppedFrames: 2.0)
+        XCTAssertFalse(infoMap?.isEmpty ?? true)
+        XCTAssertEqual(24, infoMap?[MediaConstants.QoEInfo.BITRATE] as? Double ?? 0.0)
+        XCTAssertEqual(0.5, infoMap?[MediaConstants.QoEInfo.STARTUP_TIME] as? Double ?? 0.0)
+        XCTAssertEqual(30, infoMap?[MediaConstants.QoEInfo.FPS] as? Double ?? 0.0)
+        XCTAssertEqual(2, infoMap?[MediaConstants.QoEInfo.DROPPED_FRAMES] as? Double ?? 0.0)
+    }
+
+    func testCreateQoEInfo_Invalid() {
+        // < 0 bitrate
+        var infoMap = Media.createQoEObjectWith(bitrate: -1,  startupTime: 0.5, fps: 30.0 ,droppedFrames: 2.0)
+        XCTAssertNil(infoMap)
+
+        // < 0 startupTime
+        infoMap = Media.createQoEObjectWith(bitrate: -2.5,  startupTime: 0.5, fps: 30.0 ,droppedFrames: 2.0)
+        XCTAssertNil(infoMap)
+
+        // < 0 fps
+        infoMap = Media.createQoEObjectWith(bitrate: -15,  startupTime: 0.5, fps: 30.0 ,droppedFrames: 2.0)
+        XCTAssertNil(infoMap)
+
+        // < 0 dropped frame
+        infoMap = Media.createQoEObjectWith(bitrate: -4.9,  startupTime: 0.5, fps: 30.0 ,droppedFrames: 2.0)
+        XCTAssertNil(infoMap)
+    }
+
+    // ==========================================================================
+    // createStateObjects
+    // ==========================================================================
+
+    func testCreateStateInfo() {
+        let infoMap = Media.createStateObjectWith(stateName: "muted")
+        XCTAssertFalse(infoMap?.isEmpty ?? true)
+        XCTAssertEqual("muted", infoMap?[MediaConstants.StateInfo.STATE_NAME_KEY] as? String ?? "")
+    }
+
+    func testCreateStateInfo_Invalid() {
+        // empty state name
+        var infoMap = Media.createStateObjectWith(stateName: "")
+        XCTAssertNil(infoMap)
+
+        // Invalid state name
+        infoMap = Media.createStateObjectWith(stateName: "mute$$")
+        XCTAssertNil(infoMap)
     }
 }
