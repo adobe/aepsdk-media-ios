@@ -211,17 +211,17 @@ class MediaCollectionHitGenerator {
     func processStateStart(stateInfo: StateInfo) {
         var params = [String: Any]()
 
-        params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.name
+        params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.stateName
 
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_START, params: params, metadata: nil)
+        generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_START, params: params, metadata: nil, QOEData: nil)
     }
 
     func processStateEnd(stateInfo: StateInfo) {
         var params = [String: Any]()
 
-        params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.name
+        params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.stateName
 
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_END, params: params, metadata: nil)
+        generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_END, params: params, metadata: nil, QOEData: nil)
     }
 
     func endMediaSession() {
@@ -235,7 +235,6 @@ class MediaCollectionHitGenerator {
 
     func generateHit(eventType: String, params: [String: Any]?, metadata: [String: String]?) {
         let QOEData = MediaCollectionHelper.extractQoeData(mediaContext: mediaContext)
-        // TODO: replace with lhs rhs comparison after QoeInfo class is created
         let QOEInfoUpdated = self.lastQOEData as NSDictionary != QOEData as NSDictionary
 
         if QOEInfoUpdated {

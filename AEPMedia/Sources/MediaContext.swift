@@ -103,9 +103,11 @@ class MediaContext {
 
     // TODO: stub
     func setQoEInfo(qoeInfo: QoEInfo?) {
-        if qoeInfo != nil {
-            self.qoeInfo = qoeInfo
-        }
+        self.qoeInfo = qoeInfo
+    }
+    
+    func getQoEInfo() -> QoEInfo? {
+        return self.qoeInfo
     }
     
     // TODO: stub
@@ -113,7 +115,7 @@ class MediaContext {
         var activeStates: [StateInfo] = []
         
         for state in states {
-            if let activeState = StateInfo(name: state.key) {
+            if let activeState = StateInfo(stateName: state.key) {
                 activeStates.append(activeState)
             }
         }
@@ -123,7 +125,7 @@ class MediaContext {
     
     // TODO: stub
     func isInState(_ state: StateInfo) -> Bool {
-        return states[state.name] != nil ? true : false
+        return states[state.stateName] != nil ? true : false
     }
     
     // TODO: stub
@@ -177,12 +179,12 @@ class MediaContext {
         }
         
         if isInState(stateInfo) {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to start state, state \(stateInfo.name) already started")
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to start state, state \(stateInfo.stateName) already started")
             return false
         }
         
-        Log.trace(label: LOG_TAG, "\(#function) - Starting state \(stateInfo.name)")
-        states[stateInfo.name] = true
+        Log.trace(label: LOG_TAG, "\(#function) - Starting state \(stateInfo.stateName)")
+        states[stateInfo.stateName] = true
         return true
     }
     
@@ -194,12 +196,12 @@ class MediaContext {
         }
         
         if !isInState(stateInfo) {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to end state, state \(stateInfo.name) has not been started")
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to end state, state \(stateInfo.stateName) has not been started")
             return false
         }
         
-        Log.trace(label: LOG_TAG, "\(#function) - Ending state \(stateInfo.name)")
-        states[stateInfo.name] = false
+        Log.trace(label: LOG_TAG, "\(#function) - Ending state \(stateInfo.stateName)")
+        states[stateInfo.stateName] = false
         return true
     }
 }

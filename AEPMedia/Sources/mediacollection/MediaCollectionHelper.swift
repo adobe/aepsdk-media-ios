@@ -125,6 +125,13 @@ class MediaCollectionHelper {
     class func extractQoeData(mediaContext: MediaContext) -> [String: Any] {
         var retDict = [String: Any]()
 
+        let qoeInfoDict = mediaContext.getQoEInfo()?.toMap()
+
+        retDict[MediaConstants.QoEInfo.BITRATE] = qoeInfoDict?[MediaConstants.QoEInfo.BITRATE]
+        retDict[MediaConstants.QoEInfo.DROPPED_FRAMES] = qoeInfoDict?[MediaConstants.QoEInfo.DROPPED_FRAMES]
+        retDict[MediaConstants.QoEInfo.FPS] = qoeInfoDict?[MediaConstants.QoEInfo.FPS]
+        retDict[MediaConstants.QoEInfo.STARTUP_TIME] = qoeInfoDict?[MediaConstants.QoEInfo.STARTUP_TIME]
+
         return retDict
     }
 
