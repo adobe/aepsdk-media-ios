@@ -19,16 +19,23 @@ public class Media: NSObject, Extension {
 
     // MARK: Extension
     public var runtime: ExtensionRuntime
-
     public var name = MediaConstants.EXTENSION_NAME
     public var friendlyName = MediaConstants.FRIENDLY_NAME
     public static var extensionVersion = MediaConstants.EXTENSION_VERSION
     public var metadata: [String: String]?
-    private let dependencies: [String] = [MediaConstants.Configuration.SHARED_STATE_NAME, MediaConstants.Identity.SHARED_STATE_NAME, MediaConstants.Analytics.SHARED_STATE_NAME]
-    private var sessionIdToTrackerIdMapping: [String: String] = [:]
-    private var mediaState: MediaState
+    let dependencies: [String] = [MediaConstants.Configuration.SHARED_STATE_NAME, MediaConstants.Identity.SHARED_STATE_NAME, MediaConstants.Analytics.SHARED_STATE_NAME]
+    #if DEBUG
+        var sessionIdToTrackerIdMapping: [String: String] = [:]
+        var mediaState: MediaState
+        var trackerCalled = false
+    #else
+        private var sessionIdToTrackerIdMapping: [String: String] = [:]
+        private var mediaState: MediaState
+        private var trackerCalled = false
+    #endif
     // private var mediaService: MediaService?
 
+    // MARK: Extension
     /// Initializes the Media extension and it's dependencies
     public required init(runtime: ExtensionRuntime) {
         self.runtime = runtime
@@ -66,8 +73,6 @@ public class Media: NSObject, Extension {
         mediaState.update(dataMap: sharedStates)
     }
 
-    // MARK: Event Listeners
-
     /// Processes Configuration Response content events to retrieve the configuration data and privacy status settings.
     /// - Parameter:
     ///   - event: The configuration response event
@@ -81,26 +86,27 @@ public class Media: NSObject, Extension {
     /// Handler for media tracker creation events
     /// - Parameter event: an event containing  data for creating tracker
     private func handleMediaTrackerRequest(event: Event) {
-        updateMediaState(forEvent: event, dependencies: dependencies)
+        // TODO: revisit when media service implemented
 
+        updateMediaState(forEvent: event, dependencies: dependencies)
         guard let trackerRequestData = event.data else {
             Log.error(label: LOG_TAG, "\(#function) - Failed to extract tracker request data (event data was nil).")
             return
         }
 
-        guard let trackerId = trackerRequestData[MediaConstants.Tracker.ID] as? String else {
+        guard let trackerId = trackerRequestData[MediaConstants.Tracker.ID] as? String, trackerId.count > 0 else {
             Log.debug(label: LOG_TAG, "\(#function) - Tracker ID is nil, unable to create tracker.")
             return
         }
 
-        guard let trackerConfig = trackerRequestData[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any] else {
-            Log.error(label: LOG_TAG, "\(#function) - Failed to retrieve tracker config, tracker will not be created.")
-            return
-        }
+        let trackerConfig = trackerRequestData[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any] ?? [:]
 
         mediaState.setTrackerConfig(with: trackerConfig)
         // save returned session id in a dictionary using the tracker id as a key
         // sessionIdToTrackerIdMapping[trackerId] = mediaService?.createSession(state: mediaState) ?? ""
+
+        // TODO: placeholder until MediaService available
+        sessionIdToTrackerIdMapping[trackerId] = UUID().uuidString
     }
 
     /// Handler for media track events
@@ -113,7 +119,7 @@ public class Media: NSObject, Extension {
             return
         }
 
-        guard let trackerId = mediaTrackData[MediaConstants.Tracker.ID] as? String else {
+        guard let trackerId = mediaTrackData[MediaConstants.Tracker.ID] as? String, trackerId.count > 0 else {
             Log.error(label: LOG_TAG, "\(#function) - Unable to retrieve valid tracker id.")
             return
         }
@@ -124,25 +130,37 @@ public class Media: NSObject, Extension {
         }
 
         Log.debug(label: LOG_TAG, "\(#function) - tracking media for sessionId: \(sessionId).")
-        _ = trackMedia(sessionId: sessionId, eventData: mediaTrackData)
+        trackerCalled = trackMedia(sessionId: sessionId, eventData: mediaTrackData)
     }
 
     /// Clears persisted media sessions.
     private func handleOptOut(event: Event) {
+        // TODO: revisit when media service implemented
+
         Log.debug(label: LOG_TAG, "\(#function) - Privacy status is opted-out. Clearing persisted media sessions.")
-        // TODO, move to MediaState?
+        // clear tracked sessions and abort all running sessions within the media service
+        sessionIdToTrackerIdMapping.removeAll()
+        // mediaService.abortAllSession()
     }
 
     private func trackMedia(sessionId: String, eventData: [String: Any]) -> Bool {
         // TODO: revisit when media service implemented
-//        let trackingSession = mediaService.mediaSessions[sessionId]
-//        guard let tracker = MediaCollectionEventTracking(session: trackingSession, state: mediaState) else {
-//            Log.error(label: LOG_TAG, "\(#function) - Unable to crrate tracker for session id: \(sessionId).")
-//            return false
-//        }
-//
-//        tracker.track(eventData: eventData)
-//        return true
+
+        /*
+         let trackingSession = mediaService.mediaSessions[sessionId]
+         guard let tracker = MediaCollectionEventTracking(session: trackingSession, state: mediaState) else {
+             Log.error(label: LOG_TAG, "\(#function) - Unable to create tracker for session id: \(sessionId).")
+             return false
+         }
+
+         tracker.track(eventData: eventData)
+         return true
+         */
+
+        // TODO: placeholder for testing until MediaService available
+        if sessionId.count > 0 {
+            return true
+        }
         return false
     }
 

@@ -74,21 +74,18 @@ class MediaState {
             Log.trace(label: LOG_TAG, "\(#function) - Failed to extract configuration data (event data was nil).")
             return
         }
-        
-        dispatchQueue.async {
-            self.privacyStatus = PrivacyStatus.init(rawValue: configurationData[MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY] as? PrivacyStatus.RawValue ?? PrivacyStatus.unknown.rawValue) ?? MediaConstants.DEFAULT_PRIVACY_STATUS
+        self.privacyStatus = PrivacyStatus.init(rawValue: configurationData[MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY] as? PrivacyStatus.RawValue ?? PrivacyStatus.unknown.rawValue) ?? MediaConstants.DEFAULT_PRIVACY_STATUS
 
-            self.mcOrgId = configurationData[MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID] as? String
-            self.analyticsTrackingServer = configurationData[MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER] as? String
-            self.analyticsRsid = configurationData[MediaConstants.Configuration.ANALYTICS_RSID] as? String
-            self.mediaTrackingServer = configurationData[MediaConstants.Configuration.MEDIA_TRACKING_SERVER] as? String
-            self.mediaCollectionServer = configurationData[MediaConstants.Configuration.MEDIA_COLLECTION_SERVER] as? String
-            self.mediaChannel = configurationData[MediaConstants.Configuration.MEDIA_CHANNEL] as? String
-            self.mediaOvp = configurationData[MediaConstants.Configuration.MEDIA_OVP] as? String
-            self.mediaPlayerName = configurationData[MediaConstants.Configuration.MEDIA_PLAYER_NAME] as? String
-            self.mediaAppVersion = configurationData[MediaConstants.Configuration.MEDIA_APP_VERSION] as? String
-            self.mediaDebugLogging = configurationData[MediaConstants.Configuration.MEDIA_DEBUG_LOGGING] as? Bool ?? false
-        }
+        self.mcOrgId = configurationData[MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID] as? String
+        self.analyticsTrackingServer = configurationData[MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER] as? String
+        self.analyticsRsid = configurationData[MediaConstants.Configuration.ANALYTICS_RSID] as? String
+        self.mediaTrackingServer = configurationData[MediaConstants.Configuration.MEDIA_TRACKING_SERVER] as? String
+        self.mediaCollectionServer = configurationData[MediaConstants.Configuration.MEDIA_COLLECTION_SERVER] as? String
+        self.mediaChannel = configurationData[MediaConstants.Configuration.MEDIA_CHANNEL] as? String
+        self.mediaOvp = configurationData[MediaConstants.Configuration.MEDIA_OVP] as? String
+        self.mediaPlayerName = configurationData[MediaConstants.Configuration.MEDIA_PLAYER_NAME] as? String
+        self.mediaAppVersion = configurationData[MediaConstants.Configuration.MEDIA_APP_VERSION] as? String
+        self.mediaDebugLogging = configurationData[MediaConstants.Configuration.MEDIA_DEBUG_LOGGING] as? Bool ?? false
     }
     
     /// Extracts the identity data from the provided shared state data.
