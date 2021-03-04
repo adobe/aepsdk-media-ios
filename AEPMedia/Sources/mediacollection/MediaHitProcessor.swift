@@ -11,20 +11,18 @@
 
 import Foundation
 
+// TODO: stub
 class MediaHitProcessor {
     let LOG_TAG = "MediaHitProcessor"
     
-    // TODO: stub
     func startSession() -> Int {
         return 1234567890
     }
     
-    // TODO: stub
     func endSession(sessionID: Int) {
         
     }
     
-    // TODO: stub
     func processHit(sessionID: Int, hit: MediaHit) {
         
     }

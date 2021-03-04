@@ -12,6 +12,7 @@
 import Foundation
 import AEPServices
 
+// TODO: replace with final implementation
 enum MediaPlaybackState {
     case Init // First play / pause has not happened
     case Play
@@ -21,6 +22,7 @@ enum MediaPlaybackState {
     case Stall
 }
 
+// TODO: replace with final implementation
 class MediaContext {
     private var mediaInfo: MediaInfo
     private var chapterInfo: ChapterInfo?
@@ -42,37 +44,30 @@ class MediaContext {
     
     let LOG_TAG = "MediaContext"
 
-    // TODO: stub
     func getMediaInfo() -> MediaInfo {
         return mediaInfo
     }
     
-    // TODO: stub
     func getMediaMetadata() -> [String: String] {
         return metadata ?? [:]
     }
     
-    // TODO: stub
     func getPlayhead() -> Double {
         return 50
     }
     
-    // TODO: stub
     func isInChapter() -> Bool {
         return chapterInfo != nil
     }
     
-    // TODO: stub
     func isInAdBreak() -> Bool {
         return adBreakInfo != nil
     }
     
-    // TODO: stub
     func isInAd() -> Bool {
         return adInfo != nil
     }
     
-    // TODO: stub
     func setAdInfo(adInfo: AdInfo?, metadata: [String: String]?) {
         if adInfo != nil {
             self.adInfo = adInfo
@@ -83,14 +78,12 @@ class MediaContext {
         }
     }
 
-    // TODO: stub
     func setAdBreakInfo(adBreakInfo: AdBreakInfo?) {
         if adBreakInfo != nil {
             self.adBreakInfo = adBreakInfo
         }
     }
 
-    // TODO: stub
     func setChapterInfo(chapterInfo: ChapterInfo?, metadata: [String: String]?) {
         if chapterInfo != nil {
             self.chapterInfo = chapterInfo
@@ -101,7 +94,6 @@ class MediaContext {
         }
     }
 
-    // TODO: stub
     func setQoEInfo(qoeInfo: QoEInfo?) {
         self.qoeInfo = qoeInfo
     }
@@ -110,7 +102,6 @@ class MediaContext {
         return self.qoeInfo
     }
     
-    // TODO: stub
     func getActiveTrackedStates() -> [StateInfo] {
         var activeStates: [StateInfo] = []
         
@@ -123,12 +114,10 @@ class MediaContext {
         return activeStates
     }
     
-    // TODO: stub
     func isInState(_ state: StateInfo) -> Bool {
         return states[state.stateName] != nil ? true : false
     }
     
-    // TODO: stub
     func isInState(_ state: MediaPlaybackState) -> Bool {
         var retVal = false
         
@@ -144,7 +133,6 @@ class MediaContext {
         return retVal
     }
     
-    // TODO: stub
     func enterState(_ state: MediaPlaybackState) {
         switch state {
         case .Play, .Pause, .Stall:
@@ -158,7 +146,6 @@ class MediaContext {
         }
     }
     
-    // TODO: stub
     func exitState(_ state: MediaPlaybackState) {
         switch state {
         case .Buffer:
@@ -170,7 +157,6 @@ class MediaContext {
         }
     }
     
-    // TODO: stub
     func startState(_ stateInfo: StateInfo?) -> Bool {
         // TODO: check if (!hasTrackedState(stateInfo) && hasReachedStateLimit()) { then return false
         guard let stateInfo = stateInfo else {
@@ -188,7 +174,6 @@ class MediaContext {
         return true
     }
     
-    // TODO: stub
     func endState(_ stateInfo: StateInfo?) -> Bool {
         guard let stateInfo = stateInfo else {
             Log.debug(label: LOG_TAG, "\(#function) - Unable to end state, received nil StateInfo")

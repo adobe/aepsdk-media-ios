@@ -173,12 +173,12 @@ class MediaCollectionHitGenerator {
 
 
     func processBitrateChange() {
-        let QOEData = MediaCollectionHelper.extractQoeData(mediaContext: mediaContext)
+        let QOEData = mediaContext.getQoEInfo()?.toMap() ?? [String: Any]()
         generateHit(eventType: MediaConstants.MediaCollection.EventType.BITRATE_CHANGE, params: nil, metadata: nil, QOEData: QOEData)
     }
 
     func processError(errorId: String) {
-        var QOEData = MediaCollectionHelper.extractQoeData(mediaContext: mediaContext)
+        var QOEData = mediaContext.getQoEInfo()?.toMap() ?? [String: Any]()
         QOEData[MediaConstants.MediaCollection.QoE.ERROR_ID] = errorId
         QOEData[MediaConstants.MediaCollection.QoE.ERROR_SOURCE] = MediaConstants.MediaCollection.QoE.ERROR_SOURCE_PLAYER
 
@@ -234,7 +234,7 @@ class MediaCollectionHitGenerator {
     }
 
     func generateHit(eventType: String, params: [String: Any]?, metadata: [String: String]?) {
-        let QOEData = MediaCollectionHelper.extractQoeData(mediaContext: mediaContext)
+        let QOEData = mediaContext.getQoEInfo()?.toMap() ?? [String: Any]()
         let QOEInfoUpdated = self.lastQOEData as NSDictionary != QOEData as NSDictionary
 
         if QOEInfoUpdated {

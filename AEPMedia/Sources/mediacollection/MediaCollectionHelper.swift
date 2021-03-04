@@ -11,6 +11,7 @@
 
 import Foundation
 
+// TODO: replace with final implementation
 class MediaCollectionHelper {
     let LOG_TAG = "MediaCollectionHelper"
 
@@ -117,20 +118,6 @@ class MediaCollectionHelper {
                 retDict[entry.key] = entry.value
             }
         }
-
-        return retDict
-    }
-
-    // TODO: stub
-    class func extractQoeData(mediaContext: MediaContext) -> [String: Any] {
-        var retDict = [String: Any]()
-
-        let qoeInfoDict = mediaContext.getQoEInfo()?.toMap()
-
-        retDict[MediaConstants.QoEInfo.BITRATE] = qoeInfoDict?[MediaConstants.QoEInfo.BITRATE]
-        retDict[MediaConstants.QoEInfo.DROPPED_FRAMES] = qoeInfoDict?[MediaConstants.QoEInfo.DROPPED_FRAMES]
-        retDict[MediaConstants.QoEInfo.FPS] = qoeInfoDict?[MediaConstants.QoEInfo.FPS]
-        retDict[MediaConstants.QoEInfo.STARTUP_TIME] = qoeInfoDict?[MediaConstants.QoEInfo.STARTUP_TIME]
 
         return retDict
     }
