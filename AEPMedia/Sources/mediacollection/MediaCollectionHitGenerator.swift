@@ -208,7 +208,6 @@ class MediaCollectionHitGenerator {
 
     func processStateStart(stateInfo: StateInfo) {
         var params = [String: Any]()
-
         params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.stateName
 
         generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_START, params: params)
@@ -216,7 +215,6 @@ class MediaCollectionHitGenerator {
 
     func processStateEnd(stateInfo: StateInfo) {
         var params = [String: Any]()
-
         params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.stateName
 
         generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_END, params: params)
@@ -227,27 +225,30 @@ class MediaCollectionHitGenerator {
         isTracking = false
     }
 
-
     func generateHit(eventType: String, params: [String: Any]? = nil, metadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
         let mediaContextQoeData = mediaContext.getQoeInfo()?.toMap() ?? [String: Any]()
         let passedInQoeData = qoeData ?? [String: Any]()
-        var qoeDataForHit = [String: Any]()
+        var qoeDataForCurrentHit = [String: Any]()
 
         if !isTracking {
             Log.debug(label: self.LOG_TAG, "\(#function) - Dropping hit as we have internally stopped tracking")
             return
         }
 
-        // for bitrate change and error events, we always want to use the qoe data in the current hit.
+        // for bitrate change events, error events, and calls to generateHit with qoeData present we
+        // want to use the qoe data in the current hit being generated.
         // for all other events, we want to send the qoe data on the next hit after a qoe info change.
         switch eventType {
         case MediaConstants.MediaCollection.EventType.BITRATE_CHANGE, MediaConstants.MediaCollection.EventType.ERROR:
-            qoeDataForHit = passedInQoeData
+            qoeDataForCurrentHit = passedInQoeData
         default:
-            if self.qoeInfoUpdated {
-                qoeDataForHit = mediaContextQoeData
-            } else if !passedInQoeData.isEmpty {
-                qoeDataForHit = passedInQoeData
+            // handle case when generateHit is called with qoeData
+            if !passedInQoeData.isEmpty {
+                qoeDataForCurrentHit = passedInQoeData
+            }
+            else if self.qoeInfoUpdated {
+                qoeDataForCurrentHit = mediaContextQoeData
+
             }
         }
 
@@ -255,14 +256,14 @@ class MediaCollectionHitGenerator {
         self.qoeInfoUpdated = self.lastQoeData as NSDictionary != mediaContextQoeData as NSDictionary
 
         // Update the lastQoeData so we don't resend it with the next ping
-        if !qoeDataForHit.isEmpty {
-            self.lastQoeData = qoeDataForHit
+        if !qoeDataForCurrentHit.isEmpty {
+            self.lastQoeData = qoeDataForCurrentHit
         }
 
         let playhead = mediaContext.getPlayhead()
         let ts = refTS
 
-        let hit = MediaHit.init(eventType: eventType, params: params ?? [String: Any](), metadata: metadata ?? [String: String](), qoeData: qoeDataForHit, playhead: playhead, ts: ts)
+        let hit = MediaHit.init(eventType: eventType, params: params ?? [String: Any](), metadata: metadata ?? [String: String](), qoeData: qoeDataForCurrentHit, playhead: playhead, ts: ts)
         mediaHitProcessor.processHit(sessionID: sessionID, hit: hit)
     }
 

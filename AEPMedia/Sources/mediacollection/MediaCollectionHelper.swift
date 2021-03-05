@@ -87,6 +87,7 @@ class MediaCollectionHelper {
 
         let metadata = mediaContext.getMediaMetadata()
 
+        // custom metadata is removed and only standard metadata will be returned.
         for (key,value) in metadata {
             if standardMediaMetadataMapping[key] != nil {
                 let newKey = getMediaCollectionKey(key: key)
