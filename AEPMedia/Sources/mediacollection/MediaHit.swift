@@ -11,21 +11,20 @@
 
 import Foundation
 
-
 struct MediaHit {
     let eventType: String
+    let playhead: Double
+    let ts: TimeInterval
     let params: [String: Any]?
     let customMetada: [String: String]?
     let qoeData: [String: Any]?
-    let playhead: Double
-    let ts: TimeInterval
-
+    
     init(eventType: String, params: [String: Any]? = nil, customMetada: [String: String]? = nil, qoeData: [String: Any]? = nil, playhead: Double, ts: TimeInterval) {
         self.eventType = eventType
+        self.playhead = playhead
+        self.ts = ts
         self.params = params
         self.customMetada = customMetada
         self.qoeData = qoeData
-        self.playhead = playhead
-        self.ts = ts
     }
 }

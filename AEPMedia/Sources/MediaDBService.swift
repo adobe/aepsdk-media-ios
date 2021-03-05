@@ -18,7 +18,7 @@ struct MediaDBService {
         //TODO implement this function.
     }
 
-    func deleteSessionHits(sessionId id: String) {
+    func deleteHits(sessionId id: String) {
         //TODO implement this function.
     }
 

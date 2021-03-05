@@ -25,7 +25,7 @@
 		3D2C833725E4932A0064E0D4 /* MediaRealTimeSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C833625E4932A0064E0D4 /* MediaRealTimeSession.swift */; };
 		3D2C836325E5CADC0064E0D4 /* MediaState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C836225E5CADC0064E0D4 /* MediaState.swift */; };
 		3D2C836A25E5CFDF0064E0D4 /* MediaHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C836925E5CFDF0064E0D4 /* MediaHit.swift */; };
-		3D663A4525E71E4C00E96250 /* MediaSessionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D663A4425E71E4C00E96250 /* MediaSessionHelper.swift */; };
+		3D663A4525E71E4C00E96250 /* MediaCollectionReportHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D663A4425E71E4C00E96250 /* MediaCollectionReportHelper.swift */; };
 		3D663A4925E9914900E96250 /* MediaDBService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D663A4825E9914900E96250 /* MediaDBService.swift */; };
 		3D9D531725D5E73100F33EB7 /* MediaSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531625D5E73100F33EB7 /* MediaSession.swift */; };
 		3D9D531B25D5E75B00F33EB7 /* MediaEventTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531A25D5E75B00F33EB7 /* MediaEventTracking.swift */; };
@@ -72,7 +72,7 @@
 		3D2C833625E4932A0064E0D4 /* MediaRealTimeSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRealTimeSession.swift; sourceTree = "<group>"; };
 		3D2C836225E5CADC0064E0D4 /* MediaState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaState.swift; sourceTree = "<group>"; };
 		3D2C836925E5CFDF0064E0D4 /* MediaHit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaHit.swift; sourceTree = "<group>"; };
-		3D663A4425E71E4C00E96250 /* MediaSessionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MediaSessionHelper.swift; path = ../MediaSessionHelper.swift; sourceTree = "<group>"; };
+		3D663A4425E71E4C00E96250 /* MediaCollectionReportHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MediaCollectionReportHelper.swift; path = ../MediaCollectionReportHelper.swift; sourceTree = "<group>"; };
 		3D663A4825E9914900E96250 /* MediaDBService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDBService.swift; sourceTree = "<group>"; };
 		3D9D531625D5E73100F33EB7 /* MediaSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSession.swift; sourceTree = "<group>"; };
 		3D9D531A25D5E75B00F33EB7 /* MediaEventTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaEventTracking.swift; sourceTree = "<group>"; };
@@ -210,7 +210,7 @@
 		AC36EC3425C9F11E00A37345 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				3D663A4425E71E4C00E96250 /* MediaSessionHelper.swift */,
+				3D663A4425E71E4C00E96250 /* MediaCollectionReportHelper.swift */,
 				3D2C831F25DEFFEA0064E0D4 /* MediaTimer.swift */,
 				3D2C836625E5CFAA0064E0D4 /* mediacollection */,
 				2E20D4A425CA154C00B5CCB8 /* MediaRule.swift */,
@@ -425,7 +425,7 @@
 				3D2C833725E4932A0064E0D4 /* MediaRealTimeSession.swift in Sources */,
 				3D2C832025DEFFEA0064E0D4 /* MediaTimer.swift in Sources */,
 				3D2C831425DE65C70064E0D4 /* MediaService.swift in Sources */,
-				3D663A4525E71E4C00E96250 /* MediaSessionHelper.swift in Sources */,
+				3D663A4525E71E4C00E96250 /* MediaCollectionReportHelper.swift in Sources */,
 				3D2C831825DE65EF0064E0D4 /* MediaOfflineSession.swift in Sources */,
 				2E1691A625E468D30010D14A /* MediaType.swift in Sources */,
 				3D2C836325E5CADC0064E0D4 /* MediaState.swift in Sources */,

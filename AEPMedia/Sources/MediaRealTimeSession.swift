@@ -13,61 +13,48 @@ import Foundation
 import AEPCore
 import AEPServices
 
-class MediaRealTimeSession : MediaSession {
+class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
     
     private let LOG_TAG = "MediaRealTimeSession"
     private static let MAX_RETRY_COUNT = 2
     private static let MAX_ALLOWED_DURATION_BETWEEN_HITS: TimeInterval = 60
     
     private var hits: [MediaHit] = []
-    private var state: MediaState
-    private var sessionId: String?
-    private var isSessionActive: Bool?
+    private var sessionId: String?    
     private var isSendingHit: Bool?
     private var sessionStartRetryCount: Int?
     private var lastRefTS: TimeInterval = 0
     private var sessionRetryCount = 0
-    
-    private let id: String;
+        
     
     init(id: String, state: MediaState) {
-        self.id = id
-        self.state = state
+        super.init(id: id, mediaState: state)
+        eventsHandler = self
     }
     
-    func queue(hit: MediaHit?) {
-        guard let hit = hit else {
-            Log.debug(label: LOG_TAG, "\(#function) - Returning early. MediaHit passed is nil.")
-            return
-        }
+    func queue(hit: MediaHit) {
+        
         hits.append(hit)
     }
-    
-    func process() {
+            
+    func processSession() {
+        
         trySendHit()
     }
     
-    func end() {
-        if !(isSessionActive ?? false){
-            Log.trace(label: LOG_TAG, "\(#function) - Session is already ended.")
-            return
-        }
+    func endSession() {
         
         isSessionActive = false
     }
     
-    func abort() {
-        if !(isSessionActive ?? false){
-            Log.trace(label: LOG_TAG, "\(#function) - Session is already ended.")
-            return
-        }
+    func abortSession() {
         
         isSessionActive = false
         hits.removeAll()
     }
     
     func finishedProcessing() -> Bool {
-        return !(isSessionActive ?? false) && !(isSendingHit ?? false) && hits.isEmpty
+        return !isSessionActive && !(isSendingHit ?? false) && hits.isEmpty
     }
     
     private func trySendHit() {
@@ -112,12 +99,12 @@ class MediaRealTimeSession : MediaSession {
         var urlString = "";
         
         if isSessionStartHit {
-            urlString = MediaSessionHelper.getTrackingURL(url: state.getMediaCollectionServer())
+            urlString = MediaCollectionReportHelper.getTrackingURL(url: mediaState.getMediaCollectionServer())
         } else {
-            urlString = MediaSessionHelper.getTrackingURLForEvents(url: state.getMediaCollectionServer(), sessionId: sessionId)
+            urlString = MediaCollectionReportHelper.getTrackingURLForEvents(url: mediaState.getMediaCollectionServer(), sessionId: sessionId)
         }
         
-        let body = MediaSessionHelper.generateHitReport(state: state, hit: [hit])
+        let body = MediaCollectionReportHelper.generateHitReport(state: mediaState, hit: [hit])
         Log.debug(label: LOG_TAG, "trySendHit - \(eventType) Generated url \(urlString), Generated body \(body)")
         isSendingHit = true;
                 
@@ -132,8 +119,8 @@ class MediaRealTimeSession : MediaSession {
                     } else {
                         if isSessionStartHit {
                             if let sessionReponseFragment = connection.responseHttpHeader(forKey: "Location"), !sessionReponseFragment.isEmpty {
-                                let mcSessionId = MediaSessionHelper.extractSessionID(sessionResponseFragment: sessionReponseFragment)
-                                Log.trace(label: self.LOG_TAG, "\(#function) - \(eventType) Media collection endpoint created internal session with id \(mcSessionId)")
+                                let mcSessionId = MediaCollectionReportHelper.extractSessionID(sessionResponseFragment: sessionReponseFragment)
+                                Log.trace(label: self.LOG_TAG, "\(#function) - \(eventType) Media collection endpoint created internal session with id \(String(describing: mcSessionId))")
                                 
                                 var shouldRetry = false
                                 

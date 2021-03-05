@@ -10,14 +10,83 @@
  */
 
 import Foundation
+import AEPServices
 
-protocol MediaSession {
+class MediaSession {
+    
+    private let LOG_TAG = "MediaSession"
+    var id: String
+    var mediaState: MediaState
+    var isSessionActive: Bool
+    var eventsHandler: MediaSessionEventsHandler?
+    
+    init(id: String, mediaState: MediaState) {
+        self.id = id
+        self.mediaState = mediaState
+        isSessionActive = true
+    }
+    
+    func isReadyToSendHit() -> Bool {
+         
+        guard mediaState.privacyStatus == .optedIn else {
+            return false
+        }
+        
+        //TODO: implement rest of the conditions.
+        
+        return true
+    }
+    
+    func queue(hit: MediaHit?) {
+        guard let hit = hit else {
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to queue hit. MediaHit passed is nil.")
+            return
+        }
+        
+        guard isSessionActive else {
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to queue hit. Media Session is inactive.")
+            return
+        }
+        
+        eventsHandler?.queue(hit: hit)
+    }
+    
+    func process() {
+        
+        guard isSessionActive else {
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to process session. Session (\(id)) is inactive")
+            return
+        }
+        
+        eventsHandler?.processSession()
+    }
 
-    func queue(hit: MediaHit?)
+    func end() {
+        
+        guard isSessionActive else {
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to end session. Session (\(id)) is inactive")
+            return
+        }
+        
+        eventsHandler?.endSession()
+    }
 
-    func process()    
+    func abort() {
+        
+        guard isSessionActive else {
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to abort session. Session (\(id)) is inactive")
+            return
+        }
+        
+        eventsHandler?.abortSession()
+    }
+}
 
-    func end()
 
-    func abort()
+protocol MediaSessionEventsHandler {
+    
+    func processSession()
+    func endSession()
+    func abortSession()
+    func queue(hit: MediaHit)
 }

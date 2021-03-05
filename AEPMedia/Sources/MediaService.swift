@@ -28,7 +28,7 @@ class MediaService : MediaProcessor {
         startTick();
     }
     
-    func createSession(state: MediaState) -> String? {
+    func createSession(state: MediaState) -> MediaSession? {
         
         guard mediaState.privacyStatus != .optedOut else {
             Log.debug(label: LOG_TAG, "Could not start new media session. Privacy is opted out.")
@@ -37,15 +37,16 @@ class MediaService : MediaProcessor {
         
         let isDownloaded = false //TODO: Need to update how we determine isDownloaded
         let sessionId = UUID().uuidString
+        var session: MediaSession
         if isDownloaded {
-            mediaSessions[sessionId] = MediaOfflineSession(id: sessionId, state: state)
+            session = MediaOfflineSession(id: sessionId, state: state)
         } else {
-            mediaSessions[sessionId] = MediaRealTimeSession(id: sessionId, state: state)
+            session = MediaRealTimeSession(id: sessionId, state: state)
         }
         
+        mediaSessions[sessionId] = session
         Log.trace(label: LOG_TAG, "Created a new session \(sessionId)")
-        
-        return sessionId
+        return session
     }
     
     func endSession(sessionId: String) {

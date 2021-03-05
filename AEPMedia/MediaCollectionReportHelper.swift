@@ -11,20 +11,9 @@
 
 import Foundation
 
-class MediaSessionHelper {
+class MediaCollectionReportHelper {
     
     private init() {}
-    
-    static func isReadyToSendHit(state: MediaState) -> Bool {
-         
-        guard state.privacyStatus == .optedIn else {
-            return false
-        }
-        
-        //TODO: implement rest of the conditions.
-        
-        return true
-    }
     
     static func getTrackingURL(url: String) -> String {
         //TODO Define this function
@@ -45,5 +34,4 @@ class MediaSessionHelper {
         //TDOO implement this function.
         return ""
     }
-    
 }

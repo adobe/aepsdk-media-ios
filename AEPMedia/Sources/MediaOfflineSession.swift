@@ -13,7 +13,7 @@ import Foundation
 import AEPCore
 import AEPServices
 
-class MediaOfflineSession : MediaSession {
+class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
     
     enum MediaSessionState {
         // Session absent in our store / exceeded retries.
@@ -27,66 +27,42 @@ class MediaOfflineSession : MediaSession {
         // Session failed to report to backend. We will clear the hits from db if we exceed retries.
         case Failed
     }
-    
-    private let id: String
-    private var state: MediaState
+            
     private let LOG_TAG = "MediaOfflineSession"
     private var mediaDBService: MediaDBService
-    private var isReportingSession: Bool
-    private var isSessionActive: Bool
+    private var isReportingSession: Bool    
     private let MAX_ALLOWED_FAILURE: UInt8 = 2
     private var failureCount = 0
     private var sessionState: MediaSessionState
     
                     
     init(id: String, state: MediaState) {
-        self.id = id
-        self.state = state
-        self.mediaDBService = MediaDBService()
-        self.isReportingSession = false
-        self.isSessionActive = true
+        super.init(id: id, mediaState: state)
+        mediaDBService = MediaDBService()
+        isReportingSession = false
+        eventsHandler = self
         sessionState = .Active
     }
     
-    func queue(hit: MediaHit?) {
-        
-        guard let hit = hit else {
-            Log.debug(label: LOG_TAG, "\(#function) - Session \(id) hit is null.")
-            return
-        }
-        
-        guard isSessionActive else {
-            Log.debug(label: LOG_TAG, "\(#function) - Session \(id) not Active.")
-            return
-        }
+    func queue(hit: MediaHit) {                                
         
         mediaDBService.persistHit(hit: hit, sessionId: id)
-        Log.debug(label: LOG_TAG, "\(#function) - Session \(id) persisting hit \(hit.eventType).")
+        Log.debug(label: LOG_TAG, "\(#function) - Session (\(id)) persisting hit (\(hit.eventType)).")
     }
     
-    func process() {
+    func processSession() {
         
     }
                     
-    func end() {
-        guard isSessionActive else {
-            Log.debug(label: LOG_TAG, "\(#function) - Session \(id) is inactive")
-            return
-        }
-        
+    func endSession() {
         reportSession()
-        Log.debug(label: LOG_TAG, "\(#function) - Session \(id) is ended")
+        Log.debug(label: LOG_TAG, "\(#function) - Session (\(id)) is ended")
         isSessionActive = false
     }
     
-    func abort() {
+    func abortSession() {
         
-        guard isSessionActive else {
-            Log.debug(label: LOG_TAG, "\(#function) - Session \(id) is inactive")
-            return
-        }
-        
-        mediaDBService.deleteSessionHits(sessionId: id)
+        mediaDBService.deleteHits(sessionId: id)
         isSessionActive = false
         Log.debug(label: LOG_TAG, "\(#function) - Session \(id) is aborted.")
     }
@@ -97,19 +73,19 @@ class MediaOfflineSession : MediaSession {
             return
         }
         
-        guard MediaSessionHelper.isReadyToSendHit(state: state) else {
+        guard isReadyToSendHit() else {
             Log.trace(label: LOG_TAG, "\(#function) - Exiting as session is not ready for sending hits.")
             return
         }
         
         var hits = mediaDBService.getHits(sessionId: id)
-        let url = MediaSessionHelper.getTrackingURL(url: state.getMediaCollectionServer())
-        let body = MediaSessionHelper.generateHitReport(state: state, hit: hits)
+        let url = MediaCollectionReportHelper.getTrackingURL(url: mediaState.getMediaCollectionServer())
+        let body = MediaCollectionReportHelper.generateHitReport(state: state, hit: hits)
         
         guard !url.isEmpty, !body.isEmpty else {
             Log.debug(label: LOG_TAG, "\(#function) - Could not generate downloaded content report from persisted hits for session \(id). Clearing persisted pings.")
             if shouldClearSession() {
-                mediaDBService.deleteSessionHits(sessionId: id)
+                mediaDBService.deleteHits(sessionId: id)
                 sessionState = .Invalid
             }
             return
@@ -133,7 +109,7 @@ class MediaOfflineSession : MediaSession {
                     
                         if self.shouldClearSession() {
                             Log.trace(label: self.LOG_TAG, "ReportSessions - Clearing persisted pings for session \(self.id).")
-                            self.mediaDBService.deleteSessionHits(sessionId: self.id)
+                            self.mediaDBService.deleteHits(sessionId: self.id)
                             return
                         }
                     }
@@ -155,11 +131,11 @@ class MediaOfflineSession : MediaSession {
     private func shouldClearSession() -> Bool {
         
         if (sessionState == .Reported || sessionState == .Invalid) {
-            return true;
+            return true
         }
         
         if (sessionState == .Failed) {
-            return failureCount > MAX_ALLOWED_FAILURE;
+            return failureCount > MAX_ALLOWED_FAILURE
         }
         
         return false
