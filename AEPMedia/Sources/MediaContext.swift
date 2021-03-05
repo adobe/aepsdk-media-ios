@@ -94,11 +94,11 @@ class MediaContext {
         }
     }
 
-    func setQoEInfo(qoeInfo: QoEInfo?) {
+    func setQoeInfo(qoeInfo: QoEInfo?) {
         self.qoeInfo = qoeInfo
     }
     
-    func getQoEInfo() -> QoEInfo? {
+    func getQoeInfo() -> QoEInfo? {
         return self.qoeInfo
     }
     

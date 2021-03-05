@@ -78,22 +78,19 @@ class MediaCollectionHelper {
         var retDict = [String: Any]()
 
         let mediaInfo = mediaContext.getMediaInfo()
-
-        if !mediaInfo.toMap().isEmpty {
-            retDict[MediaConstants.MediaCollection.Media.ID] = mediaInfo.id
-            retDict[MediaConstants.MediaCollection.Media.NAME] = mediaInfo.name
-            retDict[MediaConstants.MediaCollection.Media.LENGTH] = mediaInfo.length
-            retDict[MediaConstants.MediaCollection.Media.CONTENT_TYPE] = mediaInfo.streamType
-            retDict[MediaConstants.MediaCollection.Media.STREAM_TYPE] = mediaInfo.mediaType
-            retDict[MediaConstants.MediaCollection.Media.RESUME] = mediaInfo.resumed
-        }
+        retDict[MediaConstants.MediaCollection.Media.ID] = mediaInfo.id
+        retDict[MediaConstants.MediaCollection.Media.NAME] = mediaInfo.name
+        retDict[MediaConstants.MediaCollection.Media.LENGTH] = mediaInfo.length
+        retDict[MediaConstants.MediaCollection.Media.CONTENT_TYPE] = mediaInfo.streamType
+        retDict[MediaConstants.MediaCollection.Media.STREAM_TYPE] = mediaInfo.mediaType
+        retDict[MediaConstants.MediaCollection.Media.RESUME] = mediaInfo.resumed
 
         let metadata = mediaContext.getMediaMetadata()
 
-        for entry in metadata {
-            if standardMediaMetadataMapping[entry.key] != nil {
-                let newKey = getMediaCollectionKey(key: entry.key)
-                retDict[newKey] = entry.value
+        for (key,value) in metadata {
+            if standardMediaMetadataMapping[key] != nil {
+                let newKey = getMediaCollectionKey(key: key)
+                retDict[newKey] = value
             }
         }
 
@@ -101,11 +98,7 @@ class MediaCollectionHelper {
     }
 
     class func getMediaCollectionKey(key: String) -> String {
-        if standardMediaMetadataMapping[key] != nil {
-            return standardMediaMetadataMapping[key] ?? key
-        }
-
-        return key
+        return standardMediaMetadataMapping[key] ?? key
     }
 
     class func extractMediaMetadata(mediaContext: MediaContext) -> [String: String] {
@@ -113,9 +106,10 @@ class MediaCollectionHelper {
 
         let metadata = mediaContext.getMediaMetadata()
 
-        for entry in metadata {
-            if standardMediaMetadataMapping[entry.key] == nil {
-                retDict[entry.key] = entry.value
+        // standard metadata is removed and only custom metadata will be returned.
+        for (key,value) in metadata {
+            if standardMediaMetadataMapping[key] == nil {
+                retDict[key] = value
             }
         }
 
