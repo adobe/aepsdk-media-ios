@@ -38,6 +38,7 @@
 		D665898625ED5F3400D8593E /* MediaHitProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D665898525ED5F2A00D8593E /* MediaHitProcessor.swift */; };
 		D665899525ED5FDA00D8593E /* MediaHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C836925E5CFDF0064E0D4 /* MediaHit.swift */; };
 		D665899925ED654100D8593E /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D665899825ED654100D8593E /* TestHelpers.swift */; };
+		D6658AD925F2D9C100D8593E /* Double+Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6658AD825F2D9C100D8593E /* Double+Media.swift */; };
 		E2683CEE7CCC1BB92D69FC07 /* Pods_AEPMedia_AEPMediaTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81B6B11A87DE4E2228FA46FB /* Pods_AEPMedia_AEPMediaTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -98,6 +99,7 @@
 		D6424A8B25DDDD0C00ED94F9 /* MediaObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaObject.swift; sourceTree = "<group>"; };
 		D665898525ED5F2A00D8593E /* MediaHitProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaHitProcessor.swift; sourceTree = "<group>"; };
 		D665899825ED654100D8593E /* TestHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
+		D6658AD825F2D9C100D8593E /* Double+Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Media.swift"; sourceTree = "<group>"; };
 		E8A954C12C9495CABE12814A /* Pods-AEPMedia-AEPMediaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -244,6 +246,7 @@
 				3D9D531A25D5E75B00F33EB7 /* MediaEventTracking.swift */,
 				3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */,
 				3D2C836225E5CADC0064E0D4 /* MediaState.swift */,
+				D6658AD825F2D9C100D8593E /* Double+Media.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -434,6 +437,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D6424A8025DDB3BE00ED94F9 /* MediaCollectionHelper.swift in Sources */,
+				D6658AD925F2D9C100D8593E /* Double+Media.swift in Sources */,
 				2E1691A625E468D30010D14A /* MediaType.swift in Sources */,
 				3D2C836325E5CADC0064E0D4 /* MediaState.swift in Sources */,
 				AC36EC4325C9F11E00A37345 /* MediaConstants.swift in Sources */,

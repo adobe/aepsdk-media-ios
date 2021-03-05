@@ -35,8 +35,8 @@ class MediaHit: Equatable {
             NSDictionary(dictionary: lhs.params).isEqual(to: rhs.params) &&
             lhs.metadata == rhs.metadata &&
             NSDictionary(dictionary: lhs.qoeData).isEqual(to: rhs.qoeData)  &&
-            lhs.playhead == rhs.playhead &&
-            lhs.timestamp == rhs.timestamp
+            lhs.playhead.isAlmostEqual(rhs.playhead) &&
+            lhs.timestamp.isAlmostEqual(rhs.timestamp)
     }
 
     init(eventType: String, params: [String: Any], metadata: [String: String], qoeData: [String: Any], playhead: Double, ts: TimeInterval) {
