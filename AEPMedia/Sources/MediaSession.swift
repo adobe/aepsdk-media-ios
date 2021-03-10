@@ -14,16 +14,31 @@ import AEPServices
 
 class MediaSession {
     
-    private let LOG_TAG = "MediaSession"
+    enum MediaSessionState {
+        // Session absent in our store / exceeded retries.
+        case Invalid
+        // Session is currently being tracked.
+        case Active
+        // Session is complete and waiting to be reported.
+        case Complete
+        // Session is reported to backend and we will clear the hits from db.
+        case Reported
+        // Session failed to report to backend. We will clear the hits from db if we exceed retries.
+        case Failed
+    }
+        
     var id: String
     var mediaState: MediaState
     var isSessionActive: Bool
     var eventsHandler: MediaSessionEventsHandler?
+    var dispatchQueue: DispatchQueue
+    var sessionEndHandler: (() -> Void)?
     
-    init(id: String, mediaState: MediaState) {
+    init(id: String, mediaState: MediaState, processingQueue: DispatchQueue) {
         self.id = id
         self.mediaState = mediaState
         isSessionActive = true
+        dispatchQueue = processingQueue
     }
     
     func isReadyToSendHit() -> Bool {
@@ -39,54 +54,53 @@ class MediaSession {
     
     func queue(hit: MediaHit?) {
         guard let hit = hit else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to queue hit. MediaHit passed is nil.")
+            Log.debug(label: eventsHandler?.LOG_TAG ?? "", "\(#function) - Unable to queue hit. MediaHit passed is nil.")
             return
         }
         
         guard isSessionActive else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to queue hit. Media Session is inactive.")
+            Log.debug(label: eventsHandler?.LOG_TAG ?? "", "\(#function) - Unable to queue hit. Media Session is inactive.")
             return
         }
         
-        eventsHandler?.queue(hit: hit)
-    }
-    
-    func process() {
-        
-        guard isSessionActive else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to process session. Session (\(id)) is inactive")
-            return
+        dispatchQueue.async {
+            self.eventsHandler?.queueMediaHit(hit: hit)
         }
-        
-        eventsHandler?.processSession()
     }
 
-    func end() {
+    func end(onSessionEnd sessionEndHandler: (() -> Void)? = nil) {
         
         guard isSessionActive else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to end session. Session (\(id)) is inactive")
+            Log.debug(label: eventsHandler?.LOG_TAG ?? "", "\(#function) - Unable to end session. Session (\(id)) is inactive")
             return
         }
         
-        eventsHandler?.endSession()
+        self.sessionEndHandler = sessionEndHandler
+        dispatchQueue.async {
+            self.eventsHandler?.endSession()
+        }
     }
 
     func abort() {
         
         guard isSessionActive else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to abort session. Session (\(id)) is inactive")
+            Log.debug(label: eventsHandler?.LOG_TAG ?? "", "\(#function) - Unable to abort session. Session (\(id)) is inactive")
             return
         }
         
-        eventsHandler?.abortSession()
+        dispatchQueue.async {
+            self.eventsHandler?.abortSession()
+        }
     }
 }
 
-
+/**
+ Declares the functions that handles Media hit related events in Media session.
+ */
 protocol MediaSessionEventsHandler {
     
-    func processSession()
+    var LOG_TAG: String {get}
     func endSession()
     func abortSession()
-    func queue(hit: MediaHit)
+    func queueMediaHit(hit: MediaHit)
 }

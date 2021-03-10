@@ -20,15 +20,23 @@ class MediaService : MediaProcessor {
     
     private var mediaSessions: [String: MediaSession] = [:]
     private var mediaState: MediaState
-    private var timer: MediaTimer?
-    
+    private var dispatchQueue = DispatchQueue(label: "MediaService.DispatchQueue")
+    private var mediaDBService: MediaDBService
     
     init(mediaState: MediaState) {
         self.mediaState = mediaState
-        startTick();
+        mediaDBService = MediaDBService()
+        initCachedSessions()
     }
     
-    func createSession(state: MediaState) -> MediaSession? {
+    private func initCachedSessions() {
+        let cachedSessionIds = mediaDBService.getCachedSessionIds()
+        cachedSessionIds.forEach { sessionId in
+            mediaSessions[sessionId] = MediaOfflineSession(id: sessionId, state: mediaState, processingQueue: dispatchQueue, mediaDBService: mediaDBService)
+        }
+    }
+    
+    func createSession(state: MediaState) -> String? {
         
         guard mediaState.privacyStatus != .optedOut else {
             Log.debug(label: LOG_TAG, "Could not start new media session. Privacy is opted out.")
@@ -39,27 +47,15 @@ class MediaService : MediaProcessor {
         let sessionId = UUID().uuidString
         var session: MediaSession
         if isDownloaded {
-            session = MediaOfflineSession(id: sessionId, state: state)
+            session = MediaOfflineSession(id: sessionId, state: state, processingQueue: dispatchQueue, mediaDBService: mediaDBService)
         } else {
-            session = MediaRealTimeSession(id: sessionId, state: state)
+            session = MediaRealTimeSession(id: sessionId, state: state, processingQueue: dispatchQueue)
         }
         
         mediaSessions[sessionId] = session
         Log.trace(label: LOG_TAG, "Created a new session \(sessionId)")
-        return session
+        return sessionId
     }
-    
-    func endSession(sessionId: String) {
-        guard mediaSessions.keys.contains(sessionId) else {
-            Log.debug(label: LOG_TAG, "Could not end media session. Invalid session id \(sessionId).")
-            return
-        }
-        
-        mediaSessions[sessionId]?.end()
-        mediaSessions.removeValue(forKey: sessionId)
-        Log.trace(label: LOG_TAG, "Successfully ends the session \(sessionId)")
-    }
-    
     
     func processHit(sessionId: String?, hit : MediaHit) {
         
@@ -78,41 +74,31 @@ class MediaService : MediaProcessor {
         session?.queue(hit: hit)
     }
     
-    func endSession(sessionId : String?) {
+    func endSession(sessionId: String) {
         
-        guard let sessionId = sessionId, !sessionId.isEmpty else {
-            Log.debug(label: LOG_TAG, "Null or empty session id passed.")
+        guard mediaSessions.keys.contains(sessionId) else {
+            Log.debug(label: LOG_TAG, "Could not end media session. Invalid session id \(sessionId).")
             return
         }
         
-        let session = mediaSessions[sessionId]
-        session?.end()
-        Log.trace(label: LOG_TAG, "endSession - Session \(sessionId) ended.")
-
-    }
-    
-    func startTick() {
-        timer = MediaTimer(label: "MediaSessionProcessingTimer", event: processMediaSession)
-        timer?.startTimer(repeating: TIMER_REPEAT_INTERVAL)
-    }
-    
-    func processMediaSession() {
+        mediaSessions[sessionId]?.end {
+            self.mediaSessions.removeValue(forKey: sessionId)
+            Log.trace(label: self.LOG_TAG, "Successfully ends the session (\(sessionId))")
+        }
         
-        guard !mediaSessions.isEmpty else {
-            Log.trace(label: LOG_TAG, "\(#function) - No Media sessions to process.")
+        Log.trace(label: LOG_TAG, "Scheduled end of the session (\(sessionId))")
+    }
+    
+    func abort(sessionId: String) {
+        
+        guard mediaSessions.keys.contains(sessionId) else {
+            Log.debug(label: LOG_TAG, "\(#function) Unable to abort session (\(sessionId)). Session is missing.")
             return
         }
         
-        mediaSessions.forEach { sessionId, mediaSession in
-            mediaSession.process()
-            mediaSessions.removeValue(forKey: sessionId)
-        }
-        Log.trace(label: LOG_TAG, "Completed processing all media sessions.")
-    }
-    
-    func stopTimer() {
-        timer?.cancelTimer()
-        timer = nil
+        mediaSessions[sessionId]?.abort()
+        mediaSessions.removeValue(forKey: sessionId)
+        Log.trace(label: LOG_TAG, "\(#function) Successfully aborted session (\(sessionId)).")
     }
     
     func abortAllSession() {

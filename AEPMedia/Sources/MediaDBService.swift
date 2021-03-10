@@ -26,5 +26,10 @@ struct MediaDBService {
         //TODO implement this function.
         return [MediaHit]()
     }
+    
+    func getCachedSessionIds() -> [String] {
+        //TODO implement this function.
+        return [String]()
+    }
 
 }

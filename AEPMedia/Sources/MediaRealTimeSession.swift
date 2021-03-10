@@ -14,8 +14,8 @@ import AEPCore
 import AEPServices
 
 class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
+    var LOG_TAG: String = "MediaRealTimeSession"
     
-    private let LOG_TAG = "MediaRealTimeSession"
     private static let MAX_RETRY_COUNT = 2
     private static let MAX_ALLOWED_DURATION_BETWEEN_HITS: TimeInterval = 60
     
@@ -25,30 +25,24 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
     private var sessionStartRetryCount: Int?
     private var lastRefTS: TimeInterval = 0
     private var sessionRetryCount = 0
+                
+    init(id: String, state: MediaState, processingQueue: DispatchQueue) {
         
-    
-    init(id: String, state: MediaState) {
-        super.init(id: id, mediaState: state)
+        super.init(id: id, mediaState: state, processingQueue: processingQueue)
         eventsHandler = self
     }
     
-    func queue(hit: MediaHit) {
-        
+    func queueMediaHit(hit: MediaHit) {
         hits.append(hit)
-    }
-            
-    func processSession() {
-        
         trySendHit()
     }
     
     func endSession() {
-        
         isSessionActive = false
+        sessionEndHandler?()
     }
     
     func abortSession() {
-        
         isSessionActive = false
         hits.removeAll()
     }
@@ -85,18 +79,18 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
             lastRefTS = hit.ts
         }
         
-        // We currently just lof the error and don't do any error correction.
+        // We currently just log the error and don't do any error correction.
         // This should never happen. Might happen in some devices if app goes to sleep and timer stops ticking.
         let currRefTs = hit.ts
-        let diff = currRefTs - lastRefTS;
+        let diff = currRefTs - lastRefTS
         
-        if (diff >= MediaRealTimeSession.MAX_ALLOWED_DURATION_BETWEEN_HITS) {
-            Log.warning(label: LOG_TAG, "trySendHit - \(eventType) TS difference from previous hit is \(diff) greater than 60 seconds.")
+        if diff >= MediaRealTimeSession.MAX_ALLOWED_DURATION_BETWEEN_HITS {
+            Log.warning(label: LOG_TAG, "trySendHit - (\(eventType)) TS difference from previous hit is \(diff) greater than 60 seconds.")
         }
         
-        lastRefTS = currRefTs;
+        lastRefTS = currRefTs
         
-        var urlString = "";
+        var urlString = ""
         
         if isSessionStartHit {
             urlString = MediaCollectionReportHelper.getTrackingURL(url: mediaState.getMediaCollectionServer())
@@ -106,47 +100,64 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
         
         let body = MediaCollectionReportHelper.generateHitReport(state: mediaState, hit: [hit])
         Log.debug(label: LOG_TAG, "trySendHit - \(eventType) Generated url \(urlString), Generated body \(body)")
-        isSendingHit = true;
+        isSendingHit = true
                 
         if let url = URL.init(string: urlString){
             let networkService = ServiceProvider.shared.networkService
             let networkrequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: [String:String](), connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
             networkService.connectAsync(networkRequest: networkrequest) { connection in
+                self.dispatchQueue.async {
                 if connection.error == nil {
                     let statusCode = connection.response?.statusCode ?? -1
-                    if MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
+                    if !MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
                         Log.debug(label: self.LOG_TAG, "\(#function) - \(eventType) Http failed with response code (\(statusCode))")
+                        self.handleProcessingError()
                     } else {
                         if isSessionStartHit {
                             if let sessionReponseFragment = connection.responseHttpHeader(forKey: "Location"), !sessionReponseFragment.isEmpty {
                                 let mcSessionId = MediaCollectionReportHelper.extractSessionID(sessionResponseFragment: sessionReponseFragment)
                                 Log.trace(label: self.LOG_TAG, "\(#function) - \(eventType) Media collection endpoint created internal session with id \(String(describing: mcSessionId))")
                                 
-                                var shouldRetry = false
-                                
                                 if isSessionStartHit, let mcSessionId = mcSessionId, mcSessionId.count > 0 {
-                                    self.sessionId = mcSessionId;
+                                    self.sessionId = mcSessionId
+                                    self.handleProcessingSuccess()
                                 } else if (isSessionStartHit) {
-                                    shouldRetry = self.sessionRetryCount < MediaRealTimeSession.MAX_RETRY_COUNT
-                                    self.sessionRetryCount += 1
+                                    self.handleProcessingError()
                                 }
                                 
                                 self.isSendingHit = false
-                                
-                                if (!shouldRetry) {
-                                    self.hits.removeFirst()
-                                }
                             }
                         } else {
-                            Log.trace(label: self.LOG_TAG, "\(#function) \(eventType) Media collection endpoint returns nil location header.")
+                            self.handleProcessingSuccess()
                         }
-                        
                     }
-                } else if let error = connection.error as? URLError, error.code == URLError.Code.notConnectedToInternet {
-                    //TODO handle no internet connection here.
                 } else {
-                    //TODO handle all other errors here.
+                    self.handleProcessingError()
                 }
+            }
+        }
+        }}
+    
+    private func handleProcessingSuccess() {
+        sessionRetryCount = 0
+        hits.removeFirst()
+        if hits.count > 0 {
+            dispatchQueue.async {
+                self.trySendHit()
+            }
+        }
+    }
+    
+    private func handleProcessingError(){
+        if sessionRetryCount >= MediaRealTimeSession.MAX_RETRY_COUNT {
+            hits.removeFirst()
+            sessionRetryCount = 0
+        } else {
+            sessionRetryCount += 1
+        }
+        if hits.count > 0 {
+            dispatchQueue.async {
+                self.trySendHit()
             }
         }
     }

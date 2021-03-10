@@ -13,5 +13,5 @@ import Foundation
 
 protocol MediaProcessor {
 
-    func createSession(state: MediaState) -> MediaSession?
+    func createSession(state: MediaState) -> String?
 }
