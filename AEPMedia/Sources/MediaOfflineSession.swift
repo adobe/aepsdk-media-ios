@@ -120,7 +120,7 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
             sessionEndHandler?()
         } else {
             failureCount += 1
-            dispatchQueue.async {
+            dispatchQueue.asyncAfter(deadline: .now() + .seconds(MediaSession.DURATION_BETWEEN_HITS_ON_FAILURE)) {
                 self.reportSession()
             }
         }

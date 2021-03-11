@@ -156,7 +156,7 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
             sessionRetryCount += 1
         }
         
-        dispatchQueue.asyncAfter(deadline: DispatchTime.init(uptimeNanoseconds: MediaSession.DURATION_BETWEEN_HITS_ON_FAILURE)) {
+        dispatchQueue.asyncAfter(deadline: DispatchTime.now() + .seconds(MediaSession.DURATION_BETWEEN_HITS_ON_FAILURE)) {
             if self.hits.count > 0 {
                 self.trySendHit()
             }

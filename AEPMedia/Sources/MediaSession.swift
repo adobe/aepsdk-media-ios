@@ -26,7 +26,7 @@ class MediaSession {
         // Session failed to report to backend. We will clear the hits from db if we exceed retries.
         case Failed
     }
-    static let DURATION_BETWEEN_HITS_ON_FAILURE: UInt64 = 30 * 1000_000_000  //Convert 30 seconds into nanoseconds.
+    static let DURATION_BETWEEN_HITS_ON_FAILURE = 30  //seconds
         
     var id: String
     var mediaState: MediaState
