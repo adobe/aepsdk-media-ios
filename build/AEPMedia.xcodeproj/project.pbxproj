@@ -24,7 +24,6 @@
 		2EF1DF3025E866930008925D /* MediaContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1DF2E25E866930008925D /* MediaContext.swift */; };
 		2EF1DF3125E866930008925D /* MediaCollectionHitGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1DF2F25E866930008925D /* MediaCollectionHitGenerator.swift */; };
 		2EF2299E25F82D2C00A94E3D /* FakeMediaProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF2299D25F82D2C00A94E3D /* FakeMediaProcessor.swift */; };
-		2EF229A225F830C100A94E3D /* MediaEventGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF229A125F830C100A94E3D /* MediaEventGenerator.swift */; };
 		2EFF1B5B25BF57FC00375965 /* AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EFF1B5125BF57FC00375965 /* AEPMedia.framework */; };
 		3D2C836325E5CADC0064E0D4 /* MediaState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C836225E5CADC0064E0D4 /* MediaState.swift */; };
 		3D2C836A25E5CFDF0064E0D4 /* MediaHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C836925E5CFDF0064E0D4 /* MediaHit.swift */; };
@@ -72,7 +71,6 @@
 		2EF1DF2E25E866930008925D /* MediaContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaContext.swift; sourceTree = "<group>"; };
 		2EF1DF2F25E866930008925D /* MediaCollectionHitGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaCollectionHitGenerator.swift; sourceTree = "<group>"; };
 		2EF2299D25F82D2C00A94E3D /* FakeMediaProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeMediaProcessor.swift; sourceTree = "<group>"; };
-		2EF229A125F830C100A94E3D /* MediaEventGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaEventGenerator.swift; sourceTree = "<group>"; };
 		2EFF1B5125BF57FC00375965 /* AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EFF1B5A25BF57FC00375965 /* AEPMediaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPMediaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D2C836225E5CADC0064E0D4 /* MediaState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaState.swift; sourceTree = "<group>"; };
@@ -218,7 +216,6 @@
 				2EEAC4E925D61ACF00759D3E /* MockExtension.swift */,
 				AC36EC3225C9F11E00A37345 /* TestableExtensionRuntime.swift */,
 				2EF2299D25F82D2C00A94E3D /* FakeMediaProcessor.swift */,
-				2EF229A125F830C100A94E3D /* MediaEventGenerator.swift */,
 			);
 			path = TestHelpers;
 			sourceTree = "<group>";
@@ -459,7 +456,6 @@
 				AC36EC4925C9F12D00A37345 /* MediaTests.swift in Sources */,
 				2EED4F5525CE299D00D2E88B /* MediaPublicTrackerTests.swift in Sources */,
 				2E20D4AB25CA544000B5CCB8 /* MediaRuleEngineTests.swift in Sources */,
-				2EF229A225F830C100A94E3D /* MediaEventGenerator.swift in Sources */,
 				2EEAC4FA25D61C9900759D3E /* TestHelpers.swift in Sources */,
 				2EF2299E25F82D2C00A94E3D /* FakeMediaProcessor.swift in Sources */,
 			);
