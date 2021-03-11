@@ -15,6 +15,8 @@ import AEPCore
 
 class MediaExtensionTests: MediaTestBase {
     
+    static let config: [String:Any] = [:]
+    
     override func setUp() {
         super.setupBase()
     }
@@ -68,9 +70,9 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
         // verify
-        XCTAssertEqual(media.sessionIdToTrackerIdMapping.count, 1)
-        let sessionId = media.sessionIdToTrackerIdMapping["testTracker"]
-        XCTAssertEqual(sessionId?.count, 36)
+        XCTAssertEqual(media.trackers.count, 1)
+        let tracker = media.trackers["testTracker"]
+        XCTAssertNotNil(tracker)
     }
     
     func testCreateTrackerWithEmptyConfig() {
@@ -85,9 +87,9 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
         // verify
-        XCTAssertEqual(media.sessionIdToTrackerIdMapping.count, 1)
-        let sessionId = media.sessionIdToTrackerIdMapping["testTracker"]
-        XCTAssertEqual(sessionId?.count, 36)
+        XCTAssertEqual(media.trackers.count, 1)
+        let tracker = media.trackers["testTracker"]
+        XCTAssertNotNil(tracker)
     }
     
     func testCreateTrackerWithInvalidTrackerId() {
@@ -102,7 +104,7 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
         // verify
-        XCTAssertEqual(media.sessionIdToTrackerIdMapping.count, 0)
+        XCTAssertEqual(media.trackers.count, 0)
     }
     
     func testCreateTrackerWithInvalidEvent() {
@@ -113,7 +115,7 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
         // verify
-        XCTAssertEqual(media.sessionIdToTrackerIdMapping.count, 0)
+        XCTAssertEqual(media.trackers.count, 0)
     }
     
     func testCreateMultipleTrackers() {
@@ -135,11 +137,11 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: createTrackerEvent2)
         waitForProcessing()
         // verify
-        XCTAssertEqual(media.sessionIdToTrackerIdMapping.count, 2)
-        let sessionId = media.sessionIdToTrackerIdMapping["testTracker1"]
-        let sessionId2 = media.sessionIdToTrackerIdMapping["testTracker2"]
-        XCTAssertEqual(sessionId?.count, 36)
-        XCTAssertEqual(sessionId2?.count, 36)
+        XCTAssertEqual(media.trackers.count, 2)
+        let tracker = media.trackers["testTracker1"]
+        let tracker2 = media.trackers["testTracker2"]
+        XCTAssertNotNil(tracker)
+        XCTAssertNotNil(tracker2)
     }
     
     func testCreateTrackerThenPrivacyOptedOut() {
@@ -154,25 +156,24 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
         // verify
-        XCTAssertEqual(media.sessionIdToTrackerIdMapping.count, 1)
-        let sessionId = media.sessionIdToTrackerIdMapping["testTracker"]
-        XCTAssertEqual(sessionId?.count, 36)
+        XCTAssertEqual(media.trackers.count, 1)
+        let tracker = media.trackers["testTracker"]
+        XCTAssertNotNil(tracker)
         // set privacy to opt out
         dispatchDefaultConfigAndSharedStates(configData: ["global.privacy" : "optedout"])
         waitForProcessing()
         // verify session id to tracker id mapping is cleared
-        XCTAssertEqual(media.sessionIdToTrackerIdMapping.count, 0)
+        XCTAssertEqual(media.trackers.count, 0)
     }
     
     // MARK: handleMediaTrack tests
     func testHandleMediaTrackHappyPath() {
         // setup
-        let sessionId = UUID().uuidString
-        media.sessionIdToTrackerIdMapping["testTracker"] = sessionId
+        let mediaService = media.mediaService
+        media.trackers["trackerId"] = FakeMediaCoreTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
-            MediaConstants.Tracker.ID: "testTracker",
-            MediaConstants.Tracker.SESSION_ID : sessionId,
+            MediaConstants.Tracker.ID: "trackerId",
             MediaConstants.Tracker.EVENT_NAME : MediaConstants.EventName.PLAY,
             MediaConstants.Tracker.EVENT_INTERNAL : false
         ]
@@ -181,17 +182,17 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: mediaTrackEvent)
         waitForProcessing()
         // verify
-        XCTAssertTrue(media.trackerCalled)
+        let tracker = media.trackers["trackerId"] as! FakeMediaCoreTracker
+        XCTAssertTrue(tracker.trackCalled)
     }
-    
+
     func testHandleMediaTrackNonMatchingTrackerId() {
         // setup
-        let sessionId = UUID().uuidString
-        media.sessionIdToTrackerIdMapping["testTracker"] = sessionId
+        let mediaService = media.mediaService
+        media.trackers["trackerId"] = FakeMediaCoreTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "differentTrackerId",
-            MediaConstants.Tracker.SESSION_ID : sessionId,
             MediaConstants.Tracker.EVENT_NAME : MediaConstants.EventName.PLAY,
             MediaConstants.Tracker.EVENT_INTERNAL : false
         ]
@@ -200,17 +201,17 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: mediaTrackEvent)
         waitForProcessing()
         // verify
-        XCTAssertFalse(media.trackerCalled)
+        let tracker = media.trackers["trackerId"] as! FakeMediaCoreTracker
+        XCTAssertFalse(tracker.trackCalled)
     }
-    
+
     func testHandleMediaTrackEmptyTrackerId() {
         // setup
-        let sessionId = UUID().uuidString
-        media.sessionIdToTrackerIdMapping["testTracker"] = sessionId
+        let mediaService = media.mediaService
+        media.trackers["trackerId"] = FakeMediaCoreTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "",
-            MediaConstants.Tracker.SESSION_ID : sessionId,
             MediaConstants.Tracker.EVENT_NAME : MediaConstants.EventName.PLAY,
             MediaConstants.Tracker.EVENT_INTERNAL : false
         ]
@@ -219,19 +220,21 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: mediaTrackEvent)
         waitForProcessing()
         // verify
-        XCTAssertFalse(media.trackerCalled)
+        let tracker = media.trackers["trackerId"] as! FakeMediaCoreTracker
+        XCTAssertFalse(tracker.trackCalled)
     }
-    
+
     func testHandleMediaTrackWithInvalidEvent() {
         // setup
-        let sessionId = UUID().uuidString
-        media.sessionIdToTrackerIdMapping["testTracker"] = sessionId
+        let mediaService = media.mediaService
+        media.trackers["trackerId"] = FakeMediaCoreTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let mediaTrackEvent = Event(name: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA, data: nil)
         // test
         mockRuntime.simulateComingEvent(event: mediaTrackEvent)
         waitForProcessing()
         // verify
-        XCTAssertFalse(media.trackerCalled)
+        let tracker = media.trackers["trackerId"] as! FakeMediaCoreTracker
+        XCTAssertFalse(tracker.trackCalled)
     }
 }

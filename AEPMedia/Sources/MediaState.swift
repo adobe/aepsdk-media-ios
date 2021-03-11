@@ -16,8 +16,7 @@ import AEPServices
 class MediaState {
     //TODO: implementation of this class.
     private let LOG_TAG = "MediaState"
-    private(set) var privacyStatus: PrivacyStatus = .unknown
-    private var trackerConfig: [String: Any]?
+    private(set) var privacyStatus: PrivacyStatus = MediaConstants.DEFAULT_PRIVACY_STATUS
     
     // Media Config
     private(set) var mediaTrackingServer: String?
@@ -44,9 +43,7 @@ class MediaState {
     private(set) var locHint: Int?
     private(set) var blob: String?
     private(set) var visitorCustomerIDs: [[String: Any]]?
-    
-    private(set) var dispatchQueue: DispatchQueue = DispatchQueue(label: MediaConstants.FRIENDLY_NAME)
-    
+        
     /// Takes the shared states map and updates the data within the Media State.
     /// - Parameter dataMap: The map contains the shared state data required by the Analytics SDK.
     func update(dataMap: [String: [String: Any]?]) {
@@ -95,12 +92,10 @@ class MediaState {
             Log.trace(label: LOG_TAG, "\(#function) - Failed to extract identity data (event data was nil).")
             return
         }
-        dispatchQueue.async {
-            self.ecid = identityData[MediaConstants.Identity.MARKETING_VISITOR_ID] as? String
-            self.locHint = identityData[MediaConstants.Identity.LOC_HINT] as? Int
-            self.blob = identityData[MediaConstants.Identity.BLOB] as? String
-            self.visitorCustomerIDs = identityData[MediaConstants.Identity.VISITOR_IDS_LIST] as? [[String:Any]]
-        }
+        self.ecid = identityData[MediaConstants.Identity.MARKETING_VISITOR_ID] as? String
+        self.locHint = identityData[MediaConstants.Identity.LOC_HINT] as? Int
+        self.blob = identityData[MediaConstants.Identity.BLOB] as? String
+        self.visitorCustomerIDs = identityData[MediaConstants.Identity.VISITOR_IDS_LIST] as? [[String:Any]]
     }
     
     /// Extracts the analytics data from the provided shared state data.
@@ -110,10 +105,8 @@ class MediaState {
             Log.trace(label: LOG_TAG, "\(#function) - Failed to extract analytics data (event data was nil).")
             return
         }
-        dispatchQueue.async {
-            self.aid = analyticsData[MediaConstants.Analytics.ANALYTICS_VISITOR_ID] as? String
-            self.vid = analyticsData[MediaConstants.Analytics.VISITOR_ID] as? String
-        }
+        self.aid = analyticsData[MediaConstants.Analytics.ANALYTICS_VISITOR_ID] as? String
+        self.vid = analyticsData[MediaConstants.Analytics.VISITOR_ID] as? String
     }
     
     func getPrivacyStatus() -> PrivacyStatus {
@@ -124,11 +117,4 @@ class MediaState {
         return mediaCollectionServer ?? ""
     }
     
-    func setTrackerConfig(with config: [String: Any]?) {
-        self.trackerConfig = config
-    }
-    
-    func getTrackerConfig() -> [String: Any]? {
-        return self.trackerConfig ?? nil
-    }
 }
