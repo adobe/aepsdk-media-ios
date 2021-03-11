@@ -32,6 +32,9 @@
 		AC36EC4325C9F11E00A37345 /* MediaConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3925C9F11E00A37345 /* MediaConstants.swift */; };
 		AC36EC4925C9F12D00A37345 /* MediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3025C9F11E00A37345 /* MediaTests.swift */; };
 		AC36EC4E25C9F13100A37345 /* TestableExtensionRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3225C9F11E00A37345 /* TestableExtensionRuntime.swift */; };
+		D6DAB46725F97E6200260DA8 /* MediaQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB46625F97E6200260DA8 /* MediaQueue.swift */; };
+		D6DAB46B25F9822800260DA8 /* SQLiteWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB46A25F9822800260DA8 /* SQLiteWrapper.swift */; };
+		D6DAB47725F99EE200260DA8 /* MediaDBHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB47625F99EE200260DA8 /* MediaDBHit.swift */; };
 		E2683CEE7CCC1BB92D69FC07 /* Pods_AEPMedia_AEPMediaTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81B6B11A87DE4E2228FA46FB /* Pods_AEPMedia_AEPMediaTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -85,6 +88,9 @@
 		AC36EC6725C9F2CD00A37345 /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CODE_OF_CONDUCT.md; path = ../CODE_OF_CONDUCT.md; sourceTree = "<group>"; };
 		AC36EC6825C9F2CD00A37345 /* COPYRIGHT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYRIGHT; path = ../COPYRIGHT; sourceTree = "<group>"; };
 		AE4C842E765A1CAD32D46871 /* Pods-AEPMedia-AEPMediaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.release.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.release.xcconfig"; sourceTree = "<group>"; };
+		D6DAB46625F97E6200260DA8 /* MediaQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaQueue.swift; sourceTree = "<group>"; };
+		D6DAB46A25F9822800260DA8 /* SQLiteWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteWrapper.swift; sourceTree = "<group>"; };
+		D6DAB47625F99EE200260DA8 /* MediaDBHit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDBHit.swift; sourceTree = "<group>"; };
 		E8A954C12C9495CABE12814A /* Pods-AEPMedia-AEPMediaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -224,6 +230,9 @@
 				3D9D531A25D5E75B00F33EB7 /* MediaEventTracking.swift */,
 				3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */,
 				3D2C836225E5CADC0064E0D4 /* MediaState.swift */,
+				D6DAB46625F97E6200260DA8 /* MediaQueue.swift */,
+				D6DAB46A25F9822800260DA8 /* SQLiteWrapper.swift */,
+				D6DAB47625F99EE200260DA8 /* MediaDBHit.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -406,6 +415,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2E1691A625E468D30010D14A /* MediaType.swift in Sources */,
+				D6DAB46B25F9822800260DA8 /* SQLiteWrapper.swift in Sources */,
 				3D2C836325E5CADC0064E0D4 /* MediaState.swift in Sources */,
 				AC36EC4325C9F11E00A37345 /* MediaConstants.swift in Sources */,
 				AC36EC4025C9F11E00A37345 /* Media.swift in Sources */,
@@ -415,7 +425,9 @@
 				3D2C836A25E5CFDF0064E0D4 /* MediaHit.swift in Sources */,
 				AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */,
 				3D9D531B25D5E75B00F33EB7 /* MediaEventTracking.swift in Sources */,
+				D6DAB46725F97E6200260DA8 /* MediaQueue.swift in Sources */,
 				2E20D4A625CA154C00B5CCB8 /* MediaRule.swift in Sources */,
+				D6DAB47725F99EE200260DA8 /* MediaDBHit.swift in Sources */,
 				AC36EC4225C9F11E00A37345 /* Media+PublicAPI.swift in Sources */,
 				3D9D531F25D5ED3E00F33EB7 /* MediaProcessor.swift in Sources */,
 				3D9D531725D5E73100F33EB7 /* MediaSession.swift in Sources */,
