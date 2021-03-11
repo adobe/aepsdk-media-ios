@@ -13,7 +13,8 @@ import XCTest
 @testable import AEPCore
 @testable import AEPMedia
 
-class MediaCoreTrackerTests: XCTestCase {
+class MediaEventTrackerTests: XCTestCase {
+    typealias RuleName = MediaEventTracker.RuleName
     // Disable preroll logic for tests
     static let media = MediaInfo(id: "id", name: "name", streamType: "aod", mediaType: MediaType.Audio, length: 60, resumed: false, prerollWaitingTime: 0, granularAdTracking: false)
 
@@ -59,7 +60,7 @@ class MediaCoreTrackerTests: XCTestCase {
 
     static let config: [String:Any] = [:]
     var fakeMediaProcessor: MediaProcessor?
-    var mediaTracker: MediaCoreTracker?
+    var mediaTracker: MediaEventTracker?
     var eventGenerator: MediaPublicTracker?
     var capturedEvents: [Event] = []
     var ts = TimeInterval()
@@ -83,7 +84,7 @@ class MediaCoreTrackerTests: XCTestCase {
         return mediaTracker!.track(eventData: eventData)
     }
     
-    func compareRuleNames(list1: [(name: Int, context: [String: Any])], list2:[(name: Int, context: [String: Any])]) -> Bool {
+    func compareRuleNames(list1: [(name: RuleName, context: [String: Any])], list2:[(name: RuleName, context: [String: Any])]) -> Bool {
         if list1.count != list2.count {
             return false
         }
@@ -108,7 +109,7 @@ class MediaCoreTrackerTests: XCTestCase {
         
         eventGenerator = MediaPublicTracker(dispatch: dispatch(event:), config: Self.config)
         fakeMediaProcessor = FakeMediaProcessor()
-        mediaTracker = MediaCoreTracker(hitProcessor: fakeMediaProcessor!, config: Self.config)
+        mediaTracker = MediaEventTracker(hitProcessor: fakeMediaProcessor!, config: Self.config)
     }
 
     private func registerMockExtension<T: Extension> (_ type: T.Type) {
@@ -121,7 +122,7 @@ class MediaCoreTrackerTests: XCTestCase {
     }
     
     
-    //MARK: MediaCoreTracker Unit Tests
+    //MARK: MediaEventTracker Unit Tests
     func testTrackeventHandleAbsentEventData() {
         XCTAssertFalse(mediaTracker!.track(eventData: nil))
     }
@@ -190,7 +191,7 @@ class MediaCoreTrackerTests: XCTestCase {
     func testTrackSessionStartWithDenyListMetadataPass() {
         eventGenerator?.trackSessionStart(info: Self.media!.toMap(), metadata: Self.denyListMetadata)
         XCTAssertTrue(handleTrackAPI())
-        let actualMetadata = mediaTracker!.mediaContext!.getMetadata()
+        let actualMetadata = mediaTracker!.mediaContext!.mediaMetadata
         XCTAssertEqual(Self.cleanMetadata, actualMetadata)
     }
     
@@ -469,7 +470,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.ADBREAK_START, info: Self.adbreak1!.toMap())
         XCTAssertTrue(handleTrackAPI())
         
-        let actualAdBreak = mediaTracker!.mediaContext!.getAdBreakInfo()
+        let actualAdBreak = mediaTracker!.mediaContext!.adBreakInfo
         XCTAssertEqual(Self.adbreak1, actualAdBreak)
     }
     
@@ -480,7 +481,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.ADBREAK_START)
         XCTAssertFalse(handleTrackAPI())
         
-        let actualAdBreak = mediaTracker!.mediaContext!.getAdBreakInfo()
+        let actualAdBreak = mediaTracker!.mediaContext!.adBreakInfo
         XCTAssertNil(actualAdBreak)
     }
     
@@ -519,7 +520,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.ADBREAK_START, info: Self.adbreak2!.toMap())
         XCTAssertTrue(handleTrackAPI())
         
-        let actualAdBreak = mediaTracker!.mediaContext!.getAdBreakInfo()
+        let actualAdBreak = mediaTracker!.mediaContext!.adBreakInfo
         XCTAssertEqual(Self.adbreak2, actualAdBreak)
     }
     
@@ -541,7 +542,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.ADBREAK_COMPLETE)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualAdBreak = mediaTracker!.mediaContext!.getAdBreakInfo()
+        let actualAdBreak = mediaTracker!.mediaContext!.adBreakInfo
         XCTAssertNil(actualAdBreak)
     }
     
@@ -558,10 +559,10 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.ADBREAK_COMPLETE)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualAdBreak = mediaTracker!.mediaContext!.getAdBreakInfo()
+        let actualAdBreak = mediaTracker!.mediaContext!.adBreakInfo
         XCTAssertNil(actualAdBreak)
         
-        let actualAd = mediaTracker!.mediaContext!.getAdInfo()
+        let actualAd = mediaTracker!.mediaContext!.adInfo
         XCTAssertNil(actualAd)
     }
     
@@ -575,7 +576,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.AD_START, info: Self.ad1!.toMap(), metadata: Self.metadata)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualAd = mediaTracker!.mediaContext!.getAdInfo()
+        let actualAd = mediaTracker!.mediaContext!.adInfo
         XCTAssertEqual(Self.ad1, actualAd)
     }
     
@@ -590,7 +591,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.AD_START, info: Self.ad1!.toMap(), metadata: Self.denyListMetadata)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualMetadata = mediaTracker!.mediaContext!.getAdMetadata()
+        let actualMetadata = mediaTracker!.mediaContext!.adMetadata
         XCTAssertEqual(Self.cleanMetadata, actualMetadata)
     }
     
@@ -640,7 +641,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.AD_START, info: Self.ad2!.toMap(), metadata: Self.metadata)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualAd = mediaTracker!.mediaContext!.getAdInfo()
+        let actualAd = mediaTracker!.mediaContext!.adInfo
         XCTAssertEqual(Self.ad2, actualAd)
     }
 
@@ -676,7 +677,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.AD_COMPLETE)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualAd = mediaTracker!.mediaContext!.getAdInfo()
+        let actualAd = mediaTracker!.mediaContext!.adInfo
         XCTAssertNil(actualAd)
     }
     
@@ -714,7 +715,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.AD_SKIP)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualAd = mediaTracker!.mediaContext!.getAdInfo()
+        let actualAd = mediaTracker!.mediaContext!.adInfo
         XCTAssertNil(actualAd)
         
     }
@@ -726,8 +727,11 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.CHAPTER_START, info: Self.chapter1!.toMap(), metadata: Self.metadata)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualChapter = mediaTracker!.mediaContext!.getChapterInfo()
+        let actualChapter = mediaTracker!.mediaContext!.chapterInfo
         XCTAssertEqual(Self.chapter1, actualChapter)
+        
+        let actualMetadata = mediaTracker!.mediaContext!.chapterMetadata
+        XCTAssertEqual(Self.metadata, actualMetadata)
     }
     
     func testChapterStartInvalidInfoFail() {
@@ -759,7 +763,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.CHAPTER_START, info: Self.chapter2!.toMap(), metadata: Self.metadata)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualChapter = mediaTracker!.mediaContext!.getChapterInfo()
+        let actualChapter = mediaTracker!.mediaContext!.chapterInfo
         XCTAssertEqual(Self.chapter2, actualChapter)
     }
     
@@ -781,7 +785,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.CHAPTER_SKIP)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualChapter = mediaTracker!.mediaContext!.getChapterInfo()
+        let actualChapter = mediaTracker!.mediaContext!.chapterInfo
         XCTAssertNil(actualChapter)
     }
     
@@ -803,7 +807,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.trackEvent(event: MediaConstants.EventName.CHAPTER_SKIP)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualChapter = mediaTracker!.mediaContext!.getChapterInfo()
+        let actualChapter = mediaTracker!.mediaContext!.chapterInfo
         XCTAssertNil(actualChapter)
     }
     
@@ -814,7 +818,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.updateCurrentPlayhead(time: 1.1)
         XCTAssertTrue(handleTrackAPI())
         
-        let actualPlayhead = mediaTracker!.mediaContext!.getPlayhead()
+        let actualPlayhead = mediaTracker!.mediaContext!.playhead
         XCTAssertEqual(1.1, actualPlayhead)
     }
     
@@ -825,7 +829,7 @@ class MediaCoreTrackerTests: XCTestCase {
         eventGenerator?.updateQoEObject(qoe: Self.qoe!.toMap())
         XCTAssertTrue(handleTrackAPI())
         
-        let actualQoE = mediaTracker!.mediaContext!.getQoEInfo()
+        let actualQoE = mediaTracker!.mediaContext!.qoeInfo
         XCTAssertEqual(Self.qoe, actualQoE)
     }
     
@@ -1090,10 +1094,10 @@ class MediaCoreTrackerTests: XCTestCase {
     }
     
     func testPrerollReorderNoAdBreak() {
-        let rules: [(name: Int, context: [String: Any])] = [
-            (name: MediaCoreTracker.RuleName.Play.rawValue, context: [:]),
-            (name: MediaCoreTracker.RuleName.Pause.rawValue, context: [:]),
-            (name: MediaCoreTracker.RuleName.ChapterStart.rawValue, context: [:])
+        let rules: [(name: RuleName, context: [String: Any])] = [
+            (name: RuleName.Play, context: [:]),
+            (name: RuleName.Pause, context: [:]),
+            (name: RuleName.ChapterStart, context: [:])
         ]
         
         let reorderedRules = mediaTracker!.prerollReorderRules(rules: rules)
@@ -1102,10 +1106,10 @@ class MediaCoreTrackerTests: XCTestCase {
     }
     
     func testPrerollReorderNoPlay() {
-        let rules: [(name: Int, context: [String: Any])] = [
-            (name: MediaCoreTracker.RuleName.Pause.rawValue, context: [:]),
-            (name: MediaCoreTracker.RuleName.AdBreakStart.rawValue, context: [:]),
-            (name: MediaCoreTracker.RuleName.AdStart.rawValue, context: [:])
+        let rules: [(name: RuleName, context: [String: Any])] = [
+            (name: RuleName.Pause, context: [:]),
+            (name: RuleName.AdBreakStart, context: [:]),
+            (name: RuleName.AdStart, context: [:])
         ]
         
         let reorderedRules = mediaTracker!.prerollReorderRules(rules: rules)
@@ -1114,15 +1118,15 @@ class MediaCoreTrackerTests: XCTestCase {
     }
     
     func testPrerollReorderPlayBeforeAdBreak() {
-        let rules: [(name: Int, context: [String: Any])] = [
-            (name: MediaCoreTracker.RuleName.Play.rawValue, context: [:]),
-            (name: MediaCoreTracker.RuleName.AdBreakStart.rawValue, context: [:]),
-            (name: MediaCoreTracker.RuleName.AdStart.rawValue, context: [:])
+        let rules: [(name: RuleName, context: [String: Any])] = [
+            (name: RuleName.Play, context: [:]),
+            (name: RuleName.AdBreakStart, context: [:]),
+            (name: RuleName.AdStart, context: [:])
         ]
         
-        let expectedReorderedRules: [(name: Int, context: [String: Any])] = [
-            (name: MediaCoreTracker.RuleName.AdBreakStart.rawValue, context: [:]),
-            (name: MediaCoreTracker.RuleName.AdStart.rawValue, context: [:])
+        let expectedReorderedRules: [(name: RuleName, context: [String: Any])] = [
+            (name: RuleName.AdBreakStart, context: [:]),
+            (name: RuleName.AdStart, context: [:])
         ]
         
         let reorderedRules = mediaTracker!.prerollReorderRules(rules: rules)

@@ -22,127 +22,68 @@ class MediaContext {
     }
 
     static let LOG_TAG = "MediaContext"
-    private var buffering: Bool
-    private var seeking: Bool
-    private var trackedStates: [String: Bool]
+    private(set) var buffering = false
+    private(set) var seeking = false
+    private var trackedStates: [String: Bool] = [:]
 
-    private var playhead: Double
-    private var playState: MediaPlaybackState
+    private(set) var playhead = 0.0
+    private var playState = MediaPlaybackState.Init
 
-    private let mediaInfo: MediaInfo
-    private let mediaMetadata: [String: String]?
+    let mediaInfo: MediaInfo
+    let mediaMetadata: [String: String]?
 
-    private var adBreakInfo: AdBreakInfo?
-    private var adInfo: AdInfo?
-    private var adMetadata: [String: String]?
+    private(set) var adBreakInfo: AdBreakInfo?
+    private(set) var adInfo: AdInfo?
+    private(set) var adMetadata: [String: String]?
 
-    private var chapterInfo: ChapterInfo?
-    private var chapterMetadata: [String: String]?
+    private(set) var chapterInfo: ChapterInfo?
+    private(set) var chapterMetadata: [String: String]?
 
-    private var errorInfo: [String: String]?
-    private var qoeInfo: QoEInfo?
+    private(set) var errorInfo: [String: String]?
+    private(set) var qoeInfo: QoEInfo?
 
     init(mediaInfo: MediaInfo, metadata: [String: String]?) {
         self.mediaInfo = mediaInfo
         self.mediaMetadata = metadata
-        self.buffering = false
-        self.seeking = false
-        self.trackedStates = [:]
-        self.playhead = 0.0
-        self.playState = MediaPlaybackState.Init
-    }
-
-    func getMediaInfo() -> MediaInfo? {
-        return mediaInfo
-    }
-
-    func getMetadata() -> [String: String] {
-        return mediaMetadata ?? [:]
     }
 
     // AdBreak
-    func setAdBreak(info: AdBreakInfo?) {
+    func setAdBreak(info: AdBreakInfo) {
         adBreakInfo = info
     }
 
-    func clearAdBreakInfo() {
+    func clearAdBreak() {
         adBreakInfo = nil
     }
 
-    func isInAdBreak() -> Bool {
-        return adBreakInfo != nil
-    }
-
-    func getAdBreakInfo() -> AdBreakInfo? {
-        return adBreakInfo
-    }
-
     // Ad
-    func setAd(info: AdInfo?, metadata: [String: String]) {
-        guard info != nil else {
-            return
-        }
+    func setAd(info: AdInfo, metadata: [String: String]) {
         adInfo = info
         adMetadata = metadata
     }
 
-    func clearAdInfo() {
+    func clearAd() {
         adInfo = nil
     }
 
-    func isInAd() -> Bool {
-        return adInfo != nil
-    }
-
-    func getAdInfo() -> AdInfo? {
-        return adInfo
-    }
-
-    func getAdMetadata() -> [String: String] {
-        return adMetadata ?? [:]
-    }
-
     // Chapter
-    func setChapter(info: ChapterInfo?, metadata: [String: String]) {
-        guard info != nil else {
-            return
-        }
+    func setChapter(info: ChapterInfo, metadata: [String: String]) {
         chapterInfo = info
         chapterMetadata = metadata
     }
 
-    func clearChapterInfo() {
+    func clearChapter() {
         chapterInfo = nil
     }
 
-    func isInChapter() -> Bool {
-        return chapterInfo != nil
-    }
-
-    func getChapterInfo() -> ChapterInfo? {
-        return chapterInfo
-    }
-
-    func getChapterMetadata() -> [String: String] {
-        return chapterMetadata ?? [:]
-    }
-
     // QoE
-    func setQoE(info: QoEInfo?) {
+    func setQoE(info: QoEInfo) {
         qoeInfo = info
-    }
-
-    func getQoEInfo() -> QoEInfo? {
-        return qoeInfo
     }
 
     // Playhead
     func setPlayhead(value: Double) {
         playhead = value
-    }
-
-    func getPlayhead() -> Double {
-        return playhead
     }
 
     func enter(state: MediaPlaybackState) {

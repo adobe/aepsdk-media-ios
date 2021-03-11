@@ -30,86 +30,65 @@ class MediaContextTests: XCTestCase {
     func testMedia() {
         let mediaInfo = MediaInfo(id: "id", name: "name", streamType: "vod", mediaType: MediaType.Video, length: 30.0)!
         let mediaContext = MediaContext(mediaInfo: mediaInfo, metadata: Self.metadata)
-        XCTAssertNotNil(mediaContext.getMediaInfo())
-        XCTAssertEqual(mediaInfo, mediaContext.getMediaInfo())
-        XCTAssertEqual(Self.metadata, mediaContext.getMetadata())
+        XCTAssertNotNil(mediaContext.mediaInfo)
+        XCTAssertEqual(mediaInfo, mediaContext.mediaInfo)
+        XCTAssertEqual(Self.metadata, mediaContext.mediaMetadata)
     }
     
     func testAdBreak() {
-        XCTAssertFalse(mediaContext!.isInAdBreak())
-        
-        mediaContext?.setAdBreak(info:nil)
-        XCTAssertFalse(mediaContext!.isInAdBreak())
+        XCTAssertNil(mediaContext!.adBreakInfo)
         
         let adBreakInfo = AdBreakInfo(name: "name", position: 1, startTime: 1.1)!
         mediaContext?.setAdBreak(info:adBreakInfo)
         
-        XCTAssertTrue(mediaContext!.isInAdBreak())
-        XCTAssertNotNil(mediaContext?.getAdBreakInfo())
-        XCTAssertEqual(adBreakInfo, mediaContext?.getAdBreakInfo())
+        XCTAssertNotNil(mediaContext!.adBreakInfo)
+        XCTAssertEqual(adBreakInfo, mediaContext?.adBreakInfo)
         
-        mediaContext?.clearAdBreakInfo()
-        XCTAssertFalse(mediaContext!.isInAdBreak())
-        XCTAssertNil(mediaContext?.getAdBreakInfo())
+        mediaContext?.clearAdBreak()
+        XCTAssertNil(mediaContext!.adBreakInfo)
     }
     
     func testAd() {
-        XCTAssertFalse(mediaContext!.isInAd())
-        
-        mediaContext?.setAd(info:nil, metadata: Self.metadata)
-        XCTAssertFalse(mediaContext!.isInAd())
+        XCTAssertNil(mediaContext!.adInfo)
         
         let adInfo = AdInfo(id: "id", name: "name", position: 2, length: 30.0)!
         mediaContext?.setAd(info:adInfo, metadata: Self.metadata)
         
-        XCTAssertTrue(mediaContext!.isInAd())
-        XCTAssertNotNil(mediaContext?.getAdInfo())
-        XCTAssertEqual(adInfo, mediaContext?.getAdInfo())
-        XCTAssertEqual(Self.metadata, mediaContext?.getAdMetadata())
+        XCTAssertEqual(adInfo, mediaContext?.adInfo)
+        XCTAssertEqual(Self.metadata, mediaContext?.adMetadata)
         
-        mediaContext?.clearAdInfo()
-        XCTAssertFalse(mediaContext!.isInAd())
-        XCTAssertNil(mediaContext?.getAdInfo())
+        mediaContext?.clearAd()
+        XCTAssertNil(mediaContext?.adInfo)
     }
     
     func testChapter() {
-        XCTAssertFalse(mediaContext!.isInChapter())
-        
-        mediaContext?.setChapter(info:nil, metadata: Self.metadata)
-        XCTAssertFalse(mediaContext!.isInChapter())
+        XCTAssertNil(mediaContext!.chapterInfo)
         
         let chapterInfo = ChapterInfo(name: "name", position: 1, startTime: 1.2, length: 30.0)!
         mediaContext?.setChapter(info:chapterInfo, metadata: Self.metadata)
-        XCTAssertEqual(Self.metadata, mediaContext?.getChapterMetadata())
+        XCTAssertEqual(Self.metadata, mediaContext?.chapterMetadata)
         
-        XCTAssertTrue(mediaContext!.isInChapter())
-        XCTAssertNotNil(mediaContext?.getChapterInfo())
-        XCTAssertEqual(chapterInfo, mediaContext?.getChapterInfo())
+        XCTAssertEqual(chapterInfo, mediaContext?.chapterInfo)
         
-        mediaContext?.clearChapterInfo()
-        XCTAssertFalse(mediaContext!.isInChapter())
-        XCTAssertNil(mediaContext?.getChapterInfo())
+        mediaContext?.clearChapter()
+        XCTAssertNil(mediaContext?.chapterInfo)
     }
     
     func testQoE() {
-        XCTAssertNil(mediaContext?.getQoEInfo())
-        
-        mediaContext?.setQoE(info:nil)
-        XCTAssertNil(mediaContext?.getQoEInfo())
+        XCTAssertNil(mediaContext?.qoeInfo)
         
         let qoeInfo = QoEInfo(bitrate: 1.1, droppedFrames: 2.2, fps: 3.3, startupTime: 4.4)
-        mediaContext?.setQoE(info:qoeInfo)
+        mediaContext?.setQoE(info:qoeInfo!)
         
-        XCTAssertNotNil(mediaContext?.getQoEInfo())
-        XCTAssertEqual(qoeInfo, mediaContext?.getQoEInfo())
+        XCTAssertEqual(qoeInfo, mediaContext?.qoeInfo)
     }
     
     func testPlayhead() {
-        XCTAssertEqual(0, mediaContext?.getPlayhead())
+        XCTAssertEqual(0, mediaContext?.playhead)
         
         mediaContext?.setPlayhead(value: 1.12)
         
-        XCTAssertEqual(1.12, mediaContext?.getPlayhead())
+        XCTAssertEqual(1.12, mediaContext?.playhead)
     }
     
     func testBufferState() {

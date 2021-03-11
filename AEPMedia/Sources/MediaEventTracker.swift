@@ -11,12 +11,10 @@
 
 import AEPServices
 
-class MediaCoreTracker {
-
+class MediaEventTracker: MediaEventTracking {
     // MARK: Rule Name
 
     enum RuleName: Int {
-        case Invalid
         case MediaStart
         case MediaComplete
         case MediaSkip
@@ -42,95 +40,66 @@ class MediaCoreTracker {
         case StateEnd
     }
 
-    func getRuleNameForEvent(name: String) -> RuleName {
-        let eventToRuleMap: [String: RuleName] = [
-            MediaConstants.EventName.SESSION_START: RuleName.MediaStart,
-            MediaConstants.EventName.COMPLETE: RuleName.MediaComplete,
-            MediaConstants.EventName.SESSION_END: RuleName.MediaSkip,
+    static let eventToRuleMap: [String: RuleName] = [
+        MediaConstants.EventName.SESSION_START: RuleName.MediaStart,
+        MediaConstants.EventName.COMPLETE: RuleName.MediaComplete,
+        MediaConstants.EventName.SESSION_END: RuleName.MediaSkip,
 
-            MediaConstants.EventName.ADBREAK_START: RuleName.AdBreakStart,
-            MediaConstants.EventName.ADBREAK_COMPLETE: RuleName.AdBreakComplete,
+        MediaConstants.EventName.ADBREAK_START: RuleName.AdBreakStart,
+        MediaConstants.EventName.ADBREAK_COMPLETE: RuleName.AdBreakComplete,
 
-            MediaConstants.EventName.AD_START: RuleName.AdStart,
-            MediaConstants.EventName.AD_COMPLETE: RuleName.AdComplete,
-            MediaConstants.EventName.AD_SKIP: RuleName.AdSkip,
+        MediaConstants.EventName.AD_START: RuleName.AdStart,
+        MediaConstants.EventName.AD_COMPLETE: RuleName.AdComplete,
+        MediaConstants.EventName.AD_SKIP: RuleName.AdSkip,
 
-            MediaConstants.EventName.CHAPTER_START: RuleName.ChapterStart,
-            MediaConstants.EventName.CHAPTER_COMPLETE: RuleName.ChapterComplete,
-            MediaConstants.EventName.CHAPTER_SKIP: RuleName.ChapterSkip,
+        MediaConstants.EventName.CHAPTER_START: RuleName.ChapterStart,
+        MediaConstants.EventName.CHAPTER_COMPLETE: RuleName.ChapterComplete,
+        MediaConstants.EventName.CHAPTER_SKIP: RuleName.ChapterSkip,
 
-            MediaConstants.EventName.PLAY: RuleName.Play,
-            MediaConstants.EventName.PAUSE: RuleName.Pause,
-            MediaConstants.EventName.SEEK_START: RuleName.SeekStart,
-            MediaConstants.EventName.SEEK_COMPLETE: RuleName.SeekComplete,
-            MediaConstants.EventName.BUFFER_START: RuleName.BufferStart,
-            MediaConstants.EventName.BUFFER_COMPLETE: RuleName.BufferComplete,
+        MediaConstants.EventName.PLAY: RuleName.Play,
+        MediaConstants.EventName.PAUSE: RuleName.Pause,
+        MediaConstants.EventName.SEEK_START: RuleName.SeekStart,
+        MediaConstants.EventName.SEEK_COMPLETE: RuleName.SeekComplete,
+        MediaConstants.EventName.BUFFER_START: RuleName.BufferStart,
+        MediaConstants.EventName.BUFFER_COMPLETE: RuleName.BufferComplete,
 
-            MediaConstants.EventName.BITRATE_CHANGE: RuleName.BitrateChange,
-            MediaConstants.EventName.ERROR: RuleName.Error,
-            MediaConstants.EventName.QOE_UPDATE: RuleName.QoEUpdate,
-            MediaConstants.EventName.PLAYHEAD_UPDATE: RuleName.PlayheadUpdate,
-            MediaConstants.EventName.STATE_START: RuleName.StateStart,
-            MediaConstants.EventName.STATE_END: RuleName.StateEnd
-        ]
-
-        guard let ret = eventToRuleMap[name] else {
-            return RuleName.Invalid
-        }
-
-        return ret
-    }
+        MediaConstants.EventName.BITRATE_CHANGE: RuleName.BitrateChange,
+        MediaConstants.EventName.ERROR: RuleName.Error,
+        MediaConstants.EventName.QOE_UPDATE: RuleName.QoEUpdate,
+        MediaConstants.EventName.PLAYHEAD_UPDATE: RuleName.PlayheadUpdate,
+        MediaConstants.EventName.STATE_START: RuleName.StateStart,
+        MediaConstants.EventName.STATE_END: RuleName.StateEnd
+    ]
 
     enum ErrorMessage: String {
         case ErrNotInMedia = "Media tracker is not in active tracking session, call 'API:trackSessionStart' to begin a new tracking session."
-        case ErrInMedia =
-            "Media tracker is in active tracking session, call 'API:trackSessionEnd' or 'API:trackComplete' to end current tracking session."
-        case ErrInBuffer =
-            "Media tracker is tracking buffer events, call 'API:trackEvent(BufferComplete)' first to stop tracking buffer events."
-        case ErrNotInBuffer =
-            "Media tracker is not tracking buffer events, call 'API:trackEvent(BufferStart)' before 'API:trackEvent(BufferComplete)'."
-        case ErrInSeek =
-            "Media tracker is tracking seek events, call 'API:trackEvent(SeekComplete)' first to stop tracking seek events."
-        case ErrNotInSeek =
-            "Media tracker is not tracking seek events, call 'API:trackEvent(SeekStart)' before 'API:trackEvent(SeekComplete)'."
-        case ErrNotInAdBreak =
-            "Media tracker is not tracking any AdBreak, call 'API:trackEvent(AdBreakStart)' to begin tracking AdBreak"
-        case ErrNotInAd =
-            "Media tracker is not tracking any Ad, call 'API:trackEvent(AdStart)' to begin tracking Ad"
-        case ErrNotInChapter =
-            "Media tracker is not tracking any Chapter, call 'API:trackEvent(ChapterStart)' to begin tracking Chapter"
-        case ErrInvalidMediaInfo =
-            "MediaInfo passed into 'API:trackSessionStart' is invalid."
-        case ErrInvalidAdBreakInfo =
-            "AdBreakInfo passed into 'API:trackEvent(AdBreakStart)' is invalid."
-        case ErrDuplicateAdBreakInfo =
-            "Media tracker is currently tracking the AdBreak passed into 'API:trackEvent(AdBreakStart)'."
-        case ErrInvalidAdInfo =
-            "AdInfo passed into 'API:trackEvent(AdStart)' is invalid."
-        case ErrDuplicateAdInfo =
-            "Media tracker is currently tracking the Ad passed into 'API:trackEvent(AdStart)'."
-        case ErrInvalidChapterInfo =
-            "ChapterInfo passed into 'API:trackEvent(ChapterStart)' is invalid."
-        case ErrDuplicateChapterInfo =
-            "Media tracker is currently tracking the Chapter passed into 'API:trackEvent(ChapterStart)'."
+        case ErrInMedia = "Media tracker is in active tracking session, call 'API:trackSessionEnd' or 'API:trackComplete' to end current tracking session."
+        case ErrInBuffer = "Media tracker is tracking buffer events, call 'API:trackEvent(BufferComplete)' first to stop tracking buffer events."
+        case ErrNotInBuffer = "Media tracker is not tracking buffer events, call 'API:trackEvent(BufferStart)' before 'API:trackEvent(BufferComplete)'."
+        case ErrInSeek = "Media tracker is tracking seek events, call 'API:trackEvent(SeekComplete)' first to stop tracking seek events."
+        case ErrNotInSeek = "Media tracker is not tracking seek events, call 'API:trackEvent(SeekStart)' before 'API:trackEvent(SeekComplete)'."
+        case ErrNotInAdBreak = "Media tracker is not tracking any AdBreak, call 'API:trackEvent(AdBreakStart)' to begin tracking AdBreak"
+        case ErrNotInAd = "Media tracker is not tracking any Ad, call 'API:trackEvent(AdStart)' to begin tracking Ad"
+        case ErrNotInChapter = "Media tracker is not tracking any Chapter, call 'API:trackEvent(ChapterStart)' to begin tracking Chapter"
+        case ErrInvalidMediaInfo = "MediaInfo passed into 'API:trackSessionStart' is invalid."
+        case ErrInvalidAdBreakInfo = "AdBreakInfo passed into 'API:trackEvent(AdBreakStart)' is invalid."
+        case ErrDuplicateAdBreakInfo = "Media tracker is currently tracking the AdBreak passed into 'API:trackEvent(AdBreakStart)'."
+        case ErrInvalidAdInfo = "AdInfo passed into 'API:trackEvent(AdStart)' is invalid."
+        case ErrDuplicateAdInfo = "Media tracker is currently tracking the Ad passed into 'API:trackEvent(AdStart)'."
+        case ErrInvalidChapterInfo = "ChapterInfo passed into 'API:trackEvent(ChapterStart)' is invalid."
+        case ErrDuplicateChapterInfo =  "Media tracker is currently tracking the Chapter passed into 'API:trackEvent(ChapterStart)'."
         case ErrInvalidQoEInfo = "QoEInfo passed into 'API:updateQoEInfo' is invalid."
         case ErrInvalidPlayhead = "Playhead value not present in 'API:updatePlayhead' event data."
-        case ErrInvalidPlaybackState =
-            "Media tracker is tracking an AdBreak but not tracking any Ad and will drop any calls to track player state (Play, Pause, Buffer or Seek) in this state."
-        case ErrInvalidStateInfo =
-            "StateInfo passed into 'API:trackEvent(StartStart)' or 'API:trackEvent(StartEnd)' is invalid."
-        case ErrInTrackedState =
-            "Media tracker is already tracking a state with the same state name."
-        case ErrNotInTrackedState =
-            "Media tracker is not tracking a state with the given state name."
-        case ErrTrackedStatesLimitReached =
-            "Media tracker has reached maximum number of states per session (10)."
+        case ErrInvalidPlaybackState = "Media tracker is tracking an AdBreak but not tracking any Ad and will drop any calls to track player state (Play, Pause, Buffer or Seek) in this state."
+        case ErrInvalidStateInfo = "StateInfo passed into 'API:trackEvent(StartStart)' or 'API:trackEvent(StartEnd)' is invalid."
+        case ErrInTrackedState = "Media tracker is already tracking a state with the same state name."
+        case ErrNotInTrackedState = "Media tracker is not tracking a state with the given state name."
+        case ErrTrackedStatesLimitReached = "Media tracker has reached maximum number of states per session (10)."
     }
 
-    let KEY_INFO = "key_info"
-    let KEY_METADATA = "key_metadata"
-    let KEY_EVENT_TS = "key_eventts"
-    let UNKNOWN_ERROR = "unknownError"
+    static let KEY_INFO = "key_info"
+    static let KEY_METADATA = "key_metadata"
+    static let KEY_EVENT_TS = "key_eventts"
 
     static let LOG_TAG = "MediaCoreTracker"
     static let IDLE_TIMEOUT = TimeInterval(1800) //30 min
@@ -138,7 +107,7 @@ class MediaCoreTracker {
     static let CONTENT_START_DURATION = TimeInterval(1) //1 sec
 
     #if DEBUG
-        var inPrerollInterval: Bool = false
+        var inPrerollInterval = false
         var trackerIdle = false
         var mediaContext: MediaContext?
     #else
@@ -151,7 +120,7 @@ class MediaCoreTracker {
     private var hitGenerator: MediaCollectionHitGenerator?
     private var config: [String: Any]?
     private var mediaIdle = false
-    private var prerollQueuedRules: [(name: Int, context: [String: Any])] = []
+    private var prerollQueuedRules: [(name: RuleName, context: [String: Any])] = []
     private var contentStarted = false
     private var prerollRefTS = TimeInterval()
     private var contentStartRefTS = TimeInterval()
@@ -184,54 +153,53 @@ class MediaCoreTracker {
 
     func track(eventData: [String: Any]?) -> Bool {
         guard let eventData = eventData else {
-            Log.debug(label: MediaCoreTracker.LOG_TAG, "\(#function) - Failed to track event (event data was null).")
+            Log.debug(label: Self.LOG_TAG, "\(#function) - Failed to track event (event data was null).")
             return false
         }
 
         guard let eventName = eventData[MediaConstants.Tracker.EVENT_NAME] as? String else {
-            Log.debug(label: MediaCoreTracker.LOG_TAG, "\(#function) - Event name is missing in track event data.")
+            Log.debug(label: Self.LOG_TAG, "\(#function) - Event name is missing in track event data.")
             return false
         }
 
-        let rule = getRuleNameForEvent(name: eventName)
-        if rule == RuleName.Invalid {
-            Log.debug(label: MediaCoreTracker.LOG_TAG, "\(#function) - Event name is invalid in track event data.")
+        guard let rule = Self.eventToRuleMap[eventName] else {
+            Log.debug(label: Self.LOG_TAG, "\(#function) - Event name is invalid in track event data.")
             return false
         }
 
         var ruleContext: [String: Any] = [:]
         if let eventTs = eventData[MediaConstants.Tracker.EVENT_TIMESTAMP] {
-            ruleContext[KEY_EVENT_TS] = eventTs
+            ruleContext[Self.KEY_EVENT_TS] = eventTs
         } else {
-            Log.debug(label: MediaCoreTracker.LOG_TAG, "\(#function) - Event timestamp is missing in track event data.")
+            Log.debug(label: Self.LOG_TAG, "\(#function) - Event timestamp is missing in track event data.")
             return false
         }
 
         if let eventParam = eventData[MediaConstants.Tracker.EVENT_PARAM] {
-            ruleContext[KEY_INFO] = eventParam
+            ruleContext[Self.KEY_INFO] = eventParam
         }
 
         if let eventMetadata = eventData[MediaConstants.Tracker.EVENT_METADATA] as? [String: String] {
-            ruleContext[KEY_METADATA] = cleanMetadata(data: eventMetadata)
+            ruleContext[Self.KEY_METADATA] = cleanMetadata(data: eventMetadata)
         }
 
         if rule != RuleName.PlayheadUpdate {
-            Log.trace(label: MediaCoreTracker.LOG_TAG, "\(#function) - Processing event - \(eventName)")
+            Log.trace(label: Self.LOG_TAG, "\(#function) - Processing event - \(eventName)")
         }
 
-        if prerollDeferRule(rule: rule.rawValue, context: ruleContext) {
+        if prerollDeferRule(rule: rule, context: ruleContext) {
             return true
         }
 
-        return processRule(rule: rule.rawValue, context: ruleContext)
+        return processRule(rule: rule, context: ruleContext)
     }
 
     @discardableResult
-    private func processRule(rule: Int, context: [String: Any]) -> Bool {
-        let result = ruleEngine.processRule(name: rule, context: context)
+    private func processRule(rule: RuleName, context: [String: Any]) -> Bool {
+        let result = ruleEngine.processRule(name: rule.rawValue, context: context)
 
         if !result.success {
-            Log.warning(label: MediaCoreTracker.LOG_TAG, "\(#function) - ProcessRule - \(result.erorMsg)")
+            Log.warning(label: Self.LOG_TAG, "\(#function) - ProcessRule - \(result.errorMsg)")
         }
 
         return result.success
@@ -412,76 +380,76 @@ class MediaCoreTracker {
     }
 
     private func isInAdBreak(rule: MediaRule, context: [String: Any]) -> Bool {
-        return mediaContext?.isInAdBreak() ?? false
+        return mediaContext?.adBreakInfo != nil
     }
 
     private func isInAd(rule: MediaRule, context: [String: Any]) -> Bool {
-        return mediaContext?.isInAd() ?? false
+        return mediaContext?.adInfo != nil
     }
 
     private func isInChapter(rule: MediaRule, context: [String: Any]) -> Bool {
-        return mediaContext?.isInChapter() ?? false
+        return mediaContext?.chapterInfo != nil
     }
 
     private func isBuffering(rule: MediaRule, context: [String: Any]) -> Bool {
-        return mediaContext?.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Buffer) ?? false
+        return mediaContext?.buffering ?? false
     }
 
     private func isSeeking(rule: MediaRule, context: [String: Any]) -> Bool {
-        return mediaContext?.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Seek) ?? false
+        return mediaContext?.seeking ?? false
     }
 
     private func isTrackingState(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let state = StateInfo(info: context[KEY_INFO] as? [String: Any]) else {
+        guard let state = StateInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
             return false
         }
         return mediaContext?.isInState(info: state) ?? false
     }
 
     private func allowStateTrack(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let state = StateInfo(info: context[KEY_INFO] as? [String: Any]) else {
+        guard let state = StateInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
             return false
         }
         return (mediaContext?.hasTrackedState(info: state) ?? false) || !(mediaContext?.didReachMaxStateLimit() ?? true)
     }
 
     private func isValidMediaInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard MediaInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
+        guard MediaInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
     }
 
     private func isValidAdBreakInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard AdBreakInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
+        guard AdBreakInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
     }
 
     private func isValidAdInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard AdInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
+        guard AdInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
     }
 
     private func isValidChapterInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard ChapterInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
+        guard ChapterInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
     }
 
     private func isValidQoEInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard QoEInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
+        guard QoEInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
     }
 
     private func isValidStateInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard StateInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
+        guard StateInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
@@ -492,13 +460,13 @@ class MediaCoreTracker {
             return false
         }
 
-        if !mediaCtx.isInAdBreak() {
+        if mediaCtx.adBreakInfo == nil {
             return true
         }
 
-        let currAdBreak = mediaCtx.getAdBreakInfo()
-        let newAdBreak = AdBreakInfo(info: context[KEY_INFO] as? [String: Any] ?? [:])
-        return !(currAdBreak == newAdBreak)
+        let currAdBreak = mediaCtx.adBreakInfo
+        let newAdBreak = AdBreakInfo(info: context[Self.KEY_INFO] as? [String: Any] ?? [:])
+        return currAdBreak != newAdBreak
     }
 
     private func isDifferentAdInfo(rule: MediaRule, context: [String: Any]) -> Bool {
@@ -506,13 +474,13 @@ class MediaCoreTracker {
             return false
         }
 
-        if !mediaCtx.isInAd() {
+        if mediaCtx.adInfo == nil {
             return true
         }
 
-        let currAd = mediaCtx.getAdInfo()
-        let newAd = AdInfo(info: context[KEY_INFO] as? [String: Any] ?? [:])
-        return !(currAd == newAd)
+        let currAd = mediaCtx.adInfo
+        let newAd = AdInfo(info: context[Self.KEY_INFO] as? [String: Any] ?? [:])
+        return currAd != newAd
     }
 
     private func isDifferentChapterInfo(rule: MediaRule, context: [String: Any]) -> Bool {
@@ -520,20 +488,21 @@ class MediaCoreTracker {
             return false
         }
 
-        if !mediaCtx.isInChapter() {
+        if mediaCtx.chapterInfo == nil {
             return true
         }
 
-        let currChapter = mediaCtx.getChapterInfo()
-        let newChapter = ChapterInfo(info: context[KEY_INFO] as? [String: Any] ?? [:])
-        return !(currChapter == newChapter)
+        let currChapter = mediaCtx.chapterInfo
+        let newChapter = ChapterInfo(info: context[Self.KEY_INFO] as? [String: Any] ?? [:])
+        return currChapter != newChapter
     }
 
     private func allowPlaybackStateChange(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaCtx = mediaContext else {
             return false
         }
-        return !mediaCtx.isInAdBreak() || mediaCtx.isInAd()
+        // Change of Playback State not allowed inside AdBreak but outside Ad
+        return (mediaCtx.adBreakInfo == nil) || (mediaCtx.adInfo != nil)
     }
 
     // MARK: Rule Actions
@@ -580,7 +549,7 @@ class MediaCoreTracker {
     }
 
     private func cmdMediaStart(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let mediaInfo = MediaInfo(info: context[KEY_INFO] as? [String: Any]) else {
+        guard let mediaInfo = MediaInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
             return false
         }
 
@@ -615,7 +584,7 @@ class MediaCoreTracker {
     }
 
     private func cmdAdBreakStart(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let adBreakInfo = AdBreakInfo(info: context[KEY_INFO] as? [String: Any]) else {
+        guard let adBreakInfo = AdBreakInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
             return false
         }
         mediaContext?.setAdBreak(info: adBreakInfo)
@@ -625,22 +594,22 @@ class MediaCoreTracker {
 
     private func cmdAdBreakComplete(rule: MediaRule, context: [String: Any]) -> Bool {
         hitGenerator?.processAdBreakComplete()
-        mediaContext?.clearAdBreakInfo()
+        mediaContext?.clearAdBreak()
 
         return true
     }
 
     private func cmdAdBreakSkip(rule: MediaRule, context: [String: Any]) -> Bool {
         // This may be called even when we are not in adbreak.
-        if mediaContext?.isInAdBreak() ?? false {
+        if mediaContext?.adBreakInfo != nil {
             hitGenerator?.processAdBreakSkip()
-            mediaContext?.clearAdBreakInfo()
+            mediaContext?.clearAdBreak()
         }
         return true
     }
 
     private func cmdAdStart(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let adInfo = AdInfo(info: context[KEY_INFO] as? [String: Any]) else {
+        guard let adInfo = AdInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
             return false
         }
         let metadata = getMetadata(context: context) ?? [:]
@@ -653,23 +622,23 @@ class MediaCoreTracker {
 
     private func cmdAdComplete(rule: MediaRule, context: [String: Any]) -> Bool {
         hitGenerator?.processAdComplete()
-        mediaContext?.clearAdInfo()
+        mediaContext?.clearAd()
 
         return true
     }
 
     private func cmdAdSkip(rule: MediaRule, context: [String: Any]) -> Bool {
         // This may be called even when we are not in ad.
-        if mediaContext?.isInAd() ?? false {
+        if mediaContext?.adInfo != nil {
             hitGenerator?.processAdSkip()
-            mediaContext?.clearAdInfo()
+            mediaContext?.clearAd()
         }
 
         return true
     }
 
     private func cmdChapterStart(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let chapterInfo = ChapterInfo(info: context[KEY_INFO] as? [String: Any]) else {
+        guard let chapterInfo = ChapterInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
             return false
         }
         let metadata = getMetadata(context: context) ?? [:]
@@ -682,16 +651,16 @@ class MediaCoreTracker {
 
     private func cmdChapterComplete(rule: MediaRule, context: [String: Any]) -> Bool {
         hitGenerator?.processChapterComplete()
-        mediaContext?.clearChapterInfo()
+        mediaContext?.clearChapter()
 
         return true
     }
 
     private func cmdChapterSkip(rule: MediaRule, context: [String: Any]) -> Bool {
         // This may be called even when we are not in chapter.
-        if mediaContext?.isInChapter() ?? false {
+        if mediaContext?.chapterInfo != nil {
             hitGenerator?.processChapterSkip()
-            mediaContext?.clearChapterInfo()
+            mediaContext?.clearChapter()
         }
         return true
     }
@@ -743,7 +712,7 @@ class MediaCoreTracker {
     }
 
     private func cmdStateStart(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let stateInfo = StateInfo(info: context[KEY_INFO] as? [String: Any]) else {
+        guard let stateInfo = StateInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
             return false
         }
         mediaContext?.startState(info: stateInfo)
@@ -753,7 +722,7 @@ class MediaCoreTracker {
     }
 
     private func cmdStateEnd(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let stateInfo = StateInfo(info: context[KEY_INFO] as? [String: Any]) else {
+        guard let stateInfo = StateInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
             return false
         }
         mediaContext?.endState(info: stateInfo)
@@ -763,7 +732,7 @@ class MediaCoreTracker {
     }
 
     private func cmdQoEUpdate(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let qoeInfo = QoEInfo(info: context[KEY_INFO] as? [String: Any]) else {
+        guard let qoeInfo = QoEInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
             return false
         }
         mediaContext?.setQoE(info: qoeInfo)
@@ -846,7 +815,7 @@ class MediaCoreTracker {
             return true
         }
 
-        if mediaCtx.isInAdBreak() {
+        if mediaCtx.adBreakInfo != nil {
             // Reset the timer if in AdBreak and contentStart ping is not sent
             contentStartRefTS = TimeInterval()
             return true
@@ -866,12 +835,12 @@ class MediaCoreTracker {
     }
 
     // MARK: Preroll Rule Helpers
-    func prerollReorderRules(rules: [(name: Int, context: [String: Any])]) ->[(name: Int, context: [String: Any])] {
-        var reorderedRules: [(name: Int, context: [String: Any])] = []
-        var adBreakStart: (name: Int, context: [String: Any])?
+    func prerollReorderRules(rules: [(name: RuleName, context: [String: Any])]) ->[(name: RuleName, context: [String: Any])] {
+        var reorderedRules: [(name: RuleName, context: [String: Any])] = []
+        var adBreakStart: (name: RuleName, context: [String: Any])?
 
         for rule in rules {
-            if rule.name == RuleName.AdBreakStart.rawValue {
+            if rule.name == RuleName.AdBreakStart {
                 adBreakStart = rule
                 break
             }
@@ -879,11 +848,11 @@ class MediaCoreTracker {
 
         var dropPlay = adBreakStart != nil
         for rule in rules {
-            if rule.name == RuleName.Play.rawValue && dropPlay {
+            if rule.name == RuleName.Play && dropPlay {
                 continue
             }
 
-            if dropPlay && rule.name == RuleName.AdBreakStart.rawValue {
+            if dropPlay && rule.name == RuleName.AdBreakStart {
                 dropPlay = false
             }
 
@@ -893,11 +862,11 @@ class MediaCoreTracker {
         return reorderedRules
     }
 
-    func prerollDeferRule(rule: Int, context: [String: Any]) -> Bool {
+    func prerollDeferRule(rule: RuleName, context: [String: Any]) -> Bool {
         guard  let mediaCtx = mediaContext, inPrerollInterval else {
             return false
         }
-        let prerollWaitingtime = mediaCtx.getMediaInfo()?.prerollWaitingTime ?? MediaInfo.DEFAULT_PREROLL_WAITING_TIME_IN_MS
+        let prerollWaitingtime = mediaCtx.mediaInfo.prerollWaitingTime
         // We are going to queue the events and stop further downstream
         // processing for preroll_waiting_time ms.
         prerollQueuedRules.append((name: rule, context: context))
@@ -905,16 +874,16 @@ class MediaCoreTracker {
         let refTS = getRefTS(context: context) ?? TimeInterval()
 
         if (refTS - prerollRefTS) >= prerollWaitingtime ||
-            rule == RuleName.AdBreakStart.rawValue ||
-            rule == RuleName.MediaComplete.rawValue ||
-            rule == RuleName.MediaSkip.rawValue {
+            rule == RuleName.AdBreakStart ||
+            rule == RuleName.MediaComplete ||
+            rule == RuleName.MediaSkip {
 
             // If preroll_waiting_time has elapsed or we get any of these rules
             // We start processing all the queued rules.
             let reorderedRules = prerollReorderRules(rules: prerollQueuedRules)
 
-            for rule in reorderedRules {
-                processRule(rule: rule.name, context: rule.context)
+            for orderedRule in reorderedRules {
+                processRule(rule: orderedRule.name, context: orderedRule.context)
             }
 
             prerollQueuedRules.removeAll()
@@ -945,7 +914,7 @@ class MediaCoreTracker {
     }
 
     func getMetadata(context: [String: Any]) -> [String: String]? {
-        guard let metadata = context[KEY_METADATA] as? [String: String] else {
+        guard let metadata = context[Self.KEY_METADATA] as? [String: String] else {
             return nil
         }
 
@@ -953,7 +922,7 @@ class MediaCoreTracker {
     }
 
     func getError(context: [String: Any]) -> String? {
-        guard let errorInfo = context[KEY_INFO] as? [String: Any] else {
+        guard let errorInfo = context[Self.KEY_INFO] as? [String: Any] else {
             return nil
         }
 
@@ -965,7 +934,7 @@ class MediaCoreTracker {
     }
 
     func getPlayhead(context: [String: Any]) -> Double? {
-        guard let playheadInfo = context[KEY_INFO] as? [String: Any] else {
+        guard let playheadInfo = context[Self.KEY_INFO] as? [String: Any] else {
             return nil
         }
 
@@ -977,7 +946,7 @@ class MediaCoreTracker {
     }
 
     func getRefTS(context: [String: Any]) -> Double? {
-        guard let ts = context[KEY_EVENT_TS] as? Double else {
+        guard let ts = context[Self.KEY_EVENT_TS] as? Double else {
             return nil
         }
 

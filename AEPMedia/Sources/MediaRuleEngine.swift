@@ -36,7 +36,7 @@ class MediaRuleEngine {
         self.exitFn = exitFn
     }
 
-    func processRule(name: Int, context: [String: Any]) -> (success: Bool, erorMsg: String) {
+    func processRule(name: Int, context: [String: Any]) -> (success: Bool, errorMsg: String) {
         guard let rule = rules[name] else {
             return (false, RULE_NOT_FOUND)
         }
