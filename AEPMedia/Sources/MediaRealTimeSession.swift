@@ -107,35 +107,35 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
             let networkrequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: [String:String](), connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
             networkService.connectAsync(networkRequest: networkrequest) { connection in
                 self.dispatchQueue.async {
-                if connection.error == nil {
-                    let statusCode = connection.response?.statusCode ?? -1
-                    if !MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
-                        Log.debug(label: self.LOG_TAG, "\(#function) - \(eventType) Http failed with response code (\(statusCode))")
-                        self.handleProcessingError()
-                    } else {
-                        if isSessionStartHit {
-                            if let sessionReponseFragment = connection.responseHttpHeader(forKey: "Location"), !sessionReponseFragment.isEmpty {
-                                let mcSessionId = MediaCollectionReportHelper.extractSessionID(sessionResponseFragment: sessionReponseFragment)
-                                Log.trace(label: self.LOG_TAG, "\(#function) - \(eventType) Media collection endpoint created internal session with id \(String(describing: mcSessionId))")
-                                
-                                if isSessionStartHit, let mcSessionId = mcSessionId, mcSessionId.count > 0 {
-                                    self.sessionId = mcSessionId
-                                    self.handleProcessingSuccess()
-                                } else if (isSessionStartHit) {
-                                    self.handleProcessingError()
-                                }
-                                
-                                self.isSendingHit = false
-                            }
+                    if connection.error == nil {
+                        let statusCode = connection.response?.statusCode ?? -1
+                        if !MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
+                            Log.debug(label: self.LOG_TAG, "\(#function) - \(eventType) Http failed with response code (\(statusCode))")
+                            self.handleProcessingError()
                         } else {
-                            self.handleProcessingSuccess()
+                            if isSessionStartHit {
+                                if let sessionReponseFragment = connection.responseHttpHeader(forKey: "Location"), !sessionReponseFragment.isEmpty {
+                                    let mcSessionId = MediaCollectionReportHelper.extractSessionID(sessionResponseFragment: sessionReponseFragment)
+                                    Log.trace(label: self.LOG_TAG, "\(#function) - \(eventType) Media collection endpoint created internal session with id \(String(describing: mcSessionId))")
+                                
+                                    if isSessionStartHit, let mcSessionId = mcSessionId, mcSessionId.count > 0 {
+                                        self.sessionId = mcSessionId
+                                        self.handleProcessingSuccess()
+                                    } else if (isSessionStartHit) {
+                                        self.handleProcessingError()
+                                    }
+                                
+                                    self.isSendingHit = false
+                                }
+                            } else {
+                                self.handleProcessingSuccess()
+                            }
                         }
+                    } else {
+                        self.handleProcessingError()
                     }
-                } else {
-                    self.handleProcessingError()
                 }
             }
-        }
         }}
     
     private func handleProcessingSuccess() {
@@ -155,8 +155,9 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
         } else {
             sessionRetryCount += 1
         }
-        if hits.count > 0 {
-            dispatchQueue.async {
+        
+        dispatchQueue.asyncAfter(deadline: DispatchTime.init(uptimeNanoseconds: MediaSession.DURATION_BETWEEN_HITS_ON_FAILURE)) {
+            if self.hits.count > 0 {
                 self.trySendHit()
             }
         }

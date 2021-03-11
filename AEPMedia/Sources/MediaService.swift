@@ -96,9 +96,12 @@ class MediaService : MediaProcessor {
             return
         }
         
-        mediaSessions[sessionId]?.abort()
-        mediaSessions.removeValue(forKey: sessionId)
-        Log.trace(label: LOG_TAG, "\(#function) Successfully aborted session (\(sessionId)).")
+        mediaSessions[sessionId]?.abort {
+            self.mediaSessions.removeValue(forKey: sessionId)
+            Log.trace(label: self.LOG_TAG, "\(#function) Successfully aborted session (\(sessionId)).")
+        }
+        
+        Log.trace(label: LOG_TAG, "\(#function) Scheduled session abort for Session (\(sessionId).")
     }
     
     func abortAllSession() {

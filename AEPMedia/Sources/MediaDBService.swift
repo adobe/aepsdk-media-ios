@@ -12,7 +12,7 @@
 
 import Foundation
 
-struct MediaDBService {
+class MediaDBService {
 
     func persistHit(hit: MediaHit, sessionId: String) {
         //TODO implement this function.
@@ -26,7 +26,7 @@ struct MediaDBService {
         //TODO implement this function.
         return [MediaHit]()
     }
-    
+
     func getCachedSessionIds() -> [String] {
         //TODO implement this function.
         return [String]()

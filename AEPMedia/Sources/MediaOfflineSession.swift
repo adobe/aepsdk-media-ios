@@ -18,23 +18,21 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
     var LOG_TAG: String = "MediaOfflineSession"
     private var mediaDBService: MediaDBService
     private var isReportingSession: Bool    
-    private let MAX_ALLOWED_FAILURE: UInt8 = 2
+    private let MAX_ALLOWED_FAILURE: Int8 = 2
     private var failureCount = 0
-    private var sessionState: MediaSessionState
-    
+    private var sessionState: MediaSessionState    
                     
-    init(id: String, state: MediaState, processingQueue: DispatchQueue, mediaDBService: MediaDBService) {
+    init(id: String, state: MediaState, processingQueue dispatchQueue: DispatchQueue, mediaDBService: MediaDBService) {
         self.mediaDBService = mediaDBService
         isReportingSession = false
         sessionState = .Active
-        super.init(id: id, mediaState: state, processingQueue: processingQueue)
+        super.init(id: id, mediaState: state, processingQueue: dispatchQueue)
         eventsHandler = self
     }
     
     func queueMediaHit(hit: MediaHit) {
-        
         mediaDBService.persistHit(hit: hit, sessionId: id)
-        Log.debug(label: LOG_TAG, "\(#function) - Session (\(id)) persisting hit (\(hit.eventType)).")
+        Log.debug(label: LOG_TAG, "\(#function) - Session (\(id)) persisted hit (\(hit.eventType)).")
     }
                     
     func endSession() {
@@ -46,33 +44,31 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
     func abortSession() {
         mediaDBService.deleteHits(sessionId: id)
         isSessionActive = false
-        Log.debug(label: LOG_TAG, "\(#function) - Session (\(id)) is aborted.")
+        sessionEndHandler?()
+        Log.trace(label: LOG_TAG, "\(#function) - Session (\(id)) is aborted.")
     }
     
     private func reportSession() {
         guard !isReportingSession else {
-            Log.trace(label: LOG_TAG, "\(#function) - Exiting as we are currently sending session report.")
+            Log.debug(label: LOG_TAG, "\(#function) - Exiting as we are currently sending session report (\(id).")
             return
         }
         
         guard isReadyToSendHit() else {
-            Log.trace(label: LOG_TAG, "\(#function) - Exiting as session is not ready for sending hits.")
+            Log.debug(label: LOG_TAG, "\(#function) - Exiting as session (\(id) is not ready for sending hits.")
             return
         }
         
-        var hits = mediaDBService.getHits(sessionId: id)
+        let hits = mediaDBService.getHits(sessionId: id)
         let url = MediaCollectionReportHelper.getTrackingURL(url: mediaState.getMediaCollectionServer())
         let body = MediaCollectionReportHelper.generateHitReport(state: mediaState, hit: hits)
         
         guard !url.isEmpty, !body.isEmpty else {
-            Log.debug(label: LOG_TAG, "\(#function) - Could not generate downloaded content report from persisted hits for session \(id). Clearing persisted pings.")
-            if shouldClearSession() {
-                mediaDBService.deleteHits(sessionId: id)
-                sessionState = .Invalid
-            }
+            Log.debug(label: LOG_TAG, "\(#function) - Could not generate downloaded content report from persisted hits for session (\(id)). Clearing persisted pings.")
+            sessionState = .Invalid
+            onSessionReportFailure()
             return
         }
-        
         
         if let url = URL.init(string: url) {
             isReportingSession = true
@@ -80,32 +76,52 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
             let networkrequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: [String:String](), connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
          
             networkService.connectAsync(networkRequest: networkrequest) { connection in
-                self.isReportingSession = false;
-                if connection.error == nil {
-                    let statusCode = connection.response?.statusCode ?? -1
-                    if MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
-                        Log.debug(label: self.LOG_TAG, "\(#function) - \(self.id) Http failed with response code (\(statusCode))")
-                    
-                        self.sessionState = .Reported
-                    
-                    
-                        if self.shouldClearSession() {
-                            Log.trace(label: self.LOG_TAG, "ReportSessions - Clearing persisted pings for session \(self.id).")
-                            self.mediaDBService.deleteHits(sessionId: self.id)
-                            return
+                self.dispatchQueue.async {
+                    if connection.error == nil {
+                        let statusCode = connection.response?.statusCode ?? -1
+                        if !MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
+                            Log.debug(label: self.LOG_TAG, "\(#function) - Session (\(self.id)) reporting failed. HTTP request failed with response code (\(statusCode))")
+                            self.sessionState = .Failed
+                        } else {
+                            self.sessionState = .Reported
+                            Log.trace(label: self.LOG_TAG, "\(#function) - Session (\(self.id) Successfully reported.")
                         }
+                    } else if let error = connection.error as? URLError, error.code == URLError.Code.notConnectedToInternet {
+                        self.sessionState = .Failed
+                        self.onSessionReportFailure()
+                        //TODO: Do we need to handle no internet connection in some other way?
+                    } else {
+                        self.sessionState = .Failed
+                        self.onSessionReportFailure()
                     }
-                    
-                    else {
-                        Log.trace(label: self.LOG_TAG, "\(#function) \(self.id) Media collection endpoint returns nil location header.")
-                    }
-                } else if let error = connection.error as? URLError, error.code == URLError.Code.notConnectedToInternet {
-                    self.sessionState = .Failed
-                    //TODO handle no internet connection here.
-                } else {
-                    self.sessionState = .Failed
-                    //TODO handle all other errors here.
                 }
+            }
+        } else {
+            Log.debug(label: LOG_TAG, "\(#function) - Failed to report session (\(id). Unable to get URL.")
+            sessionState = .Invalid
+            onSessionReportFailure()
+        }
+    }
+    
+    private func onSessionReportSuccess() {
+        isReportingSession = false
+        if shouldClearSession() {
+            Log.trace(label: self.LOG_TAG, "\(#function) - Clearing persisted pings for Session (\(self.id)).")
+            mediaDBService.deleteHits(sessionId: id)
+            sessionEndHandler?()
+        }
+    }
+    
+    private func onSessionReportFailure() {
+        isReportingSession = false
+        if shouldClearSession() {
+            Log.trace(label: self.LOG_TAG, "\(#function) - Clearing persisted pings for Session (\(self.id)).")
+            mediaDBService.deleteHits(sessionId: id)
+            sessionEndHandler?()
+        } else {
+            failureCount += 1
+            dispatchQueue.async {
+                self.reportSession()
             }
         }
     }
@@ -117,7 +133,7 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
         }
         
         if (sessionState == .Failed) {
-            return failureCount > MAX_ALLOWED_FAILURE
+            return failureCount >= MAX_ALLOWED_FAILURE
         }
         
         return false

@@ -26,6 +26,7 @@ class MediaSession {
         // Session failed to report to backend. We will clear the hits from db if we exceed retries.
         case Failed
     }
+    static let DURATION_BETWEEN_HITS_ON_FAILURE: UInt64 = 30 * 1000_000_000  //Convert 30 seconds into nanoseconds.
         
     var id: String
     var mediaState: MediaState
@@ -81,13 +82,14 @@ class MediaSession {
         }
     }
 
-    func abort() {
+    func abort(onSessionEnd sessionEndHandler: (() -> Void)? = nil) {
         
         guard isSessionActive else {
             Log.debug(label: eventsHandler?.LOG_TAG ?? "", "\(#function) - Unable to abort session. Session (\(id)) is inactive")
             return
         }
         
+        self.sessionEndHandler = sessionEndHandler
         dispatchQueue.async {
             self.eventsHandler?.abortSession()
         }
