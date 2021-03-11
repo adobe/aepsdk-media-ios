@@ -13,7 +13,7 @@ import Foundation
 import AEPCore
 import AEPServices
 
-public class MediaPublicTracker: MediaTracker {
+class MediaPublicTracker: MediaTracker {
 
     static let LOG_TAG = "MediaTracker"
 

@@ -9,18 +9,16 @@
  governing permissions and limitations under the License.
  */
 
-import Foundation
-import AEPCore
 import AEPServices
 
-public class MediaContext {
+class MediaContext {
     enum MediaPlaybackState: String {
-        case Play = "Play"
-        case Pause = "Pause"
-        case Stall = "Stall"
-        case Buffer = "Buffer"
-        case Seek = "Seek"
-        case Init = "Init"
+        case Play
+        case Pause
+        case Stall
+        case Buffer
+        case Seek
+        case Init
     }
 
     static let LOG_TAG = "MediaContext"

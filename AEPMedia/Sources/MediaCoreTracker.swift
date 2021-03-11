@@ -9,11 +9,9 @@
  governing permissions and limitations under the License.
  */
 
-import Foundation
-import AEPCore
 import AEPServices
 
-public class MediaCoreTracker {
+class MediaCoreTracker {
 
     // MARK: Rule Name
 
@@ -124,7 +122,7 @@ public class MediaCoreTracker {
         case ErrInTrackedState =
             "Media tracker is already tracking a state with the same state name."
         case ErrNotInTrackedState =
-            "Media tracker is not already tracking a state with the same state name."
+            "Media tracker is not tracking a state with the given state name."
         case ErrTrackedStatesLimitReached =
             "Media tracker has reached maximum number of states per session (10)."
     }
@@ -137,6 +135,7 @@ public class MediaCoreTracker {
     static let LOG_TAG = "MediaCoreTracker"
     static let IDLE_TIMEOUT = TimeInterval(1800) //30 min
     static let MEDIA_SESSION_TIMEOUT = TimeInterval(86400) //24 hours
+    static let CONTENT_START_DURATION = TimeInterval(1) //1 sec
 
     #if DEBUG
         var inPrerollInterval: Bool = false
@@ -168,7 +167,7 @@ public class MediaCoreTracker {
         setupRules()
     }
 
-    func reset() {
+    private func reset() {
         self.hitGenerator = nil
         self.mediaContext = nil
 
@@ -228,7 +227,7 @@ public class MediaCoreTracker {
     }
 
     @discardableResult
-    func processRule(rule: Int, context: [String: Any]) -> Bool {
+    private func processRule(rule: Int, context: [String: Any]) -> Bool {
         let result = ruleEngine.processRule(name: rule, context: context)
 
         if !result.success {
@@ -238,8 +237,7 @@ public class MediaCoreTracker {
         return result.success
     }
 
-    func setupRules() {
-
+    private func setupRules() {
         ruleEngine.onEnterRule(enterFn: cmdEnterAction(rule:context:))
         ruleEngine.onExitRule(exitFn: cmdExitAction(rule:context:))
 
@@ -409,87 +407,87 @@ public class MediaCoreTracker {
     }
 
     // MARK: Rule Predicates
-    func isInMedia(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isInMedia(rule: MediaRule, context: [String: Any]) -> Bool {
         return mediaContext != nil
     }
 
-    func isInAdBreak(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isInAdBreak(rule: MediaRule, context: [String: Any]) -> Bool {
         return mediaContext?.isInAdBreak() ?? false
     }
 
-    func isInAd(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isInAd(rule: MediaRule, context: [String: Any]) -> Bool {
         return mediaContext?.isInAd() ?? false
     }
 
-    func isInChapter(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isInChapter(rule: MediaRule, context: [String: Any]) -> Bool {
         return mediaContext?.isInChapter() ?? false
     }
 
-    func isBuffering(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isBuffering(rule: MediaRule, context: [String: Any]) -> Bool {
         return mediaContext?.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Buffer) ?? false
     }
 
-    func isSeeking(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isSeeking(rule: MediaRule, context: [String: Any]) -> Bool {
         return mediaContext?.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Seek) ?? false
     }
 
-    func isTrackingState(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isTrackingState(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let state = StateInfo(info: context[KEY_INFO] as? [String: Any]) else {
             return false
         }
         return mediaContext?.isInState(info: state) ?? false
     }
 
-    func allowStateTrack(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func allowStateTrack(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let state = StateInfo(info: context[KEY_INFO] as? [String: Any]) else {
             return false
         }
         return (mediaContext?.hasTrackedState(info: state) ?? false) || !(mediaContext?.didReachMaxStateLimit() ?? true)
     }
 
-    func isValidMediaInfo(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isValidMediaInfo(rule: MediaRule, context: [String: Any]) -> Bool {
         guard MediaInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
     }
 
-    func isValidAdBreakInfo(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isValidAdBreakInfo(rule: MediaRule, context: [String: Any]) -> Bool {
         guard AdBreakInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
     }
 
-    func isValidAdInfo(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isValidAdInfo(rule: MediaRule, context: [String: Any]) -> Bool {
         guard AdInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
     }
 
-    func isValidChapterInfo(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isValidChapterInfo(rule: MediaRule, context: [String: Any]) -> Bool {
         guard ChapterInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
     }
 
-    func isValidQoEInfo(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isValidQoEInfo(rule: MediaRule, context: [String: Any]) -> Bool {
         guard QoEInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
     }
 
-    func isValidStateInfo(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isValidStateInfo(rule: MediaRule, context: [String: Any]) -> Bool {
         guard StateInfo(info: context[KEY_INFO] as? [String: Any]) != nil else {
             return false
         }
         return true
     }
 
-    func isDifferentAdBreakInfo(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isDifferentAdBreakInfo(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaCtx = mediaContext else {
             return false
         }
@@ -503,7 +501,7 @@ public class MediaCoreTracker {
         return !(currAdBreak == newAdBreak)
     }
 
-    func isDifferentAdInfo(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isDifferentAdInfo(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaCtx = mediaContext else {
             return false
         }
@@ -517,7 +515,7 @@ public class MediaCoreTracker {
         return !(currAd == newAd)
     }
 
-    func isDifferentChapterInfo(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func isDifferentChapterInfo(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaCtx = mediaContext else {
             return false
         }
@@ -531,7 +529,7 @@ public class MediaCoreTracker {
         return !(currChapter == newChapter)
     }
 
-    func allowPlaybackStateChange(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func allowPlaybackStateChange(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaCtx = mediaContext else {
             return false
         }
@@ -539,21 +537,21 @@ public class MediaCoreTracker {
     }
 
     // MARK: Rule Actions
-    func cmdEnterAction(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdEnterAction(rule: MediaRule, context: [String: Any]) -> Bool {
         if let refTS = getRefTS(context: context), hitGenerator != nil {
             hitGenerator?.setRefTS(ts: refTS)
         }
         return true
     }
 
-    func cmdExitAction(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdExitAction(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaCtx = mediaContext else {
             return false
         }
 
         // Force the state to play when we receive adstart before any play/pause.
         // Happens usually for preroll ad. We manually switch our state to play as the backend
-        // automatically swithces state to play after adstart.
+        // automatically switches state to play after adstart.
         if rule.name == RuleName.AdStart.rawValue {
             if mediaCtx.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Init) &&
                 !mediaCtx.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Buffer) &&
@@ -575,13 +573,13 @@ public class MediaCoreTracker {
         cmdSessionTimeoutDetection(rule: rule, context: context)
 
         // Flush the playback state after AdStart and AdBreakComplete
-        let shouldFlush = rule.name == RuleName.AdStart.rawValue || rule.name == RuleName.AdBreakComplete.rawValue
+        let shouldFlush = (rule.name == RuleName.AdStart.rawValue) || (rule.name == RuleName.AdBreakComplete.rawValue)
         hitGenerator?.processPlayback(doFlush: shouldFlush)
 
         return true
     }
 
-    func cmdMediaStart(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdMediaStart(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaInfo = MediaInfo(info: context[KEY_INFO] as? [String: Any]) else {
             return false
         }
@@ -602,21 +600,21 @@ public class MediaCoreTracker {
         return true
     }
 
-    func cmdMediaComplete(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdMediaComplete(rule: MediaRule, context: [String: Any]) -> Bool {
         hitGenerator?.processMediaComplete()
         reset()
 
         return true
     }
 
-    func cmdMediaSkip(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdMediaSkip(rule: MediaRule, context: [String: Any]) -> Bool {
         hitGenerator?.processMediaSkip()
         reset()
 
         return true
     }
 
-    func cmdAdBreakStart(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdAdBreakStart(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let adBreakInfo = AdBreakInfo(info: context[KEY_INFO] as? [String: Any]) else {
             return false
         }
@@ -625,14 +623,14 @@ public class MediaCoreTracker {
         return true
     }
 
-    func cmdAdBreakComplete(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdAdBreakComplete(rule: MediaRule, context: [String: Any]) -> Bool {
         hitGenerator?.processAdBreakComplete()
         mediaContext?.clearAdBreakInfo()
 
         return true
     }
 
-    func cmdAdBreakSkip(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdAdBreakSkip(rule: MediaRule, context: [String: Any]) -> Bool {
         // This may be called even when we are not in adbreak.
         if mediaContext?.isInAdBreak() ?? false {
             hitGenerator?.processAdBreakSkip()
@@ -641,7 +639,7 @@ public class MediaCoreTracker {
         return true
     }
 
-    func cmdAdStart(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdAdStart(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let adInfo = AdInfo(info: context[KEY_INFO] as? [String: Any]) else {
             return false
         }
@@ -653,14 +651,14 @@ public class MediaCoreTracker {
         return true
     }
 
-    func cmdAdComplete(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdAdComplete(rule: MediaRule, context: [String: Any]) -> Bool {
         hitGenerator?.processAdComplete()
         mediaContext?.clearAdInfo()
 
         return true
     }
 
-    func cmdAdSkip(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdAdSkip(rule: MediaRule, context: [String: Any]) -> Bool {
         // This may be called even when we are not in ad.
         if mediaContext?.isInAd() ?? false {
             hitGenerator?.processAdSkip()
@@ -670,7 +668,7 @@ public class MediaCoreTracker {
         return true
     }
 
-    func cmdChapterStart(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdChapterStart(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let chapterInfo = ChapterInfo(info: context[KEY_INFO] as? [String: Any]) else {
             return false
         }
@@ -682,14 +680,14 @@ public class MediaCoreTracker {
         return true
     }
 
-    func cmdChapterComplete(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdChapterComplete(rule: MediaRule, context: [String: Any]) -> Bool {
         hitGenerator?.processChapterComplete()
         mediaContext?.clearChapterInfo()
 
         return true
     }
 
-    func cmdChapterSkip(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdChapterSkip(rule: MediaRule, context: [String: Any]) -> Bool {
         // This may be called even when we are not in chapter.
         if mediaContext?.isInChapter() ?? false {
             hitGenerator?.processChapterSkip()
@@ -698,53 +696,53 @@ public class MediaCoreTracker {
         return true
     }
 
-    func cmdError(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdError(rule: MediaRule, context: [String: Any]) -> Bool {
         if let errorId = getError(context: context) {
             hitGenerator?.processError(errorId: errorId)
         }
         return true
     }
 
-    func cmdBitrateChange(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdBitrateChange(rule: MediaRule, context: [String: Any]) -> Bool {
         hitGenerator?.processBitrateChange()
         return true
     }
 
-    func cmdPlay(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdPlay(rule: MediaRule, context: [String: Any]) -> Bool {
         mediaContext?.enter(state: MediaContext.MediaPlaybackState.Play)
         return true
     }
 
-    func cmdPause(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdPause(rule: MediaRule, context: [String: Any]) -> Bool {
         mediaContext?.enter(state: MediaContext.MediaPlaybackState.Pause)
         return true
     }
 
-    func cmdBufferStart(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdBufferStart(rule: MediaRule, context: [String: Any]) -> Bool {
         mediaContext?.enter(state: MediaContext.MediaPlaybackState.Buffer)
         return true
     }
 
-    func cmdBufferComplete(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdBufferComplete(rule: MediaRule, context: [String: Any]) -> Bool {
         if mediaContext?.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Buffer) ?? false {
             mediaContext?.exit(state: MediaContext.MediaPlaybackState.Buffer)
         }
         return true
     }
 
-    func cmdSeekStart(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdSeekStart(rule: MediaRule, context: [String: Any]) -> Bool {
         mediaContext?.enter(state: MediaContext.MediaPlaybackState.Seek)
         return true
     }
 
-    func cmdSeekComplete(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdSeekComplete(rule: MediaRule, context: [String: Any]) -> Bool {
         if mediaContext?.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Seek) ?? false {
             mediaContext?.exit(state: MediaContext.MediaPlaybackState.Seek)
         }
         return true
     }
 
-    func cmdStateStart(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdStateStart(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let stateInfo = StateInfo(info: context[KEY_INFO] as? [String: Any]) else {
             return false
         }
@@ -754,7 +752,7 @@ public class MediaCoreTracker {
         return true
     }
 
-    func cmdStateEnd(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdStateEnd(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let stateInfo = StateInfo(info: context[KEY_INFO] as? [String: Any]) else {
             return false
         }
@@ -764,7 +762,7 @@ public class MediaCoreTracker {
         return true
     }
 
-    func cmdQoEUpdate(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdQoEUpdate(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let qoeInfo = QoEInfo(info: context[KEY_INFO] as? [String: Any]) else {
             return false
         }
@@ -773,7 +771,7 @@ public class MediaCoreTracker {
         return true
     }
 
-    func cmdPlayheadUpdate(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdPlayheadUpdate(rule: MediaRule, context: [String: Any]) -> Bool {
         if let playhead = getPlayhead(context: context) {
             mediaContext?.setPlayhead(value: playhead)
         }
@@ -782,7 +780,7 @@ public class MediaCoreTracker {
     }
 
     @discardableResult
-    func cmdSessionTimeoutDetection(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdSessionTimeoutDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         let refTS = getRefTS(context: context) ?? TimeInterval()
 
         if contentStartRefTS == TimeInterval() {
@@ -802,7 +800,7 @@ public class MediaCoreTracker {
     }
 
     @discardableResult
-    func cmdIdleDetection(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdIdleDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaCtx = mediaContext else {
             return false
         }
@@ -839,7 +837,7 @@ public class MediaCoreTracker {
     }
 
     @discardableResult
-    func cmdContentStartDetection(rule: MediaRule, context: [String: Any]) -> Bool {
+    private func cmdContentStartDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaCtx = mediaContext else {
             return false
         }
@@ -859,7 +857,7 @@ public class MediaCoreTracker {
             contentStartRefTS = refTS
         }
 
-        if (refTS - contentStartRefTS) >= TimeInterval(1) {
+        if (refTS - contentStartRefTS) >= Self.CONTENT_START_DURATION {
             hitGenerator?.processPlayback(doFlush: true)
             contentStarted = true
         }
@@ -927,7 +925,7 @@ public class MediaCoreTracker {
     }
 
     // MARK: Event Data Helpers
-    func cleanMetadata(data: [String: String]) -> [String: String] {
+    private func cleanMetadata(data: [String: String]) -> [String: String] {
         var cleanData: [String: String] = [:]
         let pattern = ("^[a-zA-Z0-9_\\.]+$")
         guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
