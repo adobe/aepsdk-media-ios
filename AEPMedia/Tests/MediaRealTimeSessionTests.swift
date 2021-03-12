@@ -41,7 +41,7 @@ class MediaRealTimeSessionTests: XCTestCase {
     func testEndSession() {
         //prepare
         let sessionId = "sessionId"
-        let eventType = MediaConstants.EventName.SESSION_START        
+        let eventType = MediaConstants.EventName.SESSION_START
         let mediaState = MediaState()
         let mediaSession = MediaRealTimeSession(id: sessionId, state: mediaState , processingQueue: DispatchQueue(label: ""))
         

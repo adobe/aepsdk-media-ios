@@ -34,11 +34,12 @@ class MediaServiceTest: XCTestCase {
         
         //setup
         let mockDBService = MockMediaDBService()
+        let emptyConfig = [String:Any]()
         
         //Action
         let mediaService: MediaService = MediaService(mediaState: MediaState(), mediaDBService:mockDBService)
         
-        let sessionId = mediaService.createSession()
+        let sessionId = mediaService.createSession(config: emptyConfig)
         
         //Assert
         XCTAssertNotNil(sessionId)
@@ -52,11 +53,12 @@ class MediaServiceTest: XCTestCase {
         let mockDBService = MockMediaDBService()
         let eventType = "test_event"
         let mediaHit = MediaHit(eventType: eventType, params: nil, customMetada: nil, qoeData: nil, playhead: 0.0, ts: TimeInterval())
+        let emptyConfig = [String:Any]()
         
         //Action
         let mediaService = MediaService(mediaState: MediaState(), mediaDBService:mockDBService)
         
-        let sessionId = mediaService.createSession()
+        let sessionId = mediaService.createSession(config: emptyConfig)
         let mockMediaSession = MockMediaSession(id: sessionId!, mediaState: MediaState(), processingQueue: DispatchQueue(label: ""))
         mediaService.mediaSessions[sessionId!] = mockMediaSession
         mediaService.processHit(sessionId: sessionId!, hit: mediaHit)
@@ -72,11 +74,12 @@ class MediaServiceTest: XCTestCase {
     func testEndSession() {
         //setup
         let mockDBService = MockMediaDBService()
+        let emptyConfig = [String:Any]()
                 
         //Action
         let mediaService = MediaService(mediaState: MediaState(), mediaDBService:mockDBService)
         
-        let sessionId = mediaService.createSession()
+        let sessionId = mediaService.createSession(config: emptyConfig)
         let mockMediaSession = MockMediaSession(id: sessionId!, mediaState: MediaState(), processingQueue: DispatchQueue(label: ""))
         mediaService.mediaSessions[sessionId!] = mockMediaSession
         mediaService.endSession(sessionId: sessionId!)
@@ -93,8 +96,9 @@ class MediaServiceTest: XCTestCase {
                 
         //Action
         let mediaService = MediaService(mediaState: MediaState(), mediaDBService: mockDBService)
+        let emptyConfig = [String:Any]()
         
-        let sessionId = mediaService.createSession()
+        let sessionId = mediaService.createSession(config: emptyConfig)
         let mockMediaSession = MockMediaSession(id: sessionId!, mediaState: MediaState(), processingQueue: DispatchQueue(label: ""))
         mediaService.mediaSessions[sessionId!] = mockMediaSession
         mediaService.abort(sessionId: sessionId!)
