@@ -13,7 +13,7 @@ import Foundation
 import AEPCore
 import AEPServices
 
-public class MediaPublicTracker: MediaTracker {
+class MediaPublicTracker: MediaTracker {
 
     static let LOG_TAG = "MediaTracker"
 
@@ -40,14 +40,18 @@ public class MediaPublicTracker: MediaTracker {
         self.trackerId = UUID().uuidString
         self.sessionId = UUID().uuidString
 
-        let eventData: [String: Any] = [MediaConstants.Tracker.ID: trackerId, MediaConstants.Tracker.EVENT_PARAM: config ?? [:]]
+        let eventData: [String: Any] = [MediaConstants.Tracker.ID: self.trackerId, MediaConstants.Tracker.EVENT_PARAM: self.config ?? [:]]
         let event = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
 
         dispatch(event)
         Log.debug(label: Self.LOG_TAG, "\(#function): Tracker request event was sent to event hub.")
     }
 
-    public func trackSessionStart(info: [String: Any], metadata: [String: String] = [:]) {
+    deinit {
+        stopTimer()
+    }
+
+    public func trackSessionStart(info: [String: Any], metadata: [String: String]? = nil) {
         dispatchQueue.async {
             self.trackInternal(eventName: MediaConstants.EventName.SESSION_START, params: info, metadata: metadata)
             self.startTimer()
