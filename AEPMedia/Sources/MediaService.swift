@@ -16,27 +16,35 @@ import AEPServices
 class MediaService : MediaProcessor {
     
     private let LOG_TAG = "MediaService"
-    private let TIMER_REPEAT_INTERVAL = 0.5
     
+    #if DEBUG
+    var mediaSessions: [String: MediaSession] = [:]
+    #else
     private var mediaSessions: [String: MediaSession] = [:]
+    #endif
     private var mediaState: MediaState
     private var dispatchQueue = DispatchQueue(label: "MediaService.DispatchQueue")
     private var mediaDBService: MediaDBService
     
-    init(mediaState: MediaState) {
+    init(mediaState: MediaState, mediaDBService: MediaDBService = MediaDBService()) {
         self.mediaState = mediaState
-        mediaDBService = MediaDBService()
+        self.mediaDBService = mediaDBService
         initCachedSessions()
     }
     
+    ///Reads the cached offline session in DB, create `MediaSession` objects for them and initiate the reporting of `MediaSessions.`
     private func initCachedSessions() {
         let cachedSessionIds = mediaDBService.getCachedSessionIds()
         cachedSessionIds.forEach { sessionId in
-            mediaSessions[sessionId] = MediaOfflineSession(id: sessionId, state: mediaState, processingQueue: dispatchQueue, mediaDBService: mediaDBService)
+            let mediaOfflineSession = MediaOfflineSession(id: sessionId, state: mediaState, processingQueue: dispatchQueue, mediaDBService: mediaDBService)
+            mediaSessions[sessionId] = mediaOfflineSession
+            mediaOfflineSession.end {
+                self.mediaSessions.removeValue(forKey: sessionId)
+            }
         }
     }
     
-    func createSession(state: MediaState) -> String? {
+    func createSession() -> String? {
         
         guard mediaState.privacyStatus != .optedOut else {
             Log.debug(label: LOG_TAG, "Could not start new media session. Privacy is opted out.")
@@ -47,9 +55,9 @@ class MediaService : MediaProcessor {
         let sessionId = UUID().uuidString
         var session: MediaSession
         if isDownloaded {
-            session = MediaOfflineSession(id: sessionId, state: state, processingQueue: dispatchQueue, mediaDBService: mediaDBService)
+            session = MediaOfflineSession(id: sessionId, state: mediaState, processingQueue: dispatchQueue, mediaDBService: mediaDBService)
         } else {
-            session = MediaRealTimeSession(id: sessionId, state: state, processingQueue: dispatchQueue)
+            session = MediaRealTimeSession(id: sessionId, state: mediaState, processingQueue: dispatchQueue)
         }
         
         mediaSessions[sessionId] = session
@@ -57,6 +65,10 @@ class MediaService : MediaProcessor {
         return sessionId
     }
     
+    /// Queues the `MediaHit` hit in session `sessionId`
+    ///- Parameters:
+    ///    - sessionId: UniqueId of session to which `MediaHit` belongs.
+    ///    - hit: `Object` of type `MediaHit`
     func processHit(sessionId: String?, hit : MediaHit) {
         
         guard let sessionId = sessionId, !sessionId.isEmpty else {
@@ -74,6 +86,9 @@ class MediaService : MediaProcessor {
         session?.queue(hit: hit)
     }
     
+    /// Ends the session `sessionId`. In case of Offline session, sends the report to MediaAnalytics collection server.
+    ///
+    /// - Parameter sessionId: Unique session id for session to end.
     func endSession(sessionId: String) {
         
         guard mediaSessions.keys.contains(sessionId) else {
@@ -89,6 +104,9 @@ class MediaService : MediaProcessor {
         Log.trace(label: LOG_TAG, "Scheduled end of the session (\(sessionId))")
     }
     
+    /// Abort the session `sessionId`.
+    ///
+    /// - Parameter sessionId: Unique sessionId of session to be aborted.
     func abort(sessionId: String) {
         
         guard mediaSessions.keys.contains(sessionId) else {
@@ -104,9 +122,10 @@ class MediaService : MediaProcessor {
         Log.trace(label: LOG_TAG, "\(#function) Scheduled session abort for Session (\(sessionId).")
     }
     
+    /// Aborts all the active sessions.
     func abortAllSession() {
-        for (_, session) in mediaSessions {
-            session.abort()
+        for (sessionId, _) in mediaSessions {
+            abort(sessionId: sessionId)
         }
     }
 }

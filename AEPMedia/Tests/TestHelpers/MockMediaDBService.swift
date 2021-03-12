@@ -10,28 +10,13 @@
  */
 
 import Foundation
+@testable import AEPMedia
 
-class MediaCollectionReportHelper {
+class MockMediaDBService : MediaDBService {
     
-    private init() {}
+    var cachedSessionId: [String] = []
     
-    static func getTrackingURL(url: String) -> String {
-        //TODO Define this function
-        return url
-    }
-    
-    static func getTrackingURLForEvents(url: String, sessionId: String?) -> String {
-        //TODO Define this function.
-        return ""
-    }
-    
-    static func generateHitReport(state: MediaState, hit: [MediaHit]) -> String {
-        //TDOO implement this function.
-        return ""
-    }
-    
-    static func extractSessionID(sessionResponseFragment: String) -> String? {
-        //TDOO implement this function.
-        return ""
+    override func getCachedSessionIds() -> [String] {
+        return cachedSessionId
     }
 }

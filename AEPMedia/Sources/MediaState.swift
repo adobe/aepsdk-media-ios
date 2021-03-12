@@ -15,9 +15,10 @@ import AEPCore
 class MediaState {
     //TODO to be implemented.
     var privacyStatus: PrivacyStatus = .optedIn
+    var url: String = ""
 
     func getMediaCollectionServer() -> String {
         //TODO define this function
-        return ""
+        return url
     }        
 }

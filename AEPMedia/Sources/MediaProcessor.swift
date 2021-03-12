@@ -13,5 +13,8 @@ import Foundation
 
 protocol MediaProcessor {
 
-    func createSession(state: MediaState) -> String?
+    /// Creates a new `session` and return its `sessionId`.
+    ///    
+    /// - Returns: Unique SessionId for the session.
+    func createSession() -> String?
 }

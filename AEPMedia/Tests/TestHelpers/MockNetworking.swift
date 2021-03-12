@@ -9,29 +9,16 @@
  governing permissions and limitations under the License.
  */
 
-import Foundation
 
-class MediaCollectionReportHelper {
+import Foundation
+import AEPServices
+
+class MockNetworking: Networking {
     
-    private init() {}
+    var hasNetworkRequestReceived = false
     
-    static func getTrackingURL(url: String) -> String {
-        //TODO Define this function
-        return url
-    }
     
-    static func getTrackingURLForEvents(url: String, sessionId: String?) -> String {
-        //TODO Define this function.
-        return ""
-    }
-    
-    static func generateHitReport(state: MediaState, hit: [MediaHit]) -> String {
-        //TDOO implement this function.
-        return ""
-    }
-    
-    static func extractSessionID(sessionResponseFragment: String) -> String? {
-        //TDOO implement this function.
-        return ""
+    func connectAsync(networkRequest: NetworkRequest, completionHandler: ((HttpConnection) -> Void)?) {
+        hasNetworkRequestReceived = true
     }
 }

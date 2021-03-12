@@ -19,7 +19,11 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
     private static let MAX_RETRY_COUNT = 2
     private static let MAX_ALLOWED_DURATION_BETWEEN_HITS: TimeInterval = 60
     
+    #if DEBUG
+    var hits: [MediaHit] = []
+    #else
     private var hits: [MediaHit] = []
+    #endif
     private var sessionId: String?    
     private var isSendingHit: Bool?
     private var sessionStartRetryCount: Int?
@@ -27,7 +31,6 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
     private var sessionRetryCount = 0
                 
     init(id: String, state: MediaState, processingQueue: DispatchQueue) {
-        
         super.init(id: id, mediaState: state, processingQueue: processingQueue)
         eventsHandler = self
     }
@@ -47,7 +50,7 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
         hits.removeAll()
     }
     
-    func finishedProcessing() -> Bool {
+    private func finishedProcessing() -> Bool {
         return !isSessionActive && !(isSendingHit ?? false) && hits.isEmpty
     }
     
