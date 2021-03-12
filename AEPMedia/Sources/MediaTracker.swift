@@ -9,22 +9,33 @@
  governing permissions and limitations under the License.
  */
 
-@objc public protocol MediaTracker {
-    func trackSessionStart(info: [String: Any], metadata: [String: String])
+@objc(AEPMediaTracker)
+public protocol MediaTracker {
 
+    @objc(trackSessionStart:metadata:)
+    func trackSessionStart(info: [String: Any], metadata: [String: String]?)
+
+    @objc(trackPlay)
     func trackPlay()
 
+    @objc(trackPause)
     func trackPause()
 
+    @objc(trackComplete)
     func trackComplete()
 
+    @objc(trackSessionEnd)
     func trackSessionEnd()
 
+    @objc(trackError:)
     func trackError(errorId: String)
 
+    @objc(trackEvent:info:metadata:)
     func trackEvent(event: String, info: [String: Any]?, metadata: [String: String]?)
 
+    @objc(updateCurrentPlayhead:)
     func updateCurrentPlayhead(time: Double)
 
+    @objc(updateQoEObject:)
     func updateQoEObject(qoe: [String: Any])
 }

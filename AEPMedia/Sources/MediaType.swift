@@ -11,7 +11,8 @@
 
 import AEPServices
 
-@objc public enum MediaType: Int, RawRepresentable {
+@objc(AEPMediaType)
+public enum MediaType: Int, RawRepresentable {
     case Audio
     case Video
 
