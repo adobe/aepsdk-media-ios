@@ -83,40 +83,81 @@ import AEPServices
     }
 }
 
-@objc public enum AEPMediaEvent: Int {
-    case AEPMediaEventAdBreakStart
-    case AEPMediaEventAdBreakComplete
-    case AEPMediaEventAdStart
-    case AEPMediaEventAdComplete
-    case AEPMediaEventAdSkip
-    case AEPMediaEventChapterStart
-    case AEPMediaEventChapterComplete
-    case AEPMediaEventChapterSkip
-    case AEPMediaEventSeekStart
-    case AEPMediaEventSeekComplete
-    case AEPMediaEventBufferStart
-    case AEPMediaEventBufferComplete
-    case AEPMediaEventBitrateChange
-    case AEPMediaEventStateStart
-    case AEPMediaEventStateEnd
+@objc(AEPMediaEvent)
+public enum MediaEvent: Int, RawRepresentable {
+    case AdBreakStart
+    case AdBreakComplete
+    case AdStart
+    case AdComplete
+    case AdSkip
+    case ChapterStart
+    case ChapterComplete
+    case ChapterSkip
+    case SeekStart
+    case SeekComplete
+    case BufferStart
+    case BufferComplete
+    case BitrateChange
+    case StateStart
+    case StateEnd
 
-    func stringValue() -> String {
+    public typealias RawValue = String
+
+    public var rawValue: RawValue {
         switch self {
-        case .AEPMediaEventAdBreakStart: return MediaConstants.EventName.ADBREAK_START
-        case .AEPMediaEventAdBreakComplete: return MediaConstants.EventName.ADBREAK_COMPLETE
-        case .AEPMediaEventAdStart: return MediaConstants.EventName.AD_START
-        case .AEPMediaEventAdComplete: return MediaConstants.EventName.AD_COMPLETE
-        case .AEPMediaEventAdSkip: return MediaConstants.EventName.AD_SKIP
-        case .AEPMediaEventChapterStart: return MediaConstants.EventName.CHAPTER_START
-        case .AEPMediaEventChapterComplete: return MediaConstants.EventName.CHAPTER_COMPLETE
-        case .AEPMediaEventChapterSkip: return MediaConstants.EventName.CHAPTER_SKIP
-        case .AEPMediaEventSeekStart: return MediaConstants.EventName.SEEK_START
-        case .AEPMediaEventSeekComplete: return MediaConstants.EventName.SEEK_COMPLETE
-        case .AEPMediaEventBufferStart: return MediaConstants.EventName.BUFFER_START
-        case .AEPMediaEventBufferComplete: return MediaConstants.EventName.BUFFER_COMPLETE
-        case .AEPMediaEventBitrateChange: return MediaConstants.EventName.BITRATE_CHANGE
-        case .AEPMediaEventStateStart: return MediaConstants.EventName.STATE_START
-        case .AEPMediaEventStateEnd: return MediaConstants.EventName.STATE_END
+        case .AdBreakStart: return MediaConstants.EventName.ADBREAK_START
+        case .AdBreakComplete: return MediaConstants.EventName.ADBREAK_COMPLETE
+        case .AdStart: return MediaConstants.EventName.AD_START
+        case .AdComplete: return MediaConstants.EventName.AD_COMPLETE
+        case .AdSkip: return MediaConstants.EventName.AD_SKIP
+        case .ChapterStart: return MediaConstants.EventName.CHAPTER_START
+        case .ChapterComplete: return MediaConstants.EventName.CHAPTER_COMPLETE
+        case .ChapterSkip: return MediaConstants.EventName.CHAPTER_SKIP
+        case .SeekStart: return MediaConstants.EventName.SEEK_START
+        case .SeekComplete: return MediaConstants.EventName.SEEK_COMPLETE
+        case .BufferStart: return MediaConstants.EventName.BUFFER_START
+        case .BufferComplete: return MediaConstants.EventName.BUFFER_COMPLETE
+        case .BitrateChange: return MediaConstants.EventName.BITRATE_CHANGE
+        case .StateStart: return MediaConstants.EventName.STATE_START
+        case .StateEnd: return MediaConstants.EventName.STATE_END
+        }
+    }
+
+    public init?(rawValue: RawValue) {
+        switch rawValue {
+        case MediaConstants.EventName.ADBREAK_START:
+            self = .AdBreakStart
+        case MediaConstants.EventName.ADBREAK_COMPLETE:
+            self = .AdBreakComplete
+        case MediaConstants.EventName.AD_START:
+            self = .AdStart
+        case MediaConstants.EventName.AD_COMPLETE:
+            self = .AdComplete
+        case MediaConstants.EventName.AD_SKIP:
+            self = .AdSkip
+        case MediaConstants.EventName.CHAPTER_START:
+            self = .ChapterStart
+        case MediaConstants.EventName.CHAPTER_COMPLETE:
+            self = .ChapterComplete
+        case MediaConstants.EventName.CHAPTER_SKIP:
+            self = .ChapterSkip
+        case MediaConstants.EventName.SEEK_START:
+            self = .SeekStart
+        case MediaConstants.EventName.SEEK_COMPLETE:
+            self = .SeekComplete
+        case MediaConstants.EventName.BUFFER_START:
+            self = .BufferStart
+        case MediaConstants.EventName.BUFFER_COMPLETE:
+            self = .BufferComplete
+        case MediaConstants.EventName.BITRATE_CHANGE:
+            self = .BitrateChange
+        case MediaConstants.EventName.STATE_START:
+            self = .StateStart
+        case MediaConstants.EventName.STATE_END:
+            self = .StateEnd
+
+        default:
+            return nil
         }
     }
 }
