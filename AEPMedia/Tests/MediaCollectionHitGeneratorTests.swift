@@ -799,7 +799,6 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     func testGenerateHitUpdatedQoEInfo() {
         // test
         hitGenerator.generateHit(eventType: MediaConstants.EventName.PLAY)
-        // TODO: revisit qoe info creation after MediaObject convenience initializers fixed
         guard let newQoeInfo = QoEInfo(info: [MediaConstants.QoEInfo.BITRATE : 10000.0,
                                               MediaConstants.QoEInfo.DROPPED_FRAMES : 4.0,
                                               MediaConstants.QoEInfo.FPS : 60.0,

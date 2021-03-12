@@ -235,9 +235,9 @@ class MediaCollectionHitGenerator {
             return
         }
 
-        // for bitrate change events, error events, and calls to generateHit with qoeData present we
-        // want to use the qoe data in the current hit being generated.
-        // for all other events, we want to send the qoe data on the next hit after a qoe info change.
+        // for bitrate change events, error events, and calls to generateHit with qoeData present,
+        // we want to use the qoe data in the current hit being generated.
+        // for all other events, qoe data will be sent on the next hit after a qoe info change.
         switch eventType {
         case MediaConstants.MediaCollection.EventType.BITRATE_CHANGE, MediaConstants.MediaCollection.EventType.ERROR:
             qoeDataForCurrentHit = passedInQoeData
@@ -246,6 +246,7 @@ class MediaCollectionHitGenerator {
             if !passedInQoeData.isEmpty {
                 qoeDataForCurrentHit = passedInQoeData
             }
+            // handle case when qoe info has been updated
             else if self.qoeInfoUpdated {
                 qoeDataForCurrentHit = mediaContextQoeData
 
@@ -255,7 +256,7 @@ class MediaCollectionHitGenerator {
         // check if qoe info updated. if so, send qoe data in next hit.
         self.qoeInfoUpdated = self.lastQoeData as NSDictionary != mediaContextQoeData as NSDictionary
 
-        // Update the lastQoeData so we don't resend it with the next ping
+        // update the lastQoeData so we don't resend it with the next ping
         if !qoeDataForCurrentHit.isEmpty {
             self.lastQoeData = qoeDataForCurrentHit
         }
