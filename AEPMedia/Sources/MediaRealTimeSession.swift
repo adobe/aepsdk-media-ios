@@ -14,7 +14,7 @@ import AEPCore
 import AEPServices
 
 class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
-    static var LOG_TAG = "MediaRealTimeSession"
+    var LOG_TAG = "MediaRealTimeSession"
     
     private static let MAX_RETRY_COUNT = 2
     private static let MAX_ALLOWED_DURATION_BETWEEN_HITS: TimeInterval = 60
@@ -56,24 +56,24 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
     
     private func trySendHit() {
         guard !hits.isEmpty else {
-            Log.trace(label: MediaRealTimeSession.LOG_TAG, "\(#function) - MediaHit collection is empty.")
+            Log.trace(label: LOG_TAG, "\(#function) - MediaHit collection is empty.")
             return
         }
         
         guard !(isSendingHit ?? false) else {
-            Log.trace(label: MediaRealTimeSession.LOG_TAG, "\(#function) - Returning early. Already sending a Media hit.")
+            Log.trace(label: LOG_TAG, "\(#function) - Returning early. Already sending a Media hit.")
             return
         }
         
         guard let hit = hits.first else {
-            Log.debug(label: MediaRealTimeSession.LOG_TAG, "Returning early, first MediaHit is nil.")
+            Log.debug(label: LOG_TAG, "Returning early, first MediaHit is nil.")
             return
         }
         let eventType = hit.eventType
         
         let isSessionStartHit = hit.eventType == MediaConstants.EventName.SESSION_START
         if !isSessionStartHit && sessionId?.isEmpty ?? true {
-            Log.trace(label: MediaRealTimeSession.LOG_TAG, "\(#function) - \(eventType) Dropping as session id is unavailable.")
+            Log.trace(label: LOG_TAG, "\(#function) - \(eventType) Dropping as session id is unavailable.")
             hits.removeFirst()
             return
         }
@@ -88,7 +88,7 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
         let diff = currRefTs - lastRefTS
         
         if diff >= MediaRealTimeSession.MAX_ALLOWED_DURATION_BETWEEN_HITS {
-            Log.warning(label: MediaRealTimeSession.LOG_TAG, "trySendHit - (\(eventType)) TS difference from previous hit is \(diff) greater than 60 seconds.")
+            Log.warning(label: LOG_TAG, "trySendHit - (\(eventType)) TS difference from previous hit is \(diff) greater than 60 seconds.")
         }
         
         lastRefTS = currRefTs
@@ -102,7 +102,7 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
         }
         
         let body = MediaCollectionReportHelper.generateHitReport(state: mediaState, hit: [hit])
-        Log.debug(label: MediaRealTimeSession.LOG_TAG, "trySendHit - \(eventType) Generated url \(urlString), Generated body \(body)")
+        Log.debug(label: LOG_TAG, "trySendHit - \(eventType) Generated url \(urlString), Generated body \(body)")
         isSendingHit = true
                 
         if let url = URL.init(string: urlString){
@@ -113,13 +113,13 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
                     if connection.error == nil {
                         let statusCode = connection.response?.statusCode ?? -1
                         if !MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
-                            Log.debug(label: MediaRealTimeSession.LOG_TAG, "\(#function) - \(eventType) Http failed with response code (\(statusCode))")
+                            Log.debug(label: self.LOG_TAG, "\(#function) - \(eventType) Http failed with response code (\(statusCode))")
                             self.handleProcessingError()
                         } else {
                             if isSessionStartHit {
                                 if let sessionReponseFragment = connection.responseHttpHeader(forKey: "Location"), !sessionReponseFragment.isEmpty {
                                     let mcSessionId = MediaCollectionReportHelper.extractSessionID(sessionResponseFragment: sessionReponseFragment)
-                                    Log.trace(label: MediaRealTimeSession.LOG_TAG, "\(#function) - \(eventType) Media collection endpoint created internal session with id \(String(describing: mcSessionId))")
+                                    Log.trace(label: self.LOG_TAG, "\(#function) - \(eventType) Media collection endpoint created internal session with id \(String(describing: mcSessionId))")
                                 
                                     if isSessionStartHit, let mcSessionId = mcSessionId, mcSessionId.count > 0 {
                                         self.sessionId = mcSessionId
