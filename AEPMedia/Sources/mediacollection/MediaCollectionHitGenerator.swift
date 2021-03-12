@@ -39,7 +39,7 @@ class MediaCollectionHitGenerator {
         self.mediaHitProcessor = hitProcessor
         self.mediaConfig = config
         self.refTS = timestamp
-        previousState = MediaPlaybackState.Init
+        self.previousState = MediaPlaybackState.Init
         self.previousStateTS = refTS
 
         self.downloadedContent = mediaConfig[MediaConstants.Configuration.DOWNLOADED_CONTENT] as? Bool ?? false
@@ -231,7 +231,7 @@ class MediaCollectionHitGenerator {
         var qoeDataForCurrentHit = [String: Any]()
 
         if !isTracking {
-            Log.debug(label: self.LOG_TAG, "\(#function) - Dropping hit as we have internally stopped tracking")
+            Log.debug(label: LOG_TAG, "\(#function) - Dropping hit as we have internally stopped tracking")
             return
         }
 
