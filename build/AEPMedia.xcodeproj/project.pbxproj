@@ -21,7 +21,6 @@
 		2EFF1B5B25BF57FC00375965 /* AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EFF1B5125BF57FC00375965 /* AEPMedia.framework */; };
 		3D2C831425DE65C70064E0D4 /* MediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831325DE65C70064E0D4 /* MediaService.swift */; };
 		3D2C831825DE65EF0064E0D4 /* MediaOfflineSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831725DE65EF0064E0D4 /* MediaOfflineSession.swift */; };
-		3D2C832025DEFFEA0064E0D4 /* MediaTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C831F25DEFFEA0064E0D4 /* MediaTimer.swift */; };
 		3D2C833725E4932A0064E0D4 /* MediaRealTimeSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C833625E4932A0064E0D4 /* MediaRealTimeSession.swift */; };
 		3D2C836325E5CADC0064E0D4 /* MediaState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C836225E5CADC0064E0D4 /* MediaState.swift */; };
 		3D2C836A25E5CFDF0064E0D4 /* MediaHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C836925E5CFDF0064E0D4 /* MediaHit.swift */; };
@@ -73,11 +72,10 @@
 		2EFF1B5A25BF57FC00375965 /* AEPMediaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPMediaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D2C831325DE65C70064E0D4 /* MediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaService.swift; sourceTree = "<group>"; };
 		3D2C831725DE65EF0064E0D4 /* MediaOfflineSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaOfflineSession.swift; sourceTree = "<group>"; };
-		3D2C831F25DEFFEA0064E0D4 /* MediaTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MediaTimer.swift; path = ../MediaTimer.swift; sourceTree = "<group>"; };
 		3D2C833625E4932A0064E0D4 /* MediaRealTimeSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRealTimeSession.swift; sourceTree = "<group>"; };
 		3D2C836225E5CADC0064E0D4 /* MediaState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaState.swift; sourceTree = "<group>"; };
 		3D2C836925E5CFDF0064E0D4 /* MediaHit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaHit.swift; sourceTree = "<group>"; };
-		3D663A4425E71E4C00E96250 /* MediaCollectionReportHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MediaCollectionReportHelper.swift; path = ../MediaCollectionReportHelper.swift; sourceTree = "<group>"; };
+		3D663A4425E71E4C00E96250 /* MediaCollectionReportHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCollectionReportHelper.swift; sourceTree = "<group>"; };
 		3D663A4825E9914900E96250 /* MediaDBService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDBService.swift; sourceTree = "<group>"; };
 		3D663A9225FACA7600E96250 /* MediaServiceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaServiceTest.swift; sourceTree = "<group>"; };
 		3D663A9625FACB3800E96250 /* MockMediaDBService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMediaDBService.swift; sourceTree = "<group>"; };
@@ -170,6 +168,7 @@
 		3D2C836625E5CFAA0064E0D4 /* mediacollection */ = {
 			isa = PBXGroup;
 			children = (
+				3D663A4425E71E4C00E96250 /* MediaCollectionReportHelper.swift */,
 				3D2C836925E5CFDF0064E0D4 /* MediaHit.swift */,
 			);
 			path = mediacollection;
@@ -237,8 +236,6 @@
 		AC36EC3425C9F11E00A37345 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				3D663A4425E71E4C00E96250 /* MediaCollectionReportHelper.swift */,
-				3D2C831F25DEFFEA0064E0D4 /* MediaTimer.swift */,
 				3D2C836625E5CFAA0064E0D4 /* mediacollection */,
 				2E20D4A425CA154C00B5CCB8 /* MediaRule.swift */,
 				2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */,
@@ -442,7 +439,6 @@
 			files = (
 				3D663A4925E9914900E96250 /* MediaDBService.swift in Sources */,
 				3D2C833725E4932A0064E0D4 /* MediaRealTimeSession.swift in Sources */,
-				3D2C832025DEFFEA0064E0D4 /* MediaTimer.swift in Sources */,
 				3D2C831425DE65C70064E0D4 /* MediaService.swift in Sources */,
 				3D663A4525E71E4C00E96250 /* MediaCollectionReportHelper.swift in Sources */,
 				3D2C831825DE65EF0064E0D4 /* MediaOfflineSession.swift in Sources */,

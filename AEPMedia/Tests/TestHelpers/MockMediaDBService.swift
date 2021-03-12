@@ -13,9 +13,9 @@ import Foundation
 @testable import AEPMedia
 
 class MockMediaDBService : MediaDBService {
-    
+
     var cachedSessionId: [String] = []
-    
+
     override func getCachedSessionIds() -> [String] {
         return cachedSessionId
     }

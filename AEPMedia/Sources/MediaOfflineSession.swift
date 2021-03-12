@@ -15,7 +15,7 @@ import AEPServices
 
 class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {        
             
-    var LOG_TAG: String = "MediaOfflineSession"
+    static var LOG_TAG = "MediaOfflineSession"
     private var mediaDBService: MediaDBService
     private var isReportingSession: Bool    
     private let MAX_ALLOWED_FAILURE: Int8 = 2
@@ -32,12 +32,12 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
     
     func queueMediaHit(hit: MediaHit) {
         mediaDBService.persistHit(hit: hit, sessionId: id)
-        Log.debug(label: LOG_TAG, "\(#function) - Session (\(id)) persisted hit (\(hit.eventType)).")
+        Log.debug(label: MediaOfflineSession.LOG_TAG, "\(#function) - Session (\(id)) persisted hit (\(hit.eventType)).")
     }
                     
     func endSession() {
         reportSession()
-        Log.debug(label: LOG_TAG, "\(#function) - Session (\(id)) is ended")
+        Log.debug(label: MediaOfflineSession.LOG_TAG, "\(#function) - Session (\(id)) is ended")
         isSessionActive = false
     }
     
@@ -45,17 +45,17 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
         mediaDBService.deleteHits(sessionId: id)
         isSessionActive = false
         sessionEndHandler?()
-        Log.trace(label: LOG_TAG, "\(#function) - Session (\(id)) is aborted.")
+        Log.trace(label: MediaOfflineSession.LOG_TAG, "\(#function) - Session (\(id)) is aborted.")
     }
     
     private func reportSession() {
         guard !isReportingSession else {
-            Log.debug(label: LOG_TAG, "\(#function) - Exiting as we are currently sending session report (\(id).")
+            Log.debug(label: MediaOfflineSession.LOG_TAG, "\(#function) - Exiting as we are currently sending session report (\(id).")
             return
         }
         
         guard isReadyToSendHit() else {
-            Log.debug(label: LOG_TAG, "\(#function) - Exiting as session (\(id) is not ready for sending hits.")
+            Log.debug(label: MediaOfflineSession.LOG_TAG, "\(#function) - Exiting as session (\(id) is not ready for sending hits.")
             return
         }
         
@@ -64,7 +64,7 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
         let body = MediaCollectionReportHelper.generateHitReport(state: mediaState, hit: hits)
         
         guard !url.isEmpty, !body.isEmpty else {
-            Log.debug(label: LOG_TAG, "\(#function) - Could not generate downloaded content report from persisted hits for session (\(id)). Clearing persisted pings.")
+            Log.debug(label: MediaOfflineSession.LOG_TAG, "\(#function) - Could not generate downloaded content report from persisted hits for session (\(id)). Clearing persisted pings.")
             sessionState = .Invalid
             onSessionReportFailure()
             return
@@ -80,11 +80,11 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
                     if connection.error == nil {
                         let statusCode = connection.response?.statusCode ?? -1
                         if !MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
-                            Log.debug(label: self.LOG_TAG, "\(#function) - Session (\(self.id)) reporting failed. HTTP request failed with response code (\(statusCode))")
+                            Log.debug(label: MediaOfflineSession.LOG_TAG, "\(#function) - Session (\(self.id)) reporting failed. HTTP request failed with response code (\(statusCode))")
                             self.sessionState = .Failed
                         } else {
                             self.sessionState = .Reported
-                            Log.trace(label: self.LOG_TAG, "\(#function) - Session (\(self.id) Successfully reported.")
+                            Log.trace(label: MediaOfflineSession.LOG_TAG, "\(#function) - Session (\(self.id) Successfully reported.")
                         }
                     } else if let error = connection.error as? URLError, error.code == URLError.Code.notConnectedToInternet {
                         self.sessionState = .Failed
@@ -97,7 +97,7 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
                 }
             }
         } else {
-            Log.debug(label: LOG_TAG, "\(#function) - Failed to report session (\(id). Unable to get URL.")
+            Log.debug(label: MediaOfflineSession.LOG_TAG, "\(#function) - Failed to report session (\(id). Unable to get URL.")
             sessionState = .Invalid
             onSessionReportFailure()
         }
@@ -106,7 +106,7 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
     private func onSessionReportSuccess() {
         isReportingSession = false
         if shouldClearSession() {
-            Log.trace(label: self.LOG_TAG, "\(#function) - Clearing persisted pings for Session (\(self.id)).")
+            Log.trace(label: MediaOfflineSession.LOG_TAG, "\(#function) - Clearing persisted pings for Session (\(self.id)).")
             mediaDBService.deleteHits(sessionId: id)
             sessionEndHandler?()
         }
@@ -115,7 +115,7 @@ class MediaOfflineSession : MediaSession, MediaSessionEventsHandler {
     private func onSessionReportFailure() {
         isReportingSession = false
         if shouldClearSession() {
-            Log.trace(label: self.LOG_TAG, "\(#function) - Clearing persisted pings for Session (\(self.id)).")
+            Log.trace(label: MediaOfflineSession.LOG_TAG, "\(#function) - Clearing persisted pings for Session (\(self.id)).")
             mediaDBService.deleteHits(sessionId: id)
             sessionEndHandler?()
         } else {

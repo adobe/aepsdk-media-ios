@@ -101,7 +101,7 @@ class MediaSession {
  */
 protocol MediaSessionEventsHandler {
     
-    var LOG_TAG: String {get}
+    static var LOG_TAG: String {get}
     func endSession()
     func abortSession()
     func queueMediaHit(hit: MediaHit)
