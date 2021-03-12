@@ -237,4 +237,17 @@ class MediaExtensionTests: MediaTestBase {
         let tracker = media.trackers["trackerId"] as! FakeMediaCoreTracker
         XCTAssertFalse(tracker.trackCalled)
     }
+    
+    // MARK: handleSharedStateUpdate tests
+    func testHandleSharedStateUpdate() {
+        // setup
+        let fakeMediaService = FakeMediaService(mediaState: media.mediaState)
+        media.mediaService = fakeMediaService
+        let sharedStateUpdateEvent = Event(name: "shared state update", type: EventType.hub, source: EventSource.sharedState, data: identitySharedState)
+        // test
+        mockRuntime.simulateComingEvent(event: sharedStateUpdateEvent)
+        waitForProcessing()
+        // verify
+        XCTAssertTrue(fakeMediaService.updateMediaStateCalled)
+    }
 }

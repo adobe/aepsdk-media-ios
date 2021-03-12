@@ -10,15 +10,14 @@
  governing permissions and limitations under the License.
  */
 
+import AEPCore
 @testable import AEPMedia
 
-class FakeMediaCoreTracker : MediaCoreTracker {
+class FakeMediaService : MediaService {
 
-    var trackCalled = false
+    var updateMediaStateCalled = false
 
-    override func track(eventData: [String: Any]?) -> Bool {
-        trackCalled = true
-        return trackCalled
+    override func updateMediaState(event: Event) {
+        updateMediaStateCalled = true
     }
-    
 }

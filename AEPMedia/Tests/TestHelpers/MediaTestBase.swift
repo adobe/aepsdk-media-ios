@@ -16,8 +16,20 @@ import AEPServices
 @testable import AEPMedia
 
 class MediaTestBase : XCTestCase {
-    var media:Media!
+    var media: Media!
     var mockRuntime: TestableExtensionRuntime!
+    
+    let analyticsSharedState: [String: Any] = [
+        MediaConstants.Analytics.ANALYTICS_VISITOR_ID : "aid",
+        MediaConstants.Analytics.VISITOR_ID : "vid",
+    ]
+    
+    let identitySharedState: [String: Any] = [
+        MediaConstants.Identity.MARKETING_VISITOR_ID : "mid",
+        MediaConstants.Identity.BLOB : "blob",
+        MediaConstants.Identity.LOC_HINT : "lochint",
+        MediaConstants.Identity.VISITOR_IDS_LIST: [["id_origin": "orig1", "id_type": "type1", "id": "97717", "authentication_state": 1]]
+    ]
             
     func setupBase(disableIdRequest: Bool = true) {
         resetExtension()
@@ -59,18 +71,9 @@ class MediaTestBase : XCTestCase {
     }
     
     func dispatchDefaultConfigAndSharedStates(configData: [String:Any]? = nil) {
-        let analyticsSharedState: [String: Any] = [
-            MediaConstants.Analytics.ANALYTICS_VISITOR_ID : "aid",
-            MediaConstants.Analytics.VISITOR_ID : "vid",
-        ]
+       
         simulateAnalyticsState(data: analyticsSharedState)
         
-        let identitySharedState: [String: Any] = [
-            MediaConstants.Identity.MARKETING_VISITOR_ID : "mid",
-            MediaConstants.Identity.BLOB : "blob",
-            MediaConstants.Identity.LOC_HINT : "lochint",
-            MediaConstants.Identity.VISITOR_IDS_LIST: [["id_origin": "orig1", "id_type": "type1", "id": "97717", "authentication_state": 1]]
-        ]
         simulateIdentityState(data: identitySharedState)
         
         var configSharedState: [String: Any] = [
