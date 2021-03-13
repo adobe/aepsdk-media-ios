@@ -11,18 +11,18 @@
 
 import Foundation
 
-class MediaHit: Equatable {
+class MediaHit {
     /// Media Analytics Tracking Event Type
     private (set) var eventType: String
 
     /// Media Analytics parameters
-    private (set) var params: [String: Any]
+    private (set) var params: [String: Any]?
 
     /// Media Analytics metadata
-    private (set) var metadata: [String: String]
+    private (set) var metadata: [String: String]?
 
     /// Media Analytics QoE data
-    private (set) var qoeData: [String: Any]
+    private (set) var qoeData: [String: Any]?
 
     /// The current playhead
     private (set) var playhead: Double = 0
@@ -30,20 +30,11 @@ class MediaHit: Equatable {
     /// The current timestamp
     private (set) var timestamp: TimeInterval
 
-    static func == (lhs: MediaHit, rhs: MediaHit) -> Bool {
-        return  lhs.eventType == rhs.eventType &&
-            NSDictionary(dictionary: lhs.params).isEqual(to: rhs.params) &&
-            lhs.metadata == rhs.metadata &&
-            NSDictionary(dictionary: lhs.qoeData).isEqual(to: rhs.qoeData)  &&
-            lhs.playhead.isAlmostEqual(rhs.playhead) &&
-            lhs.timestamp.isAlmostEqual(rhs.timestamp)
-    }
-
     init(eventType: String, playhead: Double, ts: TimeInterval, params: [String: Any]? = nil, customMetadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
         self.eventType = eventType
-        self.params = params ?? [:]
-        self.metadata = customMetadata ?? [:]
-        self.qoeData = qoeData ?? [:]
+        self.params = params
+        self.metadata = customMetadata
+        self.qoeData = qoeData
         self.playhead = playhead
         self.timestamp = ts
     }

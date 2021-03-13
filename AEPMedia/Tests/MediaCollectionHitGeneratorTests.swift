@@ -836,3 +836,14 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         }
     }
 }
+
+extension MediaHit: Equatable {
+    public static func == (lhs: MediaHit, rhs: MediaHit) -> Bool {
+        return  lhs.eventType == rhs.eventType &&
+            NSDictionary(dictionary: lhs.params ?? [:]).isEqual(to: rhs.params ?? [:]) &&
+            lhs.metadata == rhs.metadata &&
+            NSDictionary(dictionary: lhs.qoeData ?? [:]).isEqual(to: rhs.qoeData ?? [:])  &&
+            lhs.playhead.isAlmostEqual(rhs.playhead) &&
+            lhs.timestamp.isAlmostEqual(rhs.timestamp)
+    }
+}
