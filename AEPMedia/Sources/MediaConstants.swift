@@ -17,6 +17,11 @@ enum MediaConstants {
     static let EXTENSION_VERSION                        = "0.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
 
+    enum TrackerConfig {
+        static let CHANNEL = "config.channel"
+        static let DOWNLOADED_CONTENT = "config.downloadedcontent"
+    }
+
     enum Configuration {
         static let SHARED_STATE_NAME = "com.adobe.module.configuration"
         static let GLOBAL_CONFIG_PRIVACY = "global.privacy"
@@ -30,8 +35,6 @@ enum MediaConstants {
         static let MEDIA_PLAYER_NAME = "media.playerName"
         static let MEDIA_APP_VERSION = "media.appVersion"
         static let MEDIA_DEBUG_LOGGING = "media.debugLogging"
-        static let CHANNEL = "config.channel"
-        static let DOWNLOADED_CONTENT = "config.downloadedcontent"
     }
 
     enum Identity {

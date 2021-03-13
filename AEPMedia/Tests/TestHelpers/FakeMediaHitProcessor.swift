@@ -12,37 +12,36 @@
 import Foundation
 @testable import AEPMedia
 
-class MockMediaHitProcessor: MediaHitProcessor {
+class FakeMediaHitProcessor: MediaProcessor {
+
     private var sessionEnded = false
-    private var processedHits: [Int: [MediaHit]] = [:]
-    private var currentSessionID: Int = -1
+    private var processedHits: [String: [MediaHit]] = [:]
+    private var currentSessionId: String = "-1"
     private var isSessionStartCalled = false
     
-    override func startSession() -> Int {
+    func createSession(config: [String : Any]) -> String? {
         isSessionStartCalled = true
-        currentSessionID += 1
-        processedHits[currentSessionID] = []
-        return currentSessionID
+        var intSessionId = (Int(currentSessionId) ?? 0)
+        intSessionId += 1
+        currentSessionId = "\(intSessionId)"
+        processedHits[currentSessionId] = []
+        return currentSessionId
     }
     
-    override func endSession(sessionID: Int) {
+    func endSession(sessionId: String) {
         sessionEnded = true
     }
     
-    override func processHit(sessionID: Int, hit: MediaHit) {
-        processedHits[sessionID]?.append(hit)
+    func processHit(sessionId: String, hit: MediaHit) {
+        processedHits[sessionId]?.append(hit)
     }
     
     func getHitFromActiveSession(index: Int) -> MediaHit? {
-        return getHit(sessionID: currentSessionID, index: index)
+        return getHit(sessionId: currentSessionId, index: index)
     }
     
-    func getHitCountFromActiveSession() -> Int {
-        return getHitCount(sessionID: currentSessionID)
-    }
-    
-    private func getHit(sessionID: Int, index: Int) -> MediaHit? {
-        guard let hits = processedHits[sessionID], hits.count != 0 else {
+    private func getHit(sessionId: String, index: Int) -> MediaHit? {
+        guard let hits = processedHits[sessionId], hits.count != 0 else {
             return nil
         }
         
@@ -53,13 +52,17 @@ class MockMediaHitProcessor: MediaHitProcessor {
         return hits[index]
     }
     
-    func getHitCount(sessionID: Int) -> Int {
-        return processedHits[sessionID]?.count ?? 0
+    func getHitCountFromActiveSession() -> Int {
+        return getHitCount(sessionId: currentSessionId)
+    }
+    
+    func getHitCount(sessionId: String) -> Int {
+        return processedHits[sessionId]?.count ?? 0
     }
     
     func clearHitsFromActiveSession() {
-        if processedHits[currentSessionID] != nil {
-            processedHits[currentSessionID]?.removeAll()
+        if processedHits[currentSessionId] != nil {
+            processedHits[currentSessionId]?.removeAll()
         }
     }
 }

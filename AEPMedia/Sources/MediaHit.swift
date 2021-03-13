@@ -39,11 +39,11 @@ class MediaHit: Equatable {
             lhs.timestamp.isAlmostEqual(rhs.timestamp)
     }
 
-    init(eventType: String, params: [String: Any], metadata: [String: String], qoeData: [String: Any], playhead: Double, ts: TimeInterval) {
+    init(eventType: String, playhead: Double, ts: TimeInterval, params: [String: Any]? = nil, customMetadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
         self.eventType = eventType
-        self.params = params
-        self.metadata = metadata
-        self.qoeData = qoeData
+        self.params = params ?? [:]
+        self.metadata = customMetadata ?? [:]
+        self.qoeData = qoeData ?? [:]
         self.playhead = playhead
         self.timestamp = ts
     }

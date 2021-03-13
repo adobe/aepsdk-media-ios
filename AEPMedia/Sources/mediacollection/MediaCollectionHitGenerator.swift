@@ -15,15 +15,15 @@ import AEPServices
 class MediaCollectionHitGenerator {
     private let LOG_TAG = "MediaCollectionHitGenerator"
 
-    private let mediaHitProcessor: MediaHitProcessor
+    private let mediaHitProcessor: MediaProcessor
     private let mediaConfig: [String: Any]
     private let downloadedContent: Bool
     private var lastQoeData: [String: Any] = [:]
-    private var sessionID: Int
-    private var isTracking: Bool
-    private var interval: TimeInterval
-    private var refTS: TimeInterval
-    private var previousState: MediaPlaybackState?
+    private var sessionId: String = ""
+    private var isTracking: Bool = false
+    private var reportingInterval: TimeInterval
+    private var currentStateRefTs: TimeInterval
+    private var currentState: MediaPlaybackState?
     private var previousStateTS: TimeInterval
     private var qoeInfoUpdated = false
 
@@ -34,18 +34,17 @@ class MediaCollectionHitGenerator {
     #endif
 
     /// Initializes the Media Collection Hit Generator
-    public required init(context: MediaContext, hitProcessor: MediaHitProcessor, config: [String: Any], timestamp: TimeInterval) {
+    public required init(context: MediaContext, hitProcessor: MediaProcessor, config: [String: Any], refTS: TimeInterval) {
         self.mediaContext = context
         self.mediaHitProcessor = hitProcessor
         self.mediaConfig = config
-        self.refTS = timestamp
-        self.previousState = MediaPlaybackState.Init
-        self.previousStateTS = refTS
+        self.currentStateRefTs = refTS
+        self.currentState = MediaPlaybackState.Init
+        self.previousStateTS = currentStateRefTs
 
-        self.downloadedContent = mediaConfig[MediaConstants.Configuration.DOWNLOADED_CONTENT] as? Bool ?? false
-        self.interval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
-        self.sessionID = mediaHitProcessor.startSession()
-        self.isTracking = true
+        self.downloadedContent = mediaConfig[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
+        self.reportingInterval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
+        startTrackingSession()
     }
 
     func processMediaStart(forceResume: Bool = false) {
@@ -58,7 +57,7 @@ class MediaCollectionHitGenerator {
         params[MediaConstants.MediaCollection.Media.DOWNLOADED] = downloadedContent
 
         if !self.mediaConfig.isEmpty {
-            if let channel = mediaConfig[MediaConstants.Configuration.CHANNEL] as? String, !channel.isEmpty {
+            if let channel = mediaConfig[MediaConstants.TrackerConfig.CHANNEL] as? String, !channel.isEmpty {
                 params[MediaConstants.MediaCollection.Media.CHANNEL] = channel
             }
         }
@@ -70,12 +69,12 @@ class MediaCollectionHitGenerator {
 
     func processMediaComplete() {
         generateHit(eventType: MediaConstants.MediaCollection.EventType.SESSION_COMPLETE)
-        endMediaSession()
+        endTrackingSession()
     }
 
     func processMediaSkip() {
         generateHit(eventType: MediaConstants.MediaCollection.EventType.SESSION_END)
-        endMediaSession()
+        endTrackingSession()
     }
 
     func processAdBreakStart() {
@@ -96,11 +95,11 @@ class MediaCollectionHitGenerator {
         let granularAdTrackingEnabled = mediaInfo.granularAdTracking
 
         if downloadedContent {
-            interval = MediaConstants.PingInterval.DEFAULT_OFFLINE
+            reportingInterval = MediaConstants.PingInterval.DEFAULT_OFFLINE
         } else if granularAdTrackingEnabled {
-            interval = MediaConstants.PingInterval.GRANULAR_AD
+            reportingInterval = MediaConstants.PingInterval.GRANULAR_AD
         } else {
-            interval = MediaConstants.PingInterval.DEFAULT_ONLINE
+            reportingInterval = MediaConstants.PingInterval.DEFAULT_ONLINE
         }
 
         let params = MediaCollectionHelper.extractAdParams(mediaContext: mediaContext)
@@ -110,12 +109,12 @@ class MediaCollectionHitGenerator {
     }
 
     func processAdComplete() {
-        interval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
+        reportingInterval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
         generateHit(eventType: MediaConstants.MediaCollection.EventType.AD_COMPLETE)
     }
 
     func processAdSkip() {
-        interval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
+        reportingInterval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
         generateHit(eventType: MediaConstants.MediaCollection.EventType.AD_SKIP)
     }
 
@@ -141,12 +140,12 @@ class MediaCollectionHitGenerator {
 
     /// Restart session again after 24 hr timeout or idle timeout recovered.
     func processSessionRestart() {
-        previousState = MediaPlaybackState.Init
-        previousStateTS = refTS
+        currentState = MediaPlaybackState.Init
+        previousStateTS = currentStateRefTs
 
         lastQoeData.removeAll()
 
-        sessionID = mediaHitProcessor.startSession()
+        sessionId = mediaHitProcessor.createSession(config: mediaConfig) ?? ""
         isTracking = true
 
         processMediaStart(forceResume: true)
@@ -184,7 +183,7 @@ class MediaCollectionHitGenerator {
     }
 
     func setRefTS(ts: Double) {
-        self.refTS = ts
+        self.currentStateRefTs = ts
     }
 
     func processPlayback(doFlush: Bool = false) {
@@ -194,15 +193,15 @@ class MediaCollectionHitGenerator {
 
         let currentState = getPlaybackState()
 
-        if (previousState != currentState || doFlush) {
+        if (self.currentState != currentState || doFlush) {
             let eventType = getMediaCollectionEvent(state: currentState)
             generateHit(eventType: eventType)
-            previousState = currentState
-            previousStateTS = refTS
-        } else if (previousState == currentState && (refTS - previousStateTS) >= interval) {
+            self.currentState = currentState
+            previousStateTS = currentStateRefTs
+        } else if (self.currentState == currentState) && (currentStateRefTs - previousStateTS >= reportingInterval) {
             // if the ts difference is more than interval we need to send it as multiple pings
             generateHit(eventType: MediaConstants.MediaCollection.EventType.PING)
-            previousStateTS = refTS
+            previousStateTS = currentStateRefTs
         }
     }
 
@@ -220,10 +219,22 @@ class MediaCollectionHitGenerator {
         generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_END, params: params)
     }
 
-    func endMediaSession() {
-        mediaHitProcessor.endSession(sessionID: sessionID)
-        isTracking = false
+    func startTrackingSession() {
+        sessionId = mediaHitProcessor.createSession(config: mediaConfig) ?? ""
+        isTracking = true
     }
+
+    #if DEBUG
+        func endTrackingSession() {
+            mediaHitProcessor.endSession(sessionId: sessionId)
+            isTracking = false
+        }
+    #else
+        private func endTrackingSession() {
+            mediaHitProcessor.endSession(sessionId: sessionId)
+            isTracking = false
+        }
+    #endif
 
     func generateHit(eventType: String, params: [String: Any]? = nil, metadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
         let mediaContextQoeData = mediaContext.getQoeInfo()?.toMap() ?? [String: Any]()
@@ -262,10 +273,10 @@ class MediaCollectionHitGenerator {
         }
 
         let playhead = mediaContext.getPlayhead()
-        let ts = refTS
+        let refTs = currentStateRefTs
 
-        let hit = MediaHit.init(eventType: eventType, params: params ?? [String: Any](), metadata: metadata ?? [String: String](), qoeData: qoeDataForCurrentHit, playhead: playhead, ts: ts)
-        mediaHitProcessor.processHit(sessionID: sessionID, hit: hit)
+        let hit = MediaHit.init(eventType: eventType, playhead: playhead, ts: refTs, params: params ?? [String: Any](), customMetadata: metadata ?? [String: String](), qoeData: qoeDataForCurrentHit)
+        mediaHitProcessor.processHit(sessionId: sessionId, hit: hit)
     }
 
     func getPlaybackState() -> MediaPlaybackState {

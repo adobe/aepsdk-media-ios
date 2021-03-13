@@ -74,7 +74,7 @@ class MediaCollectionHelper {
                                                          MediaConstants.MediaCollection.StandardAdMetadata.CREATIVE_URL
     ]
 
-    class func extractMediaParams(mediaContext: MediaContext) -> [String: Any] {
+    static func extractMediaParams(mediaContext: MediaContext) -> [String: Any] {
         var retDict = [String: Any]()
 
         let mediaInfo = mediaContext.getMediaInfo()
@@ -87,22 +87,16 @@ class MediaCollectionHelper {
 
         let metadata = mediaContext.getMediaMetadata()
 
-        // custom metadata is removed and only standard metadata will be returned.
+        // standard metadata keys are transformed and reported as part of media param
         for (key,value) in metadata {
-            if standardMediaMetadataMapping[key] != nil {
-                let newKey = getMediaCollectionKey(key: key)
-                retDict[newKey] = value
-            }
+            let newKey = standardMediaMetadataMapping[key] ?? key
+            retDict[newKey] = value
         }
 
         return retDict
     }
 
-    class func getMediaCollectionKey(key: String) -> String {
-        return standardMediaMetadataMapping[key] ?? key
-    }
-
-    class func extractMediaMetadata(mediaContext: MediaContext) -> [String: String] {
+    static func extractMediaMetadata(mediaContext: MediaContext) -> [String: String] {
         var retDict = [String: String]()
 
         let metadata = mediaContext.getMediaMetadata()
@@ -118,35 +112,35 @@ class MediaCollectionHelper {
     }
 
     // TODO: stub
-    class func extractAdBreakParams(mediaContext: MediaContext) -> [String: Any] {
+    static func extractAdBreakParams(mediaContext: MediaContext) -> [String: Any] {
         var retDict = [String: Any]()
 
         return retDict
     }
 
     // TODO: stub
-    class func extractAdParams(mediaContext: MediaContext) -> [String: Any] {
+    static func extractAdParams(mediaContext: MediaContext) -> [String: Any] {
         var retDict = [String: Any]()
 
         return retDict
     }
 
     // TODO: stub
-    class func extractAdMetadata(mediaContext: MediaContext) -> [String: String] {
+    static func extractAdMetadata(mediaContext: MediaContext) -> [String: String] {
         var retDict = [String: String]()
 
         return retDict
     }
 
     // TODO: stub
-    class func extractChapterParams(mediaContext: MediaContext) -> [String: Any] {
+    static func extractChapterParams(mediaContext: MediaContext) -> [String: Any] {
         var retDict = [String: Any]()
 
         return retDict
     }
 
     // TODO: stub
-    class func extractChapterMetadata(mediaContext: MediaContext) -> [String: String] {
+    static func extractChapterMetadata(mediaContext: MediaContext) -> [String: String] {
         var retDict = [String: String]()
 
         return retDict
