@@ -33,7 +33,7 @@ public protocol MediaTracker {
     func trackError(errorId: String)
 
     @objc(trackEvent:info:metadata:)
-    func trackEvent(event: String, info: [String: Any]?, metadata: [String: String]?)
+    func trackEvent(event: MediaEvent, info: [String: Any]?, metadata: [String: String]?)
 
     @objc(updateCurrentPlayhead:)
     func updateCurrentPlayhead(time: Double)

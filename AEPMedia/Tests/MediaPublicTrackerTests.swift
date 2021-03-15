@@ -407,7 +407,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventAdBreakStart() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.ADBREAK_START, info: Self.validAdBreakInfo, metadata: Self.metadata)
+        tracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.validAdBreakInfo, metadata: Self.metadata)
         
         sleep(1)
         
@@ -431,7 +431,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventAdBreakComplete() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.ADBREAK_COMPLETE)
+        tracker.trackEvent(event: MediaEvent.AdBreakComplete)
         
         sleep(1)
         
@@ -454,7 +454,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventAdStart() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.AD_START, info: Self.validAdInfo, metadata: Self.metadata)
+        tracker.trackEvent(event: MediaEvent.AdStart, info: Self.validAdInfo, metadata: Self.metadata)
         
         sleep(1)
         
@@ -478,7 +478,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventAdComplete() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.AD_COMPLETE)
+        tracker.trackEvent(event: MediaEvent.AdComplete)
         
         sleep(1)
         
@@ -501,7 +501,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventAdSkip() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.AD_SKIP)
+        tracker.trackEvent(event: MediaEvent.AdSkip)
         
         sleep(1)
         
@@ -524,7 +524,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventChapterStart() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.CHAPTER_START, info: Self.validChapterInfo, metadata: Self.metadata)
+        tracker.trackEvent(event: MediaEvent.ChapterStart, info: Self.validChapterInfo, metadata: Self.metadata)
         
         sleep(1)
         
@@ -548,7 +548,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventChapterCompelete() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.CHAPTER_COMPLETE)
+        tracker.trackEvent(event: MediaEvent.ChapterComplete)
         
         sleep(1)
         
@@ -571,7 +571,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventChapterSkip() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.CHAPTER_SKIP)
+        tracker.trackEvent(event: MediaEvent.ChapterSkip)
         
         sleep(1)
         
@@ -594,7 +594,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventStateStart() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.STATE_START, info: Self.validStateInfo)
+        tracker.trackEvent(event: MediaEvent.StateStart, info: Self.validStateInfo)
         
         sleep(1)
         
@@ -618,7 +618,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventStateCompelete() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.STATE_END, info: Self.validStateInfo)
+        tracker.trackEvent(event: MediaEvent.StateEnd, info: Self.validStateInfo)
         
         sleep(1)
         
@@ -642,7 +642,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventBufferStart() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.BUFFER_START)
+        tracker.trackEvent(event: MediaEvent.BufferStart)
         
         sleep(1)
         
@@ -665,7 +665,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventBufferComplete() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.BUFFER_COMPLETE)
+        tracker.trackEvent(event: MediaEvent.BufferComplete)
         
         sleep(1)
         
@@ -688,7 +688,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventSeekStart() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.SEEK_START)
+        tracker.trackEvent(event: MediaEvent.SeekStart)
         
         sleep(1)
         
@@ -711,7 +711,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventSeekComplete() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.SEEK_COMPLETE)
+        tracker.trackEvent(event: MediaEvent.SeekComplete)
         
         sleep(1)
         
@@ -734,7 +734,7 @@ class MediaPublicTrackerTests: XCTestCase {
     
     func test_trackEventBitrateChange() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
-        tracker.trackEvent(event: MediaConstants.EventName.BITRATE_CHANGE)
+        tracker.trackEvent(event: MediaEvent.BitrateChange)
         
         sleep(1)
         
