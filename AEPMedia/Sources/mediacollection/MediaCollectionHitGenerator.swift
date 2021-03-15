@@ -26,6 +26,9 @@ class MediaCollectionHitGenerator {
     private var currentState: MediaContext.MediaPlaybackState?
     private var previousStateTS: TimeInterval
     private var qoeInfoUpdated = false
+    private typealias EventType = MediaConstants.MediaCollection.EventType
+    private typealias Media = MediaConstants.MediaCollection.Media
+    private typealias QoE = MediaConstants.MediaCollection.QoE
 
     #if DEBUG
         var mediaContext: MediaContext
@@ -51,43 +54,43 @@ class MediaCollectionHitGenerator {
         var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
 
         if forceResume {
-            params[MediaConstants.MediaCollection.Media.RESUME] = true
+            params[Media.RESUME] = true
         }
 
-        params[MediaConstants.MediaCollection.Media.DOWNLOADED] = downloadedContent
+        params[Media.DOWNLOADED] = downloadedContent
 
         if !self.mediaConfig.isEmpty {
             if let channel = mediaConfig[MediaConstants.TrackerConfig.CHANNEL] as? String, !channel.isEmpty {
-                params[MediaConstants.MediaCollection.Media.CHANNEL] = channel
+                params[Media.CHANNEL] = channel
             }
         }
 
         let customMetadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
 
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.SESSION_START, params: params, metadata: customMetadata)
+        generateHit(eventType: EventType.SESSION_START, params: params, metadata: customMetadata)
     }
 
     func processMediaComplete() {
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.SESSION_COMPLETE)
+        generateHit(eventType: EventType.SESSION_COMPLETE)
         endTrackingSession()
     }
 
     func processMediaSkip() {
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.SESSION_END)
+        generateHit(eventType: EventType.SESSION_END)
         endTrackingSession()
     }
 
     func processAdBreakStart() {
         let params = MediaCollectionHelper.extractAdBreakParams(mediaContext: mediaContext)
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.ADBREAK_START, params: params)
+        generateHit(eventType: EventType.ADBREAK_START, params: params)
     }
 
     func processAdBreakComplete() {
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.ADBREAK_COMPLETE)
+        generateHit(eventType: EventType.ADBREAK_COMPLETE)
     }
 
     func processAdBreakSkip() {
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.ADBREAK_COMPLETE)
+        generateHit(eventType: EventType.ADBREAK_COMPLETE)
     }
 
     func processAdStart() {
@@ -105,32 +108,32 @@ class MediaCollectionHitGenerator {
         let params = MediaCollectionHelper.extractAdParams(mediaContext: mediaContext)
         let metadata = MediaCollectionHelper.extractAdMetadata(mediaContext: mediaContext)
 
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.AD_START, params: params, metadata: metadata)
+        generateHit(eventType: EventType.AD_START, params: params, metadata: metadata)
     }
 
     func processAdComplete() {
         reportingInterval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.AD_COMPLETE)
+        generateHit(eventType: EventType.AD_COMPLETE)
     }
 
     func processAdSkip() {
         reportingInterval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.AD_SKIP)
+        generateHit(eventType: EventType.AD_SKIP)
     }
 
     func processChapterStart() {
         let params = MediaCollectionHelper.extractChapterParams(mediaContext: mediaContext)
         let metadata = MediaCollectionHelper.extractChapterMetadata(mediaContext: mediaContext)
 
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.CHAPTER_START, params: params, metadata: metadata)
+        generateHit(eventType: EventType.CHAPTER_START, params: params, metadata: metadata)
     }
 
     func processChapterComplete() {
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.CHAPTER_COMPLETE)
+        generateHit(eventType: EventType.CHAPTER_COMPLETE)
     }
 
     func processChapterSkip() {
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.CHAPTER_SKIP)
+        generateHit(eventType: EventType.CHAPTER_SKIP)
     }
 
     /// End media session after 24 hr timeout or idle timeout(30 mins).
@@ -171,15 +174,15 @@ class MediaCollectionHitGenerator {
 
     func processBitrateChange() {
         let qoeData = mediaContext.qoeInfo?.toMap()
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.BITRATE_CHANGE, qoeData: qoeData)
+        generateHit(eventType: EventType.BITRATE_CHANGE, qoeData: qoeData)
     }
 
     func processError(errorId: String) {
         var qoeData = mediaContext.qoeInfo?.toMap()
-        qoeData?[MediaConstants.MediaCollection.QoE.ERROR_ID] = errorId
-        qoeData?[MediaConstants.MediaCollection.QoE.ERROR_SOURCE] = MediaConstants.MediaCollection.QoE.ERROR_SOURCE_PLAYER
+        qoeData?[QoE.ERROR_ID] = errorId
+        qoeData?[QoE.ERROR_SOURCE] = QoE.ERROR_SOURCE_PLAYER
 
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.ERROR, qoeData: qoeData)
+        generateHit(eventType: EventType.ERROR, qoeData: qoeData)
     }
 
     func setRefTS(ts: Double) {
@@ -200,7 +203,7 @@ class MediaCollectionHitGenerator {
             previousStateTS = currentStateRefTs
         } else if (self.currentState == currentState) && (currentStateRefTs - previousStateTS >= reportingInterval) {
             // if the ts difference is more than interval we need to send it as multiple pings
-            generateHit(eventType: MediaConstants.MediaCollection.EventType.PING)
+            generateHit(eventType: EventType.PING)
             previousStateTS = currentStateRefTs
         }
     }
@@ -213,7 +216,7 @@ class MediaCollectionHitGenerator {
         var params = [String: Any]()
         params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.stateName
 
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_START, params: params)
+        generateHit(eventType: EventType.STATE_START, params: params)
     }
 
     func processStateEnd(stateInfo: StateInfo?) {
@@ -224,11 +227,16 @@ class MediaCollectionHitGenerator {
         var params = [String: Any]()
         params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.stateName
 
-        generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_END, params: params)
+        generateHit(eventType: EventType.STATE_END, params: params)
     }
 
     func startTrackingSession() {
-        sessionId = mediaHitProcessor.createSession(config: mediaConfig) ?? ""
+        guard let sessionId = mediaHitProcessor.createSession(config: mediaConfig) else {
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to create a tracking session.")
+            isTracking = false
+            return
+        }
+        self.sessionId = sessionId
         isTracking = true
     }
 
@@ -258,7 +266,7 @@ class MediaCollectionHitGenerator {
         // we want to use the qoe data in the current hit being generated.
         // for all other events, qoe data will be sent on the next hit after a qoe info change.
         switch eventType {
-        case MediaConstants.MediaCollection.EventType.BITRATE_CHANGE, MediaConstants.MediaCollection.EventType.ERROR:
+        case EventType.BITRATE_CHANGE, EventType.ERROR:
             qoeDataForCurrentHit = passedInQoeData
         default:
             // handle case when generateHit is called with qoeData
@@ -306,20 +314,20 @@ class MediaCollectionHitGenerator {
     func getMediaCollectionEvent(state: MediaContext.MediaPlaybackState) -> String {
         switch state {
         case .Buffer:
-            return MediaConstants.MediaCollection.EventType.BUFFER_START
+            return EventType.BUFFER_START
         case .Seek:
-            return MediaConstants.MediaCollection.EventType.PAUSE_START
+            return EventType.PAUSE_START
         case .Play:
-            return MediaConstants.MediaCollection.EventType.PLAY
+            return EventType.PLAY
         case .Pause:
-            return MediaConstants.MediaCollection.EventType.PAUSE_START
+            return EventType.PAUSE_START
         case .Stall:
             // Stall not supported by backend we just send Play event for it
-            return MediaConstants.MediaCollection.EventType.PLAY
+            return EventType.PLAY
         case .Init:
             // We should never hit this condition as there is no event to denote init.
             // Ping without any previous playback state denotes init.
-            return MediaConstants.MediaCollection.EventType.PING
+            return EventType.PING
         }
     }
 }
