@@ -30,21 +30,21 @@ class MediaContext {
     private var playState = MediaPlaybackState.Init
 
     let mediaInfo: MediaInfo
-    let mediaMetadata: [String: String]?
+    let mediaMetadata: [String: String]
 
     private(set) var adBreakInfo: AdBreakInfo?
     private(set) var adInfo: AdInfo?
-    private(set) var adMetadata: [String: String]?
+    private(set) var adMetadata: [String: String] = [:]
 
     private(set) var chapterInfo: ChapterInfo?
-    private(set) var chapterMetadata: [String: String]?
+    private(set) var chapterMetadata: [String: String] = [:]
 
     private(set) var errorInfo: [String: String]?
     private(set) var qoeInfo: QoEInfo?
 
     init(mediaInfo: MediaInfo, metadata: [String: String]?) {
         self.mediaInfo = mediaInfo
-        self.mediaMetadata = metadata
+        self.mediaMetadata = metadata ?? [:]
     }
 
     // AdBreak
@@ -64,6 +64,7 @@ class MediaContext {
 
     func clearAd() {
         adInfo = nil
+        adMetadata = [:]
     }
 
     // Chapter
@@ -74,6 +75,7 @@ class MediaContext {
 
     func clearChapter() {
         chapterInfo = nil
+        chapterMetadata = [:]
     }
 
     // QoE
@@ -86,7 +88,7 @@ class MediaContext {
         playhead = value
     }
 
-    func enter(state: MediaPlaybackState) {
+    func enterPlaybackState(state: MediaPlaybackState) {
         Log.trace(label: Self.LOG_TAG, "\(#function) EnterState - \(state)")
         switch state {
         case .Play, .Pause, .Stall:
@@ -100,7 +102,7 @@ class MediaContext {
         }
     }
 
-    func exit(state: MediaPlaybackState) {
+    func exitPlaybackState(state: MediaPlaybackState) {
         Log.trace(label: Self.LOG_TAG, "\(#function) ExitState - \(state)")
         switch state {
         case .Buffer:
@@ -127,18 +129,14 @@ class MediaContext {
     }
 
     func isIdle() -> Bool {
-        return !isInMediaPlaybackState(state: MediaPlaybackState.Play) ||
-            isInMediaPlaybackState(state: MediaPlaybackState.Seek) ||
-            isInMediaPlaybackState(state: MediaPlaybackState.Buffer)
+        return !isInMediaPlaybackState(state: .Play) ||
+            isInMediaPlaybackState(state: .Seek) ||
+            isInMediaPlaybackState(state: .Buffer)
     }
 
     // State
     @discardableResult
-    func startState(info: StateInfo?) -> Bool {
-        guard let info = info else {
-            return false
-        }
-
+    func startState(info: StateInfo) -> Bool {
         if !hasTrackedState(info: info) && didReachMaxStateLimit() {
             Log.debug(label: Self.LOG_TAG, "\(#function) - failed, already tracked max states \(MediaConstants.StateInfo.STATE_LIMIT) during the current session.")
             return false
@@ -154,11 +152,7 @@ class MediaContext {
     }
 
     @discardableResult
-    func endState(info: StateInfo?) -> Bool {
-        guard let info = info else {
-            return false
-        }
-
+    func endState(info: StateInfo) -> Bool {
         if !isInState(info: info) {
             Log.debug(label: Self.LOG_TAG, "\(#function) - failed, state \(info.stateName) is not being tracked.")
             return false
@@ -169,11 +163,7 @@ class MediaContext {
     }
 
     func isInState(info: StateInfo) -> Bool {
-        guard let isStateActive = trackedStates[info.stateName] else {
-            return false
-        }
-
-        return isStateActive
+        return trackedStates[info.stateName] ?? false
     }
 
     func hasTrackedState(info: StateInfo) -> Bool {

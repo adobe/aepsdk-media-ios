@@ -97,14 +97,14 @@ class MediaEventTracker: MediaEventTracking {
         case ErrTrackedStatesLimitReached = "Media tracker has reached maximum number of states per session (10)."
     }
 
-    static let KEY_INFO = "key_info"
-    static let KEY_METADATA = "key_metadata"
-    static let KEY_EVENT_TS = "key_eventts"
+    private static let KEY_INFO = "key_info"
+    private static let KEY_METADATA = "key_metadata"
+    private static let KEY_EVENT_TS = "key_eventts"
 
-    static let LOG_TAG = "MediaCoreTracker"
-    static let IDLE_TIMEOUT = TimeInterval(1800) //30 min
-    static let MEDIA_SESSION_TIMEOUT = TimeInterval(86400) //24 hours
-    static let CONTENT_START_DURATION = TimeInterval(1) //1 sec
+    private static let LOG_TAG = "MediaCoreTracker"
+    private static let IDLE_TIMEOUT = TimeInterval(1800) //30 min
+    private static let MEDIA_SESSION_TIMEOUT = TimeInterval(86400) //24 hours
+    private static let CONTENT_START_DURATION = TimeInterval(1) //1 sec
 
     #if DEBUG
         var inPrerollInterval = false
@@ -116,9 +116,9 @@ class MediaEventTracker: MediaEventTracking {
         private var mediaContext: MediaContext?
     #endif
 
-    private var hitProcessor: MediaProcessor?
+    private let hitProcessor: MediaProcessor?
     private var hitGenerator: MediaCollectionHitGenerator?
-    private var config: [String: Any]?
+    private let config: [String: Any]?
     private var mediaIdle = false
     private var prerollQueuedRules: [(name: RuleName, context: [String: Any])] = []
     private var contentStarted = false
@@ -126,13 +126,12 @@ class MediaEventTracker: MediaEventTracking {
     private var contentStartRefTS = TimeInterval()
     private var mediaSessionStartTS = TimeInterval()
     private var mediaIdleStartTS = TimeInterval()
-    private var ruleEngine: MediaRuleEngine
+    private let ruleEngine: MediaRuleEngine
 
     init(hitProcessor: MediaProcessor, config: [String: Any]) {
         self.hitProcessor = hitProcessor
         self.config = config
         ruleEngine = MediaRuleEngine()
-        reset()
         setupRules()
     }
 
@@ -456,65 +455,65 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     private func isDifferentAdBreakInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let mediaCtx = mediaContext else {
+        guard let mediaContext = mediaContext else {
             return false
         }
 
-        if mediaCtx.adBreakInfo == nil {
+        if mediaContext.adBreakInfo == nil {
             return true
         }
 
-        let currAdBreak = mediaCtx.adBreakInfo
+        let currAdBreak = mediaContext.adBreakInfo
         let newAdBreak = AdBreakInfo(info: context[Self.KEY_INFO] as? [String: Any] ?? [:])
         return currAdBreak != newAdBreak
     }
 
     private func isDifferentAdInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let mediaCtx = mediaContext else {
+        guard let mediaContext = mediaContext else {
             return false
         }
 
-        if mediaCtx.adInfo == nil {
+        if mediaContext.adInfo == nil {
             return true
         }
 
-        let currAd = mediaCtx.adInfo
+        let currAd = mediaContext.adInfo
         let newAd = AdInfo(info: context[Self.KEY_INFO] as? [String: Any] ?? [:])
         return currAd != newAd
     }
 
     private func isDifferentChapterInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let mediaCtx = mediaContext else {
+        guard let mediaContext = mediaContext else {
             return false
         }
 
-        if mediaCtx.chapterInfo == nil {
+        if mediaContext.chapterInfo == nil {
             return true
         }
 
-        let currChapter = mediaCtx.chapterInfo
+        let currChapter = mediaContext.chapterInfo
         let newChapter = ChapterInfo(info: context[Self.KEY_INFO] as? [String: Any] ?? [:])
         return currChapter != newChapter
     }
 
     private func allowPlaybackStateChange(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let mediaCtx = mediaContext else {
+        guard let mediaContext = mediaContext else {
             return false
         }
         // Change of Playback State not allowed inside AdBreak but outside Ad
-        return (mediaCtx.adBreakInfo == nil) || (mediaCtx.adInfo != nil)
+        return (mediaContext.adBreakInfo == nil) || (mediaContext.adInfo != nil)
     }
 
     // MARK: Rule Actions
     private func cmdEnterAction(rule: MediaRule, context: [String: Any]) -> Bool {
-        if let refTS = getRefTS(context: context), hitGenerator != nil {
-            hitGenerator?.setRefTS(ts: refTS)
+        if hitGenerator != nil {
+            hitGenerator?.setRefTS(ts: getRefTS(context: context))
         }
         return true
     }
 
     private func cmdExitAction(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let mediaCtx = mediaContext else {
+        guard let mediaContext = mediaContext else {
             return false
         }
 
@@ -522,18 +521,18 @@ class MediaEventTracker: MediaEventTracking {
         // Happens usually for preroll ad. We manually switch our state to play as the backend
         // automatically switches state to play after adstart.
         if rule.name == RuleName.AdStart.rawValue {
-            if mediaCtx.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Init) &&
-                !mediaCtx.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Buffer) &&
-                !mediaCtx.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Seek) {
-                mediaCtx.enter(state: MediaContext.MediaPlaybackState.Play)
+            if mediaContext.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Init) &&
+                !mediaContext.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Buffer) &&
+                !mediaContext.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Seek) {
+                mediaContext.enterPlaybackState(state: MediaContext.MediaPlaybackState.Play)
             }
         }
 
         // If we receive BufferComplete / SeekComplete before first play / pause,
         // we manually switch to pause as there is not way to go back to init state.
         if rule.name == RuleName.BufferComplete.rawValue || rule.name == RuleName.SeekComplete.rawValue {
-            if mediaCtx.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Init) {
-                mediaCtx.enter(state: MediaContext.MediaPlaybackState.Pause)
+            if mediaContext.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Init) {
+                mediaContext.enterPlaybackState(state: MediaContext.MediaPlaybackState.Pause)
             }
         }
 
@@ -553,9 +552,9 @@ class MediaEventTracker: MediaEventTracking {
             return false
         }
 
-        let metadata = getMetadata(context: context) ?? [:]
+        let metadata = getMetadata(context: context)
 
-        let refTS = getRefTS(context: context) ?? TimeInterval()
+        let refTS = getRefTS(context: context)
 
         mediaContext = MediaContext(mediaInfo: mediaInfo, metadata: metadata)
         //TODO replace with actual MediaColectionHitGenerator implementation
@@ -612,7 +611,7 @@ class MediaEventTracker: MediaEventTracking {
         guard let adInfo = AdInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
             return false
         }
-        let metadata = getMetadata(context: context) ?? [:]
+        let metadata = getMetadata(context: context)
 
         mediaContext?.setAd(info: adInfo, metadata: metadata)
         hitGenerator?.processAdStart()
@@ -641,7 +640,7 @@ class MediaEventTracker: MediaEventTracking {
         guard let chapterInfo = ChapterInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
             return false
         }
-        let metadata = getMetadata(context: context) ?? [:]
+        let metadata = getMetadata(context: context)
 
         mediaContext?.setChapter(info: chapterInfo, metadata: metadata)
         hitGenerator?.processChapterStart()
@@ -678,35 +677,35 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     private func cmdPlay(rule: MediaRule, context: [String: Any]) -> Bool {
-        mediaContext?.enter(state: MediaContext.MediaPlaybackState.Play)
+        mediaContext?.enterPlaybackState(state: MediaContext.MediaPlaybackState.Play)
         return true
     }
 
     private func cmdPause(rule: MediaRule, context: [String: Any]) -> Bool {
-        mediaContext?.enter(state: MediaContext.MediaPlaybackState.Pause)
+        mediaContext?.enterPlaybackState(state: MediaContext.MediaPlaybackState.Pause)
         return true
     }
 
     private func cmdBufferStart(rule: MediaRule, context: [String: Any]) -> Bool {
-        mediaContext?.enter(state: MediaContext.MediaPlaybackState.Buffer)
+        mediaContext?.enterPlaybackState(state: MediaContext.MediaPlaybackState.Buffer)
         return true
     }
 
     private func cmdBufferComplete(rule: MediaRule, context: [String: Any]) -> Bool {
         if mediaContext?.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Buffer) ?? false {
-            mediaContext?.exit(state: MediaContext.MediaPlaybackState.Buffer)
+            mediaContext?.exitPlaybackState(state: MediaContext.MediaPlaybackState.Buffer)
         }
         return true
     }
 
     private func cmdSeekStart(rule: MediaRule, context: [String: Any]) -> Bool {
-        mediaContext?.enter(state: MediaContext.MediaPlaybackState.Seek)
+        mediaContext?.enterPlaybackState(state: MediaContext.MediaPlaybackState.Seek)
         return true
     }
 
     private func cmdSeekComplete(rule: MediaRule, context: [String: Any]) -> Bool {
         if mediaContext?.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Seek) ?? false {
-            mediaContext?.exit(state: MediaContext.MediaPlaybackState.Seek)
+            mediaContext?.exitPlaybackState(state: MediaContext.MediaPlaybackState.Seek)
         }
         return true
     }
@@ -750,7 +749,7 @@ class MediaEventTracker: MediaEventTracking {
 
     @discardableResult
     private func cmdSessionTimeoutDetection(rule: MediaRule, context: [String: Any]) -> Bool {
-        let refTS = getRefTS(context: context) ?? TimeInterval()
+        let refTS = getRefTS(context: context)
 
         if contentStartRefTS == TimeInterval() {
             mediaSessionStartTS = refTS
@@ -770,12 +769,12 @@ class MediaEventTracker: MediaEventTracking {
 
     @discardableResult
     private func cmdIdleDetection(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let mediaCtx = mediaContext else {
+        guard let mediaContext = mediaContext else {
             return false
         }
 
-        if mediaCtx.isIdle() {
-            let refTS = getRefTS(context: context) ?? TimeInterval()
+        if mediaContext.isIdle() {
+            let refTS = getRefTS(context: context)
             if mediaIdle {
                 // Media was already idle during previous call.
                 if !trackerIdle && (refTS - mediaSessionStartTS) >= Self.IDLE_TIMEOUT {
@@ -807,21 +806,21 @@ class MediaEventTracker: MediaEventTracking {
 
     @discardableResult
     private func cmdContentStartDetection(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let mediaCtx = mediaContext else {
+        guard let mediaContext = mediaContext else {
             return false
         }
 
-        if mediaCtx.isIdle() || contentStarted {
+        if mediaContext.isIdle() || contentStarted {
             return true
         }
 
-        if mediaCtx.adBreakInfo != nil {
+        if mediaContext.adBreakInfo != nil {
             // Reset the timer if in AdBreak and contentStart ping is not sent
             contentStartRefTS = TimeInterval()
             return true
         }
 
-        let refTS = getRefTS(context: context) ?? TimeInterval()
+        let refTS = getRefTS(context: context)
         if contentStartRefTS == TimeInterval() {
             contentStartRefTS = refTS
         }
@@ -863,15 +862,15 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     func prerollDeferRule(rule: RuleName, context: [String: Any]) -> Bool {
-        guard  let mediaCtx = mediaContext, inPrerollInterval else {
+        guard  let mediaContext = mediaContext, inPrerollInterval else {
             return false
         }
-        let prerollWaitingtime = mediaCtx.mediaInfo.prerollWaitingTime
+        let prerollWaitingtime = mediaContext.mediaInfo.prerollWaitingTime
         // We are going to queue the events and stop further downstream
         // processing for preroll_waiting_time ms.
         prerollQueuedRules.append((name: rule, context: context))
 
-        let refTS = getRefTS(context: context) ?? TimeInterval()
+        let refTS = getRefTS(context: context)
 
         if (refTS - prerollRefTS) >= prerollWaitingtime ||
             rule == RuleName.AdBreakStart ||
@@ -913,9 +912,9 @@ class MediaEventTracker: MediaEventTracking {
         return cleanData
     }
 
-    func getMetadata(context: [String: Any]) -> [String: String]? {
+    func getMetadata(context: [String: Any]) -> [String: String] {
         guard let metadata = context[Self.KEY_METADATA] as? [String: String] else {
-            return nil
+            return [:]
         }
 
         return metadata
@@ -945,9 +944,9 @@ class MediaEventTracker: MediaEventTracking {
         return playhead
     }
 
-    func getRefTS(context: [String: Any]) -> Double? {
+    func getRefTS(context: [String: Any]) -> TimeInterval {
         guard let ts = context[Self.KEY_EVENT_TS] as? Double else {
-            return nil
+            return TimeInterval()
         }
 
         return ts
