@@ -15,7 +15,6 @@ class MediaContext {
     enum MediaPlaybackState: String {
         case Play
         case Pause
-        case Stall
         case Buffer
         case Seek
         case Init
@@ -91,7 +90,7 @@ class MediaContext {
     func enterPlaybackState(state: MediaPlaybackState) {
         Log.trace(label: Self.LOG_TAG, "\(#function) EnterState - \(state)")
         switch state {
-        case .Play, .Pause, .Stall:
+        case .Play, .Pause:
             playState = state
         case .Buffer:
             buffering = true
@@ -118,7 +117,7 @@ class MediaContext {
         var retVal = false
 
         switch state {
-        case .Init, .Play, .Pause, .Stall:
+        case .Init, .Play, .Pause:
             retVal = (playState == state)
         case .Buffer:
             retVal = buffering

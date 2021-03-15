@@ -729,6 +729,7 @@ class MediaEventTracker: MediaEventTracking {
         return true
     }
 
+    // Abort and restart the current media Session if active for more than 24hrs
     @discardableResult
     private func cmdSessionTimeoutDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         let refTS = getRefTS(context: context)
@@ -749,6 +750,7 @@ class MediaEventTracker: MediaEventTracking {
         return true
     }
 
+    // Abort the session if the player is idle (not in play) for more than 30 minutes
     @discardableResult
     private func cmdIdleDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaContext = mediaContext else {
@@ -786,6 +788,7 @@ class MediaEventTracker: MediaEventTracking {
         return true
     }
 
+    // Detect 1 sec of main content playback and send the content start (play) ping
     @discardableResult
     private func cmdContentStartDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaContext = mediaContext else {
@@ -816,6 +819,8 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     // MARK: Preroll Rule Helpers
+
+    // Remove the trackPlay calls before AdBreakStart for preroll ads to avoid incorrect content start on reporting side
     func prerollReorderRules(rules: [(name: RuleName, context: [String: Any])]) ->[(name: RuleName, context: [String: Any])] {
         var reorderedRules: [(name: RuleName, context: [String: Any])] = []
         var adBreakStart: (name: RuleName, context: [String: Any])?
@@ -843,6 +848,7 @@ class MediaEventTracker: MediaEventTracking {
         return reorderedRules
     }
 
+    // Check if we need to wait for PrerollWaitTime for preroll ads before executing any track calls
     func prerollDeferRule(rule: RuleName, context: [String: Any]) -> Bool {
         guard  let mediaContext = mediaContext, inPrerollInterval else {
             return false
