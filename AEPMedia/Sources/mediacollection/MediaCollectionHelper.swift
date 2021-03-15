@@ -10,10 +10,10 @@
  */
 
 import Foundation
+import AEPServices
 
-// TODO: replace with final implementation
 class MediaCollectionHelper {
-    let LOG_TAG = "MediaCollectionHelper"
+    static let LOG_TAG = "MediaCollectionHelper"
 
     private static let standardMediaMetadataMapping = [ MediaConstants.StandardMediaMetadata.SHOW:
         MediaConstants.MediaCollection.StandardMediaMetadata.SHOW, MediaConstants.StandardMediaMetadata.SEASON: MediaConstants.MediaCollection.StandardMediaMetadata.SEASON,
@@ -77,7 +77,7 @@ class MediaCollectionHelper {
     static func extractMediaParams(mediaContext: MediaContext) -> [String: Any] {
         var retDict = [String: Any]()
 
-        let mediaInfo = mediaContext.getMediaInfo()
+        let mediaInfo = mediaContext.mediaInfo
         retDict[MediaConstants.MediaCollection.Media.ID] = mediaInfo.id
         retDict[MediaConstants.MediaCollection.Media.NAME] = mediaInfo.name
         retDict[MediaConstants.MediaCollection.Media.LENGTH] = mediaInfo.length
@@ -85,7 +85,7 @@ class MediaCollectionHelper {
         retDict[MediaConstants.MediaCollection.Media.STREAM_TYPE] = mediaInfo.mediaType
         retDict[MediaConstants.MediaCollection.Media.RESUME] = mediaInfo.resumed
 
-        let metadata = mediaContext.getMediaMetadata()
+        let metadata = mediaContext.mediaMetadata ?? [:]
 
         // standard metadata keys are transformed and reported as part of media param
         for (key,value) in metadata {
@@ -99,7 +99,10 @@ class MediaCollectionHelper {
     static func extractMediaMetadata(mediaContext: MediaContext) -> [String: String] {
         var retDict = [String: String]()
 
-        let metadata = mediaContext.getMediaMetadata()
+        guard let metadata = mediaContext.mediaMetadata else {
+            Log.trace(label: LOG_TAG, "\(#function) - found empty metadata.")
+            return retDict
+        }
 
         // standard metadata is removed and only custom metadata will be returned.
         for (key,value) in metadata {
@@ -111,37 +114,89 @@ class MediaCollectionHelper {
         return retDict
     }
 
-    // TODO: stub
     static func extractAdBreakParams(mediaContext: MediaContext) -> [String: Any] {
         var retDict = [String: Any]()
 
+        guard let adBreakInfo = mediaContext.adBreakInfo else {
+            Log.trace(label: LOG_TAG, "\(#function) - found empty ad break info.")
+            return retDict
+        }
+
+        retDict[MediaConstants.MediaCollection.AdBreak.POD_FRIENDLY_NAME] = adBreakInfo.name
+        retDict[MediaConstants.MediaCollection.AdBreak.POD_INDEX] = adBreakInfo.position
+        retDict[MediaConstants.MediaCollection.AdBreak.POD_SECOND] = adBreakInfo.startTime
+
         return retDict
     }
 
-    // TODO: stub
     static func extractAdParams(mediaContext: MediaContext) -> [String: Any] {
         var retDict = [String: Any]()
 
+        guard let adInfo = mediaContext.adInfo else {
+            Log.trace(label: LOG_TAG, "\(#function) - found empty ad info.")
+            return retDict
+        }
+
+        retDict[MediaConstants.MediaCollection.Ad.ID] = adInfo.id
+        retDict[MediaConstants.MediaCollection.Ad.LENGTH] = adInfo.length
+        retDict[MediaConstants.MediaCollection.Ad.NAME] = adInfo.name
+        retDict[MediaConstants.MediaCollection.Ad.POD_POSITION] = adInfo.position
+
+        if let adMetadata = mediaContext.adMetadata,!adMetadata.isEmpty
+        {
+            // standard ad metadata keys are transformed and reported as part of ad params
+            for (key,value) in adMetadata {
+                let newKey = standardAdMetadataMapping[key] ?? key
+                retDict[newKey] = value
+            }
+        }
+
         return retDict
     }
 
-    // TODO: stub
     static func extractAdMetadata(mediaContext: MediaContext) -> [String: String] {
         var retDict = [String: String]()
 
+        guard let adMetadata = mediaContext.adMetadata else {
+            Log.trace(label: LOG_TAG, "\(#function) - found empty ad metadata.")
+            return retDict
+        }
+
+        // standard ad metadata is removed and only custom ad metadata will be returned.
+        for (key,value) in adMetadata {
+            if standardAdMetadataMapping[key] == nil {
+                retDict[key] = value
+            }
+        }
+
         return retDict
     }
 
-    // TODO: stub
     static func extractChapterParams(mediaContext: MediaContext) -> [String: Any] {
         var retDict = [String: Any]()
 
+        guard let chapterInfo = mediaContext.chapterInfo else {
+            Log.trace(label: LOG_TAG, "\(#function) - found empty chapter info.")
+            return retDict
+        }
+
+        retDict[MediaConstants.MediaCollection.Chapter.FRIENDLY_NAME] = chapterInfo.name
+        retDict[MediaConstants.MediaCollection.Chapter.INDEX] = chapterInfo.position
+        retDict[MediaConstants.MediaCollection.Chapter.LENGTH] = chapterInfo.length
+        retDict[MediaConstants.MediaCollection.Chapter.OFFSET] = chapterInfo.startTime
+
         return retDict
     }
 
-    // TODO: stub
     static func extractChapterMetadata(mediaContext: MediaContext) -> [String: String] {
         var retDict = [String: String]()
+
+        guard let chapterMetadata = mediaContext.chapterMetadata else {
+            Log.trace(label: LOG_TAG, "\(#function) - found empty chapter metadata.")
+            return retDict
+        }
+
+        retDict.merge(chapterMetadata, uniquingKeysWith: { _, new in new })
 
         return retDict
     }

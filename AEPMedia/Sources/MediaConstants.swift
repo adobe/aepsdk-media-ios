@@ -227,6 +227,20 @@ enum MediaConstants {
             static let ERROR_SOURCE_EXTERNAL = "external"
         }
 
+        enum AdBreak {
+            static let POD_FRIENDLY_NAME = "media.ad.podFriendlyName"
+            static let POD_INDEX = "media.ad.podIndex"
+            static let POD_SECOND = "media.ad.podSecond"
+        }
+
+        enum Ad {
+            static let NAME = "media.ad.name"
+            static let ID = "media.ad.id"
+            static let LENGTH = "media.ad.length"
+            static let POD_POSITION = "media.ad.podPosition"
+            static let PLAYER_NAME = "media.ad.playerName"
+        }
+
         enum StandardMediaMetadata {
             static let SHOW = "media.show"
             static let SEASON = "media.season"
@@ -251,6 +265,13 @@ enum MediaConstants {
             static let AUTHOR = "media.author"
             static let STATION = "media.station"
             static let PUBLISHER = "media.publisher"
+        }
+
+        enum Chapter {
+            static let FRIENDLY_NAME = "media.chapter.friendlyName"
+            static let LENGTH = "media.chapter.length"
+            static let OFFSET = "media.chapter.offset"
+            static let INDEX = "media.chapter.index"
         }
 
         enum StandardAdMetadata {

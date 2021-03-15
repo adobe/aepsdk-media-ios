@@ -23,7 +23,7 @@ class MediaCollectionHitGenerator {
     private var isTracking: Bool = false
     private var reportingInterval: TimeInterval
     private var currentStateRefTs: TimeInterval
-    private var currentState: MediaPlaybackState?
+    private var currentState: MediaContext.MediaPlaybackState?
     private var previousStateTS: TimeInterval
     private var qoeInfoUpdated = false
 
@@ -39,7 +39,7 @@ class MediaCollectionHitGenerator {
         self.mediaHitProcessor = hitProcessor
         self.mediaConfig = config
         self.currentStateRefTs = refTS
-        self.currentState = MediaPlaybackState.Init
+        self.currentState = .Init
         self.previousStateTS = currentStateRefTs
 
         self.downloadedContent = mediaConfig[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
@@ -91,7 +91,7 @@ class MediaCollectionHitGenerator {
     }
 
     func processAdStart() {
-        let mediaInfo = mediaContext.getMediaInfo()
+        let mediaInfo = mediaContext.mediaInfo
         let granularAdTrackingEnabled = mediaInfo.granularAdTracking
 
         if downloadedContent {
@@ -140,7 +140,7 @@ class MediaCollectionHitGenerator {
 
     /// Restart session again after 24 hr timeout or idle timeout recovered.
     func processSessionRestart() {
-        currentState = MediaPlaybackState.Init
+        currentState = .Init
         previousStateTS = currentStateRefTs
 
         lastQoeData.removeAll()
@@ -150,15 +150,15 @@ class MediaCollectionHitGenerator {
 
         processMediaStart(forceResume: true)
 
-        if mediaContext.isInChapter() {
+        if mediaContext.chapterInfo != nil {
             processChapterStart()
         }
 
-        if mediaContext.isInAdBreak() {
+        if mediaContext.adBreakInfo != nil {
             processAdBreakStart()
         }
 
-        if mediaContext.isInAd() {
+        if mediaContext.adInfo != nil {
             processAdStart()
         }
 
@@ -170,14 +170,14 @@ class MediaCollectionHitGenerator {
     }
 
     func processBitrateChange() {
-        let qoeData = mediaContext.getQoeInfo()?.toMap() ?? [String: Any]()
+        let qoeData = mediaContext.qoeInfo?.toMap()
         generateHit(eventType: MediaConstants.MediaCollection.EventType.BITRATE_CHANGE, qoeData: qoeData)
     }
 
     func processError(errorId: String) {
-        var qoeData = mediaContext.getQoeInfo()?.toMap() ?? [String: Any]()
-        qoeData[MediaConstants.MediaCollection.QoE.ERROR_ID] = errorId
-        qoeData[MediaConstants.MediaCollection.QoE.ERROR_SOURCE] = MediaConstants.MediaCollection.QoE.ERROR_SOURCE_PLAYER
+        var qoeData = mediaContext.qoeInfo?.toMap()
+        qoeData?[MediaConstants.MediaCollection.QoE.ERROR_ID] = errorId
+        qoeData?[MediaConstants.MediaCollection.QoE.ERROR_SOURCE] = MediaConstants.MediaCollection.QoE.ERROR_SOURCE_PLAYER
 
         generateHit(eventType: MediaConstants.MediaCollection.EventType.ERROR, qoeData: qoeData)
     }
@@ -205,14 +205,22 @@ class MediaCollectionHitGenerator {
         }
     }
 
-    func processStateStart(stateInfo: StateInfo) {
+    func processStateStart(stateInfo: StateInfo?) {
+        guard let stateInfo = stateInfo else {
+            Log.debug(label: LOG_TAG, "\(#function) - Received nil stateInfo, will not generate a start state hit.")
+            return
+        }
         var params = [String: Any]()
         params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.stateName
 
         generateHit(eventType: MediaConstants.MediaCollection.EventType.STATE_START, params: params)
     }
 
-    func processStateEnd(stateInfo: StateInfo) {
+    func processStateEnd(stateInfo: StateInfo?) {
+        guard let stateInfo = stateInfo else {
+            Log.debug(label: LOG_TAG, "\(#function) - Received nil stateInfo, will not generate an end state hit.")
+            return
+        }
         var params = [String: Any]()
         params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.stateName
 
@@ -237,7 +245,7 @@ class MediaCollectionHitGenerator {
     #endif
 
     func generateHit(eventType: String, params: [String: Any]? = nil, metadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
-        let mediaContextQoeData = mediaContext.getQoeInfo()?.toMap() ?? [String: Any]()
+        let mediaContextQoeData = mediaContext.qoeInfo?.toMap() ?? [String: Any]()
         let passedInQoeData = qoeData ?? [String: Any]()
         var qoeDataForCurrentHit = [String: Any]()
 
@@ -272,43 +280,43 @@ class MediaCollectionHitGenerator {
             self.lastQoeData = qoeDataForCurrentHit
         }
 
-        let playhead = mediaContext.getPlayhead()
+        let playhead = mediaContext.playhead
         let refTs = currentStateRefTs
 
         let hit = MediaHit.init(eventType: eventType, playhead: playhead, ts: refTs, params: params ?? [String: Any](), customMetadata: metadata ?? [String: String](), qoeData: qoeDataForCurrentHit)
         mediaHitProcessor.processHit(sessionId: sessionId, hit: hit)
     }
 
-    func getPlaybackState() -> MediaPlaybackState {
-        if mediaContext.isInState(MediaPlaybackState.Buffer) {
-            return MediaPlaybackState.Buffer
-        } else if mediaContext.isInState(MediaPlaybackState.Seek) {
-            return MediaPlaybackState.Seek
-        } else if mediaContext.isInState(MediaPlaybackState.Play) {
-            return MediaPlaybackState.Play
-        } else if mediaContext.isInState(MediaPlaybackState.Pause) {
-            return MediaPlaybackState.Pause
-        } else if mediaContext.isInState(MediaPlaybackState.Stall) {
-            return MediaPlaybackState.Stall
+    func getPlaybackState() -> MediaContext.MediaPlaybackState {
+        if mediaContext.isInMediaPlaybackState(state: .Buffer) {
+            return .Buffer
+        } else if mediaContext.isInMediaPlaybackState(state: .Seek) {
+            return .Seek
+        } else if mediaContext.isInMediaPlaybackState(state: .Play) {
+            return .Play
+        } else if mediaContext.isInMediaPlaybackState(state: .Pause) {
+            return .Pause
+        } else if mediaContext.isInMediaPlaybackState(state: .Stall) {
+            return .Stall
         } else {
-            return MediaPlaybackState.Init
+            return .Init
         }
     }
 
-    func getMediaCollectionEvent(state: MediaPlaybackState) -> String {
+    func getMediaCollectionEvent(state: MediaContext.MediaPlaybackState) -> String {
         switch state {
-        case MediaPlaybackState.Buffer:
+        case .Buffer:
             return MediaConstants.MediaCollection.EventType.BUFFER_START
-        case MediaPlaybackState.Seek:
+        case .Seek:
             return MediaConstants.MediaCollection.EventType.PAUSE_START
-        case MediaPlaybackState.Play:
+        case .Play:
             return MediaConstants.MediaCollection.EventType.PLAY
-        case MediaPlaybackState.Pause:
+        case .Pause:
             return MediaConstants.MediaCollection.EventType.PAUSE_START
-        case MediaPlaybackState.Stall:
+        case .Stall:
             // Stall not supported by backend we just send Play event for it
             return MediaConstants.MediaCollection.EventType.PLAY
-        case MediaPlaybackState.Init:
+        case .Init:
             // We should never hit this condition as there is no event to denote init.
             // Ping without any previous playback state denotes init.
             return MediaConstants.MediaCollection.EventType.PING
