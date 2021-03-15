@@ -413,45 +413,27 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     private func isValidMediaInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard MediaInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
-            return false
-        }
-        return true
+        return MediaInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil
     }
 
     private func isValidAdBreakInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard AdBreakInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
-            return false
-        }
-        return true
+        return AdBreakInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil
     }
 
     private func isValidAdInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard AdInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
-            return false
-        }
-        return true
+        return AdInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil
     }
 
     private func isValidChapterInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard ChapterInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
-            return false
-        }
-        return true
+        return ChapterInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil
     }
 
     private func isValidQoEInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard QoEInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
-            return false
-        }
-        return true
+        return QoEInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil
     }
 
     private func isValidStateInfo(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard StateInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil else {
-            return false
-        }
-        return true
+        return StateInfo(info: context[Self.KEY_INFO] as? [String: Any]) != nil
     }
 
     private func isDifferentAdBreakInfo(rule: MediaRule, context: [String: Any]) -> Bool {

@@ -21,7 +21,7 @@ class MediaContext {
         case Init
     }
 
-    static let LOG_TAG = "MediaContext"
+    private static let LOG_TAG = "MediaContext"
     private(set) var buffering = false
     private(set) var seeking = false
     private var trackedStates: [String: Bool] = [:]
@@ -170,7 +170,7 @@ class MediaContext {
         return trackedStates[info.stateName] != nil
     }
 
-    func getActiveTrackeStates() -> [StateInfo] {
+    func getActiveTrackedStates() -> [StateInfo] {
         var activeStates: [StateInfo] = []
 
         for (name, active) in trackedStates {

@@ -266,7 +266,7 @@ class MediaContextTests: XCTestCase {
         
         XCTAssertTrue(mediaContext!.endState(info: state1!))
         
-        let activeStates = mediaContext?.getActiveTrackeStates()
+        let activeStates = mediaContext?.getActiveTrackedStates()
         XCTAssertEqual(2, activeStates?.count)
     }
 }
