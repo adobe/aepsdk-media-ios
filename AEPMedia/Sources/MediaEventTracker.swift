@@ -538,8 +538,7 @@ class MediaEventTracker: MediaEventTracking {
         let refTS = getRefTS(context: context)
 
         mediaContext = MediaContext(mediaInfo: mediaInfo, metadata: metadata)
-        //TODO replace with actual MediaColectionHitGenerator implementation
-        hitGenerator = MediaCollectionHitGenerator()
+        hitGenerator = MediaCollectionHitGenerator(context: mediaContext, hitProcessor: hitProcessor!, config: config, refTS: refTS)
         hitGenerator?.processMediaStart()
 
         inPrerollInterval = mediaInfo.prerollWaitingTime != 0

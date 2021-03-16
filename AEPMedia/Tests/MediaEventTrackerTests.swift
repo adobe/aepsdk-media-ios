@@ -108,7 +108,7 @@ class MediaEventTrackerTests: XCTestCase {
         registerMockExtension(MockExtension.self)
         
         eventGenerator = MediaPublicTracker(dispatch: dispatch(event:), config: Self.config)
-        fakeMediaProcessor = FakeMediaProcessor()
+        fakeMediaProcessor = FakeMediaHitProcessor()
         mediaTracker = MediaEventTracker(hitProcessor: fakeMediaProcessor!, config: Self.config)
     }
 

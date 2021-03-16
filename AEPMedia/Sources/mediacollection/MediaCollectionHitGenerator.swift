@@ -16,7 +16,7 @@ class MediaCollectionHitGenerator {
     private let LOG_TAG = "MediaCollectionHitGenerator"
 
     private let mediaHitProcessor: MediaProcessor
-    private let mediaConfig: [String: Any]
+    private let mediaConfig: [String: Any]?
     private let downloadedContent: Bool
     private var lastQoeData: [String: Any] = [:]
     private var sessionId: String = ""
@@ -37,7 +37,11 @@ class MediaCollectionHitGenerator {
     #endif
 
     /// Initializes the Media Collection Hit Generator
-    public required init(context: MediaContext, hitProcessor: MediaProcessor, config: [String: Any], refTS: TimeInterval) {
+    public required init?(context: MediaContext?, hitProcessor: MediaProcessor, config: [String: Any]?, refTS: TimeInterval) {
+        guard let context = context else {
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to create a MediaCollectionHitGenerator, media context is nil.")
+            return nil
+        }
         self.mediaContext = context
         self.mediaHitProcessor = hitProcessor
         self.mediaConfig = config
@@ -45,7 +49,7 @@ class MediaCollectionHitGenerator {
         self.currentState = .Init
         self.previousStateTS = currentStateRefTs
 
-        self.downloadedContent = mediaConfig[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
+        self.downloadedContent = mediaConfig?[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
         self.reportingInterval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
         startTrackingSession()
     }
@@ -59,7 +63,7 @@ class MediaCollectionHitGenerator {
 
         params[Media.DOWNLOADED] = downloadedContent
 
-        if !self.mediaConfig.isEmpty {
+        if let mediaConfig = self.mediaConfig, !mediaConfig.isEmpty {
             if let channel = mediaConfig[MediaConstants.TrackerConfig.CHANNEL] as? String, !channel.isEmpty {
                 params[Media.CHANNEL] = channel
             }
@@ -148,8 +152,15 @@ class MediaCollectionHitGenerator {
 
         lastQoeData.removeAll()
 
-        sessionId = mediaHitProcessor.createSession(config: mediaConfig) ?? ""
-        isTracking = true
+        if let mediaConfig = self.mediaConfig, !mediaConfig.isEmpty {
+            sessionId = mediaHitProcessor.createSession(config: mediaConfig) ?? ""
+            Log.debug(label: LOG_TAG, "\(#function) - Started a new session with id \(sessionId).")
+            isTracking = true
+        } else {
+            Log.debug(label: LOG_TAG, "\(#function) - Received nil config, will not create a new session.")
+            isTracking = false
+            return
+        }
 
         processMediaStart(forceResume: true)
 
@@ -231,13 +242,15 @@ class MediaCollectionHitGenerator {
     }
 
     func startTrackingSession() {
-        guard let sessionId = mediaHitProcessor.createSession(config: mediaConfig) else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to create a tracking session.")
-            isTracking = false
-            return
+        if let mediaConfig = self.mediaConfig, !mediaConfig.isEmpty {
+            guard let sessionId = mediaHitProcessor.createSession(config: mediaConfig) else {
+                Log.debug(label: LOG_TAG, "\(#function) - Unable to create a tracking session.")
+                isTracking = false
+                return
+            }
+            self.sessionId = sessionId
+            isTracking = true
         }
-        self.sessionId = sessionId
-        isTracking = true
     }
 
     #if DEBUG
@@ -304,8 +317,6 @@ class MediaCollectionHitGenerator {
             return .Play
         } else if mediaContext.isInMediaPlaybackState(state: .Pause) {
             return .Pause
-        } else if mediaContext.isInMediaPlaybackState(state: .Stall) {
-            return .Stall
         } else {
             return .Init
         }
@@ -321,9 +332,6 @@ class MediaCollectionHitGenerator {
             return EventType.PLAY
         case .Pause:
             return EventType.PAUSE_START
-        case .Stall:
-            // Stall not supported by backend we just send Play event for it
-            return EventType.PLAY
         case .Init:
             // We should never hit this condition as there is no event to denote init.
             // Ping without any previous playback state denotes init.

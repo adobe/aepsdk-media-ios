@@ -66,3 +66,17 @@ class FakeMediaHitProcessor: MediaProcessor {
         }
     }
 }
+
+class MockMediaSession : MediaSession {
+    func processHit(hit: MediaHit) {
+        //stub
+    }
+
+    func end() {
+        //stub
+    }
+
+    func abort() {
+        //stub
+    }
+}
