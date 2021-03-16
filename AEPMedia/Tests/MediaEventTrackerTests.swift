@@ -968,12 +968,12 @@ class MediaEventTrackerTests: XCTestCase {
         eventGenerator?.trackSessionStart(info: Self.media!.toMap(), metadata: Self.metadata)
         XCTAssertTrue(handleTrackAPI())
         
-//        for i in 0...9 {
-//            let state = StateInfo(stateName: "newstate\(i)")
-//            
-//            eventGenerator?.trackEvent(event: MediaEvent.StateStart, info: state!.toMap())
-//            XCTAssertTrue(handleTrackAPI())
-//        }
+        for i in 0...9 {
+            let state = StateInfo(stateName: "newstate\(i)")
+            
+            eventGenerator?.trackEvent(event: MediaEvent.StateStart, info: state!.toMap())
+            XCTAssertTrue(handleTrackAPI())
+        }
     }
     
     func testStateIdleExitReTrackStates() {

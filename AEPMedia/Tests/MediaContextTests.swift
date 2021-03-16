@@ -80,7 +80,7 @@ class MediaContextTests: XCTestCase {
         XCTAssertNil(mediaContext?.qoeInfo)
         
         let qoeInfo = QoEInfo(bitrate: 1.1, droppedFrames: 2.2, fps: 3.3, startupTime: 4.4)
-        mediaContext?.setQoE(info:qoeInfo!)
+        mediaContext?.qoeInfo = qoeInfo!
         
         XCTAssertEqual(qoeInfo, mediaContext?.qoeInfo)
     }
@@ -88,7 +88,7 @@ class MediaContextTests: XCTestCase {
     func testPlayhead() {
         XCTAssertEqual(0, mediaContext?.playhead)
         
-        mediaContext?.setPlayhead(value: 1.12)
+        mediaContext?.playhead = 1.12
         
         XCTAssertEqual(1.12, mediaContext?.playhead)
     }

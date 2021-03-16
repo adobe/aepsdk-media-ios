@@ -24,8 +24,6 @@ class MediaContext {
     private(set) var buffering = false
     private(set) var seeking = false
     private var trackedStates: [String: Bool] = [:]
-
-    private(set) var playhead = 0.0
     private var playState = MediaPlaybackState.Init
 
     let mediaInfo: MediaInfo
@@ -39,7 +37,9 @@ class MediaContext {
     private(set) var chapterMetadata: [String: String] = [:]
 
     private(set) var errorInfo: [String: String]?
-    private(set) var qoeInfo: QoEInfo?
+
+    var playhead = 0.0
+    var qoeInfo: QoEInfo?
 
     init(mediaInfo: MediaInfo, metadata: [String: String]?) {
         self.mediaInfo = mediaInfo
@@ -75,16 +75,6 @@ class MediaContext {
     func clearChapter() {
         chapterInfo = nil
         chapterMetadata = [:]
-    }
-
-    // QoE
-    func setQoE(info: QoEInfo) {
-        qoeInfo = info
-    }
-
-    // Playhead
-    func setPlayhead(value: Double) {
-        playhead = value
     }
 
     func enterPlaybackState(state: MediaPlaybackState) {

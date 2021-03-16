@@ -713,20 +713,19 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     private func cmdQoEUpdate(rule: MediaRule, context: [String: Any]) -> Bool {
-        guard let qoeInfo = QoEInfo(info: context[Self.KEY_INFO] as? [String: Any]) else {
-            return false
+        if let qoeInfo = QoEInfo(info: context[Self.KEY_INFO] as? [String: Any]) {
+            mediaContext?.qoeInfo = qoeInfo
+            return true
         }
-        mediaContext?.setQoE(info: qoeInfo)
-
-        return true
+        return false
     }
 
     private func cmdPlayheadUpdate(rule: MediaRule, context: [String: Any]) -> Bool {
         if let playhead = getPlayhead(context: context) {
-            mediaContext?.setPlayhead(value: playhead)
+            mediaContext?.playhead = playhead
+            return true
         }
-
-        return true
+        return false
     }
 
     // Abort and restart the current media Session if active for more than 24hrs
@@ -761,14 +760,14 @@ class MediaEventTracker: MediaEventTracking {
             let refTS = getRefTS(context: context)
             if mediaIdle {
                 // Media was already idle during previous call.
-                if !trackerIdle && (refTS - mediaSessionStartTS) >= Self.IDLE_TIMEOUT {
+                if !trackerIdle && (refTS - mediaIdleStartTS) >= Self.IDLE_TIMEOUT {
                     // We stop trakcing if media has been idle for 30 mins.
                     hitGenerator?.processSessionAbort()
                     trackerIdle = true
                 }
             } else {
                 mediaIdle = true
-                mediaSessionStartTS = refTS
+                mediaIdleStartTS = refTS
             }
         } else {
             // Media is not currently idle.
