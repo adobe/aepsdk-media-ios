@@ -166,13 +166,12 @@ class MediaEventTracker: MediaEventTracking {
             return false
         }
 
-        var ruleContext: [String: Any] = [:]
-        if let eventTs = eventData[MediaConstants.Tracker.EVENT_TIMESTAMP] {
-            ruleContext[Self.KEY_EVENT_TS] = eventTs
-        } else {
+        guard let eventTs = eventData[MediaConstants.Tracker.EVENT_TIMESTAMP] else {
             Log.debug(label: Self.LOG_TAG, "\(#function) - Event timestamp is missing in track event data.")
             return false
         }
+        var ruleContext: [String: Any] = [:]
+        ruleContext[Self.KEY_EVENT_TS] = eventTs
 
         if let eventParam = eventData[MediaConstants.Tracker.EVENT_PARAM] {
             ruleContext[Self.KEY_INFO] = eventParam
