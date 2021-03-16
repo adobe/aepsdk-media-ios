@@ -89,8 +89,9 @@ class MediaCollectionHelper {
 
         // standard metadata keys are transformed and reported as part of media param
         for (key,value) in metadata {
-            let newKey = standardMediaMetadataMapping[key] ?? key
-            retDict[newKey] = value
+            if let newKey = standardMediaMetadataMapping[key], !newKey.isEmpty {
+                retDict[newKey] = value
+            }
         }
 
         return retDict
@@ -142,8 +143,9 @@ class MediaCollectionHelper {
         let adMetadata = mediaContext.adMetadata
         // standard ad metadata keys are transformed and reported as part of ad params
         for (key,value) in adMetadata {
-            let newKey = standardAdMetadataMapping[key] ?? key
-            retDict[newKey] = value
+            if let newKey = standardAdMetadataMapping[key], !newKey.isEmpty {
+                retDict[newKey] = value
+            }
         }
 
         return retDict
@@ -176,16 +178,6 @@ class MediaCollectionHelper {
         retDict[MediaConstants.MediaCollection.Chapter.INDEX] = chapterInfo.position
         retDict[MediaConstants.MediaCollection.Chapter.LENGTH] = chapterInfo.length
         retDict[MediaConstants.MediaCollection.Chapter.OFFSET] = chapterInfo.startTime
-
-        return retDict
-    }
-
-    static func extractChapterMetadata(mediaContext: MediaContext) -> [String: String] {
-        var retDict = [String: String]()
-
-        let chapterMetadata = mediaContext.chapterMetadata
-
-        retDict.merge(chapterMetadata, uniquingKeysWith: { _, new in new })
 
         return retDict
     }

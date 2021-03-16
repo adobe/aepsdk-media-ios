@@ -29,25 +29,14 @@ class MediaContext {
     let mediaInfo: MediaInfo
     let mediaMetadata: [String: String]
 
-    #if DEBUG
-        var adBreakInfo: AdBreakInfo?
-        var adInfo: AdInfo?
-        var adMetadata: [String: String] = [:]
+    private(set) var adBreakInfo: AdBreakInfo?
+    private(set) var adInfo: AdInfo?
+    private(set) var adMetadata: [String: String] = [:]
 
-        var chapterInfo: ChapterInfo?
-        var chapterMetadata: [String: String] = [:]
+    private(set) var chapterInfo: ChapterInfo?
+    private(set) var chapterMetadata: [String: String] = [:]
 
-        var errorInfo: [String: String]?
-    #else
-        private(set) var adBreakInfo: AdBreakInfo?
-        private(set) var adInfo: AdInfo?
-        private(set) var adMetadata: [String: String] = [:]
-
-        private(set) var chapterInfo: ChapterInfo?
-        private(set) var chapterMetadata: [String: String] = [:]
-
-        private(set) var errorInfo: [String: String]?
-    #endif
+    private(set) var errorInfo: [String: String]?
 
     var playhead = 0.0
     var qoeInfo: QoEInfo?

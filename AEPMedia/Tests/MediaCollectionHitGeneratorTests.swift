@@ -238,17 +238,15 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     func testProcessIdleComplete() {
         // setup
         let adBreakInfo = AdBreakInfo(info: MediaCollectionHitGeneratorTests.validAdbreakInfo)
-        mediaContext.adBreakInfo = adBreakInfo
+        mediaContext.setAdBreak(info: adBreakInfo!)
 
         let adInfo = AdInfo(info: MediaCollectionHitGeneratorTests.validAdInfo)
-        let adMetadata = ["k1": "v1", "a.media.ad.advertisier":"advertiser"]
-        mediaContext.adInfo = adInfo
-        mediaContext.adMetadata = adMetadata
+        let adMetadata = ["k1": "v1", "a.media.ad.advertiser":"advertiser"]
+        mediaContext.setAd(info: adInfo!, metadata: adMetadata)
 
         let chapterInfo = ChapterInfo(info: MediaCollectionHitGeneratorTests.validChapterInfo)
         let chapterMetadata = ["k1": "v1"]
-        mediaContext.chapterInfo = chapterInfo
-        mediaContext.chapterMetadata = chapterMetadata
+        mediaContext.setChapter(info: chapterInfo!, metadata: chapterMetadata)
         
         var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
         params[Media.DOWNLOADED] = true
@@ -266,7 +264,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         XCTAssertEqual(expectedMediaStartHit, mediaStartHit)
         // verify chapter start hit
         let expectedChapterParams = MediaCollectionHelper.extractChapterParams(mediaContext: mediaContext)
-        let expectedChapterMetadata = MediaCollectionHelper.extractChapterMetadata(mediaContext: mediaContext)
+        let expectedChapterMetadata = mediaContext.chapterMetadata
         let expectedChapterStartHit = MediaHit.init(eventType: "chapterStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: expectedChapterParams, customMetadata: expectedChapterMetadata, qoeData: emptyQoeData)
         let chapterStartHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedChapterStartHit, chapterStartHit)
@@ -290,17 +288,15 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     func testProcessIdleCompleteOnline() {
         // setup
         let adBreakInfo = AdBreakInfo(info: MediaCollectionHitGeneratorTests.validAdbreakInfo)
-        mediaContext.adBreakInfo = adBreakInfo
+        mediaContext.setAdBreak(info: adBreakInfo!)
 
         let adInfo = AdInfo(info: MediaCollectionHitGeneratorTests.validAdInfo)
-        let adMetadata = ["k1": "v1", "a.media.ad.advertisier":"advertiser"]
-        mediaContext.adInfo = adInfo
-        mediaContext.adMetadata = adMetadata
+        let adMetadata = ["k1": "v1", "a.media.ad.advertiser":"advertiser"]
+        mediaContext.setAd(info: adInfo!, metadata: adMetadata)
 
         let chapterInfo = ChapterInfo(info: MediaCollectionHitGeneratorTests.validChapterInfo)
         let chapterMetadata = ["k1": "v1"]
-        mediaContext.chapterInfo = chapterInfo
-        mediaContext.chapterMetadata = chapterMetadata
+        mediaContext.setChapter(info: chapterInfo!, metadata: chapterMetadata)
         
         var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
         params[Media.DOWNLOADED] = false
@@ -319,7 +315,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         XCTAssertEqual(expectedMediaStartHit, mediaStartHit)
         // verify chapter start hit
         let expectedChapterParams = MediaCollectionHelper.extractChapterParams(mediaContext: mediaContext)
-        let expectedChapterMetadata = MediaCollectionHelper.extractChapterMetadata(mediaContext: mediaContext)
+        let expectedChapterMetadata = mediaContext.chapterMetadata
         let expectedChapterStartHit = MediaHit.init(eventType: "chapterStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: expectedChapterParams, customMetadata: expectedChapterMetadata, qoeData: emptyQoeData)
         let chapterStartHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedChapterStartHit, chapterStartHit)
@@ -740,6 +736,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     func testGenerateHitAfterMediaSession2() {
         // test
         hitGenerator.endTrackingSession()
+        
         hitGenerator.generateHit(eventType: MediaConstants.EventName.PLAY, params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData)
         // verify no hit because tracking is stopped
         XCTAssertEqual(0, hitProcessor.getHitCountFromActiveSession())

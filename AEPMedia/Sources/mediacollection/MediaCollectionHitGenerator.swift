@@ -13,18 +13,18 @@ import Foundation
 import AEPServices
 
 class MediaCollectionHitGenerator {
-    static let LOG_TAG = "MediaCollectionHitGenerator"
+    private static let LOG_TAG = "MediaCollectionHitGenerator"
 
     private let mediaHitProcessor: MediaProcessor
-    private let mediaConfig: [String: Any]?
+    private let mediaConfig: [String: Any]
     private let downloadedContent: Bool
-    private var lastQoeData: [String: Any] = [:]
+    private var lastReportedQoeData: [String: Any] = [:]
     private var sessionId: String = ""
     private var isTracking: Bool = false
     private var reportingInterval: TimeInterval
-    private var currentStateRefTs: TimeInterval
-    private var currentState: MediaContext.MediaPlaybackState?
-    private var previousStateTS: TimeInterval
+    private var currentRefTS: TimeInterval
+    private var currentPlaybackState: MediaContext.MediaPlaybackState?
+    private var currentPlaybackStateStartRefTs: TimeInterval
     private var qoeInfoUpdated = false
     private typealias EventType = MediaConstants.MediaCollection.EventType
     private typealias Media = MediaConstants.MediaCollection.Media
@@ -37,19 +37,19 @@ class MediaCollectionHitGenerator {
     #endif
 
     /// Initializes the Media Collection Hit Generator
-    public required init?(context: MediaContext?, hitProcessor: MediaProcessor, config: [String: Any]?, refTS: TimeInterval) {
+    public required init?(context: MediaContext?, hitProcessor: MediaProcessor, config: [String: Any], refTS: TimeInterval) {
         guard let context = context else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to create a MediaCollectionHitGenerator, media context is nil.")
+            Log.debug(label: Self.LOG_TAG, "\(#function) - Unable to create a MediaCollectionHitGenerator, media context is nil.")
             return nil
         }
         self.mediaContext = context
         self.mediaHitProcessor = hitProcessor
         self.mediaConfig = config
-        self.currentStateRefTs = refTS
-        self.currentState = .Init
-        self.previousStateTS = currentStateRefTs
+        self.currentRefTS = refTS
+        self.currentPlaybackState = .Init
+        self.currentPlaybackStateStartRefTs = currentRefTS
 
-        self.downloadedContent = mediaConfig?[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
+        self.downloadedContent = mediaConfig[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
         self.reportingInterval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
         startTrackingSession()
     }
@@ -63,10 +63,8 @@ class MediaCollectionHitGenerator {
 
         params[Media.DOWNLOADED] = downloadedContent
 
-        if let mediaConfig = self.mediaConfig, !mediaConfig.isEmpty {
-            if let channel = mediaConfig[MediaConstants.TrackerConfig.CHANNEL] as? String, !channel.isEmpty {
-                params[Media.CHANNEL] = channel
-            }
+        if let channel = mediaConfig[MediaConstants.TrackerConfig.CHANNEL] as? String, !channel.isEmpty {
+            params[Media.CHANNEL] = channel
         }
 
         let customMetadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
@@ -127,7 +125,7 @@ class MediaCollectionHitGenerator {
 
     func processChapterStart() {
         let params = MediaCollectionHelper.extractChapterParams(mediaContext: mediaContext)
-        let metadata = MediaCollectionHelper.extractChapterMetadata(mediaContext: mediaContext)
+        let metadata = mediaContext.chapterMetadata
 
         generateHit(eventType: EventType.CHAPTER_START, params: params, metadata: metadata)
     }
@@ -147,21 +145,11 @@ class MediaCollectionHitGenerator {
 
     /// Restart session again after 24 hr timeout or idle timeout recovered.
     func processSessionRestart() {
-        currentState = .Init
-        previousStateTS = currentStateRefTs
+        currentPlaybackState = .Init
+        currentPlaybackStateStartRefTs = currentRefTS
 
-        lastQoeData.removeAll()
-
-        if let mediaConfig = self.mediaConfig, !mediaConfig.isEmpty {
-            sessionId = mediaHitProcessor.createSession(config: mediaConfig) ?? ""
-            Log.debug(label: LOG_TAG, "\(#function) - Started a new session with id \(sessionId).")
-            isTracking = true
-        } else {
-            Log.debug(label: LOG_TAG, "\(#function) - Received nil config, will not create a new session.")
-            isTracking = false
-            return
-        }
-
+        lastReportedQoeData.removeAll()
+        startTrackingSession()
         processMediaStart(forceResume: true)
 
         if mediaContext.chapterInfo != nil {
@@ -197,7 +185,7 @@ class MediaCollectionHitGenerator {
     }
 
     func setRefTS(ts: Double) {
-        self.currentStateRefTs = ts
+        self.currentRefTS = ts
     }
 
     func processPlayback(doFlush: Bool = false) {
@@ -205,23 +193,23 @@ class MediaCollectionHitGenerator {
             return
         }
 
-        let currentState = getPlaybackState()
+        let currentPlaybackState = getPlaybackState()
 
-        if (self.currentState != currentState || doFlush) {
-            let eventType = getMediaCollectionEvent(state: currentState)
+        if (self.currentPlaybackState != currentPlaybackState || doFlush) {
+            let eventType = getMediaCollectionEvent(state: currentPlaybackState)
             generateHit(eventType: eventType)
-            self.currentState = currentState
-            previousStateTS = currentStateRefTs
-        } else if (self.currentState == currentState) && (currentStateRefTs - previousStateTS >= reportingInterval) {
+            self.currentPlaybackState = currentPlaybackState
+            currentPlaybackStateStartRefTs = currentRefTS
+        } else if (self.currentPlaybackState == currentPlaybackState) && (currentRefTS - currentPlaybackStateStartRefTs >= reportingInterval) {
             // if the ts difference is more than interval we need to send it as multiple pings
             generateHit(eventType: EventType.PING)
-            previousStateTS = currentStateRefTs
+            currentPlaybackStateStartRefTs = currentRefTS
         }
     }
 
     func processStateStart(stateInfo: StateInfo?) {
         guard let stateInfo = stateInfo else {
-            Log.debug(label: LOG_TAG, "\(#function) - Received nil stateInfo, will not generate a start state hit.")
+            Log.debug(label: Self.LOG_TAG, "\(#function) - Received nil stateInfo, will not generate a start state hit.")
             return
         }
         var params = [String: Any]()
@@ -232,7 +220,7 @@ class MediaCollectionHitGenerator {
 
     func processStateEnd(stateInfo: StateInfo?) {
         guard let stateInfo = stateInfo else {
-            Log.debug(label: LOG_TAG, "\(#function) - Received nil stateInfo, will not generate an end state hit.")
+            Log.debug(label: Self.LOG_TAG, "\(#function) - Received nil stateInfo, will not generate an end state hit.")
             return
         }
         var params = [String: Any]()
@@ -241,16 +229,15 @@ class MediaCollectionHitGenerator {
         generateHit(eventType: EventType.STATE_END, params: params)
     }
 
-    func startTrackingSession() {
-        if let mediaConfig = self.mediaConfig, !mediaConfig.isEmpty {
-            guard let sessionId = mediaHitProcessor.createSession(config: mediaConfig) else {
-                Log.debug(label: LOG_TAG, "\(#function) - Unable to create a tracking session.")
-                isTracking = false
-                return
-            }
-            self.sessionId = sessionId
-            isTracking = true
+    private func startTrackingSession() {
+        guard let sessionId = mediaHitProcessor.createSession(config: mediaConfig) else {
+            Log.debug(label: Self.LOG_TAG, "\(#function) - Unable to create a tracking session.")
+            isTracking = false
+            return
         }
+        Log.debug(label: Self.LOG_TAG, "\(#function) - Started a new session with id \(sessionId).")
+        self.sessionId = sessionId
+        isTracking = true
     }
 
     #if DEBUG
@@ -258,54 +245,56 @@ class MediaCollectionHitGenerator {
             mediaHitProcessor.endSession(sessionId: sessionId)
             isTracking = false
         }
+        func generateHit(eventType: String, params: [String: Any]? = nil, metadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
+            let passedInQoeData = qoeData ?? [String: Any]()
+
+            if !isTracking {
+                Log.debug(label: Self.LOG_TAG, "\(#function) - Dropping hit as we have internally stopped tracking")
+                return
+            }
+            let qoeForCurrentHit = getQoEForCurrentHit(qoeData: passedInQoeData)
+            let playhead = mediaContext.playhead
+            let refTs = currentRefTS
+            let hit = MediaHit(eventType: eventType, playhead: playhead, ts: refTs, params: params ?? [String: Any](), customMetadata: metadata ?? [String: String](), qoeData: qoeForCurrentHit)
+            mediaHitProcessor.processHit(sessionId: sessionId, hit: hit)
+        }
     #else
         private func endTrackingSession() {
             mediaHitProcessor.endSession(sessionId: sessionId)
             isTracking = false
         }
+        private func generateHit(eventType: String, params: [String: Any]? = nil, metadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
+            let passedInQoeData = qoeData ?? [String: Any]()
+
+            if !isTracking {
+                Log.debug(label: Self.LOG_TAG, "\(#function) - Dropping hit as we have internally stopped tracking")
+                return
+            }
+            // for bitrate change events and error events we want to use the qoe data in the current hit being generated.
+            // for all other events, qoe data will be sent on the next hit after a qoe info change.
+            let qoeForCurrentHit = getQoEForCurrentHit(qoeData: passedInQoeData)
+            let playhead = mediaContext.playhead
+            let refTs = currentRefTS
+            let hit = MediaHit(eventType: eventType, playhead: playhead, ts: refTs, params: params ?? [String: Any](), customMetadata: metadata ?? [String: String](), qoeData: qoeForCurrentHit)
+            mediaHitProcessor.processHit(sessionId: sessionId, hit: hit)
+        }
     #endif
 
-    func generateHit(eventType: String, params: [String: Any]? = nil, metadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
+    private func getQoEForCurrentHit(qoeData: [String: Any]) -> [String: Any] {
         let mediaContextQoeData = mediaContext.qoeInfo?.toMap() ?? [String: Any]()
-        let passedInQoeData = qoeData ?? [String: Any]()
-        var qoeDataForCurrentHit = [String: Any]()
-
-        if !isTracking {
-            Log.debug(label: LOG_TAG, "\(#function) - Dropping hit as we have internally stopped tracking")
-            return
+        // we always used passed in qoe data in the next generated hit
+        if !qoeData.isEmpty {
+            lastReportedQoeData = qoeData
+            return qoeData
+            // check if last reported qoe data is different than media context's version.
+            // if so, store it as the last reported qoe data.
+        } else if lastReportedQoeData as NSDictionary != mediaContextQoeData as NSDictionary {
+            lastReportedQoeData = mediaContextQoeData
+            // use the last reported qoe data on the next hit after a qoe info change
+        } else {
+            return lastReportedQoeData
         }
-
-        // for bitrate change events, error events, and calls to generateHit with qoeData present,
-        // we want to use the qoe data in the current hit being generated.
-        // for all other events, qoe data will be sent on the next hit after a qoe info change.
-        switch eventType {
-        case EventType.BITRATE_CHANGE, EventType.ERROR:
-            qoeDataForCurrentHit = passedInQoeData
-        default:
-            // handle case when generateHit is called with qoeData
-            if !passedInQoeData.isEmpty {
-                qoeDataForCurrentHit = passedInQoeData
-            }
-            // handle case when qoe info has been updated
-            else if self.qoeInfoUpdated {
-                qoeDataForCurrentHit = mediaContextQoeData
-
-            }
-        }
-
-        // check if qoe info updated. if so, send qoe data in next hit.
-        self.qoeInfoUpdated = self.lastQoeData as NSDictionary != mediaContextQoeData as NSDictionary
-
-        // update the lastQoeData so we don't resend it with the next ping
-        if !qoeDataForCurrentHit.isEmpty {
-            self.lastQoeData = qoeDataForCurrentHit
-        }
-
-        let playhead = mediaContext.playhead
-        let refTs = currentStateRefTs
-
-        let hit = MediaHit.init(eventType: eventType, playhead: playhead, ts: refTs, params: params ?? [String: Any](), customMetadata: metadata ?? [String: String](), qoeData: qoeDataForCurrentHit)
-        mediaHitProcessor.processHit(sessionId: sessionId, hit: hit)
+        return [:]
     }
 
     func getPlaybackState() -> MediaContext.MediaPlaybackState {
