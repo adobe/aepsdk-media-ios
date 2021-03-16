@@ -733,11 +733,11 @@ class MediaEventTracker: MediaEventTracking {
     private func cmdSessionTimeoutDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         let refTS = getRefTS(context: context)
 
-        if contentStartRefTS == TimeInterval() {
+        if mediaSessionStartTS == TimeInterval() {
             mediaSessionStartTS = refTS
         }
 
-        if !trackerIdle && (refTS - mediaSessionStartTS) >= Self.MEDIA_SESSION_TIMEOUT {
+        if !trackerIdle && ((refTS - mediaSessionStartTS) >= Self.MEDIA_SESSION_TIMEOUT) {
             hitGenerator?.processSessionAbort()
             hitGenerator?.processSessionRestart()
 
