@@ -13,7 +13,7 @@ import Foundation
 import AEPServices
 
 class MediaCollectionHitGenerator {
-    private let LOG_TAG = "MediaCollectionHitGenerator"
+    static let LOG_TAG = "MediaCollectionHitGenerator"
 
     private let mediaHitProcessor: MediaProcessor
     private let mediaConfig: [String: Any]?

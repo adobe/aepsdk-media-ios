@@ -264,7 +264,7 @@ class MediaPublicTrackerTests: XCTestCase {
         XCTAssertEqual(false, actualEventInternal)
     }
     
-    func test_trackessionEnd() {
+    func test_trackSessionEnd() {
         let tracker = MediaPublicTrackerMock(dispatch: dispatch(event:), config: Self.testConfig)
         tracker.trackSessionEnd()
         
