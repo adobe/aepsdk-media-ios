@@ -131,7 +131,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processMediaComplete()
         // verify
-        let expectedHit = MediaHit.init(eventType: "sessionComplete", playhead: expectedPlayhead, ts: expectedTimestamp, params: emptyParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
+        let expectedHit = MediaHit.init(eventType: "sessionComplete", playhead: mediaContext.playhead, ts: expectedTimestamp, params: emptyParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
@@ -488,6 +488,13 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitProcessor.clearHitsFromActiveSession()
     }
     
+    func testProcessStateStartWithNilState() {
+        // test
+        hitGenerator.processStateStart(stateInfo: nil)
+        // verify no state start hit
+        XCTAssertEqual(0, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
+    }
+    
     func testProcessStateStartFullscreen() {
         // setup
         let stateInfo = StateInfo(stateName: "fullscreen")
@@ -599,6 +606,13 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let expectedSecondHit = MediaHit.init(eventType: "play", playhead: expectedPlayhead, ts: expectedTimestamp, params: emptyParams, customMetadata: emptyMetadata, qoeData: MediaCollectionHitGeneratorTests.validQoEInfo)
         let secondHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedSecondHit, secondHit)
+    }
+    
+    func testProcessStateEndWithNilState() {
+        // test
+        hitGenerator.processStateEnd(stateInfo: nil)
+        // verify no state end hit
+        XCTAssertEqual(0, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
     }
     
     func testProcessPlaybackStateSameStateOnline() {
@@ -725,23 +739,6 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         XCTAssertEqual(expectedErrorHit, errorHit)
     }
     
-    func testGenerateHitAfterMediaSession() {
-        // test
-        hitGenerator.endTrackingSession()
-        hitGenerator.processPlayback()
-        // verify no hit because tracking is stopped
-        XCTAssertEqual(0, hitProcessor.getHitCountFromActiveSession())
-    }
-    
-    func testGenerateHitAfterMediaSession2() {
-        // test
-        hitGenerator.endTrackingSession()
-        
-        hitGenerator.generateHit(eventType: MediaConstants.EventName.PLAY, params: emptyParams, metadata: emptyMetadata, qoeData: emptyQoeData)
-        // verify no hit because tracking is stopped
-        XCTAssertEqual(0, hitProcessor.getHitCountFromActiveSession())
-    }
-    
     func testGenerateHitProcessQoEChange() {
         // setup
         let qoeInfo = QoEInfo(info: MediaCollectionHitGeneratorTests.validQoEInfo)
@@ -782,54 +779,48 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         XCTAssertEqual(lastExpectedBitrateChangeHit, lastBitrateChangeHit)
     }
     
-    func testGenerateHitUpdatedQoEInfo() {
+    //MARK: Negative Tests
+    func testCreateMediaHitGeneratorWithNilContext() {
         // test
-        hitGenerator.generateHit(eventType: MediaConstants.EventName.PLAY)
-        guard let newQoeInfo = QoEInfo(info: [MediaConstants.QoEInfo.BITRATE : 10000.0,
-                                              MediaConstants.QoEInfo.DROPPED_FRAMES : 4.0,
-                                              MediaConstants.QoEInfo.FPS : 60.0,
-                                              MediaConstants.QoEInfo.STARTUP_TIME : 1.0]) else {
-            XCTFail("qoe info creation failed")
-            return
-        }
-        hitGenerator.generateHit(eventType: MediaConstants.EventName.PLAY, params: emptyParams, metadata: emptyMetadata, qoeData: newQoeInfo.toMap())
-        // verify updated Qoe Info is present in second hit
-        let expectedHit = MediaHit.init(eventType: "play", playhead: expectedPlayhead, ts: 0, params: emptyParams, customMetadata: emptyMetadata, qoeData: newQoeInfo.toMap())
-        let actualHit = hitProcessor.getHitFromActiveSession(index: 1)
-        XCTAssertEqual(expectedHit, actualHit)
+        let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
+        hitGenerator = MediaCollectionHitGenerator.init(context: nil, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        // verify
+        XCTAssertNil(hitGenerator)
     }
     
-    func testGetPlaybackStateMediaContextState() {
-        let states = [MediaContext.MediaPlaybackState.Init, MediaContext.MediaPlaybackState.Play, MediaContext.MediaPlaybackState.Pause, MediaContext.MediaPlaybackState.Seek, MediaContext.MediaPlaybackState.Buffer]
-        
-        for state in states {
-            mediaContext.enterPlaybackState(state: state)
-            hitGenerator.mediaContext = mediaContext
-            let playbackState = hitGenerator.getPlaybackState()
-            XCTAssertEqual(state, playbackState)
-            mediaContext.exitPlaybackState(state: state)
-        }
-    }
-    
-    func testGetMediaCollectionEventForMediaPlaybackState() {
-        let playbackStateToMediaCollectionDict = [MediaContext.MediaPlaybackState.Init: EventType.PING, MediaContext.MediaPlaybackState.Play: EventType.PLAY, MediaContext.MediaPlaybackState.Pause: EventType.PAUSE_START, MediaContext.MediaPlaybackState.Buffer: EventType.BUFFER_START, MediaContext.MediaPlaybackState.Seek: EventType.PAUSE_START]
-        let states = [MediaContext.MediaPlaybackState.Init, MediaContext.MediaPlaybackState.Play, MediaContext.MediaPlaybackState.Pause, MediaContext.MediaPlaybackState.Seek, MediaContext.MediaPlaybackState.Buffer]
-        
-        for state in states {
-            let actual = hitGenerator.getMediaCollectionEvent(state: state)
-            let expected = playbackStateToMediaCollectionDict[state]
-            XCTAssertEqual(actual, expected)
-        }
+    func testMediaProcessorFailedToCreateSession() {
+        // test
+        let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true, "testFail": true]
+        hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        // verify
+        XCTAssertEqual("", hitGenerator.sessionId)
     }
 }
 
 extension MediaHit: Equatable {
+    private static let emptyDict: [String: Any] = [:]
+    
     public static func == (lhs: MediaHit, rhs: MediaHit) -> Bool {
-        return  lhs.eventType == rhs.eventType &&
-            NSDictionary(dictionary: lhs.params ?? [:]).isEqual(to: rhs.params ?? [:]) &&
-            lhs.metadata == rhs.metadata &&
-            NSDictionary(dictionary: lhs.qoeData ?? [:]).isEqual(to: rhs.qoeData ?? [:])  &&
+        return lhs.eventType == rhs.eventType &&
+            areDictionariesEqual(lhs: lhs.params, rhs: rhs.params) &&
+            areDictionariesEqual(lhs: lhs.metadata, rhs: rhs.metadata) &&
+            areDictionariesEqual(lhs: lhs.qoeData, rhs: rhs.qoeData) &&
             lhs.playhead.isAlmostEqual(rhs.playhead) &&
             lhs.timestamp.isAlmostEqual(rhs.timestamp)
+    }
+    
+    private static func areDictionariesEqual(lhs: [String: Any]?, rhs: [String: Any]?) -> Bool {
+        // two nil dictionaries
+        if lhs == nil && rhs == nil {
+            return true
+            // lhs is nil, rhs is not nil
+        } else if lhs == nil && rhs != nil {
+            return NSDictionary(dictionary: emptyDict).isEqual(to: rhs ?? emptyDict)
+            // lhs is not nil, rhs is nil
+        } else if lhs != nil && rhs == nil {
+            return NSDictionary(dictionary: lhs ?? emptyDict).isEqual(to: emptyDict)
+        }
+        // two empty dictionaries or two identical dictionaries
+        return NSDictionary(dictionary: lhs ?? emptyDict).isEqual(to: rhs ?? emptyDict)
     }
 }

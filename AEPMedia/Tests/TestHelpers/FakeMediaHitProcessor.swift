@@ -25,6 +25,10 @@ class FakeMediaHitProcessor: MediaProcessor {
         intSessionId += 1
         currentSessionId = "\(intSessionId)"
         processedHits[currentSessionId] = []
+        // for testing failed session creation
+        if let forcedFail = config["testFail"] as? Bool, forcedFail == true {
+            return nil
+        }
         return currentSessionId
     }
     
