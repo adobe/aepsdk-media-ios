@@ -13,5 +13,21 @@ import Foundation
 
 protocol MediaProcessor {
 
-    func createSession(state: MediaState) -> MediaSession?
+    /// Creates a new `session` and return its `sessionId`.
+    ///
+    /// - Returns: Unique SessionId for the session.
+    func createSession(config: [String:Any]) -> String?
+
+    /// Process the Media Session with id `sessionId`
+    ///
+    /// - Parameters:
+    ///     - sessionId: The id of session to process.
+    ///     - hit: object of `MediaHit` to process.
+    func processHit(sessionId: String, hit: MediaHit)
+
+    /// Ends the session with id `sessionId`
+    ///
+    /// - Parameters:
+    ///     - sessionId: The id of session to end.
+    func endSession(sessionId: String)
 }

@@ -23,13 +23,19 @@ class MediaRule {
         self.description = description
     }
 
-    func addPredicate(predicateFn: @escaping RuleFn, expectedValue: Bool, errorMsg: String) {
+    @discardableResult
+    func addPredicate(predicateFn: @escaping RuleFn, expectedValue: Bool, errorMsg: String) -> MediaRule {
         let predicateTuple = (predicateFn, expectedValue, errorMsg)
         predicateList.append(predicateTuple)
+
+        return self
     }
 
-    func addAction(actionFn: @escaping RuleFn) {
+    @discardableResult
+    func addAction(actionFn: @escaping RuleFn) -> MediaRule {
         actionList.append(actionFn)
+
+        return self
     }
 
     func runPredicates(context: [String: Any]) -> (Bool, String) {
