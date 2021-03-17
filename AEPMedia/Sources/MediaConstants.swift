@@ -17,6 +17,11 @@ enum MediaConstants {
     static let EXTENSION_VERSION                        = "0.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
 
+    enum TrackerConfig {
+        static let CHANNEL = "config.channel"
+        static let DOWNLOADED_CONTENT = "config.downloadedcontent"
+    }
+
     enum Configuration {
         static let SHARED_STATE_NAME = "com.adobe.module.configuration"
         static let GLOBAL_CONFIG_PRIVACY = "global.privacy"
@@ -174,5 +179,123 @@ enum MediaConstants {
         static let EVENT_TIMESTAMP = "event.timestamp"
         static let EVENT_INTERNAL = "event.internal"
         static let PLAYHEAD = "time.playhead"
+    }
+
+    enum PingInterval {
+        static let DEFAULT_OFFLINE = TimeInterval(50)
+        static let DEFAULT_ONLINE = TimeInterval(10)
+        static let GRANULAR_AD = TimeInterval(1)
+    }
+
+    enum MediaCollection {
+        enum EventType {
+            static let SESSION_START = "sessionStart"
+            static let SESSION_COMPLETE = "sessionComplete"
+            static let SESSION_END = "sessionEnd"
+
+            static let ADBREAK_START = "adBreakStart"
+            static let ADBREAK_COMPLETE = "adBreakComplete"
+
+            static let AD_START = "adStart"
+            static let AD_COMPLETE = "adComplete"
+            static let AD_SKIP = "adSkip"
+
+            static let CHAPTER_START = "chapterStart"
+            static let CHAPTER_COMPLETE = "chapterComplete"
+            static let CHAPTER_SKIP = "chapterSkip"
+
+            static let PLAY = "play"
+            static let PING = "ping"
+            static let BUFFER_START =  "bufferStart"
+            static let PAUSE_START = "pauseStart"
+
+            static let BITRATE_CHANGE = "bitrateChange"
+            static let ERROR = "error"
+
+            static let STATE_START = "stateStart"
+            static let STATE_END = "stateEnd"
+        }
+
+        enum QoE {
+            static let BITRATE = "media.qoe.bitrate"
+            static let DROPPED_FRAMES = "media.qoe.droppedFrames"
+            static let FPS = "media.qoe.framesPerSecond"
+            static let STARTUP_TIME = "media.qoe.timeToStart"
+            static let ERROR_ID = "media.qoe.errorID"
+            static let ERROR_SOURCE = "media.qoe.errorSource"
+            static let ERROR_SOURCE_PLAYER = "player"
+            static let ERROR_SOURCE_EXTERNAL = "external"
+        }
+
+        enum AdBreak {
+            static let POD_FRIENDLY_NAME = "media.ad.podFriendlyName"
+            static let POD_INDEX = "media.ad.podIndex"
+            static let POD_SECOND = "media.ad.podSecond"
+        }
+
+        enum Ad {
+            static let NAME = "media.ad.name"
+            static let ID = "media.ad.id"
+            static let LENGTH = "media.ad.length"
+            static let POD_POSITION = "media.ad.podPosition"
+            static let PLAYER_NAME = "media.ad.playerName"
+        }
+
+        enum StandardMediaMetadata {
+            static let SHOW = "media.show"
+            static let SEASON = "media.season"
+            static let EPISODE = "media.episode"
+            static let ASSET_ID = "media.assetId"
+            static let GENRE = "media.genre"
+            static let FIRST_AIR_DATE = "media.firstAirDate"
+            static let FIRST_DIGITAL_DATE = "media.firstDigitalDate"
+            static let RATING = "media.rating"
+            static let ORIGINATOR = "media.originator"
+            static let NETWORK = "media.network"
+            static let SHOW_TYPE = "media.showType"
+            static let AD_LOAD = "media.adLoad"
+            static let MVPD = "media.pass.mvpd"
+            static let AUTH = "media.pass.auth"
+            static let DAY_PART = "media.dayPart"
+            static let FEED = "media.feed"
+            static let STREAM_FORMAT = "media.streamFormat"
+            static let ARTIST = "media.artist"
+            static let ALBUM = "media.album"
+            static let LABEL = "media.label"
+            static let AUTHOR = "media.author"
+            static let STATION = "media.station"
+            static let PUBLISHER = "media.publisher"
+        }
+
+        enum Chapter {
+            static let FRIENDLY_NAME = "media.chapter.friendlyName"
+            static let LENGTH = "media.chapter.length"
+            static let OFFSET = "media.chapter.offset"
+            static let INDEX = "media.chapter.index"
+        }
+
+        enum StandardAdMetadata {
+            static let ADVERTISER = "media.ad.advertiser"
+            static let CAMPAIGN_ID = "media.ad.campaignId"
+            static let CREATIVE_ID = "media.ad.creativeId"
+            static let SITE_ID = "media.ad.siteId"
+            static let CREATIVE_URL = "media.ad.creativeURL"
+            static let PLACEMENT_ID = "media.ad.placementId"
+        }
+
+        enum Media {
+            static let ID = "media.id"
+            static let NAME = "media.name"
+            static let LENGTH = "media.length"
+            static let CONTENT_TYPE = "media.contentType"
+            static let STREAM_TYPE = "media.streamType"
+            static let PLAYER_NAME = "media.playerName"
+            static let RESUME = "media.resume"
+            static let DOWNLOADED = "media.downloaded"
+
+            static let CHANNEL = "media.channel"
+            static let PUBLISHER = "media.publisher"
+            static let SDK_VERSION = "media.sdkVersion"
+        }
     }
 }
