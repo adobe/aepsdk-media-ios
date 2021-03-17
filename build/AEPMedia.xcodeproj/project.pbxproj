@@ -178,7 +178,6 @@
 			isa = PBXGroup;
 			children = (
 				D662CF2326006FA30018AEFC /* MediaCollectionHitGenerator.swift */,
-				D662CF1126006D920018AEFC /* MediaHit.swift */,
 				D6424A7F25DDB3BE00ED94F9 /* MediaCollectionHelper.swift */,
 			);
 			path = mediacollection;
@@ -257,6 +256,7 @@
 				AC36EC3925C9F11E00A37345 /* MediaConstants.swift */,
 				2EF1DF2A25E865DE0008925D /* MediaEventTracker.swift */,
 				D662CF2726006FE10018AEFC /* MediaEventTracking.swift */,
+				D662CF1126006D920018AEFC /* MediaHit.swift */,
 				2EED4F5825D1E91200D2E88B /* MediaObject.swift */,
 				3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */,
 				2EE3CBCF25E5C2F300F94EA6 /* MediaPublicTracker.swift */,
