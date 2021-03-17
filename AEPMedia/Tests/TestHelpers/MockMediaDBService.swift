@@ -15,8 +15,30 @@ import Foundation
 class MockMediaDBService : MediaDBService {
 
     var cachedSessionId: [String] = []
+    var persistedHits: [String: [MediaHit]] = [:]
 
     override func getCachedSessionIds() -> [String] {
         return cachedSessionId
+    }
+
+    override func persistHit(hit: MediaHit, sessionId: String) {
+        if var hits = persistedHits[sessionId] {
+            hits.append(hit)
+        } else {
+            let hits: [MediaHit] = [hit]
+            persistedHits[sessionId] = hits
+        }
+    }
+
+    override func getHits(sessionId id: String) -> [MediaHit] {        
+        guard let hits = persistedHits[id] else {
+            fatalError("No persisted MediaHits mapping for session id \(id) ")
+        }
+
+        return hits
+    }
+
+    override func deleteHits(sessionId id: String) {
+        persistedHits.removeValue(forKey: id)
     }
 }

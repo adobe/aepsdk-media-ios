@@ -31,6 +31,7 @@
 		3D663AA725FAD85200E96250 /* MockMediaSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D663AA625FAD85200E96250 /* MockMediaSession.swift */; };
 		3D663AAB25FAF0B800E96250 /* MediaRealTimeSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D663AAA25FAF0B800E96250 /* MediaRealTimeSessionTests.swift */; };
 		3D663AAF25FAF5FC00E96250 /* MockNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D663AAE25FAF5FC00E96250 /* MockNetworking.swift */; };
+		3D663ACA26015A9B00E96250 /* MediaOfflineSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D663AC926015A9B00E96250 /* MediaOfflineSessionTests.swift */; };
 		3D9D531725D5E73100F33EB7 /* MediaSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531625D5E73100F33EB7 /* MediaSession.swift */; };
 		3D9D531B25D5E75B00F33EB7 /* MediaEventTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531A25D5E75B00F33EB7 /* MediaEventTracking.swift */; };
 		3D9D531F25D5ED3E00F33EB7 /* MediaProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */; };
@@ -82,6 +83,7 @@
 		3D663AA625FAD85200E96250 /* MockMediaSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMediaSession.swift; sourceTree = "<group>"; };
 		3D663AAA25FAF0B800E96250 /* MediaRealTimeSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRealTimeSessionTests.swift; sourceTree = "<group>"; };
 		3D663AAE25FAF5FC00E96250 /* MockNetworking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworking.swift; sourceTree = "<group>"; };
+		3D663AC926015A9B00E96250 /* MediaOfflineSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaOfflineSessionTests.swift; sourceTree = "<group>"; };
 		3D9D531625D5E73100F33EB7 /* MediaSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSession.swift; sourceTree = "<group>"; };
 		3D9D531A25D5E75B00F33EB7 /* MediaEventTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaEventTracking.swift; sourceTree = "<group>"; };
 		3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaProcessor.swift; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 				2EEAC4CB25D4997600759D3E /* Media+PublicAPITests.swift */,
 				3D663A9225FACA7600E96250 /* MediaServiceTest.swift */,
 				3D663AAA25FAF0B800E96250 /* MediaRealTimeSessionTests.swift */,
+				3D663AC926015A9B00E96250 /* MediaOfflineSessionTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -464,6 +467,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2EEAC4CC25D4997600759D3E /* Media+PublicAPITests.swift in Sources */,
+				3D663ACA26015A9B00E96250 /* MediaOfflineSessionTests.swift in Sources */,
 				2EEAC4EA25D61ACF00759D3E /* MockExtension.swift in Sources */,
 				3D663AA725FAD85200E96250 /* MockMediaSession.swift in Sources */,
 				3D663A9325FACA7600E96250 /* MediaServiceTest.swift in Sources */,

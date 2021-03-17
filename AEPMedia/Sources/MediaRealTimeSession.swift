@@ -71,7 +71,7 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
         }
         let eventType = hit.eventType
         
-        let isSessionStartHit = hit.eventType == MediaConstants.EventName.SESSION_START
+        let isSessionStartHit = eventType == MediaConstants.EventName.SESSION_START
         if !isSessionStartHit && sessionId?.isEmpty ?? true {
             Log.trace(label: LOG_TAG, "\(#function) - \(eventType) Dropping as session id is unavailable.")
             hits.removeFirst()
@@ -105,40 +105,41 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
         Log.debug(label: LOG_TAG, "trySendHit - \(eventType) Generated url \(urlString), Generated body \(body)")
         isSendingHit = true
                 
-        if let url = URL.init(string: urlString){
+        if let url = URL.init(string: urlString) {
             let networkService = ServiceProvider.shared.networkService
             let networkrequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: [String:String](), connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
+            let semaphore = DispatchSemaphore(value: 0)
             networkService.connectAsync(networkRequest: networkrequest) { connection in
-                self.dispatchQueue.async {
-                    if connection.error == nil {
-                        let statusCode = connection.response?.statusCode ?? -1
-                        if !MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
-                            Log.debug(label: self.LOG_TAG, "\(#function) - \(eventType) Http failed with response code (\(statusCode))")
-                            self.handleProcessingError()
-                        } else {
-                            if isSessionStartHit {
-                                if let sessionReponseFragment = connection.responseHttpHeader(forKey: "Location"), !sessionReponseFragment.isEmpty {
-                                    let mcSessionId = MediaCollectionReportHelper.extractSessionID(sessionResponseFragment: sessionReponseFragment)
-                                    Log.trace(label: self.LOG_TAG, "\(#function) - \(eventType) Media collection endpoint created internal session with id \(String(describing: mcSessionId))")
-                                
-                                    if isSessionStartHit, let mcSessionId = mcSessionId, mcSessionId.count > 0 {
-                                        self.sessionId = mcSessionId
-                                        self.handleProcessingSuccess()
-                                    } else if (isSessionStartHit) {
-                                        self.handleProcessingError()
-                                    }
-                                
-                                    self.isSendingHit = false
-                                }
-                            } else {
-                                self.handleProcessingSuccess()
-                            }
-                        }
-                    } else {
+                if connection.error == nil {
+                    let statusCode = connection.response?.statusCode ?? -1
+                    if !MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
+                        Log.debug(label: self.LOG_TAG, "\(#function) - \(eventType) Http failed with response code (\(statusCode))")
                         self.handleProcessingError()
+                    } else {
+                        if isSessionStartHit {
+                            if let sessionReponseFragment = connection.responseHttpHeader(forKey: "Location"), !sessionReponseFragment.isEmpty {
+                                let mcSessionId = MediaCollectionReportHelper.extractSessionID(sessionResponseFragment: sessionReponseFragment)
+                                Log.trace(label: self.LOG_TAG, "\(#function) - \(eventType) Media collection endpoint created internal session with id \(String(describing: mcSessionId))")
+                                
+                                if isSessionStartHit, let mcSessionId = mcSessionId, mcSessionId.count > 0 {
+                                    self.sessionId = mcSessionId
+                                    self.handleProcessingSuccess()
+                                } else if (isSessionStartHit) {
+                                    self.handleProcessingError()
+                                }
+                                
+                                self.isSendingHit = false
+                            }
+                        } else {
+                            self.handleProcessingSuccess()
+                        }
                     }
+                } else {
+                    self.handleProcessingError()
                 }
+                semaphore.signal()
             }
+            semaphore.wait()
         }}
     
     private func handleProcessingSuccess() {
