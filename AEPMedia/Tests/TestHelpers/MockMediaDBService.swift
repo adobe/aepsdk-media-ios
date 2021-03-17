@@ -32,7 +32,7 @@ class MockMediaDBService : MediaDBService {
 
     override func getHits(sessionId id: String) -> [MediaHit] {        
         guard let hits = persistedHits[id] else {
-            fatalError("No persisted MediaHits mapping for session id \(id) ")
+            return [MediaHit]()
         }
 
         return hits

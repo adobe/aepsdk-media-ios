@@ -22,7 +22,7 @@ class MediaServiceTest: XCTestCase {
         mockDBService.cachedSessionId = cachedSessionIds
         
         //Action
-        let mediaService: MediaService = MediaService(mediaState: MediaState(), mediaDBService:mockDBService)
+        let mediaService: MediaService = MediaService(mediaState: MediaState(), mediaDBService: mockDBService)
         
         //Assert
         XCTAssertTrue(mediaService.mediaSessions.keys.contains(cachedSessionIds[0]))
@@ -75,16 +75,16 @@ class MediaServiceTest: XCTestCase {
         //setup
         let mockDBService = MockMediaDBService()
         let emptyConfig = [String:Any]()
-                
+
         //Action
         let mediaService = MediaService(mediaState: MediaState(), mediaDBService:mockDBService)
-        
+
         let sessionId = mediaService.createSession(config: emptyConfig)
         let mockMediaSession = MockMediaSession(id: sessionId!, mediaState: MediaState(), processingQueue: DispatchQueue(label: ""))
         mediaService.mediaSessions[sessionId!] = mockMediaSession
         mediaService.endSession(sessionId: sessionId!)
         Thread.sleep(until: .init(timeIntervalSinceNow: 1))
-        
+
         //Assert
         XCTAssertTrue(mockMediaSession.hasSessionEndCalled)
         XCTAssertFalse(mediaService.mediaSessions.keys.contains(sessionId!))
@@ -93,17 +93,17 @@ class MediaServiceTest: XCTestCase {
     func testAbortSession() {
         //setup
         let mockDBService = MockMediaDBService()
-                
+
         //Action
         let mediaService = MediaService(mediaState: MediaState(), mediaDBService: mockDBService)
         let emptyConfig = [String:Any]()
-        
+
         let sessionId = mediaService.createSession(config: emptyConfig)
         let mockMediaSession = MockMediaSession(id: sessionId!, mediaState: MediaState(), processingQueue: DispatchQueue(label: ""))
         mediaService.mediaSessions[sessionId!] = mockMediaSession
         mediaService.abort(sessionId: sessionId!)
         Thread.sleep(until: .init(timeIntervalSinceNow: 1))
-        
+
         //Assert
         XCTAssertTrue(mockMediaSession.hasSesionAbortCalled)
         XCTAssertFalse(mediaService.mediaSessions.keys.contains(sessionId!))

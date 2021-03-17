@@ -42,18 +42,18 @@ class MediaOfflineSessionTests: XCTestCase {
         var hasSessionEnded: Bool = false
         let sessionId = "sessionid"
         let eventType = "event_type"
-        let mediaDBService = MockMediaDBService()
+        let mockMediaDBService = MockMediaDBService()
         let mediaHit = MediaHit(eventType: eventType, params: nil, customMetada: nil, qoeData: nil, playhead: 0.0, ts: 0)
-        mediaDBService.persistedHits[sessionId] = [mediaHit]
+        mockMediaDBService.persistedHits[sessionId] = [mediaHit]
         
-        let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: MediaState(), processingQueue: dispatchQueue, mediaDBService: mediaDBService)
+        let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: MediaState(), processingQueue: dispatchQueue, mediaDBService: mockMediaDBService)
         
         //Action
         mediaSession.end {
             hasSessionEnded = true
         }
         
-        Thread.sleep(forTimeInterval: 1)
+        Thread.sleep(forTimeInterval: 2)
         
         //Assert
         XCTAssertTrue(hasSessionEnded)
