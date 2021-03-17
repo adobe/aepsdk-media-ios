@@ -254,7 +254,6 @@ class MediaCollectionHitGenerator {
             return
         }
         // for bitrate change events and error events we want to use the qoe data in the current hit being generated.
-        // for all other events, qoe data will be sent on the next hit after a qoe info change.
         let qoeForCurrentHit = getQoEForCurrentHit(qoeData: passedInQoeData)
         let playhead = mediaContext.playhead
         let refTs = currentRefTS
@@ -268,12 +267,12 @@ class MediaCollectionHitGenerator {
             return qoeData
         }
         let mediaContextQoeData = mediaContext.qoeInfo?.toMap() ?? [String: Any]()
-        if lastReportedQoeData as NSDictionary != mediaContextQoeData as NSDictionary {
+        if !(lastReportedQoeData as NSDictionary).isEqual(to: mediaContextQoeData) {
             lastReportedQoeData = mediaContextQoeData
-        } else { // qoe data will be sent on the next hit after a qoe info change
-            return lastReportedQoeData
+            return mediaContextQoeData
+        } else {
+            return [:]
         }
-        return [:]
     }
 
     private func getPlaybackState() -> MediaContext.MediaPlaybackState {

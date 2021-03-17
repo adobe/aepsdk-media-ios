@@ -237,14 +237,14 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     
     func testProcessIdleComplete() {
         // setup
-        let adBreakInfo = AdBreakInfo(info: MediaCollectionHitGeneratorTests.validAdbreakInfo)
+        let adBreakInfo = AdBreakInfo(info: Self.validAdbreakInfo)
         mediaContext.setAdBreak(info: adBreakInfo!)
 
-        let adInfo = AdInfo(info: MediaCollectionHitGeneratorTests.validAdInfo)
+        let adInfo = AdInfo(info: Self.validAdInfo)
         let adMetadata = ["k1": "v1", "a.media.ad.advertiser":"advertiser"]
         mediaContext.setAd(info: adInfo!, metadata: adMetadata)
 
-        let chapterInfo = ChapterInfo(info: MediaCollectionHitGeneratorTests.validChapterInfo)
+        let chapterInfo = ChapterInfo(info: Self.validChapterInfo)
         let chapterMetadata = ["k1": "v1"]
         mediaContext.setChapter(info: chapterInfo!, metadata: chapterMetadata)
         
@@ -287,14 +287,14 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     
     func testProcessIdleCompleteOnline() {
         // setup
-        let adBreakInfo = AdBreakInfo(info: MediaCollectionHitGeneratorTests.validAdbreakInfo)
+        let adBreakInfo = AdBreakInfo(info: Self.validAdbreakInfo)
         mediaContext.setAdBreak(info: adBreakInfo!)
 
-        let adInfo = AdInfo(info: MediaCollectionHitGeneratorTests.validAdInfo)
+        let adInfo = AdInfo(info: Self.validAdInfo)
         let adMetadata = ["k1": "v1", "a.media.ad.advertiser":"advertiser"]
         mediaContext.setAd(info: adInfo!, metadata: adMetadata)
 
-        let chapterInfo = ChapterInfo(info: MediaCollectionHitGeneratorTests.validChapterInfo)
+        let chapterInfo = ChapterInfo(info: Self.validChapterInfo)
         let chapterMetadata = ["k1": "v1"]
         mediaContext.setChapter(info: chapterInfo!, metadata: chapterMetadata)
         
@@ -508,43 +508,19 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         XCTAssertEqual(expectedStateStartHit, stateStartHit)
     }
     
-    func testProcessStateStartShouldNotSendQoEData() {
+    func testProcessStateStartShouldSendQoEData() {
         // setup
-        let qoeInfo = QoEInfo(info: MediaCollectionHitGeneratorTests.validQoEInfo)
+        let qoeInfo = QoEInfo(info: Self.validQoEInfo)
         mediaContext.qoeInfo = qoeInfo
         let stateInfo = StateInfo(stateName: "fullscreen")
         // test
         hitGenerator.processStateStart(stateInfo: stateInfo)
-        // verify state start hit + empty qoe info
+        // verify state start hit + qoe info
         XCTAssertEqual(1, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
         let params = ["state.name": "fullscreen"]
-        let expectedStateStartHit = MediaHit.init(eventType: "stateStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: emptyMetadata, qoeData: emptyQoeData)
+        let expectedStateStartHit = MediaHit.init(eventType: "stateStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: emptyMetadata, qoeData: Self.validQoEInfo)
         let stateStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedStateStartHit, stateStartHit)
-    }
-    
-    func testProcessStateStartShouldSendQoEDataInNextPingAfterStateStart() {
-        // setup
-        let qoeInfo = QoEInfo(info: MediaCollectionHitGeneratorTests.validQoEInfo)
-        mediaContext.qoeInfo = qoeInfo
-        let stateInfo = StateInfo(stateName: "fullscreen")
-        // test
-        hitGenerator.processStateStart(stateInfo: stateInfo)
-        // verify state start hit + empty qoe info
-        XCTAssertEqual(1, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
-        let params = ["state.name": "fullscreen"]
-        let expectedStateStartHit = MediaHit.init(eventType: "stateStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: emptyMetadata, qoeData: emptyQoeData)
-        let stateStartHit = hitProcessor.getHitFromActiveSession(index: 0)
-        XCTAssertEqual(expectedStateStartHit, stateStartHit)
-        // clear hits
-        hitProcessor.clearHitsFromActiveSession()
-        // second hit should have qoe info
-        mediaContext.enterPlaybackState(state: .Play)
-        hitGenerator.processPlayback()
-        XCTAssertEqual(1, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
-        let expectedSecondHit = MediaHit.init(eventType: "play", playhead: expectedPlayhead, ts: expectedTimestamp, params: emptyParams, customMetadata: emptyMetadata, qoeData: MediaCollectionHitGeneratorTests.validQoEInfo)
-        let secondHit = hitProcessor.getHitFromActiveSession(index: 0)
-        XCTAssertEqual(expectedSecondHit, secondHit)
     }
     
     func testProcessStateEndFullscreen() {
@@ -563,9 +539,9 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         XCTAssertEqual(expectedStateEndHit, stateEndHit)
     }
     
-    func testProcessStateEndShouldNotSendQoEData() {
+    func testProcessStateEndShouldSendQoEData() {
         // setup
-        let qoeInfo = QoEInfo(info: MediaCollectionHitGeneratorTests.validQoEInfo)
+        let qoeInfo = QoEInfo(info: Self.validQoEInfo)
         mediaContext.qoeInfo = qoeInfo
         guard let stateInfo = StateInfo(stateName: "fullscreen") else {
             XCTFail("state creation failed")
@@ -573,39 +549,12 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         }
         // test
         hitGenerator.processStateEnd(stateInfo: stateInfo)
-        // verify state end hit + empty qoe info
+        // verify state end hit + qoe info
         XCTAssertEqual(1, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
         let params = ["state.name": "fullscreen"]
-        let expectedStateEndHit = MediaHit.init(eventType: "stateEnd", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: emptyMetadata, qoeData: emptyQoeData)
+        let expectedStateEndHit = MediaHit.init(eventType: "stateEnd", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: emptyMetadata, qoeData: Self.validQoEInfo)
         let stateEndHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedStateEndHit, stateEndHit)
-    }
-    
-    func testProcessStateEndShouldSendQoEDataInNextPingAfterStateStart() {
-        // setup
-        let qoeInfo = QoEInfo(info: MediaCollectionHitGeneratorTests.validQoEInfo)
-        mediaContext.qoeInfo = qoeInfo
-        guard let stateInfo = StateInfo(stateName: "fullscreen") else {
-            XCTFail("state creation failed")
-            return
-        }
-        // test
-        hitGenerator.processStateEnd(stateInfo: stateInfo)
-        // verify state end hit + empty qoe info
-        XCTAssertEqual(1, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
-        let params = ["state.name": "fullscreen"]
-        let expectedStateEndHit = MediaHit.init(eventType: "stateEnd", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: emptyMetadata, qoeData: emptyQoeData)
-        let stateEndHit = hitProcessor.getHitFromActiveSession(index: 0)
-        XCTAssertEqual(expectedStateEndHit, stateEndHit)
-        // clear hits
-        hitProcessor.clearHitsFromActiveSession()
-        // second hit should have qoe info
-        mediaContext.enterPlaybackState(state: .Play)
-        hitGenerator.processPlayback()
-        XCTAssertEqual(1, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
-        let expectedSecondHit = MediaHit.init(eventType: "play", playhead: expectedPlayhead, ts: expectedTimestamp, params: emptyParams, customMetadata: emptyMetadata, qoeData: MediaCollectionHitGeneratorTests.validQoEInfo)
-        let secondHit = hitProcessor.getHitFromActiveSession(index: 0)
-        XCTAssertEqual(expectedSecondHit, secondHit)
     }
     
     func testProcessStateEndWithNilState() {
@@ -726,12 +675,12 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     
     func testProcessError() {
         // setup
-        let qoeInfo = QoEInfo(info: MediaCollectionHitGeneratorTests.validQoEInfo)
+        let qoeInfo = QoEInfo(info: Self.validQoEInfo)
         mediaContext.qoeInfo = qoeInfo
         // test
         hitGenerator.processError(errorId: "error-id")
         // verify
-        var expectedQoeInfo = MediaCollectionHitGeneratorTests.validQoEInfo
+        var expectedQoeInfo = Self.validQoEInfo
         expectedQoeInfo.merge([QoE.ERROR_SOURCE: QoE.ERROR_SOURCE_PLAYER, QoE.ERROR_ID: "error-id"], uniquingKeysWith: { _, new in new })
         XCTAssertEqual(1, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
         let expectedErrorHit = MediaHit.init(eventType: "error", playhead: expectedPlayhead, ts: expectedTimestamp, params: emptyParams, customMetadata: emptyMetadata, qoeData: expectedQoeInfo)
@@ -741,13 +690,13 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     
     func testGenerateHitProcessQoEChange() {
         // setup
-        let qoeInfo = QoEInfo(info: MediaCollectionHitGeneratorTests.validQoEInfo)
+        let qoeInfo = QoEInfo(info: Self.validQoEInfo)
         mediaContext.qoeInfo = qoeInfo
         // test
         hitGenerator.processBitrateChange()
         // verify bitrate change hit + qoe info
         XCTAssertEqual(1, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
-        let expectedBitrateChangeHit = MediaHit.init(eventType: "bitrateChange", playhead: expectedPlayhead, ts: 0, params: emptyParams, customMetadata: emptyMetadata, qoeData: MediaCollectionHitGeneratorTests.validQoEInfo)
+        let expectedBitrateChangeHit = MediaHit.init(eventType: "bitrateChange", playhead: expectedPlayhead, ts: 0, params: emptyParams, customMetadata: emptyMetadata, qoeData: Self.validQoEInfo)
         let bitrateChangeHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedBitrateChangeHit, bitrateChangeHit)
         // clear hits
@@ -756,7 +705,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitGenerator.processBitrateChange()
         // verify second bitrate change hit + qoe info
         XCTAssertEqual(1, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
-        let nextExpectedBitrateChangeHit = MediaHit.init(eventType: "bitrateChange", playhead: expectedPlayhead, ts: 0, params: emptyParams, customMetadata: emptyMetadata, qoeData: MediaCollectionHitGeneratorTests.validQoEInfo)
+        let nextExpectedBitrateChangeHit = MediaHit.init(eventType: "bitrateChange", playhead: expectedPlayhead, ts: 0, params: emptyParams, customMetadata: emptyMetadata, qoeData: Self.validQoEInfo)
         let nextBitrateChangeHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(nextExpectedBitrateChangeHit, nextBitrateChangeHit)
         // clear hits
