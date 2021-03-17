@@ -16,8 +16,13 @@ import AEPCore
 class FakeMediaService : MediaService {
 
     var updateMediaStateCalled = false
+    var abortAllSessionsCalled = false
 
     override func updateMediaState(event: Event) {
         updateMediaStateCalled = true
+    }
+
+    override func abortAllSessions() {
+        abortAllSessionsCalled = true
     }
 }

@@ -72,15 +72,15 @@ class FakeMediaHitProcessor: MediaProcessor {
 }
 
 class MockMediaSession : MediaSession {
-    func processHit(hit: MediaHit) {
+    override func processHit(hit: MediaHit) {
         //stub
     }
 
-    func end() {
+    override func end() {
         //stub
     }
 
-    func abort() {
+    override func abort() {
         //stub
     }
 }

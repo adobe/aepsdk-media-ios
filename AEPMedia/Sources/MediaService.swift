@@ -15,6 +15,7 @@ import AEPServices
 
 // TODO: replace with final implementation
 class MediaService : MediaProcessor {
+    
     private let LOG_TAG = "MediaService"
     
     private var mediaSessions: [String: MediaSession] = [:]
@@ -24,11 +25,27 @@ class MediaService : MediaProcessor {
         self.mediaState = mediaState
     }
     
-    func createSession(state: MediaState) -> MediaSession? {
-        return MediaSession()
+    func createSession(config: [String : Any]) -> String? {
+        return ""
+    }
+    
+    func processHit(sessionId: String, hit: MediaHit) {
+        
+    }
+    
+    func endSession(sessionId: String) {
+        
     }
     
     func updateMediaState(event: Event) {
+    
+    }
+    
+    func abort() {
+    
+    }
+    
+    func abortAllSessions() {
     
     }
 }

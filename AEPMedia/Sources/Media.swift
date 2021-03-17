@@ -25,7 +25,7 @@ public class Media: NSObject, Extension {
     public var metadata: [String: String]?
     let dependencies: [String] = [MediaConstants.Configuration.SHARED_STATE_NAME, MediaConstants.Identity.SHARED_STATE_NAME, MediaConstants.Analytics.SHARED_STATE_NAME]
     #if DEBUG
-        var trackers: [String: MediaCoreTracker] = [:]
+        var trackers: [String: MediaEventTracker] = [:]
         var mediaState: MediaState
         var mediaService: MediaService?
     #else
@@ -87,36 +87,36 @@ public class Media: NSObject, Extension {
     /// - Parameter event: an event containing  data for creating tracker
     private func handleMediaTrackerRequest(event: Event) {
         // TODO: revisit when media service implemented
-        guard let trackerRequestData = event.data else {
+        guard let eventData = event.data else {
             Log.error(label: LOG_TAG, "\(#function) - Failed to extract tracker request data (event data was nil).")
             return
         }
 
-        guard let trackerId = trackerRequestData[MediaConstants.Tracker.ID] as? String, trackerId.count > 0 else {
+        guard let trackerId = eventData[MediaConstants.Tracker.ID] as? String, trackerId.count > 0 else {
             Log.debug(label: LOG_TAG, "\(#function) - Tracker ID is nil, unable to create tracker.")
             return
         }
 
-        let trackerConfig = trackerRequestData[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any] ?? [:]
+        let trackerConfig = eventData[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any] ?? [:]
 
-        trackers[trackerId] = MediaCoreTracker(hitProcessor: mediaService!, config: trackerConfig)
+        trackers[trackerId] = MediaEventTracker(hitProcessor: mediaService!, config: trackerConfig)
     }
 
     /// Handler for media track events
     /// - Parameter event: an event containing  media event data for processing
     private func handleMediaTrack(event: Event) {
-        guard let mediaTrackData = event.data else {
+        guard let eventData = event.data else {
             Log.error(label: LOG_TAG, "\(#function) - Failed to extract media track data (event data was nil).")
             return
         }
 
-        guard let trackerId = mediaTrackData[MediaConstants.Tracker.ID] as? String, trackerId.count > 0 else {
+        guard let trackerId = eventData[MediaConstants.Tracker.ID] as? String, trackerId.count > 0 else {
             Log.error(label: LOG_TAG, "\(#function) - Unable to retrieve valid tracker id.")
             return
         }
 
         Log.debug(label: LOG_TAG, "\(#function) - tracking media for tracker id: \(trackerId).")
-        _ = trackMedia(trackerId: trackerId, eventData: mediaTrackData)
+        _ = trackMedia(trackerId: trackerId, eventData: eventData)
     }
 
     private func trackMedia(trackerId: String, eventData: [String: Any]) -> Bool {
@@ -131,9 +131,9 @@ public class Media: NSObject, Extension {
     private func handleOptOut(event: Event) {
         // TODO: revisit when media service implemented
         Log.debug(label: LOG_TAG, "\(#function) - Privacy status is opted-out. Clearing persisted media sessions.")
-        // clear tracked sessions and abort all running sessions within the media service
+        // clear tracked sessions and end all running sessions within the media service
         trackers.removeAll()
-        // mediaService.abortAllSession()
+        mediaService?.abortAllSessions()
     }
 
 }

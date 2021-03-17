@@ -16,9 +16,13 @@ import AEPCore
 class MediaExtensionTests: MediaTestBase {
     
     static let config: [String:Any] = [:]
+    var mediaState: MediaState!
+    var fakeMediaService: FakeMediaService!
     
     override func setUp() {
         super.setupBase()
+        fakeMediaService = FakeMediaService(mediaState: media.mediaState)
+        media.mediaService = fakeMediaService
     }
 
     override func tearDown() {
@@ -81,6 +85,22 @@ class MediaExtensionTests: MediaTestBase {
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "testTracker",
             MediaConstants.Tracker.EVENT_PARAM: [:]
+        ]
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
+        // test
+        mockRuntime.simulateComingEvent(event: createTrackerEvent)
+        waitForProcessing()
+        // verify
+        XCTAssertEqual(media.trackers.count, 1)
+        let tracker = media.trackers["testTracker"]
+        XCTAssertNotNil(tracker)
+    }
+    
+    func testCreateTrackerWithNoTrackerConfig() {
+        // setup
+        dispatchDefaultConfigAndSharedStates()
+        let eventData: [String: Any] = [
+            MediaConstants.Tracker.ID: "testTracker"
         ]
         let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
         // test
@@ -162,15 +182,16 @@ class MediaExtensionTests: MediaTestBase {
         // set privacy to opt out
         dispatchDefaultConfigAndSharedStates(configData: ["global.privacy" : "optedout"])
         waitForProcessing()
-        // verify session id to tracker id mapping is cleared
+        // verify trackers are cleared and media service sessions aborted
         XCTAssertEqual(media.trackers.count, 0)
+        XCTAssertTrue(fakeMediaService.abortAllSessionsCalled)
     }
     
     // MARK: handleMediaTrack tests
     func testHandleMediaTrackHappyPath() {
         // setup
         let mediaService = media.mediaService
-        media.trackers["trackerId"] = FakeMediaCoreTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
+        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "trackerId",
@@ -182,14 +203,14 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: mediaTrackEvent)
         waitForProcessing()
         // verify
-        let tracker = media.trackers["trackerId"] as! FakeMediaCoreTracker
+        let tracker = media.trackers["trackerId"] as! FakeMediaEventTracker
         XCTAssertTrue(tracker.trackCalled)
     }
 
     func testHandleMediaTrackNonMatchingTrackerId() {
         // setup
         let mediaService = media.mediaService
-        media.trackers["trackerId"] = FakeMediaCoreTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
+        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "differentTrackerId",
@@ -201,14 +222,14 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: mediaTrackEvent)
         waitForProcessing()
         // verify
-        let tracker = media.trackers["trackerId"] as! FakeMediaCoreTracker
+        let tracker = media.trackers["trackerId"] as! FakeMediaEventTracker
         XCTAssertFalse(tracker.trackCalled)
     }
 
     func testHandleMediaTrackEmptyTrackerId() {
         // setup
         let mediaService = media.mediaService
-        media.trackers["trackerId"] = FakeMediaCoreTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
+        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "",
@@ -220,29 +241,27 @@ class MediaExtensionTests: MediaTestBase {
         mockRuntime.simulateComingEvent(event: mediaTrackEvent)
         waitForProcessing()
         // verify
-        let tracker = media.trackers["trackerId"] as! FakeMediaCoreTracker
+        let tracker = media.trackers["trackerId"] as! FakeMediaEventTracker
         XCTAssertFalse(tracker.trackCalled)
     }
 
     func testHandleMediaTrackWithInvalidEvent() {
         // setup
         let mediaService = media.mediaService
-        media.trackers["trackerId"] = FakeMediaCoreTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
+        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let mediaTrackEvent = Event(name: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA, data: nil)
         // test
         mockRuntime.simulateComingEvent(event: mediaTrackEvent)
         waitForProcessing()
         // verify
-        let tracker = media.trackers["trackerId"] as! FakeMediaCoreTracker
+        let tracker = media.trackers["trackerId"] as! FakeMediaEventTracker
         XCTAssertFalse(tracker.trackCalled)
     }
     
     // MARK: handleSharedStateUpdate tests
     func testHandleSharedStateUpdate() {
         // setup
-        let fakeMediaService = FakeMediaService(mediaState: media.mediaState)
-        media.mediaService = fakeMediaService
         let sharedStateUpdateEvent = Event(name: "shared state update", type: EventType.hub, source: EventSource.sharedState, data: identitySharedState)
         // test
         mockRuntime.simulateComingEvent(event: sharedStateUpdateEvent)

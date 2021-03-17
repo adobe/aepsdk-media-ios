@@ -12,7 +12,7 @@
 
 @testable import AEPMedia
 
-class FakeMediaCoreTracker : MediaCoreTracker {
+class FakeMediaEventTracker : MediaEventTracker {
 
     var trackCalled = false
 
@@ -20,5 +20,5 @@ class FakeMediaCoreTracker : MediaCoreTracker {
         trackCalled = true
         return trackCalled
     }
-    
+
 }
