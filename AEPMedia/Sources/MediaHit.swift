@@ -12,7 +12,7 @@
 import Foundation
 import AEPServices
 
-struct MediaHit: Codable {
+struct MediaHit: Encodable {
     /// Media Analytics Tracking Event Type
     private (set) var eventType: String
 
@@ -30,14 +30,14 @@ struct MediaHit: Codable {
 
     /// The current timestamp
     private (set) var timestamp: TimeInterval
-    
+
     enum CodingKeys: String, CodingKey {
-        case eventType
-        case params
-        case metadata
-        case qoeData
-        case playhead
-        case timestamp
+        case eventType = "eventType"
+        case params = "params"
+        case metadata = "metadata"
+        case qoeData = "qoeData"
+        case playhead = "playhead"
+        case timestamp = "timestamp"
     }
 
     init(eventType: String, playhead: Double, ts: TimeInterval, params: [String: Any]? = nil, customMetadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
@@ -48,17 +48,7 @@ struct MediaHit: Codable {
         self.playhead = playhead
         self.timestamp = ts
     }
-    
-    init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        self.eventType = try values.decode(String.self, forKey: .eventType)
-        self.params = try values.decode([String: AnyCodable].self, forKey: .params)
-        self.metadata = try values.decode([String: String].self, forKey: .metadata)
-        self.qoeData = try values.decode([String: AnyCodable].self, forKey: .qoeData)
-        self.playhead = try values.decode(Double.self, forKey: .playhead)
-        self.timestamp = try values.decode(Double.self, forKey: .timestamp)
-    }
-    
+
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(eventType, forKey: .eventType)

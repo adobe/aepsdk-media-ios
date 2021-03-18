@@ -21,7 +21,7 @@ extension EventHub {
 
 extension MediaHit: Equatable {
     private static let emptyDict: [String: Any] = [:]
-    
+
     public static func == (lhs: MediaHit, rhs: MediaHit) -> Bool {
         return lhs.eventType == rhs.eventType &&
             areDictionariesEqual(lhs: lhs.params, rhs: rhs.params) &&
@@ -30,7 +30,7 @@ extension MediaHit: Equatable {
             lhs.playhead.isAlmostEqual(rhs.playhead) &&
             lhs.timestamp.isAlmostEqual(rhs.timestamp)
     }
-    
+
     private static func areDictionariesEqual(lhs: [String: Any]?, rhs: [String: Any]?) -> Bool {
         // two nil dictionaries
         if lhs == nil && rhs == nil {

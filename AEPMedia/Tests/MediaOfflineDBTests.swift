@@ -40,14 +40,14 @@ class MediaOfflineDBTests: XCTestCase {
     
     private func getHitFromDataEntity(entity: DataEntity) -> MediaHit? {
         var hit: MediaHit?
-        if let data = entity.data, let jsonData = try? JSONDecoder().decode([String: AnyCodable].self, from: data), let dict = AnyCodable.toAnyDictionary(dictionary: jsonData) {
-            let eventType = dict["eventType"] as? String ?? ""
-            let playhead = dict["playhead"] as? Double ?? 0
-            let ts = dict["timestamp"] as? TimeInterval ?? TimeInterval(0)
-            let params = dict["params"] as? [String: Any] ?? [:]
-            let metadata = dict["metadata"] as? [String: String] ?? [:]
-            let qoeData = dict["qoeData"] as? [String: Any] ?? [:]
-            hit = MediaHit.init(eventType: eventType, playhead: playhead, ts: ts, params: params, customMetadata: metadata, qoeData: qoeData)
+        if let data = entity.data, let jsonData = try? JSONDecoder().decode([String: AnyCodable].self, from: data) {
+            let eventType = jsonData["eventType"]?.stringValue ?? ""
+            let playhead = Double(jsonData["playhead"]?.intValue ?? 123456)
+            let ts = TimeInterval(jsonData["timestamp"]?.intValue ?? 123456)
+            let params = jsonData["params"]?.dictionaryValue ?? [:]
+            let metadata = jsonData["metadata"]?.dictionaryValue ?? [:]
+            let qoeData = jsonData["qoeData"]?.dictionaryValue ?? [:]
+            hit = MediaHit(eventType: eventType, playhead: playhead, ts: ts, params: params, customMetadata: metadata as? [String: String], qoeData: qoeData)
         }
         return hit
     }
@@ -56,75 +56,70 @@ class MediaOfflineDBTests: XCTestCase {
         // setup and test
         let sessionId = UUID().uuidString
         var addedHits: [MediaHit] = []
-        var count = 0
-        repeat {
+        for i in 1 ... 3 {
             let eventId = UUID().uuidString
-            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: 0, ts: 0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
             let entity = DataEntity(uniqueIdentifier: eventId, timestamp: Date(), data: data)
             _ = offlineDb.add(sessionId: sessionId, dataEntity: entity)
             addedHits.append(mediaHit)
-            count += 1
-        } while count < 3
+        }
         // verify
         XCTAssertEqual(3, offlineDb.count())
         guard let entities = offlineDb.getEntitiesFor(sessionId: sessionId) else {
             XCTFail("Failed to retrieve entities from the database")
             return
         }
-        count = 0
-        for entity in entities {
-            let retrievedHit = getHitFromDataEntity(entity: entity.entity)
-            XCTAssertEqual(retrievedHit, addedHits[count])
-            count += 1
+        var index = 0
+        for entityTuple in entities {
+            let retrievedHit = getHitFromDataEntity(entity: entityTuple.entity)
+            XCTAssertEqual(sessionId, entityTuple.sessionId)
+            XCTAssertEqual(retrievedHit, addedHits[index])
+            index += 1
         }
     }
     
     func testDBClear() throws {
+        // setup and test
         let sessionId = UUID().uuidString
         var addedEntities: [String: DataEntity] = [:]
-        var count = 0
-        repeat {
+        for i in 1 ... 10 {
             let eventId = UUID().uuidString
-            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: 0, ts: 0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
             let entity = DataEntity(uniqueIdentifier: eventId, timestamp: Date(), data: data)
             _ = offlineDb.add(sessionId: sessionId, dataEntity: entity)
             addedEntities[eventId] = entity
-            count += 1
-        } while count < 10
-        let entities = offlineDb.getEntitiesFor(sessionId: sessionId)
-        let peeked = offlineDb.peek(n: 3)!
-        XCTAssertEqual(3, peeked.count)
+        }
+        // verify
         XCTAssertEqual(10, offlineDb.count())
         XCTAssertTrue(offlineDb.clear())
         XCTAssertEqual(0, offlineDb.count())
     }
     
     func testDBDelete() throws {
+        // setup and test
         let sessionId = UUID().uuidString
         var addedEntities: [String: DataEntity] = [:]
-        var count = 0
-        repeat {
+        for i in 1 ... 10 {
             let eventId = UUID().uuidString
-            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: 0, ts: 0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
             let entity = DataEntity(uniqueIdentifier: eventId, timestamp: Date(), data: data)
             _ = offlineDb.add(sessionId: sessionId, dataEntity: entity)
             addedEntities[eventId] = entity
-            count += 1
-        } while count < 10
+        }
         XCTAssertEqual(10, offlineDb.count())
         let anotherSessionId = UUID().uuidString
-        repeat {
+        for i in 11 ... 20 {
             let eventId = UUID().uuidString
-            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: 0, ts: 0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
             let entity = DataEntity(uniqueIdentifier: eventId, timestamp: Date(), data: data)
             _ = offlineDb.add(sessionId: anotherSessionId, dataEntity: entity)
             addedEntities[eventId] = entity
-            count += 1
-        } while count < 20
+        }
+        // verify
         XCTAssertEqual(20, offlineDb.count())
         XCTAssertTrue(offlineDb.deleteEntitiesFor(sessionId: anotherSessionId))
         XCTAssertEqual(10, offlineDb.count())
