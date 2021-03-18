@@ -19,7 +19,8 @@ class MediaRuleEngine {
     var enterFn: ((MediaRule, [String: Any]) -> Bool)?
     var exitFn: ((MediaRule, [String: Any]) -> Bool)?
 
-    func addRule(rule: MediaRule) -> Bool {
+    @discardableResult
+    func add(rule: MediaRule) -> Bool {
         if rules[rule.name] == nil {
             rules[rule.name] = rule
             return true
@@ -35,8 +36,8 @@ class MediaRuleEngine {
         self.exitFn = exitFn
     }
 
-    func processRule(ruleName: Int, context: [String: Any]) -> (Bool, String) {
-        guard let rule = rules[ruleName] else {
+    func processRule(name: Int, context: [String: Any]) -> (success: Bool, errorMsg: String) {
+        guard let rule = rules[name] else {
             return (false, RULE_NOT_FOUND)
         }
 

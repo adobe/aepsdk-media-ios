@@ -79,12 +79,12 @@ class MediaRealTimeSession : MediaSession, MediaSessionEventsHandler {
         }
         
         if (isSessionStartHit) {
-            lastRefTS = hit.ts
+            lastRefTS = hit.timestamp
         }
         
         // We currently just log the error and don't do any error correction.
         // This should never happen. Might happen in some devices if app goes to sleep and timer stops ticking.
-        let currRefTs = hit.ts
+        let currRefTs = hit.timestamp
         let diff = currRefTs - lastRefTS
         
         if diff >= MediaRealTimeSession.MAX_ALLOWED_DURATION_BETWEEN_HITS {

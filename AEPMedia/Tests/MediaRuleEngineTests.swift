@@ -48,7 +48,7 @@ class MediaTests: XCTestCase {
         let testRule = MediaRule(name: 1, description: "rule1")
         
         //test and verify
-        XCTAssertTrue(ruleEngine.addRule(rule: testRule))
+        XCTAssertTrue(ruleEngine.add(rule: testRule))
     }
     
     func testAddDuplicateRule_Fail() {
@@ -57,9 +57,9 @@ class MediaTests: XCTestCase {
         let testRule = MediaRule(name: 1, description: "rule1")
         
         //test and verify
-        XCTAssertTrue(ruleEngine.addRule(rule: testRule))
+        XCTAssertTrue(ruleEngine.add(rule: testRule))
         //Should fail when trying to add same rule
-        XCTAssertFalse(ruleEngine.addRule(rule: testRule))
+        XCTAssertFalse(ruleEngine.add(rule: testRule))
     }
     
     // ==========================================================================
@@ -70,7 +70,7 @@ class MediaTests: XCTestCase {
         let ruleEngine = MediaRuleEngine()
         
         //test
-        let res = ruleEngine.processRule(ruleName: 1, context: [:])
+        let res = ruleEngine.processRule(name: 1, context: [:])
         
         //verify
         XCTAssertFalse(res.0)
@@ -87,8 +87,8 @@ class MediaTests: XCTestCase {
         }
         
         //test
-        XCTAssertTrue(ruleEngine.addRule(rule: testRule))
-        let res = ruleEngine.processRule(ruleName: 1, context: [:])
+        XCTAssertTrue(ruleEngine.add(rule: testRule))
+        let res = ruleEngine.processRule(name: 1, context: [:])
         
         //verify
         XCTAssertEqual(1, action1CalledCount)
@@ -104,8 +104,8 @@ class MediaTests: XCTestCase {
         }, expectedValue: true, errorMsg: "test error")
         
         //test
-        XCTAssertTrue(ruleEngine.addRule(rule: testRule))
-        let res = ruleEngine.processRule(ruleName: 1, context: [:])
+        XCTAssertTrue(ruleEngine.add(rule: testRule))
+        let res = ruleEngine.processRule(name: 1, context: [:])
         
         //verify
         XCTAssertTrue(res.0)
@@ -127,8 +127,8 @@ class MediaTests: XCTestCase {
             return true
         }, expectedValue: false, errorMsg: test2)
         
-        ruleEngine.addRule(rule: testRule)
-        let res = ruleEngine.processRule(ruleName: 1, context: [:])
+        ruleEngine.add(rule: testRule)
+        let res = ruleEngine.processRule(name: 1, context: [:])
         
         //verify
         XCTAssertFalse(res.0)
@@ -156,8 +156,8 @@ class MediaTests: XCTestCase {
             return true
         }
         
-        ruleEngine.addRule(rule: testRule)
-        let res = ruleEngine.processRule(ruleName: 1, context: [:])
+        ruleEngine.add(rule: testRule)
+        let res = ruleEngine.processRule(name: 1, context: [:])
         
         //verify
         XCTAssertEqual(2, action1CalledCount)
@@ -185,10 +185,10 @@ class MediaTests: XCTestCase {
             return true
         }
         
-        ruleEngine.addRule(rule: testRule)
+        ruleEngine.add(rule: testRule)
         
         //test
-        let res = ruleEngine.processRule(ruleName: 1, context: [:])
+        let res = ruleEngine.processRule(name: 1, context: [:])
         
         //verify
         XCTAssertEqual(1, action1CalledCount)
@@ -210,7 +210,7 @@ class MediaTests: XCTestCase {
             return true
         }
         
-        ruleEngine.addRule(rule: testRule)
+        ruleEngine.add(rule: testRule)
         
         ruleEngine.onEnterRule { (rule, context) -> Bool in
             self.actionHelper1(rule: rule, context: context)
@@ -224,7 +224,7 @@ class MediaTests: XCTestCase {
         
         
         //test
-        let res = ruleEngine.processRule(ruleName: 1, context: [:])
+        let res = ruleEngine.processRule(name: 1, context: [:])
         
         //verify
         XCTAssertEqual(1, action1CalledCount)
@@ -248,7 +248,7 @@ class MediaTests: XCTestCase {
             return true
         }
         
-        ruleEngine.addRule(rule: testRule)
+        ruleEngine.add(rule: testRule)
         
         ruleEngine.onEnterRule { (rule, context) -> Bool in
             //should be called
@@ -264,7 +264,7 @@ class MediaTests: XCTestCase {
         
         
         //test
-        let res = ruleEngine.processRule(ruleName: 1, context: [:])
+        let res = ruleEngine.processRule(name: 1, context: [:])
         
         //verify
         XCTAssertEqual(1, action1CalledCount)
@@ -293,8 +293,8 @@ class MediaTests: XCTestCase {
             return true
         }
         
-        ruleEngine.addRule(rule: testRule)
-        let res = ruleEngine.processRule(ruleName: 1, context: contextData)
+        ruleEngine.add(rule: testRule)
+        let res = ruleEngine.processRule(name: 1, context: contextData)
         
         //verify
         XCTAssertEqual(1, action1CalledCount)

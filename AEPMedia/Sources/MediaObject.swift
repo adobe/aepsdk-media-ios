@@ -28,9 +28,9 @@ class MediaInfo: Equatable {
             lhs.name == rhs.name &&
             lhs.streamType == rhs.streamType &&
             lhs.mediaType == rhs.mediaType &&
-            lhs.length == rhs.length &&
+            lhs.length.isAlmostEqual(rhs.length) &&
             lhs.resumed == rhs.resumed &&
-            lhs.prerollWaitingTime == rhs.prerollWaitingTime &&
+            lhs.prerollWaitingTime.isAlmostEqual(rhs.prerollWaitingTime) &&
             lhs.granularAdTracking == rhs.granularAdTracking
     }
 
@@ -136,7 +136,7 @@ class AdBreakInfo: Equatable {
     static func == (lhs: AdBreakInfo, rhs: AdBreakInfo) -> Bool {
         return  lhs.name == rhs.name &&
             lhs.position == rhs.position &&
-            lhs.startTime == rhs.startTime
+            lhs.startTime.isAlmostEqual(rhs.startTime)
     }
 
     init?(name: String, position: Int, startTime: Double) {
@@ -205,7 +205,7 @@ class AdInfo: Equatable {
         return  lhs.id == rhs.id &&
             lhs.name == rhs.name &&
             lhs.position == rhs.position &&
-            lhs.length == rhs.length
+            lhs.length.isAlmostEqual(rhs.length)
     }
 
     init?(id: String, name: String, position: Int, length: Double) {
@@ -285,8 +285,8 @@ class ChapterInfo: Equatable {
     static func == (lhs: ChapterInfo, rhs: ChapterInfo) -> Bool {
         return  lhs.name == rhs.name &&
             lhs.position == rhs.position &&
-            lhs.startTime == rhs.startTime &&
-            lhs.length == rhs.length
+            lhs.startTime.isAlmostEqual(rhs.startTime) &&
+            lhs.length.isAlmostEqual(rhs.length)
     }
 
     init?(name: String, position: Int, startTime: Double, length: Double) {
@@ -364,10 +364,10 @@ class QoEInfo: Equatable {
     let startupTime: Double
 
     static func == (lhs: QoEInfo, rhs: QoEInfo) -> Bool {
-        return  lhs.bitrate == rhs.bitrate &&
-            lhs.droppedFrames == rhs.droppedFrames &&
-            lhs.fps == rhs.fps &&
-            lhs.startupTime == rhs.startupTime
+        return  lhs.bitrate.isAlmostEqual(rhs.bitrate) &&
+            lhs.droppedFrames.isAlmostEqual(rhs.droppedFrames) &&
+            lhs.fps.isAlmostEqual(rhs.fps) &&
+            lhs.startupTime.isAlmostEqual(rhs.startupTime)
     }
 
     init?(bitrate: Double, droppedFrames: Double, fps: Double, startupTime: Double) {

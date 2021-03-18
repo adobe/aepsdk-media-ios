@@ -52,7 +52,7 @@ class MediaServiceTest: XCTestCase {
         //setup
         let mockDBService = MockMediaDBService()
         let eventType = "test_event"
-        let mediaHit = MediaHit(eventType: eventType, params: nil, customMetada: nil, qoeData: nil, playhead: 0.0, ts: TimeInterval())
+        let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         let emptyConfig = [String:Any]()
         
         //Action

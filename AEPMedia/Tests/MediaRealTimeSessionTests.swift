@@ -20,7 +20,7 @@ class MediaRealTimeSessionTests: XCTestCase {
         let sessionId = "sessionId"
         let collectionServerUrl = "https://fakeurl.com"
         let eventType = MediaConstants.EventName.SESSION_START
-        let mediaHit = MediaHit(eventType: eventType , params: nil, customMetada: nil, qoeData: nil, playhead: 0.0, ts: TimeInterval())
+        let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         let mediaState = MediaState()
         mediaState.url = collectionServerUrl
         let mediaSession = MediaRealTimeSession(id: sessionId, state: mediaState , processingQueue: DispatchQueue(label: ""))
@@ -57,7 +57,7 @@ class MediaRealTimeSessionTests: XCTestCase {
         //prepare
         let sessionId = "sessionId"
         let eventType = MediaConstants.EventName.SESSION_START
-        let mediaHit = MediaHit(eventType: eventType , params: nil, customMetada: nil, qoeData: nil, playhead: 0.0, ts: TimeInterval())
+        let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         let mediaState = MediaState()
         let mediaSession = MediaRealTimeSession(id: sessionId, state: mediaState , processingQueue: DispatchQueue(label: ""))
         mediaSession.hits = [mediaHit]
