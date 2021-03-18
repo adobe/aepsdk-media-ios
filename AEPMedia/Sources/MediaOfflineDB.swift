@@ -15,15 +15,15 @@ import AEPServices
 class MediaOfflineDB {
     private let databaseName: String
     private let databaseFilePath: FileManager.SearchPathDirectory
-    private static let TABLE_NAME: String = "TB_MEDIA_ANALYTICS_OFFLINE_HITS"
     private let serialQueue: DispatchQueue
+    private static let TABLE_NAME: String = "TB_MEDIA_ANALYTICS_OFFLINE_HITS"
     private let TB_KEY_UNIQUE_IDENTIFIER = "uniqueIdentifier"
     private let TB_KEY_SESSION_ID = "sessionId"
     private let TB_KEY_TIMESTAMP = "timestamp"
     private let TB_KEY_DATA = "data"
     private var isClosed = false
 
-    private let LOG_PREFIX = "MediaOfflineDB"
+    private static let LOG_PREFIX = "MediaOfflineDB"
 
     /// Creates a  new `MediaOfflineDB` with a database file path and a serial dispatch queue
     /// If it fails to create database or table, a `nil` will be returned.
@@ -36,12 +36,12 @@ class MediaOfflineDB {
         self.databaseFilePath = databaseFilePath
         self.serialQueue = serialQueue
         guard createTableIfNotExists(tableName: Self.TABLE_NAME) else {
-            Log.warning(label: LOG_PREFIX, "Failed to initialize MediaOfflineDB with database name '\(databaseName)'.")
+            Log.warning(label: Self.LOG_PREFIX, "Failed to initialize MediaOfflineDB with database name '\(databaseName)'.")
             return nil
         }
     }
 
-    func add(dataEntity: DataEntity, sessionId: String) -> Bool {
+    func add(sessionId: String, dataEntity: DataEntity) -> Bool {
         if isClosed { return false}
         return serialQueue.sync {
             var dataString = ""
@@ -65,7 +65,7 @@ class MediaOfflineDB {
         }
     }
 
-    func peek(n: Int) -> [(String, DataEntity)]? {
+    func peek(n: Int) -> [(sessionId: String, entity: DataEntity)]? {
         guard n > 0 else { return nil }
         if isClosed { return nil }
         return serialQueue.sync {
@@ -79,7 +79,7 @@ class MediaOfflineDB {
                 disconnect(database: connection)
             }
             guard let result = SQLiteWrapper.query(database: connection, sql: queryRowStatement) else {
-                Log.trace(label: LOG_PREFIX, "Query returned no records: \(queryRowStatement).")
+                Log.trace(label: Self.LOG_PREFIX, "Query returned no records: \(queryRowStatement).")
                 return nil
             }
 
@@ -92,11 +92,11 @@ class MediaOfflineDB {
         }
     }
 
-    func peek() -> (String, DataEntity)? {
+    func peek() -> (sessionId: String, entity: DataEntity)? {
         return peek(n: 1)?.first
     }
 
-    func getHits(sessionId: String) -> [(String, DataEntity)]? {
+    func getEntitiesFor(sessionId: String) -> [(sessionId: String, entity: DataEntity)]? {
         if isClosed { return nil}
         return serialQueue.sync {
             let queryRowStatement = """
@@ -109,7 +109,7 @@ class MediaOfflineDB {
                 disconnect(database: connection)
             }
             guard let result = SQLiteWrapper.query(database: connection, sql: queryRowStatement) else {
-                Log.trace(label: LOG_PREFIX, "Query returned no records: \(queryRowStatement).")
+                Log.trace(label: Self.LOG_PREFIX, "Query returned no records: \(queryRowStatement).")
                 return nil
             }
 
@@ -122,7 +122,7 @@ class MediaOfflineDB {
         }
     }
 
-    func delete(sessionId: String) -> Bool {
+    func deleteEntitiesFor(sessionId: String) -> Bool {
         if isClosed { return false}
         return serialQueue.sync {
             guard let connection = connect() else {
@@ -135,7 +135,7 @@ class MediaOfflineDB {
             DELETE FROM \(Self.TABLE_NAME) WHERE sessionId='\(sessionId)';
             """
             guard SQLiteWrapper.execute(database: connection, sql: deleteRowStatement) else {
-                Log.warning(label: LOG_PREFIX, "Failed to delete record for \(sessionId) from database: \(self.databaseName).")
+                Log.warning(label: Self.LOG_PREFIX, "Failed to delete record for \(sessionId) from database: \(self.databaseName).")
                 return false
             }
             return true
@@ -155,7 +155,7 @@ class MediaOfflineDB {
                 disconnect(database: connection)
             }
             guard SQLiteWrapper.execute(database: connection, sql: dropTableStatement) else {
-                Log.warning(label: LOG_PREFIX, "Failed to clear table '\(Self.TABLE_NAME)' in database: \(self.databaseName).")
+                Log.warning(label: Self.LOG_PREFIX, "Failed to clear table '\(Self.TABLE_NAME)' in database: \(self.databaseName).")
                 return false
             }
 
@@ -176,7 +176,7 @@ class MediaOfflineDB {
                 disconnect(database: connection)
             }
             guard let result = SQLiteWrapper.query(database: connection, sql: queryRowStatement), let countAsString = result.first?.first?.value else {
-                Log.trace(label: LOG_PREFIX, "Query returned no records: \(queryRowStatement).")
+                Log.trace(label: Self.LOG_PREFIX, "Query returned no records: \(queryRowStatement).")
                 return 0
             }
 
@@ -195,7 +195,7 @@ class MediaOfflineDB {
         if let database = SQLiteWrapper.connect(databaseFilePath: databaseFilePath, databaseName: databaseName) {
             return database
         } else {
-            Log.warning(label: LOG_PREFIX, "Failed to connect to database: \(databaseName).")
+            Log.warning(label: Self.LOG_PREFIX, "Failed to connect to database: \(databaseName).")
             return nil
         }
     }
@@ -226,9 +226,9 @@ class MediaOfflineDB {
 
             let result = SQLiteWrapper.execute(database: connection, sql: createTableStatement)
             if result {
-                Log.trace(label: LOG_PREFIX, "Successfully created table '\(tableName)'.")
+                Log.trace(label: Self.LOG_PREFIX, "Successfully created table '\(tableName)'.")
             } else {
-                Log.warning(label: LOG_PREFIX, "Failed to create table '\(tableName)'.")
+                Log.warning(label: Self.LOG_PREFIX, "Failed to create table '\(tableName)'.")
             }
 
             return result
@@ -237,12 +237,12 @@ class MediaOfflineDB {
 
     private func mediaHitFromSQLRow(row: [String: String]) -> (sessionId: String, dataEntity: DataEntity)? {
         guard let uniqueIdentifier = row[TB_KEY_UNIQUE_IDENTIFIER], let sessionId = row[TB_KEY_SESSION_ID], let dataString = row[TB_KEY_DATA], let dateString = row[TB_KEY_TIMESTAMP] else {
-            Log.trace(label: LOG_PREFIX, "Database record did not have valid data.")
+            Log.trace(label: Self.LOG_PREFIX, "Database record did not have valid data.")
             return nil
         }
 
         guard let dateInt64 = Int64(dateString) else {
-            Log.trace(label: LOG_PREFIX, "Database record had an invalid dateString: \(dateString).")
+            Log.trace(label: Self.LOG_PREFIX, "Database record had an invalid dateString: \(dateString).")
             return nil
         }
         let date = Date(milliseconds: dateInt64)
