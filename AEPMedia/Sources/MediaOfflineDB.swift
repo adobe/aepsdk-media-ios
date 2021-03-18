@@ -12,7 +12,7 @@
 import Foundation
 import AEPServices
 
-class MediaOfflineDB: DataQueue {
+class MediaOfflineDB {
     private let databaseName: String
     private let databaseFilePath: FileManager.SearchPathDirectory
     private static let TABLE_NAME: String = "TB_MEDIA_ANALYTICS_OFFLINE_HITS"
@@ -41,11 +41,6 @@ class MediaOfflineDB: DataQueue {
         }
     }
 
-    func add(dataEntity: DataEntity) -> Bool {
-        // no-op
-        return false
-    }
-
     func add(dataEntity: DataEntity, sessionId: String) -> Bool {
         if isClosed { return false}
         return serialQueue.sync {
@@ -54,8 +49,7 @@ class MediaOfflineDB: DataQueue {
                 dataString = String(data: data, encoding: .utf8) ?? ""
             }
             let insertRowStatement = """
-            INSERT INTO \(Self.TABLE_NAME) (uniqueIdentifier, sessionId, timestamp, data)
-            VALUES ("\(dataEntity.uniqueIdentifier)", '\(sessionId)', \(dataEntity.timestamp.millisecondsSince1970), '\(dataString)');
+            INSERT INTO \(Self.TABLE_NAME) (uniqueIdentifier, sessionId, timestamp, data) VALUES ("\(dataEntity.uniqueIdentifier)", '\(sessionId)', \(dataEntity.timestamp.millisecondsSince1970), '\(dataString)');
             """
 
             guard let connection = connect() else {
@@ -71,7 +65,7 @@ class MediaOfflineDB: DataQueue {
         }
     }
 
-    func peek(n: Int) -> [DataEntity]? {
+    func peek(n: Int) -> [(String, DataEntity)]? {
         guard n > 0 else { return nil }
         if isClosed { return nil }
         return serialQueue.sync {
@@ -89,20 +83,24 @@ class MediaOfflineDB: DataQueue {
                 return nil
             }
 
-            let entities = result.map({mediaHitFromSQLRow(row: $0)?.dataEntity}).compactMap {$0}
-            return entities
+            var retrievedEntities: [(String, DataEntity)] = []
+            let results = result.map({mediaHitFromSQLRow(row: $0)}).compactMap({$0})
+            for result in results {
+                retrievedEntities.append((result.sessionId, result.dataEntity))
+            }
+            return retrievedEntities
         }
     }
 
-    func peek() -> DataEntity? {
+    func peek() -> (String, DataEntity)? {
         return peek(n: 1)?.first
     }
 
-    func getHits(sessionId: String) -> [DataEntity]? {
+    func getHits(sessionId: String) -> [(String, DataEntity)]? {
         if isClosed { return nil}
         return serialQueue.sync {
             let queryRowStatement = """
-            SELECT id,uniqueIdentifier,sessionId,timestamp,data FROM \(Self.TABLE_NAME) WHERE sessionId=\(sessionId) ORDER BY id ASC;
+            SELECT id,uniqueIdentifier,sessionId,timestamp,data FROM \(Self.TABLE_NAME) WHERE sessionId='\(sessionId)';
             """
             guard let connection = connect() else {
                 return nil
@@ -110,17 +108,17 @@ class MediaOfflineDB: DataQueue {
             defer {
                 disconnect(database: connection)
             }
-            guard let results = SQLiteWrapper.query(database: connection, sql: queryRowStatement) else {
+            guard let result = SQLiteWrapper.query(database: connection, sql: queryRowStatement) else {
                 Log.trace(label: LOG_PREFIX, "Query returned no records: \(queryRowStatement).")
                 return nil
             }
 
-            var hitsForSessionId: [DataEntity] = []
-            for row in results.map({mediaHitFromSQLRow(row: $0)?.dataEntity}).compactMap({$0}) {
-                hitsForSessionId.append(row)
+            var retrievedEntities: [(String, DataEntity)] = []
+            let results = result.map({mediaHitFromSQLRow(row: $0)}).compactMap({$0})
+            for result in results {
+                retrievedEntities.append((result.sessionId, result.dataEntity))
             }
-
-            return hitsForSessionId
+            return retrievedEntities
         }
     }
 
@@ -134,7 +132,7 @@ class MediaOfflineDB: DataQueue {
                 disconnect(database: connection)
             }
             let deleteRowStatement = """
-            DELETE FROM \(Self.TABLE_NAME) WHERE sessionId=\(sessionId);
+            DELETE FROM \(Self.TABLE_NAME) WHERE sessionId='\(sessionId)';
             """
             guard SQLiteWrapper.execute(database: connection, sql: deleteRowStatement) else {
                 Log.warning(label: LOG_PREFIX, "Failed to delete record for \(sessionId) from database: \(self.databaseName).")
@@ -142,31 +140,6 @@ class MediaOfflineDB: DataQueue {
             }
             return true
         }
-    }
-
-    func remove(n: Int) -> Bool {
-        guard n > 0 else { return false }
-        if isClosed { return false }
-        return serialQueue.sync {
-            guard let connection = connect() else {
-                return false
-            }
-            defer {
-                disconnect(database: connection)
-            }
-            let deleteRowStatement = """
-            DELETE FROM \(Self.TABLE_NAME) ORDER BY id ASC LIMIT \(n);
-            """
-            guard SQLiteWrapper.execute(database: connection, sql: deleteRowStatement) else {
-                Log.warning(label: LOG_PREFIX, "Failed to delete oldest record from database: \(self.databaseName).")
-                return false
-            }
-            return true
-        }
-    }
-
-    func remove() -> Bool {
-        return remove(n: 1)
     }
 
     func clear() -> Bool {
@@ -245,7 +218,7 @@ class MediaOfflineDB: DataQueue {
             CREATE TABLE "\(tableName)" (
                 "id"          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
                 "uniqueIdentifier"        TEXT NOT NULL UNIQUE,
-                "sessionId"               TEXT NOT NULL UNIQUE,
+                "sessionId"               TEXT NOT NULL,
                 "timestamp"   INTEGER NOT NULL,
                 "data"        TEXT
             );
@@ -262,7 +235,7 @@ class MediaOfflineDB: DataQueue {
         }
     }
 
-    private func mediaHitFromSQLRow(row: [String: String]) -> (dataEntity: DataEntity, sessionId: String)? {
+    private func mediaHitFromSQLRow(row: [String: String]) -> (sessionId: String, dataEntity: DataEntity)? {
         guard let uniqueIdentifier = row[TB_KEY_UNIQUE_IDENTIFIER], let sessionId = row[TB_KEY_SESSION_ID], let dataString = row[TB_KEY_DATA], let dateString = row[TB_KEY_TIMESTAMP] else {
             Log.trace(label: LOG_PREFIX, "Database record did not have valid data.")
             return nil
@@ -274,11 +247,11 @@ class MediaOfflineDB: DataQueue {
         }
         let date = Date(milliseconds: dateInt64)
         guard !dataString.isEmpty else {
-            return (DataEntity(uniqueIdentifier: uniqueIdentifier, timestamp: date, data: nil), sessionId)
+            return (sessionId, DataEntity(uniqueIdentifier: uniqueIdentifier, timestamp: date, data: nil))
         }
         let data = dataString.data(using: .utf8)
 
-        return (DataEntity(uniqueIdentifier: uniqueIdentifier, timestamp: date, data: data), sessionId)
+        return (sessionId, DataEntity(uniqueIdentifier: uniqueIdentifier, timestamp: date, data: data))
     }
 
 }
