@@ -84,7 +84,7 @@ class MediaOfflineDB {
             }
 
             var retrievedEntities: [(String, DataEntity)] = []
-            let results = result.map({mediaHitFromSQLRow(row: $0)}).compactMap({$0})
+            let results = result.map({mediaEntityTupleFromSQLRow(row: $0)}).compactMap({$0})
             for result in results {
                 retrievedEntities.append((result.sessionId, result.dataEntity))
             }
@@ -114,7 +114,7 @@ class MediaOfflineDB {
             }
 
             var retrievedEntities: [(String, DataEntity)] = []
-            let results = result.map({mediaHitFromSQLRow(row: $0)}).compactMap({$0})
+            let results = result.map({mediaEntityTupleFromSQLRow(row: $0)}).compactMap({$0})
             for result in results {
                 retrievedEntities.append((result.sessionId, result.dataEntity))
             }
@@ -235,7 +235,7 @@ class MediaOfflineDB {
         }
     }
 
-    private func mediaHitFromSQLRow(row: [String: String]) -> (sessionId: String, dataEntity: DataEntity)? {
+    private func mediaEntityTupleFromSQLRow(row: [String: String]) -> (sessionId: String, dataEntity: DataEntity)? {
         guard let uniqueIdentifier = row[TB_KEY_UNIQUE_IDENTIFIER], let sessionId = row[TB_KEY_SESSION_ID], let dataString = row[TB_KEY_DATA], let dateString = row[TB_KEY_TIMESTAMP] else {
             Log.trace(label: Self.LOG_PREFIX, "Database record did not have valid data.")
             return nil
