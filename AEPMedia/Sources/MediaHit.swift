@@ -12,7 +12,7 @@
 import Foundation
 import AEPServices
 
-struct MediaHit: Encodable {
+class MediaHit: Encodable {
     /// Media Analytics Tracking Event Type
     private (set) var eventType: String
 
