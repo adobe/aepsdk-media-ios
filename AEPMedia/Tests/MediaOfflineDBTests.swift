@@ -40,14 +40,8 @@ class MediaOfflineDBTests: XCTestCase {
     
     private func getHitFromDataEntity(entity: DataEntity) -> MediaHit? {
         var hit: MediaHit?
-        if let data = entity.data, let jsonData = try? JSONDecoder().decode([String: AnyCodable].self, from: data) {
-            let eventType = jsonData["eventType"]?.stringValue ?? ""
-            let playhead = Double(jsonData["playhead"]?.intValue ?? 0)
-            let ts = TimeInterval(jsonData["timestamp"]?.intValue ?? 0)
-            let params = jsonData["params"]?.dictionaryValue ?? [:]
-            let metadata = jsonData["metadata"]?.dictionaryValue ?? [:]
-            let qoeData = jsonData["qoeData"]?.dictionaryValue ?? [:]
-            hit = MediaHit(eventType: eventType, playhead: playhead, ts: ts, params: params, customMetadata: metadata as? [String: String], qoeData: qoeData)
+        if let data = entity.data, let retrievedHit = try? JSONDecoder().decode(MediaHit.self, from: data) {
+            hit = retrievedHit
         }
         return hit
     }
@@ -73,6 +67,33 @@ class MediaOfflineDBTests: XCTestCase {
             addedHits.append(mediaHit)
         }
         // verify
+        XCTAssertEqual(3, offlineDb.count())
+        guard let entities = offlineDb.getEntitiesFor(sessionId: sessionId) else {
+            XCTFail("Failed to retrieve entities from the database")
+            return
+        }
+        var index = 0
+        for entityTuple in entities {
+            let retrievedHit = getHitFromDataEntity(entity: entityTuple.entity)
+            XCTAssertEqual(sessionId, entityTuple.sessionId)
+            XCTAssertEqual(retrievedHit, addedHits[index])
+            index += 1
+        }
+    }
+    
+    func testDbAddWithNonWholeNumbers() throws {
+        // setup and test
+        let sessionId = UUID().uuidString
+        var addedHits: [MediaHit] = []
+        for i in 1 ... 3 {
+            let eventId = UUID().uuidString
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.123456789, ts: Date().timeIntervalSince1970, params: params, customMetadata: metadata, qoeData: qoeData)
+            let data = try JSONEncoder().encode(mediaHit)
+            let entity = DataEntity(uniqueIdentifier: eventId, timestamp: Date(), data: data)
+            _ = offlineDb.add(sessionId: sessionId, dataEntity: entity)
+            addedHits.append(mediaHit)
+        }
+        // verify that non whole number playhead and timestamp values are valid
         XCTAssertEqual(3, offlineDb.count())
         guard let entities = offlineDb.getEntitiesFor(sessionId: sessionId) else {
             XCTFail("Failed to retrieve entities from the database")

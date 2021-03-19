@@ -12,7 +12,7 @@
 import Foundation
 import AEPServices
 
-class MediaHit: Encodable {
+struct MediaHit: Codable {
     /// Media Analytics Tracking Event Type
     private (set) var eventType: String
 
@@ -47,6 +47,18 @@ class MediaHit: Encodable {
         self.qoeData = qoeData
         self.playhead = playhead
         self.timestamp = ts
+    }
+    
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.eventType = try values.decode(String.self, forKey: .eventType)
+        let anyCodableParams = try values.decode([String: AnyCodable].self, forKey: .params)
+        self.params = anyCodableParams.asDictionary()
+        self.metadata = try values.decode([String: String].self, forKey: .metadata)
+        let anyCodableQoeData = try values.decode([String: AnyCodable].self, forKey: .qoeData)
+        self.qoeData = anyCodableQoeData.asDictionary()
+        self.playhead = try values.decode(Double.self, forKey: .playhead)
+        self.timestamp = try values.decode(Double.self, forKey: .timestamp)
     }
 
     func encode(to encoder: Encoder) throws {
