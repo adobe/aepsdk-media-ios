@@ -48,7 +48,7 @@ struct MediaHit: Codable {
         self.playhead = playhead
         self.timestamp = ts
     }
-    
+
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.eventType = try values.decode(String.self, forKey: .eventType)
