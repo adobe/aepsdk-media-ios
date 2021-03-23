@@ -20,6 +20,7 @@ class MediaService : MediaProcessor {
     
     private var mediaSessions: [String: MediaSession] = [:]
     private var mediaState: MediaState
+    private let dependencies = [MediaConstants.Configuration.SHARED_STATE_NAME, MediaConstants.Identity.SHARED_STATE_NAME, MediaConstants.Analytics.SHARED_STATE_NAME]
     
     init(mediaState: MediaState) {
         self.mediaState = mediaState
@@ -37,8 +38,12 @@ class MediaService : MediaProcessor {
         
     }
     
-    func updateMediaState(event: Event) {
-    
+    func updateMediaState(event: Event, getSharedState: (String, Event, Bool) -> SharedStateResult?) {
+        var sharedStates = [String: [String: Any]?]()
+        for extensionName in dependencies {
+            sharedStates[extensionName] = getSharedState(extensionName, event, true)?.value
+        }
+        mediaState.update(dataMap: sharedStates)
     }
     
     func abort() {

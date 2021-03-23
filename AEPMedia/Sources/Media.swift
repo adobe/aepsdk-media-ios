@@ -17,19 +17,17 @@ import AEPServices
 public class Media: NSObject, Extension {
     private let LOG_TAG = "Media"
 
-    // MARK: Extension
     public var runtime: ExtensionRuntime
     public var name = MediaConstants.EXTENSION_NAME
     public var friendlyName = MediaConstants.FRIENDLY_NAME
     public static var extensionVersion = MediaConstants.EXTENSION_VERSION
     public var metadata: [String: String]?
-    let dependencies: [String] = [MediaConstants.Configuration.SHARED_STATE_NAME, MediaConstants.Identity.SHARED_STATE_NAME, MediaConstants.Analytics.SHARED_STATE_NAME]
     #if DEBUG
-        var trackers: [String: MediaEventTracker] = [:]
+        var trackers: [String: MediaEventTracker]
         var mediaState: MediaState
         var mediaService: MediaService?
     #else
-        private var trackers: [String: MediaCoreTracker] = [:]
+        private var trackers: [String: MediaEventTracker]
         private var mediaState: MediaState
         private var mediaService: MediaService?
     #endif
@@ -40,6 +38,7 @@ public class Media: NSObject, Extension {
         self.runtime = runtime
         self.mediaState = MediaState()
         self.mediaService = MediaService(mediaState: mediaState)
+        self.trackers = [:]
     }
 
     /// Invoked when the Media extension has been registered by the `EventHub`
@@ -65,18 +64,14 @@ public class Media: NSObject, Extension {
     /// - Parameter:
     ///   - event: The configuration response event
     private func handleSharedStateUpdate(_ event: Event) {
-        mediaService?.updateMediaState(event: event)
+        mediaService?.updateMediaState(event: event, getSharedState: runtime.getSharedState(extensionName:event:barrier:))
     }
 
     /// Processes Configuration Response content events to retrieve the configuration data and privacy status settings.
     /// - Parameter:
     ///   - event: The configuration response event
     private func handleConfigurationResponseEvent(_ event: Event) {
-        var sharedStates = [String: [String: Any]?]()
-        for extensionName in dependencies {
-            sharedStates[extensionName] = runtime.getSharedState(extensionName: extensionName, event: event, barrier: true)?.value
-        }
-        mediaState.update(dataMap: sharedStates)
+        handleSharedStateUpdate(event)
 
         if mediaState.getPrivacyStatus() == .optedOut {
             handleOptOut(event: event)
@@ -99,6 +94,7 @@ public class Media: NSObject, Extension {
 
         let trackerConfig = eventData[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any] ?? [:]
 
+        Log.debug(label: LOG_TAG, "\(#function) - Creating tracker with tracker id: \(trackerId).")
         trackers[trackerId] = MediaEventTracker(hitProcessor: mediaService!, config: trackerConfig)
     }
 
