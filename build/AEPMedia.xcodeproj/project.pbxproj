@@ -35,14 +35,14 @@
 		D634A03E25DEE32E001EC086 /* MediaCollectionHitGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D634A03D25DEE32E001EC086 /* MediaCollectionHitGeneratorTests.swift */; };
 		D634A04C25DEF40D001EC086 /* FakeMediaHitProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D634A04B25DEF40D001EC086 /* FakeMediaHitProcessor.swift */; };
 		D6424A8025DDB3BE00ED94F9 /* MediaCollectionHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6424A7F25DDB3BE00ED94F9 /* MediaCollectionHelper.swift */; };
-		D64CCFEC2602C7D200F4761F /* MediaOfflineDBTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64CCFEB2602C7D200F4761F /* MediaOfflineDBTests.swift */; };
+		D64CCFEC2602C7D200F4761F /* MediaHitsDatabaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D64CCFEB2602C7D200F4761F /* MediaHitsDatabaseTests.swift */; };
 		D662CF1226006D920018AEFC /* MediaHit.swift in Sources */ = {isa = PBXBuildFile; fileRef = D662CF1126006D920018AEFC /* MediaHit.swift */; };
 		D662CF1E26006F880018AEFC /* MediaContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D662CF1D26006F880018AEFC /* MediaContext.swift */; };
 		D662CF2426006FA30018AEFC /* MediaCollectionHitGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D662CF2326006FA30018AEFC /* MediaCollectionHitGenerator.swift */; };
 		D662CF2826006FE10018AEFC /* MediaEventTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = D662CF2726006FE10018AEFC /* MediaEventTracking.swift */; };
 		D662CF322600771F0018AEFC /* TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D662CF312600771F0018AEFC /* TestHelpers.swift */; };
 		D6658AD925F2D9C100D8593E /* Double+Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6658AD825F2D9C100D8593E /* Double+Media.swift */; };
-		D6DAB46725F97E6200260DA8 /* MediaOfflineDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB46625F97E6200260DA8 /* MediaOfflineDB.swift */; };
+		D6DAB46725F97E6200260DA8 /* MediaHitsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB46625F97E6200260DA8 /* MediaHitsDatabase.swift */; };
 		D6DAB46B25F9822800260DA8 /* SQLiteWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB46A25F9822800260DA8 /* SQLiteWrapper.swift */; };
 		E2683CEE7CCC1BB92D69FC07 /* Pods_AEPMedia_AEPMediaTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81B6B11A87DE4E2228FA46FB /* Pods_AEPMedia_AEPMediaTests.framework */; };
 /* End PBXBuildFile section */
@@ -102,14 +102,14 @@
 		D634A04B25DEF40D001EC086 /* FakeMediaHitProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeMediaHitProcessor.swift; sourceTree = "<group>"; };
 		D6424A7F25DDB3BE00ED94F9 /* MediaCollectionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCollectionHelper.swift; sourceTree = "<group>"; };
 		D6424A8B25DDDD0C00ED94F9 /* MediaObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaObject.swift; sourceTree = "<group>"; };
-		D64CCFEB2602C7D200F4761F /* MediaOfflineDBTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaOfflineDBTests.swift; sourceTree = "<group>"; };
+		D64CCFEB2602C7D200F4761F /* MediaHitsDatabaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaHitsDatabaseTests.swift; sourceTree = "<group>"; };
 		D662CF1126006D920018AEFC /* MediaHit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaHit.swift; sourceTree = "<group>"; };
 		D662CF1D26006F880018AEFC /* MediaContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaContext.swift; sourceTree = "<group>"; };
 		D662CF2326006FA30018AEFC /* MediaCollectionHitGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaCollectionHitGenerator.swift; sourceTree = "<group>"; };
 		D662CF2726006FE10018AEFC /* MediaEventTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaEventTracking.swift; sourceTree = "<group>"; };
 		D662CF312600771F0018AEFC /* TestHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestHelpers.swift; sourceTree = "<group>"; };
 		D6658AD825F2D9C100D8593E /* Double+Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Media.swift"; sourceTree = "<group>"; };
-		D6DAB46625F97E6200260DA8 /* MediaOfflineDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaOfflineDB.swift; sourceTree = "<group>"; };
+		D6DAB46625F97E6200260DA8 /* MediaHitsDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaHitsDatabase.swift; sourceTree = "<group>"; };
 		D6DAB46A25F9822800260DA8 /* SQLiteWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteWrapper.swift; sourceTree = "<group>"; };
 		E8A954C12C9495CABE12814A /* Pods-AEPMedia-AEPMediaTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -222,7 +222,7 @@
 				2EEAC4CB25D4997600759D3E /* Media+PublicAPITests.swift */,
 				2EEB0B9D25F067CF0041B31D /* MediaContextTests.swift */,
 				2EEB0BB125F19FC80041B31D /* MediaEventTrackerTests.swift */,
-				D64CCFEB2602C7D200F4761F /* MediaOfflineDBTests.swift */,
+				D64CCFEB2602C7D200F4761F /* MediaHitsDatabaseTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -257,7 +257,7 @@
 				2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */,
 				3D9D531625D5E73100F33EB7 /* MediaSession.swift */,
 				3D2C836225E5CADC0064E0D4 /* MediaState.swift */,
-				D6DAB46625F97E6200260DA8 /* MediaOfflineDB.swift */,
+				D6DAB46625F97E6200260DA8 /* MediaHitsDatabase.swift */,
 				D6DAB46A25F9822800260DA8 /* SQLiteWrapper.swift */,
 				AC36EC3525C9F11E00A37345 /* MediaTracker.swift */,
 				2E1691A525E468D30010D14A /* MediaType.swift */,
@@ -468,7 +468,7 @@
 				D662CF2826006FE10018AEFC /* MediaEventTracking.swift in Sources */,
 				2E20D4A725CA154C00B5CCB8 /* MediaRuleEngine.swift in Sources */,
 				AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */,
-				D6DAB46725F97E6200260DA8 /* MediaOfflineDB.swift in Sources */,
+				D6DAB46725F97E6200260DA8 /* MediaHitsDatabase.swift in Sources */,
 				2E20D4A625CA154C00B5CCB8 /* MediaRule.swift in Sources */,
 				AC36EC4225C9F11E00A37345 /* Media+PublicAPI.swift in Sources */,
 				3D9D531F25D5ED3E00F33EB7 /* MediaProcessor.swift in Sources */,
@@ -481,7 +481,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D64CCFEC2602C7D200F4761F /* MediaOfflineDBTests.swift in Sources */,
+				D64CCFEC2602C7D200F4761F /* MediaHitsDatabaseTests.swift in Sources */,
 				D634A03E25DEE32E001EC086 /* MediaCollectionHitGeneratorTests.swift in Sources */,
 				2EEB0B9E25F067CF0041B31D /* MediaContextTests.swift in Sources */,
 				2EEAC4CC25D4997600759D3E /* Media+PublicAPITests.swift in Sources */,
