@@ -20,7 +20,7 @@ enum MediaConstants {
     enum Networking {
         static let HTTP_TIMEOUT_SECONDS: TimeInterval = 5
         static let HTTP_SUCCESS_RANGE = 200..<300
-        static let HIT_HEADERS = ["Content-type":"application/json"]
+        static let REQUEST_HEADERS = ["Content-type":"application/json"]
         static let INVALID_RESPONSE = -1
     }
 

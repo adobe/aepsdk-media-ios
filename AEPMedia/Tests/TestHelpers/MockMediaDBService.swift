@@ -14,13 +14,13 @@ import Foundation
 
 class MockMediaDBService : MediaDBService {
 
-    var cachedSessionId: [String] = []
+    var persistedSessionId: [String] = []
     var persistedHits: [String: [MediaHit]] = [:]
     var getPersistedSessionIdsCalled = false
 
     override func getPersistedSessionIds() -> [String] {
         getPersistedSessionIdsCalled = true
-        return cachedSessionId
+        return persistedSessionId
     }
 
     override func persistHit(hit: MediaHit, sessionId: String) {

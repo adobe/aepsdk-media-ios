@@ -18,7 +18,7 @@ class MediaSession {
     static let DURATION_BETWEEN_HITS_ON_FAILURE = 30  //Waiting time in seconds before sending hit again after failure.
         
     var id: String
-    var mediaState: MediaState
+    var state: MediaState
     var isSessionActive: Bool
     var dispatchQueue: DispatchQueue
     var sessionEndHandler: (() -> Void)?
@@ -28,9 +28,9 @@ class MediaSession {
     ///    - id: Unique `MediaSession id`
     ///    - mediaState: `MediaState` object
     ///    - dispatchQueue: `DispatchQueue` used for handling response after processing `MediaHit`
-    init(id: String, mediaState: MediaState, dispatchQueue: DispatchQueue) {
+    init(id: String, state: MediaState, dispatchQueue: DispatchQueue) {
         self.id = id
-        self.mediaState = mediaState
+        self.state = state
         isSessionActive = true
         self.dispatchQueue = dispatchQueue
     }
@@ -38,7 +38,7 @@ class MediaSession {
     ///Returns true if SDk is ready to send hits else return false.
     func isReadyToSendHit() -> Bool {
          
-        guard mediaState.privacyStatus == .optedIn else {
+        guard state.privacyStatus == .optedIn else {
             return false
         }
         
@@ -73,6 +73,7 @@ class MediaSession {
         }
         
         self.sessionEndHandler = sessionEndHandler
+        isSessionActive = false
         handleSessionEnd()
     }
 
@@ -86,6 +87,7 @@ class MediaSession {
         }
         
         self.sessionEndHandler = sessionEndHandler
+        isSessionActive = false
         handleSessionAbort()
     }
     

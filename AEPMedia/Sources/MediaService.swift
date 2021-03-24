@@ -29,13 +29,13 @@ class MediaService : MediaProcessor {
     init(mediaState: MediaState, mediaDBService: MediaDBService = MediaDBService()) {
         self.mediaState = mediaState
         self.mediaDBService = mediaDBService
-        initCachedSessions()
+        initPersistedSessions()
     }
     
-    ///Reads the cached offline session in DB, create `MediaSession` objects for them and initiate the reporting of `MediaSessions.`
-    private func initCachedSessions() {
-        let cachedSessionIds = mediaDBService.getPersistedSessionIds()
-        cachedSessionIds.forEach { sessionId in
+    ///Reads the persisted offline session in DB, create `MediaSession` objects for them and initiate the reporting of `MediaSessions.`
+    private func initPersistedSessions() {
+        let persistedSessionIds = mediaDBService.getPersistedSessionIds()
+        persistedSessionIds.forEach { sessionId in
             let mediaOfflineSession = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
             mediaSessions[sessionId] = mediaOfflineSession
             mediaOfflineSession.end {

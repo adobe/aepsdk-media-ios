@@ -31,18 +31,20 @@ class MediaRealTimeSession : MediaSession {
     private var sessionRetryCount = 0
     
     override func handleQueueMediaHit(hit: MediaHit) {
+        Log.trace(label: LOG_TAG, "\(#function) - Queuing hit for Session (\(id)) with event type (\(hit.eventType))")
         hits.append(hit)
         trySendHit()
     }
     
     override func handleSessionEnd() {
-        isSessionActive = false
-        sessionEndHandler?()
+        Log.trace(label: LOG_TAG, "\(#function) - Ending Session (\(id))")
+        trySendHit()
     }
     
     override func handleSessionAbort() {
-        isSessionActive = false
+        Log.trace(label: LOG_TAG, "\(#function) - Aborting Session (\(id))")
         hits.removeAll()
+        sessionEndHandler?()
     }
     
     ///Sends the first `MediaHit` from the collected hits to Media Collection Server
@@ -82,42 +84,51 @@ class MediaRealTimeSession : MediaSession {
         if diff >= MediaRealTimeSession.MAX_ALLOWED_DURATION_BETWEEN_HITS {
             Log.warning(label: LOG_TAG, "trySendHit - (\(eventType)) TS difference from previous hit is \(diff) greater than 60 seconds.")
         }
-        
         lastRefTS = currRefTs
         
         let (urlString, body) = generateHitUrlAndBody(isSessionStartHit, hit)
+        guard !urlString.isEmpty && !body.isEmpty else {
+            Log.debug(label: LOG_TAG, "\(#function) - Failed to report Event (\(eventType). Unable to create url or event report.")
+            hits.removeFirst()
+            return
+        }
+        
+        guard let url = URL.init(string: urlString) else {
+            Log.debug(label: LOG_TAG, "\(#function) - Failed to report Event (\(eventType). Unable to create URL.")
+            hits.removeFirst()
+            return
+        }
+        
         isSendingHit = true
-                
-        if let url = URL.init(string: urlString) {
-            let networkService = ServiceProvider.shared.networkService
-            let networkrequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: MediaConstants.Networking.HIT_HEADERS, connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
-            networkService.connectAsync(networkRequest: networkrequest) { connection in
-                self.dispatchQueue.async {
-                    if connection.error == nil {
-                        let statusCode = connection.response?.statusCode ?? MediaConstants.Networking.INVALID_RESPONSE
-                        if !MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
-                            Log.debug(label: self.LOG_TAG, "\(#function) - \(eventType) Http failed with response code (\(statusCode))")
-                            self.handleProcessingError()
-                        } else {
-                            if isSessionStartHit {
-                                if let sessionResponseFragment = connection.responseHttpHeader(forKey: "Location"), !sessionResponseFragment.isEmpty {
-                                    let mcSessionId = MediaCollectionReportHelper.extractSessionID(sessionResponseFragment: sessionResponseFragment)
-                                    Log.trace(label: self.LOG_TAG, "\(#function) - \(eventType): Media collection endpoint created internal session with id (\(String(describing: mcSessionId)))")
-                                
-                                    if let mcSessionId = mcSessionId, mcSessionId.count > 0 {
-                                        self.sessionId = mcSessionId
-                                        self.handleProcessingSuccess()
-                                    } else {
-                                        self.handleProcessingError()
-                                    }
-                                }
-                            } else {
-                                self.handleProcessingSuccess()
-                            }
-                        }
-                    } else {
+        
+        let networkService = ServiceProvider.shared.networkService
+        let networkrequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: MediaConstants.Networking.REQUEST_HEADERS, connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
+        networkService.connectAsync(networkRequest: networkrequest) { connection in
+            self.dispatchQueue.async {
+                if connection.error == nil {
+                    let statusCode = connection.response?.statusCode ?? MediaConstants.Networking.INVALID_RESPONSE
+                    if !MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
+                        Log.debug(label: self.LOG_TAG, "\(#function) - \(eventType) Http failed with response code (\(statusCode))")
                         self.handleProcessingError()
+                    } else {
+                        if isSessionStartHit {
+                            if let sessionResponseFragment = connection.responseHttpHeader(forKey: "Location"), !sessionResponseFragment.isEmpty {
+                                let mcSessionId = MediaCollectionReportHelper.extractSessionID(sessionResponseFragment: sessionResponseFragment)
+                                Log.trace(label: self.LOG_TAG, "\(#function) - \(eventType): Media collection endpoint created internal session with id (\(String(describing: mcSessionId)))")
+                                
+                                if let mcSessionId = mcSessionId, mcSessionId.count > 0 {
+                                    self.sessionId = mcSessionId
+                                    self.handleProcessingSuccess()
+                                } else {
+                                    self.handleProcessingError()
+                                }
+                            }
+                        } else {
+                            self.handleProcessingSuccess()
+                        }
                     }
+                } else {
+                    self.handleProcessingError()
                 }
             }
         }}
@@ -126,37 +137,45 @@ class MediaRealTimeSession : MediaSession {
     private func generateHitUrlAndBody(_ isSessionStartHit: Bool, _ hit: MediaHit) -> (String, String) {
         var urlString = ""
         if isSessionStartHit {
-            urlString = MediaCollectionReportHelper.getTrackingURL(url: mediaState.getMediaCollectionServer())
+            urlString = MediaCollectionReportHelper.getTrackingURL(url: state.getMediaCollectionServer())
         } else {
-            urlString = MediaCollectionReportHelper.getTrackingURLForEvents(url: mediaState.getMediaCollectionServer(), sessionId: sessionId)
+            urlString = MediaCollectionReportHelper.getTrackingURLForEvents(url: state.getMediaCollectionServer(), sessionId: sessionId)
         }
         
-        let body = MediaCollectionReportHelper.generateHitReport(state: mediaState, hit: [hit])
+        let body = MediaCollectionReportHelper.generateHitReport(state: state, hit: [hit])
         Log.debug(label: LOG_TAG, "trySendHit - Generated url (\(urlString)), Generated body (\(body))")
         return (urlString, body)
     }
     
     ///Handles if hit is successfully send to the Media Collection Server
     private func handleProcessingSuccess() {
-        sessionRetryCount = 0
-        hits.removeFirst()
         isSendingHit = false
-        if hits.count > 0 {
-            trySendHit()
-        }
+        sendNextHit()
     }
     
     ///Handles if there is an error in sending hit to the Media Collection Server
     private func handleProcessingError() {
+        isSendingHit = false
         if sessionRetryCount >= MediaRealTimeSession.MAX_ALLOWED_FAILURE {
-            hits.removeFirst()
-            sessionRetryCount = 0
+            sendNextHit()
         } else {
             sessionRetryCount += 1
+            if hits.count > 0 {
+                dispatchQueue.asyncAfter(deadline: .now() + .seconds(MediaSession.DURATION_BETWEEN_HITS_ON_FAILURE)){
+                    self.trySendHit()
+                }
+            }
         }
-        isSendingHit = false
+    }
+    
+    ///Initiates sending the next hit after a hit is successfully send OR error occurred in sending the hit, greater than or equals to MAX_ALLOWED_FAILURE times. It also handles the condition if there is not pending hit and session has been ended.
+    private func sendNextHit(){
+        hits.removeFirst()
+        sessionRetryCount = 0
         if hits.count > 0 {
             trySendHit()
+        } else if(!isSessionActive) { //Session is ended
+            sessionEndHandler?()
         }
     }
 }

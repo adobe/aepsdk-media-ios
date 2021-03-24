@@ -14,12 +14,12 @@ import XCTest
 
 class MediaServiceTest: XCTestCase {
 
-    func testInitCachedSessions() {
+    func testInitPersistedSessions() {
         
         //setup
-        let cachedSessionIds = ["sessionId1","sessionId2"]
+        let persistedSessionIds = ["sessionId1","sessionId2"]
         let mockDBService = MockMediaDBService()
-        mockDBService.cachedSessionId = cachedSessionIds
+        mockDBService.persistedSessionId = persistedSessionIds
         
         //Action
         let _ = MediaService(mediaState: MediaState(), mediaDBService: mockDBService)
