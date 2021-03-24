@@ -22,7 +22,6 @@
 		2EF1DF2B25E865DE0008925D /* MediaEventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1DF2A25E865DE0008925D /* MediaEventTracker.swift */; };
 		2EFF1B5B25BF57FC00375965 /* AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EFF1B5125BF57FC00375965 /* AEPMedia.framework */; };
 		3D2C836325E5CADC0064E0D4 /* MediaState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D2C836225E5CADC0064E0D4 /* MediaState.swift */; };
-		3D9D531725D5E73100F33EB7 /* MediaSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531625D5E73100F33EB7 /* MediaSession.swift */; };
 		3D9D531F25D5ED3E00F33EB7 /* MediaProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */; };
 		7104D52FCE7CD4FBED7235C4 /* Pods_AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13F8B2DE1682787F0FD4D771 /* Pods_AEPMedia.framework */; };
 		AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3525C9F11E00A37345 /* MediaTracker.swift */; };
@@ -79,7 +78,6 @@
 		2EFF1B5A25BF57FC00375965 /* AEPMediaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AEPMediaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D2C836225E5CADC0064E0D4 /* MediaState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaState.swift; sourceTree = "<group>"; };
 		3D2C836925E5CFDF0064E0D4 /* MediaHit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaHit.swift; sourceTree = "<group>"; };
-		3D9D531625D5E73100F33EB7 /* MediaSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSession.swift; sourceTree = "<group>"; };
 		3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaProcessor.swift; sourceTree = "<group>"; };
 		81B6B11A87DE4E2228FA46FB /* Pods_AEPMedia_AEPMediaTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPMedia_AEPMediaTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7EED2E95CAF988912D5E599 /* Pods-AEPMedia.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia.debug.xcconfig"; path = "Target Support Files/Pods-AEPMedia/Pods-AEPMedia.debug.xcconfig"; sourceTree = "<group>"; };
@@ -179,6 +177,7 @@
 			children = (
 				D662CF2326006FA30018AEFC /* MediaCollectionHitGenerator.swift */,
 				D6424A7F25DDB3BE00ED94F9 /* MediaCollectionHelper.swift */,
+				D662CF1126006D920018AEFC /* MediaHit.swift */,
 			);
 			path = mediacollection;
 			sourceTree = "<group>";
@@ -256,14 +255,12 @@
 				AC36EC3925C9F11E00A37345 /* MediaConstants.swift */,
 				2EF1DF2A25E865DE0008925D /* MediaEventTracker.swift */,
 				D662CF2726006FE10018AEFC /* MediaEventTracking.swift */,
-				D662CF1126006D920018AEFC /* MediaHit.swift */,
 				2EED4F5825D1E91200D2E88B /* MediaObject.swift */,
 				3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */,
 				2EE3CBCF25E5C2F300F94EA6 /* MediaPublicTracker.swift */,
 				2E20D4A425CA154C00B5CCB8 /* MediaRule.swift */,
 				2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */,
 				D64CCF9A2601919A00F4761F /* MediaService.swift */,
-				3D9D531625D5E73100F33EB7 /* MediaSession.swift */,
 				3D2C836225E5CADC0064E0D4 /* MediaState.swift */,
 				AC36EC3525C9F11E00A37345 /* MediaTracker.swift */,
 				2E1691A525E468D30010D14A /* MediaType.swift */,
@@ -478,7 +475,6 @@
 				AC36EC4225C9F11E00A37345 /* Media+PublicAPI.swift in Sources */,
 				3D9D531F25D5ED3E00F33EB7 /* MediaProcessor.swift in Sources */,
 				D662CF1E26006F880018AEFC /* MediaContext.swift in Sources */,
-				3D9D531725D5E73100F33EB7 /* MediaSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

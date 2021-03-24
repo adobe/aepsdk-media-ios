@@ -18,7 +18,6 @@ class MediaService : MediaProcessor {
     
     private let LOG_TAG = "MediaService"
     
-    private var mediaSessions: [String: MediaSession] = [:]
     private var mediaState: MediaState
     private let dependencies = [MediaConstants.Configuration.SHARED_STATE_NAME, MediaConstants.Identity.SHARED_STATE_NAME, MediaConstants.Analytics.SHARED_STATE_NAME]
     
