@@ -22,8 +22,8 @@ class MediaService : MediaProcessor {
     private var mediaState: MediaState
     private let dependencies = [MediaConstants.Configuration.SHARED_STATE_NAME, MediaConstants.Identity.SHARED_STATE_NAME, MediaConstants.Analytics.SHARED_STATE_NAME]
     
-    init(mediaState: MediaState) {
-        self.mediaState = mediaState
+    init() {
+        self.mediaState = MediaState()
     }
     
     func createSession(config: [String : Any]) -> String? {
@@ -44,6 +44,9 @@ class MediaService : MediaProcessor {
             sharedStates[extensionName] = getSharedState(extensionName, event, true)?.value
         }
         mediaState.update(dataMap: sharedStates)
+        if mediaState.getPrivacyStatus() == .optedOut {
+            abortAllSessions()
+        }
     }
     
     func abort() {

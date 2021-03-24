@@ -23,21 +23,18 @@ public class Media: NSObject, Extension {
     public static var extensionVersion = MediaConstants.EXTENSION_VERSION
     public var metadata: [String: String]?
     #if DEBUG
-        var trackers: [String: MediaEventTracker]
-        var mediaState: MediaState
-        var mediaService: MediaService?
+        var trackers: [String: MediaEventTracking]
+        var mediaService: MediaService
     #else
-        private var trackers: [String: MediaEventTracker]
-        private var mediaState: MediaState
-        private var mediaService: MediaService?
+        private var trackers: [String: MediaEventTracking]
+        private var mediaService: MediaService
     #endif
 
     // MARK: Extension
     /// Initializes the Media extension and it's dependencies
     public required init(runtime: ExtensionRuntime) {
         self.runtime = runtime
-        self.mediaState = MediaState()
-        self.mediaService = MediaService(mediaState: mediaState)
+        self.mediaService = MediaService()
         self.trackers = [:]
     }
 
@@ -64,7 +61,7 @@ public class Media: NSObject, Extension {
     /// - Parameter:
     ///   - event: The configuration response event
     private func handleSharedStateUpdate(_ event: Event) {
-        mediaService?.updateMediaState(event: event, getSharedState: runtime.getSharedState(extensionName:event:barrier:))
+        mediaService.updateMediaState(event: event, getSharedState: runtime.getSharedState(extensionName:event:barrier:))
     }
 
     /// Processes Configuration Response content events to retrieve the configuration data and privacy status settings.
@@ -73,8 +70,12 @@ public class Media: NSObject, Extension {
     private func handleConfigurationResponseEvent(_ event: Event) {
         handleSharedStateUpdate(event)
 
-        if mediaState.getPrivacyStatus() == .optedOut {
-            handleOptOut(event: event)
+        if let privacyStatusStr = event.data?[MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY] as? String {
+            let privacyStatus = PrivacyStatus(rawValue: privacyStatusStr) ?? PrivacyStatus.unknown
+            if privacyStatus == .optedOut {
+                Log.debug(label: LOG_TAG, "\(#function) - Privacy status is opted-out. Clearing persisted media sessions.")
+                trackers.removeAll()
+            }
         }
     }
 
@@ -87,15 +88,15 @@ public class Media: NSObject, Extension {
             return
         }
 
-        guard let trackerId = eventData[MediaConstants.Tracker.ID] as? String, trackerId.count > 0 else {
-            Log.debug(label: LOG_TAG, "\(#function) - Tracker ID is nil, unable to create tracker.")
+        guard let trackerId = eventData[MediaConstants.Tracker.ID] as? String, !trackerId.isEmpty else {
+            Log.debug(label: LOG_TAG, "\(#function) - Tracker ID is invalid, unable to create internal tracker.")
             return
         }
 
         let trackerConfig = eventData[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any] ?? [:]
 
         Log.debug(label: LOG_TAG, "\(#function) - Creating tracker with tracker id: \(trackerId).")
-        trackers[trackerId] = MediaEventTracker(hitProcessor: mediaService!, config: trackerConfig)
+        trackers[trackerId] = MediaEventTracker(hitProcessor: mediaService, config: trackerConfig)
     }
 
     /// Handler for media track events
@@ -112,24 +113,15 @@ public class Media: NSObject, Extension {
         }
 
         Log.debug(label: LOG_TAG, "\(#function) - tracking media for tracker id: \(trackerId).")
-        _ = trackMedia(trackerId: trackerId, eventData: eventData)
+        trackMedia(trackerId: trackerId, eventData: eventData)
     }
 
-    private func trackMedia(trackerId: String, eventData: [String: Any]) -> Bool {
-        if let tracker = trackers[trackerId] {
-            return tracker.track(eventData: eventData)
+    @discardableResult private func trackMedia(trackerId: String, eventData: [String: Any]) -> Bool {
+        guard let tracker = trackers[trackerId] else {
+            Log.error(label: LOG_TAG, "\(#function) - Unable to find tracker for the given tracker id: \(trackerId).")
+            return false
         }
-        Log.error(label: LOG_TAG, "\(#function) - Unable to find tracker for the given tracker id: \(trackerId).")
-        return false
-    }
-
-    /// Clears persisted media sessions.
-    private func handleOptOut(event: Event) {
-        // TODO: revisit when media service implemented
-        Log.debug(label: LOG_TAG, "\(#function) - Privacy status is opted-out. Clearing persisted media sessions.")
-        // clear tracked sessions and end all running sessions within the media service
-        trackers.removeAll()
-        mediaService?.abortAllSessions()
+        return tracker.track(eventData: eventData)
     }
 
 }

@@ -16,12 +16,11 @@ import AEPCore
 class MediaExtensionTests: MediaTestBase {
     
     static let config: [String:Any] = [:]
-    var mediaState: MediaState!
     var fakeMediaService: FakeMediaService!
     
     override func setUp() {
         super.setupBase()
-        fakeMediaService = FakeMediaService(mediaState: media.mediaState)
+        fakeMediaService = FakeMediaService()
         media.mediaService = fakeMediaService
     }
 
@@ -191,7 +190,7 @@ class MediaExtensionTests: MediaTestBase {
     func testHandleMediaTrackHappyPath() {
         // setup
         let mediaService = media.mediaService
-        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
+        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "trackerId",
@@ -210,7 +209,7 @@ class MediaExtensionTests: MediaTestBase {
     func testHandleMediaTrackNonMatchingTrackerId() {
         // setup
         let mediaService = media.mediaService
-        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
+        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "differentTrackerId",
@@ -229,7 +228,7 @@ class MediaExtensionTests: MediaTestBase {
     func testHandleMediaTrackEmptyTrackerId() {
         // setup
         let mediaService = media.mediaService
-        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
+        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "",
@@ -248,7 +247,7 @@ class MediaExtensionTests: MediaTestBase {
     func testHandleMediaTrackWithInvalidEvent() {
         // setup
         let mediaService = media.mediaService
-        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService!, config: MediaExtensionTests.config)
+        media.trackers["trackerId"] = FakeMediaEventTracker(hitProcessor: mediaService, config: MediaExtensionTests.config)
         dispatchDefaultConfigAndSharedStates()
         let mediaTrackEvent = Event(name: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA, data: nil)
         // test

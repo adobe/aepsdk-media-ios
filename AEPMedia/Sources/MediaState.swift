@@ -16,7 +16,7 @@ import AEPServices
 class MediaState {
     //TODO: implementation of this class.
     private let LOG_TAG = "MediaState"
-    private(set) var privacyStatus: PrivacyStatus = MediaConstants.DEFAULT_PRIVACY_STATUS
+    private(set) var privacyStatus: PrivacyStatus = .unknown
     
     // Media Config
     private(set) var mediaTrackingServer: String?
@@ -71,7 +71,7 @@ class MediaState {
             Log.trace(label: LOG_TAG, "\(#function) - Failed to extract configuration data (event data was nil).")
             return
         }
-        self.privacyStatus = PrivacyStatus.init(rawValue: configurationData[MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY] as? PrivacyStatus.RawValue ?? PrivacyStatus.unknown.rawValue) ?? MediaConstants.DEFAULT_PRIVACY_STATUS
+        self.privacyStatus = PrivacyStatus.init(rawValue: configurationData[MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY] as? PrivacyStatus.RawValue ?? PrivacyStatus.unknown.rawValue) ?? .unknown
 
         self.mcOrgId = configurationData[MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID] as? String
         self.analyticsTrackingServer = configurationData[MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER] as? String

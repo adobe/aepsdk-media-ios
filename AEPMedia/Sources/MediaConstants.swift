@@ -10,14 +10,12 @@
  */
 
 import Foundation
-import AEPCore
 
 enum MediaConstants {
     static let EXTENSION_NAME                           = "com.adobe.module.media"
     static let FRIENDLY_NAME                            = "Media Analytics"
     static let EXTENSION_VERSION                        = "0.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
-    static let DEFAULT_PRIVACY_STATUS                   = PrivacyStatus.unknown
 
     enum TrackerConfig {
         static let CHANNEL = "config.channel"
