@@ -16,6 +16,7 @@ import AEPServices
 class MediaState {
     //TODO: implementation of this class.
     private let LOG_TAG = "MediaState"
+    
     private(set) var privacyStatus: PrivacyStatus = .unknown
     
     // Media Config

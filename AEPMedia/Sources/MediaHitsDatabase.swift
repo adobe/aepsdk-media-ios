@@ -13,16 +13,14 @@ import Foundation
 import AEPServices
 
 class MediaHitsDatabase {
+    private static let LOG_TAG = "MediaHitsDatabase"
+
     private let databaseName: String
     private let databaseFilePath: FileManager.SearchPathDirectory
     private let serialQueue: DispatchQueue
     private static let TABLE_NAME: String = "TB_MEDIA_ANALYTICS_OFFLINE_HITS"
     private let TB_KEY_SESSION_ID = "sessionId"
-    private let TB_KEY_TIMESTAMP = "timestamp"
     private let TB_KEY_DATA = "data"
-    private var isClosed = false
-
-    private static let LOG_TAG = "MediaHitsDatabase"
 
     /// Creates a  new `MediaHitsDatabase` with a database file path and a serial dispatch queue
     /// If it fails to create database or table, a `nil` will be returned.
@@ -40,15 +38,11 @@ class MediaHitsDatabase {
         }
     }
 
-    func add(sessionId: String, dataEntity: DataEntity) -> Bool {
-        if isClosed { return false}
+    func add(sessionId: String, data: Data) -> Bool {
         return serialQueue.sync {
-            var dataString = ""
-            if let data = dataEntity.data {
-                dataString = String(data: data, encoding: .utf8) ?? ""
-            }
+            let dataString = String(data: data, encoding: .utf8) ?? ""
             let insertRowStatement = """
-            INSERT INTO \(Self.TABLE_NAME) (sessionId, timestamp, data) VALUES ("\(sessionId)", \(dataEntity.timestamp.millisecondsSince1970), '\(dataString)');
+            INSERT INTO \(Self.TABLE_NAME) (sessionId, data) VALUES ("\(sessionId)", '\(dataString)');
             """
 
             guard let connection = connect() else {
@@ -64,11 +58,10 @@ class MediaHitsDatabase {
         }
     }
 
-    func getEntitiesFor(sessionId: String) -> [DataEntity]? {
-        if isClosed { return nil}
+    func getDataFor(sessionId: String) -> [Data]? {
         return serialQueue.sync {
             let queryRowStatement = """
-            SELECT id,sessionId,timestamp,data FROM \(Self.TABLE_NAME) WHERE sessionId='\(sessionId)';
+            SELECT id,sessionId,data FROM \(Self.TABLE_NAME) WHERE sessionId='\(sessionId)';
             """
             guard let connection = connect() else {
                 return nil
@@ -81,17 +74,16 @@ class MediaHitsDatabase {
                 return nil
             }
 
-            var retrievedEntities: [DataEntity] = []
-            let dataEntities = result.map({mediaEntityFromSQLRow(row: $0)}).compactMap({$0})
-            for dataEntity in dataEntities {
-                retrievedEntities.append(dataEntity)
+            var retrievedData: [Data] = []
+            let results = result.map({dataFromSQLRow(row: $0)}).compactMap({$0})
+            for result in results {
+                retrievedData.append(result)
             }
-            return retrievedEntities
+            return retrievedData
         }
     }
 
-    func deleteEntitiesFor(sessionId: String) -> Bool {
-        if isClosed { return false}
+    func deleteDataFor(sessionId: String) -> Bool {
         return serialQueue.sync {
             guard let connection = connect() else {
                 return false
@@ -111,7 +103,6 @@ class MediaHitsDatabase {
     }
 
     func clear() -> Bool {
-        if isClosed { return false}
         return serialQueue.sync {
             let dropTableStatement = """
             DELETE FROM \(Self.TABLE_NAME);
@@ -132,7 +123,6 @@ class MediaHitsDatabase {
     }
 
     func count() -> Int {
-        if isClosed { return 0 }
         return serialQueue.sync {
             let queryRowStatement = """
             SELECT count(id) FROM \(Self.TABLE_NAME);
@@ -152,20 +142,12 @@ class MediaHitsDatabase {
         }
     }
 
-    func close() {
-        isClosed = true
-        // waiting for the current operations finished
-        serialQueue.sync {
-        }
-    }
-
     private func connect() -> OpaquePointer? {
         if let database = SQLiteWrapper.connect(databaseFilePath: databaseFilePath, databaseName: databaseName) {
             return database
-        } else {
-            Log.warning(label: Self.LOG_TAG, "Failed to connect to database: \(databaseName).")
-            return nil
         }
+        Log.warning(label: Self.LOG_TAG, "Failed to connect to database: \(databaseName).")
+        return nil
     }
 
     private func disconnect(database: OpaquePointer) {
@@ -186,7 +168,6 @@ class MediaHitsDatabase {
             CREATE TABLE "\(tableName)" (
                 "id"          INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
                 "sessionId"   TEXT NOT NULL,
-                "timestamp"   INTEGER NOT NULL,
                 "data"        TEXT
             );
             """
@@ -201,33 +182,16 @@ class MediaHitsDatabase {
         }
     }
 
-    private func mediaEntityFromSQLRow(row: [String: String]) -> DataEntity? {
-        guard let sessionId = row[TB_KEY_SESSION_ID], let dataString = row[TB_KEY_DATA], let dateString = row[TB_KEY_TIMESTAMP] else {
+    private func dataFromSQLRow(row: [String: String]) -> Data? {
+        guard let dataString = row[TB_KEY_DATA] else {
             Log.trace(label: Self.LOG_TAG, "Database record did not have valid data.")
             return nil
         }
 
-        guard let dateInt64 = Int64(dateString) else {
-            Log.trace(label: Self.LOG_TAG, "Database record had an invalid dateString: \(dateString).")
+        guard !dataString.isEmpty else {
             return nil
         }
-        let date = Date(milliseconds: dateInt64)
-        guard !dataString.isEmpty else {
-            return DataEntity(uniqueIdentifier: sessionId, timestamp: date, data: nil)
-        }
-        let data = dataString.data(using: .utf8)
-
-        return DataEntity(uniqueIdentifier: sessionId, timestamp: date, data: data)
+        return dataString.data(using: .utf8)
     }
 
-}
-
-extension Date {
-    var millisecondsSince1970: Int64 {
-        return Int64((timeIntervalSince1970 * 1000.0).rounded())
-    }
-
-    init(milliseconds: Int64) {
-        self = Date(timeIntervalSince1970: TimeInterval(milliseconds) / 1000)
-    }
 }

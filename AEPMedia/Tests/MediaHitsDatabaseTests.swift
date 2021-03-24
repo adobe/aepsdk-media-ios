@@ -38,9 +38,9 @@ class MediaHitsDatabaseTests: XCTestCase {
         }
     }
     
-    private func getHitFromDataEntity(entity: DataEntity) -> MediaHit? {
+    private func createHitFromData(data: Data) -> MediaHit? {
         var hit: MediaHit?
-        if let data = entity.data, let retrievedHit = try? JSONDecoder().decode(MediaHit.self, from: data) {
+        if let retrievedHit = try? JSONDecoder().decode(MediaHit.self, from: data) {
             hit = retrievedHit
         }
         return hit
@@ -54,48 +54,25 @@ class MediaHitsDatabaseTests: XCTestCase {
         XCTAssertNil(hitsDatabase)
     }
     
-    func testDatabaseOperationsWhenDatabaseClosed() throws {
-        // setup and test
-        let sessionId = UUID().uuidString
-        hitsDatabase.close()
-        let eventId = UUID().uuidString
-        let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: 50.0, ts: 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
-        let data = try JSONEncoder().encode(mediaHit)
-        let entity = DataEntity(uniqueIdentifier: eventId, timestamp: Date(), data: data)
-        // verify hit cannot be added
-        XCTAssertFalse(hitsDatabase.add(sessionId: sessionId, dataEntity: entity))
-        // verify hit cannot be retrieved
-        XCTAssertNil(hitsDatabase.getEntitiesFor(sessionId: sessionId))
-        // verify hit cannot be deleted
-        XCTAssertFalse(hitsDatabase.deleteEntitiesFor(sessionId: sessionId))
-        // verify count is 0
-        XCTAssertEqual(0, hitsDatabase.count())
-        // verify hit cannot be cleared
-        XCTAssertFalse(hitsDatabase.clear())
-    }
-    
     func testDatabaseAdd() throws {
         // setup and test
         let sessionId = UUID().uuidString
         var addedHits: [MediaHit] = []
         for i in 1 ... 3 {
-            let eventId = UUID().uuidString
             let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
-            let entity = DataEntity(uniqueIdentifier: eventId, timestamp: Date(), data: data)
-            _ = hitsDatabase.add(sessionId: sessionId, dataEntity: entity)
+            _ = hitsDatabase.add(sessionId: sessionId, data: data)
             addedHits.append(mediaHit)
         }
         // verify
         XCTAssertEqual(3, hitsDatabase.count())
-        guard let entities = hitsDatabase.getEntitiesFor(sessionId: sessionId) else {
+        guard let retrievedData = hitsDatabase.getDataFor(sessionId: sessionId) else {
             XCTFail("Failed to retrieve entities from the database")
             return
         }
         var index = 0
-        for entity in entities {
-            let retrievedHit = getHitFromDataEntity(entity: entity)
-            XCTAssertEqual(sessionId, entity.uniqueIdentifier)
+        for data in retrievedData {
+            let retrievedHit = createHitFromData(data: data)
             XCTAssertEqual(retrievedHit, addedHits[index])
             index += 1
         }
@@ -106,23 +83,20 @@ class MediaHitsDatabaseTests: XCTestCase {
         let sessionId = UUID().uuidString
         var addedHits: [MediaHit] = []
         for i in 1 ... 3 {
-            let eventId = UUID().uuidString
             let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.123456789, ts: Date().timeIntervalSince1970, params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
-            let entity = DataEntity(uniqueIdentifier: eventId, timestamp: Date(), data: data)
-            _ = hitsDatabase.add(sessionId: sessionId, dataEntity: entity)
+            _ = hitsDatabase.add(sessionId: sessionId, data: data)
             addedHits.append(mediaHit)
         }
         // verify that non whole number playhead and timestamp values are valid
         XCTAssertEqual(3, hitsDatabase.count())
-        guard let entities = hitsDatabase.getEntitiesFor(sessionId: sessionId) else {
+        guard let retrievedData = hitsDatabase.getDataFor(sessionId: sessionId) else {
             XCTFail("Failed to retrieve entities from the database")
             return
         }
         var index = 0
-        for entity in entities {
-            let retrievedHit = getHitFromDataEntity(entity: entity)
-            XCTAssertEqual(sessionId, entity.uniqueIdentifier)
+        for data in retrievedData {
+            let retrievedHit = createHitFromData(data: data)
             XCTAssertEqual(retrievedHit, addedHits[index])
             index += 1
         }
@@ -132,11 +106,9 @@ class MediaHitsDatabaseTests: XCTestCase {
         // setup and test
         let sessionId = UUID().uuidString
         for i in 1 ... 10 {
-            let eventId = UUID().uuidString
             let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
-            let entity = DataEntity(uniqueIdentifier: eventId, timestamp: Date(), data: data)
-            _ = hitsDatabase.add(sessionId: sessionId, dataEntity: entity)
+            _ = hitsDatabase.add(sessionId: sessionId, data: data)
         }
         // verify
         XCTAssertEqual(10, hitsDatabase.count())
@@ -149,34 +121,29 @@ class MediaHitsDatabaseTests: XCTestCase {
         let sessionId = UUID().uuidString
         var addedHits: [MediaHit] = []
         for i in 1 ... 10 {
-            let eventId = UUID().uuidString
             let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
-            let entity = DataEntity(uniqueIdentifier: eventId, timestamp: Date(), data: data)
-            _ = hitsDatabase.add(sessionId: sessionId, dataEntity: entity)
+            _ = hitsDatabase.add(sessionId: sessionId, data: data)
             addedHits.append(mediaHit)
         }
         XCTAssertEqual(10, hitsDatabase.count())
         let anotherSessionId = UUID().uuidString
         for i in 11 ... 20 {
-            let eventId = UUID().uuidString
             let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
-            let entity = DataEntity(uniqueIdentifier: eventId, timestamp: Date(), data: data)
-            _ = hitsDatabase.add(sessionId: anotherSessionId, dataEntity: entity)
+            _ = hitsDatabase.add(sessionId: anotherSessionId, data: data)
         }
         // verify
         XCTAssertEqual(20, hitsDatabase.count())
-        XCTAssertTrue(hitsDatabase.deleteEntitiesFor(sessionId: anotherSessionId))
+        XCTAssertTrue(hitsDatabase.deleteDataFor(sessionId: anotherSessionId))
         XCTAssertEqual(10, hitsDatabase.count())
-        guard let entities = hitsDatabase.getEntitiesFor(sessionId: sessionId) else {
+        guard let retrievedData = hitsDatabase.getDataFor(sessionId: sessionId) else {
             XCTFail("Failed to retrieve entities from the database")
             return
         }
         var index = 0
-        for entity in entities {
-            let retrievedHit = getHitFromDataEntity(entity: entity)
-            XCTAssertEqual(sessionId, entity.uniqueIdentifier)
+        for data in retrievedData {
+            let retrievedHit = createHitFromData(data: data)
             XCTAssertEqual(retrievedHit, addedHits[index])
             index += 1
         }
