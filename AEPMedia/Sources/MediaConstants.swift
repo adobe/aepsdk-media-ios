@@ -61,6 +61,11 @@ enum MediaConstants {
         static let EVENT_NAME_TRACK_MEDIA = "Media::TrackMedia"
     }
 
+    enum MediaConfig {
+        static let CHANNEL = "config.channel"
+        static let DOWNLOADED_CONTENT = "config.downloadedcontent"
+    }
+
     enum EventName {
         static let SESSION_START = "sessionstart"
         static let SESSION_END = "sessionend"

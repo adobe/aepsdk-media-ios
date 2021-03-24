@@ -71,7 +71,7 @@ class FakeMediaHitProcessor: MediaProcessor {
     }
 }
 
-class MockMediaSession : MediaSession {
+class MockMediaSession {
     func processHit(hit: MediaHit) {
         //stub
     }
