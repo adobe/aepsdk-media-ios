@@ -27,7 +27,7 @@ class MediaDBService {
         return [MediaHit]()
     }
 
-    func getCachedSessionIds() -> [String] {
+    func getPersistedSessionIds() -> [String] {
         //TODO implement this function.
         return [String]()
     }

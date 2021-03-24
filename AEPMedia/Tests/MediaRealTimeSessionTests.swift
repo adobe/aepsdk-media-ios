@@ -23,7 +23,7 @@ class MediaRealTimeSessionTests: XCTestCase {
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         let mediaState = MediaState()
         mediaState.url = collectionServerUrl
-        let mediaSession = MediaRealTimeSession(id: sessionId, state: mediaState , processingQueue: DispatchQueue(label: ""))
+        let mediaSession = MediaRealTimeSession(id: sessionId, mediaState: mediaState , dispatchQueue: DispatchQueue(label: ""))
         ServiceProvider.shared.networkService = MockNetworking()
         
         //Action
@@ -40,10 +40,9 @@ class MediaRealTimeSessionTests: XCTestCase {
     
     func testEndSession() {
         //prepare
-        let sessionId = "sessionId"
-        let eventType = MediaConstants.EventName.SESSION_START
+        let sessionId = "sessionId"        
         let mediaState = MediaState()
-        let mediaSession = MediaRealTimeSession(id: sessionId, state: mediaState , processingQueue: DispatchQueue(label: ""))
+        let mediaSession = MediaRealTimeSession(id: sessionId, mediaState: mediaState , dispatchQueue: DispatchQueue(label: ""))
         
         //Action
         mediaSession.end()
@@ -59,7 +58,7 @@ class MediaRealTimeSessionTests: XCTestCase {
         let eventType = MediaConstants.EventName.SESSION_START
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         let mediaState = MediaState()
-        let mediaSession = MediaRealTimeSession(id: sessionId, state: mediaState , processingQueue: DispatchQueue(label: ""))
+        let mediaSession = MediaRealTimeSession(id: sessionId, mediaState: mediaState , dispatchQueue: DispatchQueue(label: ""))
         mediaSession.hits = [mediaHit]
         XCTAssertTrue(mediaSession.hits.count > 0)
         

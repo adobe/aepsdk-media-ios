@@ -13,35 +13,29 @@ import Foundation
 import AEPServices
 
 class MediaSession {
-    
-    enum MediaSessionState {
-        // Session absent in our store / exceeded retries.
-        case Invalid
-        // Session is currently being tracked.
-        case Active
-        // Session is complete and waiting to be reported.
-        case Complete
-        // Session is reported to backend and we will clear the hits from db.
-        case Reported
-        // Session failed to report to backend. We will clear the hits from db if we exceed retries.
-        case Failed
-    }
-    static let DURATION_BETWEEN_HITS_ON_FAILURE = 30  //seconds
+        
+    private let LOG_TAG = "MediaSession"
+    static let DURATION_BETWEEN_HITS_ON_FAILURE = 30  //Waiting time in seconds before sending hit again after failure.
         
     var id: String
     var mediaState: MediaState
     var isSessionActive: Bool
-    var eventsHandler: MediaSessionEventsHandler?
     var dispatchQueue: DispatchQueue
     var sessionEndHandler: (() -> Void)?
     
-    init(id: String, mediaState: MediaState, processingQueue: DispatchQueue) {
+    ///Initializer for `MediaSession`
+    ///- Parameters:
+    ///    - id: Unique `MediaSession id`
+    ///    - mediaState: `MediaState` object
+    ///    - dispatchQueue: `DispatchQueue` used for handling response after processing `MediaHit`
+    init(id: String, mediaState: MediaState, dispatchQueue: DispatchQueue) {
         self.id = id
         self.mediaState = mediaState
         isSessionActive = true
-        dispatchQueue = processingQueue
+        self.dispatchQueue = dispatchQueue
     }
     
+    ///Returns true if SDk is ready to send hits else return false.
     func isReadyToSendHit() -> Bool {
          
         guard mediaState.privacyStatus == .optedIn else {
@@ -53,56 +47,61 @@ class MediaSession {
         return true
     }
     
+    ///Queues the `MediaHit`
+    /// - Parameter hit: `MediaHit` to be queued.
     func queue(hit: MediaHit?) {
         guard let hit = hit else {
-            Log.debug(label: eventsHandler?.LOG_TAG ?? "", "\(#function) - Unable to queue hit. MediaHit passed is nil.")
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to queue hit. MediaHit passed is nil.")
             return
         }
         
         guard isSessionActive else {
-            Log.debug(label: eventsHandler?.LOG_TAG ?? "", "\(#function) - Unable to queue hit. Media Session is inactive.")
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to queue hit. Media Session is inactive.")
             return
         }
-        
-        dispatchQueue.async {
-            self.eventsHandler?.queueMediaHit(hit: hit)
-        }
+                
+        handleQueueMediaHit(hit: hit)
     }
 
+    ///Ends the session
+    ///- Parameter onsessionEnd: An optional closure that will be executed after successfully ending the session.
     func end(onSessionEnd sessionEndHandler: (() -> Void)? = nil) {
         
         guard isSessionActive else {
-            Log.debug(label: eventsHandler?.LOG_TAG ?? "", "\(#function) - Unable to end session. Session (\(id)) is inactive")
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to end session. Session (\(id)) is inactive")
             return
         }
         
         self.sessionEndHandler = sessionEndHandler
-        dispatchQueue.async {
-            self.eventsHandler?.endSession()
-        }
+        handleSessionEnd()
     }
 
+    ///Aborts the session.
+    ///- Parameter onSessionEnd: An optional closure that will be executed after successfully aborting the session.
     func abort(onSessionEnd sessionEndHandler: (() -> Void)? = nil) {
         
         guard isSessionActive else {
-            Log.debug(label: eventsHandler?.LOG_TAG ?? "", "\(#function) - Unable to abort session. Session (\(id)) is inactive")
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to abort session. Session (\(id)) is inactive")
             return
         }
         
         self.sessionEndHandler = sessionEndHandler
-        dispatchQueue.async {
-            self.eventsHandler?.abortSession()
-        }
+        handleSessionAbort()
     }
-}
-
-/**
- Declares the functions that handles Media hit related events in Media session.
- */
-protocol MediaSessionEventsHandler {
     
-    var LOG_TAG: String {get}
-    func endSession()
-    func abortSession()
-    func queueMediaHit(hit: MediaHit)
+    ///Includes the business logic for ending session. Implemented by more concrete classes of MediaSession: `MedialRealTimeSession` and `MediaOfflineSession`.
+    func handleSessionEnd() {
+        Log.warning(label: LOG_TAG, "\(#function) - This function should be handle by the child class.")
+    }
+    
+    ///Includes the business logic for aborting session. Implemented by more concrete classes of MediaSession: `MedialRealTimeSession` and `MediaOfflineSession`.
+    func handleSessionAbort() {
+        Log.warning(label: LOG_TAG, "\(#function) - This function should be handle by the child class.")
+    }
+    
+    ///Includes the business logic for queuing `MediaHit`. Implemented by more concrete classes of MediaSession: `MedialRealTimeSession` and `MediaOfflineSession`.
+    /// - Parameter hit: `MediaHit` to be queued.
+    func handleQueueMediaHit(hit: MediaHit) {
+        Log.warning(label: LOG_TAG, "\(#function) - This function should be handle by the child class.")
+    }
 }

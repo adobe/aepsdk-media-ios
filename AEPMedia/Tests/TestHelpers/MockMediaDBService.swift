@@ -16,8 +16,10 @@ class MockMediaDBService : MediaDBService {
 
     var cachedSessionId: [String] = []
     var persistedHits: [String: [MediaHit]] = [:]
+    var getPersistedSessionIdsCalled = false
 
-    override func getCachedSessionIds() -> [String] {
+    override func getPersistedSessionIds() -> [String] {
+        getPersistedSessionIdsCalled = true
         return cachedSessionId
     }
 

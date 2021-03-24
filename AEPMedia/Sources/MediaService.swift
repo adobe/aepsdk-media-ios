@@ -34,9 +34,9 @@ class MediaService : MediaProcessor {
     
     ///Reads the cached offline session in DB, create `MediaSession` objects for them and initiate the reporting of `MediaSessions.`
     private func initCachedSessions() {
-        let cachedSessionIds = mediaDBService.getCachedSessionIds()
+        let cachedSessionIds = mediaDBService.getPersistedSessionIds()
         cachedSessionIds.forEach { sessionId in
-            let mediaOfflineSession = MediaOfflineSession(id: sessionId, state: mediaState, processingQueue: dispatchQueue, mediaDBService: mediaDBService)
+            let mediaOfflineSession = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
             mediaSessions[sessionId] = mediaOfflineSession
             mediaOfflineSession.end {
                 self.mediaSessions.removeValue(forKey: sessionId)
@@ -55,9 +55,9 @@ class MediaService : MediaProcessor {
         let sessionId = UUID().uuidString
         var session: MediaSession
         if isDownloaded {
-            session = MediaOfflineSession(id: sessionId, state: mediaState, processingQueue: dispatchQueue, mediaDBService: mediaDBService)
+            session = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
         } else {
-            session = MediaRealTimeSession(id: sessionId, state: mediaState, processingQueue: dispatchQueue)
+            session = MediaRealTimeSession(id: sessionId, mediaState: mediaState, dispatchQueue: dispatchQueue)
         }
         
         mediaSessions[sessionId] = session

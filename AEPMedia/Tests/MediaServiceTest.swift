@@ -22,11 +22,10 @@ class MediaServiceTest: XCTestCase {
         mockDBService.cachedSessionId = cachedSessionIds
         
         //Action
-        let mediaService: MediaService = MediaService(mediaState: MediaState(), mediaDBService: mockDBService)
+        let _ = MediaService(mediaState: MediaState(), mediaDBService: mockDBService)
         
         //Assert
-        XCTAssertTrue(mediaService.mediaSessions.keys.contains(cachedSessionIds[0]))
-        XCTAssertTrue(mediaService.mediaSessions.keys.contains(cachedSessionIds[1]))
+        XCTAssertTrue(mockDBService.getPersistedSessionIdsCalled)
         
     }
     
@@ -59,7 +58,7 @@ class MediaServiceTest: XCTestCase {
         let mediaService = MediaService(mediaState: MediaState(), mediaDBService:mockDBService)
         
         let sessionId = mediaService.createSession(config: emptyConfig)
-        let mockMediaSession = MockMediaSession(id: sessionId!, mediaState: MediaState(), processingQueue: DispatchQueue(label: ""))
+        let mockMediaSession = MockMediaSession(id: sessionId!, mediaState: MediaState(), dispatchQueue: DispatchQueue(label: ""))
         mediaService.mediaSessions[sessionId!] = mockMediaSession
         mediaService.processHit(sessionId: sessionId!, hit: mediaHit)
         Thread.sleep(until: .init(timeIntervalSinceNow: 1))
@@ -80,7 +79,7 @@ class MediaServiceTest: XCTestCase {
         let mediaService = MediaService(mediaState: MediaState(), mediaDBService:mockDBService)
 
         let sessionId = mediaService.createSession(config: emptyConfig)
-        let mockMediaSession = MockMediaSession(id: sessionId!, mediaState: MediaState(), processingQueue: DispatchQueue(label: ""))
+        let mockMediaSession = MockMediaSession(id: sessionId!, mediaState: MediaState(), dispatchQueue: DispatchQueue(label: ""))
         mediaService.mediaSessions[sessionId!] = mockMediaSession
         mediaService.endSession(sessionId: sessionId!)
         Thread.sleep(until: .init(timeIntervalSinceNow: 1))
@@ -99,7 +98,7 @@ class MediaServiceTest: XCTestCase {
         let emptyConfig = [String:Any]()
 
         let sessionId = mediaService.createSession(config: emptyConfig)
-        let mockMediaSession = MockMediaSession(id: sessionId!, mediaState: MediaState(), processingQueue: DispatchQueue(label: ""))
+        let mockMediaSession = MockMediaSession(id: sessionId!, mediaState: MediaState(), dispatchQueue: DispatchQueue(label: ""))
         mediaService.mediaSessions[sessionId!] = mockMediaSession
         mediaService.abort(sessionId: sessionId!)
         Thread.sleep(until: .init(timeIntervalSinceNow: 1))

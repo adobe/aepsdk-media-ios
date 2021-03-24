@@ -12,7 +12,7 @@
 import Foundation
 @testable import AEPMedia
 
-class MockMediaSession : MediaSession, MediaSessionEventsHandler {
+class MockMediaSession : MediaSession {
     
     var LOG_TAG: String = ""
     var hits: [MediaHit] = []
@@ -20,22 +20,21 @@ class MockMediaSession : MediaSession, MediaSessionEventsHandler {
     var hasSessionEndCalled = false
     var hasSesionAbortCalled = false
     
-    override init(id: String, mediaState: MediaState, processingQueue: DispatchQueue) {
-        super.init(id: id, mediaState: mediaState, processingQueue: processingQueue)
-        self.eventsHandler = self
+    override init(id: String, mediaState: MediaState, dispatchQueue: DispatchQueue) {
+        super.init(id: id, mediaState: mediaState, dispatchQueue: dispatchQueue)
     }
     
-    func endSession() {
+    override func handleSessionEnd() {
         hasSessionEndCalled = true
         sessionEndHandler?()
     }
     
-    func abortSession() {
+    override func handleSessionAbort() {
         hasSesionAbortCalled = true
         sessionEndHandler?()
     }
     
-    func queueMediaHit(hit: MediaHit) {
+    override func handleQueueMediaHit(hit: MediaHit) {
         hasQueueHitCalled = true
         hits.append(hit)
     }

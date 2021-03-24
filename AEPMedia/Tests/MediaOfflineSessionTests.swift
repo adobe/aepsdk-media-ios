@@ -24,7 +24,7 @@ class MediaOfflineSessionTests: XCTestCase {
         let eventType = "event_type"
         let mediaDBService = MockMediaDBService()
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
-        let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: MediaState(), processingQueue: dispatchQueue, mediaDBService: mediaDBService)
+        let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: MediaState(), dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
         
         //Action
         mediaSession.queue(hit: mediaHit)
@@ -46,7 +46,7 @@ class MediaOfflineSessionTests: XCTestCase {
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         mockMediaDBService.persistedHits[sessionId] = [mediaHit]
         
-        let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: MediaState(), processingQueue: dispatchQueue, mediaDBService: mockMediaDBService)
+        let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: MediaState(), dispatchQueue: dispatchQueue, mediaDBService: mockMediaDBService)
         
         //Action
         mediaSession.end {
@@ -100,7 +100,7 @@ class MediaOfflineSessionTests: XCTestCase {
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         mediaDBService.persistedHits[sessionId] = [mediaHit]
         
-        let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: MediaState(), processingQueue: dispatchQueue, mediaDBService: mediaDBService)
+        let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: MediaState(), dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
         
         //Action
         mediaSession.abort {
