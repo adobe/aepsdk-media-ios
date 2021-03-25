@@ -174,7 +174,9 @@ class MediaRealTimeSession : MediaSession {
         sessionRetryCount = 0
         if hits.count > 0 {
             trySendHit()
-        } else if(!isSessionActive) { //Session is ended
+            return
+        }
+        if !isSessionActive { //Session is ended
             sessionEndHandler?()
         }
     }
