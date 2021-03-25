@@ -17,6 +17,13 @@ enum MediaConstants {
     static let EXTENSION_VERSION                        = "0.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
 
+    enum Networking {
+        static let HTTP_TIMEOUT_SECONDS: TimeInterval = 5
+        static let HTTP_SUCCESS_RANGE = 200..<300
+        static let REQUEST_HEADERS = ["Content-type":"application/json"]
+        static let INVALID_RESPONSE = -1
+    }
+
     enum TrackerConfig {
         static let CHANNEL = "config.channel"
         static let DOWNLOADED_CONTENT = "config.downloadedcontent"

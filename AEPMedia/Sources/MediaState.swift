@@ -13,12 +13,13 @@ import Foundation
 import AEPCore
 import AEPServices
 
+
 class MediaState {
     //TODO: implementation of this class.
     private let LOG_TAG = "MediaState"
     
     private(set) var privacyStatus: PrivacyStatus = .unknown
-    
+
     // Media Config
     private(set) var mediaTrackingServer: String?
     private(set) var mediaCollectionServer: String?
@@ -31,7 +32,7 @@ class MediaState {
     // Analytics Config
     private(set) var analyticsRsid: String?
     private(set) var analyticsTrackingServer: String?
-    
+
     // Identity Config
     private(set) var mcOrgId: String?
 
@@ -44,7 +45,7 @@ class MediaState {
     private(set) var locHint: Int?
     private(set) var blob: String?
     private(set) var visitorCustomerIDs: [[String: Any]]?
-        
+
     /// Takes the shared states map and updates the data within the Media State.
     /// - Parameter dataMap: The map contains the shared state data required by the Analytics SDK.
     func update(dataMap: [String: [String: Any]?]) {
@@ -64,7 +65,7 @@ class MediaState {
             }
         }
     }
-    
+
     /// Extracts the configuration data from the provided shared state data.
     /// - Parameter configurationData the data map from `Configuration` shared state.
     func extractConfigurationInfo(from configurationData: [String: Any]?) {
@@ -85,7 +86,7 @@ class MediaState {
         self.mediaAppVersion = configurationData[MediaConstants.Configuration.MEDIA_APP_VERSION] as? String
         self.mediaDebugLogging = configurationData[MediaConstants.Configuration.MEDIA_DEBUG_LOGGING] as? Bool ?? false
     }
-    
+
     /// Extracts the identity data from the provided shared state data.
     /// - Parameter identityData the data map from `Identity` shared state.
     func extractIdentityInfo(from identityData: [String: Any]?) {
@@ -98,7 +99,7 @@ class MediaState {
         self.blob = identityData[MediaConstants.Identity.BLOB] as? String
         self.visitorCustomerIDs = identityData[MediaConstants.Identity.VISITOR_IDS_LIST] as? [[String:Any]]
     }
-    
+
     /// Extracts the analytics data from the provided shared state data.
     /// - Parameter analyticsData the data map from `Analytics` shared state.
     func extractAnalyticsInfo(from analyticsData: [String: Any]?) {
@@ -109,13 +110,12 @@ class MediaState {
         self.aid = analyticsData[MediaConstants.Analytics.ANALYTICS_VISITOR_ID] as? String
         self.vid = analyticsData[MediaConstants.Analytics.VISITOR_ID] as? String
     }
-    
+
     func getPrivacyStatus() -> PrivacyStatus {
         return privacyStatus
     }
-    
+
     func getMediaCollectionServer() -> String {
         return mediaCollectionServer ?? ""
     }
-    
 }
