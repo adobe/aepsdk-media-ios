@@ -57,7 +57,7 @@ class MediaService : MediaProcessor {
         if isDownloaded {
             session = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
         } else {
-            session = MediaRealTimeSession(id: sessionId, mediaState: mediaState, dispatchQueue: dispatchQueue)
+            session = MediaRealTimeSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue)
         }
         
         mediaSessions[sessionId] = session
