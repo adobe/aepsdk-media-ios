@@ -55,7 +55,7 @@ class MediaPublicAPITests: XCTestCase {
         }
 
         // verify
-        wait(for: [expectation], timeout: 1.5)
+        wait(for: [expectation], timeout: 2.0)
         XCTAssertNotNil(mediaTracker)
     }
 

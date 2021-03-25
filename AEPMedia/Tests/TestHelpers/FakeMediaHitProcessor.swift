@@ -70,17 +70,3 @@ class FakeMediaHitProcessor: MediaProcessor {
         }
     }
 }
-
-class MockMediaSession {
-    func processHit(hit: MediaHit) {
-        //stub
-    }
-
-    func end() {
-        //stub
-    }
-
-    func abort() {
-        //stub
-    }
-}
