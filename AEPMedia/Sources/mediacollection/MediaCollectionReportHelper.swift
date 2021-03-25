@@ -27,7 +27,7 @@ class MediaCollectionReportHelper {
     
     static func generateHitReport(state: MediaState, hit: [MediaHit]) -> String {
         //TDOO implement this function.
-        return ""
+        return "{}" //TODO: Need to modify Unit test: testQueueHit once this function is defined
     }
     
     static func extractSessionID(sessionResponseFragment: String) -> String? {

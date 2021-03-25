@@ -24,7 +24,7 @@ class MediaRealTimeSessionTests: XCTestCase {
         let mediaState = MediaState()
         let sharedData = [MediaConstants.Configuration.SHARED_STATE_NAME:[MediaConstants.Configuration.MEDIA_COLLECTION_SERVER: collectionServerUrl]]
         mediaState.update(dataMap: sharedData)
-        let mediaSession = MediaRealTimeSession(id: sessionId, state: mediaState , dispatchQueue: DispatchQueue(label: ""))
+        let mediaSession: MediaSession = MediaRealTimeSession(id: sessionId, state: mediaState , dispatchQueue: DispatchQueue(label: ""))
         ServiceProvider.shared.networkService = MockNetworking()
         
         //Action
@@ -32,7 +32,7 @@ class MediaRealTimeSessionTests: XCTestCase {
         Thread.sleep(forTimeInterval: 1)
         
         //Assert
-        XCTAssertTrue(mediaSession.hits.contains { hit in
+        XCTAssertTrue((mediaSession as! MediaRealTimeSession).hits.contains { hit in
             return hit.eventType == eventType
         })
         

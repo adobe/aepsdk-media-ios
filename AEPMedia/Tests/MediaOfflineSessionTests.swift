@@ -12,6 +12,7 @@
 import Foundation
 import XCTest
 import AEPServices
+import AEPCore
 @testable import AEPMedia
 
 class MediaOfflineSessionTests: XCTestCase {
@@ -46,7 +47,11 @@ class MediaOfflineSessionTests: XCTestCase {
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         mockMediaDBService.persistedHits[sessionId] = [mediaHit]
         
-        let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: MediaState(), dispatchQueue: dispatchQueue, mediaDBService: mockMediaDBService)
+        let sharedData = [MediaConstants.Configuration.SHARED_STATE_NAME: [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn.rawValue]]
+        let state = MediaState()
+        state.update(dataMap: sharedData)
+        
+        let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: state, dispatchQueue: dispatchQueue, mediaDBService: mockMediaDBService)
         
         //Action
         mediaSession.end {

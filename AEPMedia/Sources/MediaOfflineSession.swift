@@ -25,8 +25,7 @@ class MediaOfflineSession : MediaSession {
     ///- Parameters:
     ///    - id: Unique `MediaSession id`
     ///    - state: `MediaState` object
-    ///    - dispatchQueue: `DispatchQueue` used for handling response after processing `MediaHit`
-    ///    - dispatchQueue: `DispatchQueue` used for handling response after processing `MediaHit`
+    ///    - dispatchQueue: `DispatchQueue` used for handling response after processing `MediaHit`    
     ///    - mediaDBService: `MediaDBService` object used for persisting hits in the database
     init(id: String, state: MediaState, dispatchQueue: DispatchQueue, mediaDBService: MediaDBService) {
         self.mediaDBService = mediaDBService
@@ -132,12 +131,13 @@ class MediaOfflineSession : MediaSession {
         }
     }
     
-    ///Handles if the session is invalid for ex: session reporting url is invalid
+    ///Handles if the session is invalid for ex: session reporting url is invalid or no hits are persisted of session.
     private func handleInvalidSession() {
         Log.trace(label: LOG_TAG, "\(#function) - Clearing persisted pings for Session (\(self.id)).")
         clearSession()
     }
     
+    ///Removes the persisted hits.
     private func clearSession() {
         mediaDBService.deleteHits(sessionId: id)
         sessionEndHandler?()
