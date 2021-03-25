@@ -16,7 +16,7 @@ import AEPServices
 class MediaService : MediaProcessor {
     
     private let LOG_TAG = "MediaService"
-    
+    private let dependencies = [MediaConstants.Configuration.SHARED_STATE_NAME, MediaConstants.Identity.SHARED_STATE_NAME, MediaConstants.Analytics.SHARED_STATE_NAME]
     #if DEBUG
         var mediaSessions: [String: MediaSession] = [:]
     #else
@@ -26,8 +26,8 @@ class MediaService : MediaProcessor {
     private var dispatchQueue = DispatchQueue(label: "MediaService.DispatchQueue")
     private var mediaDBService: MediaDBService
     
-    init(mediaState: MediaState, mediaDBService: MediaDBService = MediaDBService()) {
-        self.mediaState = mediaState
+    init(mediaDBService: MediaDBService = MediaDBService()) {
+        self.mediaState = MediaState()
         self.mediaDBService = mediaDBService
         initPersistedSessions()
     }
@@ -117,9 +117,20 @@ class MediaService : MediaProcessor {
     }
     
     /// Aborts all the active sessions.
-    private func abortAllSession() {
+    func abortAllSessions() {
         for (sessionId, _) in mediaSessions {
             abort(sessionId: sessionId)
+        }
+    }
+    
+    func updateMediaState(event: Event, getSharedState: (String, Event, Bool) -> SharedStateResult?) {
+        var sharedStates = [String: [String: Any]?]()
+        for extensionName in dependencies {
+            sharedStates[extensionName] = getSharedState(extensionName, event, true)?.value
+        }
+        mediaState.update(dataMap: sharedStates)
+        if mediaState.getPrivacyStatus() == .optedOut {
+            abortAllSessions()
         }
     }
 }

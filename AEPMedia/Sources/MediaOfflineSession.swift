@@ -86,22 +86,27 @@ class MediaOfflineSession : MediaSession {
         let networkService = ServiceProvider.shared.networkService
         let networkrequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: MediaConstants.Networking.REQUEST_HEADERS, connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
         
-        networkService.connectAsync(networkRequest: networkrequest) { connection in
-            self.dispatchQueue.async {
-                if connection.error == nil {
-                    let statusCode = connection.response?.statusCode ?? MediaConstants.Networking.INVALID_RESPONSE
-                    if !MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
-                        Log.debug(label: self.LOG_TAG, "\(#function) - Session (\(self.id)) reporting failed. HTTP request failed with response code (\(statusCode))")
-                        self.onSessionReportFailure()
-                    } else {
-                        Log.trace(label: self.LOG_TAG, "\(#function) - Session (\(self.id) successfully reported")
-                        self.onSessionReportSuccess()
+        networkService.connectAsync(networkRequest: networkrequest) {[weak self] connection in
+            self?.dispatchQueue.async {
+                if let error = connection.error {
+                    //Handle the network Error case
+                    if let urlError = error as? URLError, urlError.code == URLError.Code.notConnectedToInternet {
+                        //MARK: TODO: Revisit the No internet connection handling logic
+                        self?.onSessionReportFailure()   //Reporting error due to no internet connection
+                        return
                     }
-                } else if let error = connection.error as? URLError, error.code == URLError.Code.notConnectedToInternet {
-                    self.onSessionReportFailure()   //Reporting error due to no internet connection
-                } else {
-                    self.onSessionReportFailure()
+                    self?.onSessionReportFailure()
+                    return
                 }
+                
+                if let statusCode = connection.response?.statusCode, MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
+                    Log.trace(label: self?.LOG_TAG ?? "", "\(#function) - Session (\(self?.id ?? "") successfully reported")
+                    self?.onSessionReportSuccess()
+                    return
+                }
+                
+                Log.debug(label: self?.LOG_TAG ?? "", "\(#function) - Session (\(self?.id ?? "")) reporting failed. HTTP request failed with response code (\(connection.response?.statusCode ?? MediaConstants.Networking.INVALID_RESPONSE))")
+                self?.onSessionReportFailure()
             }
         }
     }

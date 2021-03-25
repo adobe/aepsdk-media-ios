@@ -20,8 +20,8 @@ class MockMediaSession : MediaSession {
     var hasSessionEndCalled = false
     var hasSesionAbortCalled = false
     
-    override init(id: String, mediaState: MediaState, dispatchQueue: DispatchQueue) {
-        super.init(id: id, mediaState: mediaState, dispatchQueue: dispatchQueue)
+    override init(id: String, state: MediaState, dispatchQueue: DispatchQueue) {
+        super.init(id: id, state: state, dispatchQueue: dispatchQueue)
     }
     
     override func handleSessionEnd() {
