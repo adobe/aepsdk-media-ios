@@ -15,13 +15,11 @@ import AEPServices
 
 
 class MediaState {
-    //TODO: implementation of this class.
     private let LOG_TAG = "MediaState"
-    
+
     private(set) var privacyStatus: PrivacyStatus = .unknown
 
     // Media Config
-    private(set) var mediaTrackingServer: String?
     private(set) var mediaCollectionServer: String?
     private(set) var mediaChannel: String?
     private(set) var mediaOvp: String?
@@ -78,7 +76,6 @@ class MediaState {
         self.mcOrgId = configurationData[MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID] as? String
         self.analyticsTrackingServer = configurationData[MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER] as? String
         self.analyticsRsid = configurationData[MediaConstants.Configuration.ANALYTICS_RSID] as? String
-        self.mediaTrackingServer = configurationData[MediaConstants.Configuration.MEDIA_TRACKING_SERVER] as? String
         self.mediaCollectionServer = configurationData[MediaConstants.Configuration.MEDIA_COLLECTION_SERVER] as? String
         self.mediaChannel = configurationData[MediaConstants.Configuration.MEDIA_CHANNEL] as? String
         self.mediaOvp = configurationData[MediaConstants.Configuration.MEDIA_OVP] as? String

@@ -18,7 +18,7 @@ import SQLite3
 internal struct SQLiteWrapper {
     private static let LOG_TAG = "SQLiteWrapper"
 
-    /// Connect SQLite database with provide database name and database file path.
+    /// Connect SQLite database with provided database name and database file path.
     /// If the database file doesn't exist, a new database will be created and return a database connection
     /// - Parameters:
     ///   - databaseFilePath: the path to the database file

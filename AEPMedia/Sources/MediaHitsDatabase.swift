@@ -38,6 +38,11 @@ class MediaHitsDatabase {
         }
     }
 
+    /// Adds a `Data` object representing a MediaHit to the MediaHitsDatabase.
+    /// - Parameters:
+    ///   - sessionId: a string containing the session id of the media hit
+    ///   - data: a Data object representing a MediaHit
+    /// - Returns: A bool which will be true if the data was successfully added to the database and false otherwise.
     func add(sessionId: String, data: Data) -> Bool {
         return serialQueue.sync {
             let dataString = String(data: data, encoding: .utf8) ?? ""
@@ -58,6 +63,9 @@ class MediaHitsDatabase {
         }
     }
 
+    /// Retrieves the`Data` objects from the MediaHitsDatabase which match the given session id.
+    /// - Parameter sessionId: a string containing the session id to use for retrieving data
+    /// - Returns: An array of Data objects or nil if the session id did not match any database entries.
     func getDataFor(sessionId: String) -> [Data]? {
         return serialQueue.sync {
             let queryRowStatement = """
@@ -83,6 +91,9 @@ class MediaHitsDatabase {
         }
     }
 
+    /// Deletes the`Data` objects from the MediaHitsDatabase which match the given session id.
+    /// - Parameter sessionId: a string containing the session id to use for retrieving data
+    /// - Returns: A bool which will be true if the data was successfully deleted from the database and false otherwise.
     func deleteDataFor(sessionId: String) -> Bool {
         return serialQueue.sync {
             guard let connection = connect() else {
@@ -102,6 +113,8 @@ class MediaHitsDatabase {
         }
     }
 
+    /// Clears all `Data` objects from the MediaHitsDatabase.
+    /// - Returns: A bool which will be true if all the data was successfully cleared from the database and false otherwise.
     func clear() -> Bool {
         return serialQueue.sync {
             let dropTableStatement = """
@@ -122,6 +135,8 @@ class MediaHitsDatabase {
         }
     }
 
+    /// Gets the count of the `Data` objects currently present in the MediaHitsDatabase.
+    /// - Returns: An int which contains the number of data objects in the database.
     func count() -> Int {
         return serialQueue.sync {
             let queryRowStatement = """
@@ -142,6 +157,8 @@ class MediaHitsDatabase {
         }
     }
 
+    /// Opens the connection to the database.
+    /// - Returns: the database connection
     private func connect() -> OpaquePointer? {
         if let database = SQLiteWrapper.connect(databaseFilePath: databaseFilePath, databaseName: databaseName) {
             return database
@@ -150,10 +167,15 @@ class MediaHitsDatabase {
         return nil
     }
 
+    /// Closes the connection to the database.
+    /// - Parameter database: the database connection
     private func disconnect(database: OpaquePointer) {
         SQLiteWrapper.disconnect(database: database)
     }
 
+    /// Creates a table in the database with the given table name.
+    /// - Parameter tableName: a string containing the table name
+    /// - Returns: A bool which will be true if the table was successfully created and false otherwise.
     private func createTableIfNotExists(tableName: String) -> Bool {
         guard let connection = connect() else {
             return false
@@ -182,6 +204,9 @@ class MediaHitsDatabase {
         }
     }
 
+    /// Creates a `Data` object from the provided database row.
+    /// - Parameter row: a dictionary containing the contents of one database row.
+    /// - Returns: A Data object if the passed in row contains valid data.
     private func dataFromSQLRow(row: [String: String]) -> Data? {
         guard let dataString = row[TB_KEY_DATA] else {
             Log.trace(label: Self.LOG_TAG, "Database record did not have valid data.")
