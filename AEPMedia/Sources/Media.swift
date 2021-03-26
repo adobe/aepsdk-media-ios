@@ -82,18 +82,12 @@ public class Media: NSObject, Extension {
     /// Handler for media tracker creation events
     /// - Parameter event: an event containing  data for creating tracker
     private func handleMediaTrackerRequest(event: Event) {
-        // TODO: revisit when media service implemented
-        guard let eventData = event.data else {
-            Log.error(label: LOG_TAG, "\(#function) - Failed to extract tracker request data (event data was nil).")
-            return
-        }
-
-        guard let trackerId = eventData[MediaConstants.Tracker.ID] as? String, !trackerId.isEmpty else {
+        guard let trackerId = event.trackerId, !trackerId.isEmpty else {
             Log.debug(label: LOG_TAG, "\(#function) - Tracker ID is invalid, unable to create internal tracker.")
             return
         }
 
-        let trackerConfig = eventData[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any] ?? [:]
+        let trackerConfig = event.trackerConfig ?? [:]
 
         Log.debug(label: LOG_TAG, "\(#function) - Creating tracker with tracker id: \(trackerId).")
         trackers[trackerId] = MediaEventTracker(hitProcessor: mediaService, config: trackerConfig)
@@ -102,26 +96,16 @@ public class Media: NSObject, Extension {
     /// Handler for media track events
     /// - Parameter event: an event containing  media event data for processing
     private func handleMediaTrack(event: Event) {
-        guard let eventData = event.data else {
-            Log.error(label: LOG_TAG, "\(#function) - Failed to extract media track data (event data was nil).")
+        guard let trackerId = event.trackerId, !trackerId.isEmpty else {
+            Log.debug(label: LOG_TAG, "\(#function) - Tracker ID is invalid, unable to create internal tracker.")
             return
         }
 
-        guard let trackerId = eventData[MediaConstants.Tracker.ID] as? String, trackerId.count > 0 else {
-            Log.error(label: LOG_TAG, "\(#function) - Unable to retrieve valid tracker id.")
-            return
-        }
-
-        Log.debug(label: LOG_TAG, "\(#function) - tracking media for tracker id: \(trackerId).")
-        trackMedia(trackerId: trackerId, eventData: eventData)
-    }
-
-    @discardableResult private func trackMedia(trackerId: String, eventData: [String: Any]) -> Bool {
         guard let tracker = trackers[trackerId] else {
             Log.error(label: LOG_TAG, "\(#function) - Unable to find tracker for the given tracker id: \(trackerId).")
-            return false
+            return
         }
-        return tracker.track(eventData: eventData)
-    }
 
+        tracker.track(eventData: event.data)
+    }
 }

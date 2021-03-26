@@ -12,24 +12,24 @@
 import Foundation
 
 class MediaCollectionReportHelper {
-    
+
     private init() {}
-    
+
     static func getTrackingURL(url: String) -> String {
         //TODO Define this function
         return url
     }
-    
+
     static func getTrackingURLForEvents(url: String, sessionId: String?) -> String {
         //TODO Define this function.
         return ""
     }
-    
+
     static func generateHitReport(state: MediaState, hit: [MediaHit]) -> String {
         //TDOO implement this function.
         return "{}" //TODO: Need to modify Unit test: testQueueHit once this function is defined
     }
-    
+
     static func extractSessionID(sessionResponseFragment: String) -> String? {
         //TDOO implement this function.
         return ""

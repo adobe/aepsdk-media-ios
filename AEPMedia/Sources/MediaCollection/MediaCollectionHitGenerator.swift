@@ -196,7 +196,7 @@ class MediaCollectionHitGenerator {
 
         let currentPlaybackState = getPlaybackState()
 
-        if (self.currentPlaybackState != currentPlaybackState || doFlush) {
+        if self.currentPlaybackState != currentPlaybackState || doFlush {
             let eventType = getMediaCollectionEvent(state: currentPlaybackState)
             generateHit(eventType: eventType)
             self.currentPlaybackState = currentPlaybackState

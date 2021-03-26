@@ -16,7 +16,7 @@ protocol MediaProcessor {
     /// Creates a new `session` and return its `sessionId`.
     ///
     /// - Returns: Unique SessionId for the session.
-    func createSession(config: [String:Any]) -> String?
+    func createSession(config: [String: Any]) -> String?
 
     /// Process the Media Session with id `sessionId`
     ///
