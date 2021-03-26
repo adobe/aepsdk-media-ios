@@ -10,25 +10,19 @@
  */
 
 import Foundation
+import AEPCore
 
-class MediaDBService {
-
-    func persistHit(hit: MediaHit, sessionId: String) {
-        //TODO implement this function.
+extension Event {
+    /// Returns tracker id associated with Event
+    var trackerId: String? {
+        return data?[MediaConstants.Tracker.ID] as? String
     }
 
-    func deleteHits(sessionId id: String) {
-        //TODO implement this function.
+    /// Returns tracker config associated with EVENT_SOURCE_TRACKER_REQUEST Event
+    var trackerConfig: [String: Any]? {
+        guard source == MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST else {
+            return nil
+        }
+        return data?[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any]
     }
-
-    func getHits(sessionId id: String) -> [MediaHit] {
-        //TODO implement this function.
-        return [MediaHit]()
-    }
-
-    func getPersistedSessionIds() -> [String] {
-        //TODO implement this function.
-        return [String]()
-    }
-
 }

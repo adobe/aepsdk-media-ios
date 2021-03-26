@@ -85,10 +85,10 @@ class MediaCollectionHelper {
         retDict[MediaConstants.MediaCollection.Media.STREAM_TYPE] = mediaInfo.mediaType
         retDict[MediaConstants.MediaCollection.Media.RESUME] = mediaInfo.resumed
 
-        let metadata = mediaContext.mediaMetadata 
+        let metadata = mediaContext.mediaMetadata
 
         // standard metadata keys are transformed and reported as part of media param
-        for (key,value) in metadata {
+        for (key, value) in metadata {
             if let newKey = standardMediaMetadataMapping[key], !newKey.isEmpty {
                 retDict[newKey] = value
             }
@@ -103,7 +103,7 @@ class MediaCollectionHelper {
         let metadata = mediaContext.mediaMetadata
 
         // standard metadata is removed and only custom metadata will be returned.
-        for (key,value) in metadata {
+        for (key, value) in metadata {
             if standardMediaMetadataMapping[key] == nil {
                 retDict[key] = value
             }
@@ -142,7 +142,7 @@ class MediaCollectionHelper {
 
         let adMetadata = mediaContext.adMetadata
         // standard ad metadata keys are transformed and reported as part of ad params
-        for (key,value) in adMetadata {
+        for (key, value) in adMetadata {
             if let newKey = standardAdMetadataMapping[key], !newKey.isEmpty {
                 retDict[newKey] = value
             }
@@ -157,7 +157,7 @@ class MediaCollectionHelper {
         let adMetadata = mediaContext.adMetadata
 
         // standard ad metadata is removed and only custom ad metadata will be returned.
-        for (key,value) in adMetadata {
+        for (key, value) in adMetadata {
             if standardAdMetadataMapping[key] == nil {
                 retDict[key] = value
             }

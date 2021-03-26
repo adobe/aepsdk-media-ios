@@ -150,6 +150,7 @@ class MediaEventTracker: MediaEventTracking {
         mediaIdleStartTS = TimeInterval()
     }
 
+    @discardableResult
     func track(eventData: [String: Any]?) -> Bool {
         guard let eventData = eventData else {
             Log.debug(label: Self.LOG_TAG, "\(#function) - Failed to track event (event data was null).")

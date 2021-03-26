@@ -13,8 +13,8 @@ import Foundation
 import AEPCore
 import AEPServices
 
-class MediaService : MediaProcessor {
-    
+class MediaService: MediaProcessor {
+
     private let LOG_TAG = "MediaService"
     private let dependencies = [MediaConstants.Configuration.SHARED_STATE_NAME, MediaConstants.Identity.SHARED_STATE_NAME, MediaConstants.Analytics.SHARED_STATE_NAME]
     #if DEBUG
@@ -25,13 +25,13 @@ class MediaService : MediaProcessor {
     private var mediaState: MediaState
     private var dispatchQueue = DispatchQueue(label: "MediaService.DispatchQueue")
     private var mediaDBService: MediaDBService
-    
+
     init(mediaDBService: MediaDBService = MediaDBService()) {
         self.mediaState = MediaState()
         self.mediaDBService = mediaDBService
         initPersistedSessions()
     }
-    
+
     ///Reads the persisted offline session in DB, create `MediaSession` objects for them and initiate the reporting of `MediaSessions.`
     private func initPersistedSessions() {
         let persistedSessionIds = mediaDBService.getPersistedSessionIds()
@@ -43,14 +43,14 @@ class MediaService : MediaProcessor {
             }
         }
     }
-    
-    func createSession(config: [String:Any]) -> String? {
-        
+
+    func createSession(config: [String: Any]) -> String? {
+
         guard mediaState.privacyStatus != .optedOut else {
             Log.debug(label: LOG_TAG, "\(#function) - Could not start new media session. Privacy is opted out.")
             return nil
         }
-        
+
         let isDownloaded = false //TODO: Need to update how we determine isDownloaded
         let sessionId = UUID().uuidString
         var session: MediaSession
@@ -59,70 +59,70 @@ class MediaService : MediaProcessor {
         } else {
             session = MediaRealTimeSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue)
         }
-        
+
         mediaSessions[sessionId] = session
         Log.trace(label: LOG_TAG, "\(#function) - Created a new session (\(sessionId))")
         return sessionId
     }
-    
+
     /// Queues the `MediaHit` hit in session `sessionId`
     ///- Parameters:
     ///    - sessionId: UniqueId of session to which `MediaHit` belongs.
     ///    - hit: `Object` of type `MediaHit`
-    func processHit(sessionId: String, hit : MediaHit) {
+    func processHit(sessionId: String, hit: MediaHit) {
         guard mediaSessions.keys.contains(sessionId) else {
             Log.debug(label: LOG_TAG, "\(#function) - Can not process session (\(sessionId)). SessionId is invalid.")
             return
         }
-                
+
         let session = mediaSessions[sessionId]
         session?.queue(hit: hit)
         Log.trace(label: LOG_TAG, "\(#function) - Successfully queued hit (\(hit.eventType) for Session (\(sessionId)).")
     }
-    
+
     /// Ends the session `sessionId`. In case of Offline session, sends the report to MediaAnalytics collection server.
     ///
     /// - Parameter sessionId: Unique session id for session to end.
     func endSession(sessionId: String) {
-        
+
         guard mediaSessions.keys.contains(sessionId) else {
             Log.debug(label: LOG_TAG, "\(#function) - Can not end media session (\(sessionId)). Invalid session id.")
             return
         }
-        
+
         mediaSessions[sessionId]?.end {
             self.mediaSessions.removeValue(forKey: sessionId)
             Log.trace(label: self.LOG_TAG, "\(#function) - Successfully ended media session (\(sessionId))")
         }
-        
+
         Log.trace(label: LOG_TAG, "\(#function) - Scheduled end of the media session (\(sessionId))")
     }
-    
+
     /// Abort the session `sessionId`.
     ///
     /// - Parameter sessionId: Unique sessionId of session to be aborted.
     func abort(sessionId: String) {
-        
+
         guard mediaSessions.keys.contains(sessionId) else {
             Log.debug(label: LOG_TAG, "\(#function) - can not abort media session (\(sessionId)). SessionId is invalid.")
             return
         }
-        
+
         mediaSessions[sessionId]?.abort {
             self.mediaSessions.removeValue(forKey: sessionId)
             Log.trace(label: self.LOG_TAG, "\(#function) - Successfully aborted media session (\(sessionId)).")
         }
-        
+
         Log.trace(label: LOG_TAG, "\(#function) - Scheduled session abort for Session (\(sessionId).")
     }
-    
+
     /// Aborts all the active sessions.
     func abortAllSessions() {
         for (sessionId, _) in mediaSessions {
             abort(sessionId: sessionId)
         }
     }
-    
+
     func updateMediaState(event: Event, getSharedState: (String, Event, Bool) -> SharedStateResult?) {
         var sharedStates = [String: [String: Any]?]()
         for extensionName in dependencies {
