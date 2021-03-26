@@ -10,8 +10,9 @@
  */
 
 import Foundation
+import AEPServices
 
-class MediaHit {
+struct MediaHit: Codable {
     /// Media Analytics Tracking Event Type
     private (set) var eventType: String
 
@@ -30,6 +31,15 @@ class MediaHit {
     /// The current timestamp
     private (set) var timestamp: TimeInterval
 
+    enum CodingKeys: String, CodingKey {
+        case eventType = "eventType"
+        case params = "params"
+        case metadata = "metadata"
+        case qoeData = "qoeData"
+        case playhead = "playhead"
+        case timestamp = "timestamp"
+    }
+
     init(eventType: String, playhead: Double, ts: TimeInterval, params: [String: Any]? = nil, customMetadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
         self.eventType = eventType
         self.params = params
@@ -37,5 +47,27 @@ class MediaHit {
         self.qoeData = qoeData
         self.playhead = playhead
         self.timestamp = ts
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        self.eventType = try values.decode(String.self, forKey: .eventType)
+        let anyCodableParams = try values.decode([String: AnyCodable].self, forKey: .params)
+        self.params = anyCodableParams.asDictionary()
+        self.metadata = try values.decode([String: String].self, forKey: .metadata)
+        let anyCodableQoeData = try values.decode([String: AnyCodable].self, forKey: .qoeData)
+        self.qoeData = anyCodableQoeData.asDictionary()
+        self.playhead = try values.decode(Double.self, forKey: .playhead)
+        self.timestamp = try values.decode(Double.self, forKey: .timestamp)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(eventType, forKey: .eventType)
+        try container.encode(AnyCodable.from(dictionary: params), forKey: .params)
+        try container.encode(metadata, forKey: .metadata)
+        try container.encode(AnyCodable.from(dictionary: qoeData), forKey: .qoeData)
+        try container.encode(playhead, forKey: .playhead)
+        try container.encode(timestamp, forKey: .timestamp)
     }
 }
