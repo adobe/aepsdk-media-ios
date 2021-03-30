@@ -13,16 +13,16 @@ import Foundation
 import AEPServices
 
 class MediaSession {
-        
+
     private let LOG_TAG = "MediaSession"
     static let DURATION_BETWEEN_HITS_ON_FAILURE = 30  //Waiting time in seconds before sending hit again after failure.
-        
+
     var id: String
     var state: MediaState
     var isSessionActive: Bool
     var dispatchQueue: DispatchQueue
     var sessionEndHandler: (() -> Void)?
-    
+
     ///Initializer for `MediaSession`
     ///- Parameters:
     ///    - id: Unique `MediaSession id`
@@ -34,19 +34,19 @@ class MediaSession {
         isSessionActive = true
         self.dispatchQueue = dispatchQueue
     }
-    
+
     ///Returns true if SDk is ready to send hits else return false.
     func isReadyToSendHit() -> Bool {
-         
+
         guard state.privacyStatus == .optedIn else {
             return false
         }
-        
+
         //TODO: implement rest of the conditions.
-        
+
         return true
     }
-    
+
     ///Queues the `MediaHit`
     /// - Parameter hit: `MediaHit` to be queued.
     func queue(hit: MediaHit?) {
@@ -54,24 +54,24 @@ class MediaSession {
             Log.debug(label: LOG_TAG, "\(#function) - Unable to queue hit. MediaHit passed is nil.")
             return
         }
-        
+
         guard isSessionActive else {
             Log.debug(label: LOG_TAG, "\(#function) - Unable to queue hit. Media Session is inactive.")
             return
         }
-                
+
         handleQueueMediaHit(hit: hit)
     }
 
     ///Ends the session
     ///- Parameter onsessionEnd: An optional closure that will be executed after successfully ending the session.
     func end(onSessionEnd sessionEndHandler: (() -> Void)? = nil) {
-        
+
         guard isSessionActive else {
             Log.debug(label: LOG_TAG, "\(#function) - Unable to end session. Session (\(id)) is inactive")
             return
         }
-        
+
         self.sessionEndHandler = sessionEndHandler
         isSessionActive = false
         handleSessionEnd()
@@ -80,27 +80,27 @@ class MediaSession {
     ///Aborts the session.
     ///- Parameter onSessionEnd: An optional closure that will be executed after successfully aborting the session.
     func abort(onSessionEnd sessionEndHandler: (() -> Void)? = nil) {
-        
+
         guard isSessionActive else {
             Log.debug(label: LOG_TAG, "\(#function) - Unable to abort session. Session (\(id)) is inactive")
             return
         }
-        
+
         self.sessionEndHandler = sessionEndHandler
         isSessionActive = false
         handleSessionAbort()
     }
-    
+
     ///Includes the business logic for ending session. Implemented by more concrete classes of MediaSession: `MedialRealTimeSession` and `MediaOfflineSession`.
     func handleSessionEnd() {
         Log.warning(label: LOG_TAG, "\(#function) - This function should be handle by the child class.")
     }
-    
+
     ///Includes the business logic for aborting session. Implemented by more concrete classes of MediaSession: `MedialRealTimeSession` and `MediaOfflineSession`.
     func handleSessionAbort() {
         Log.warning(label: LOG_TAG, "\(#function) - This function should be handle by the child class.")
     }
-    
+
     ///Includes the business logic for queuing `MediaHit`. Implemented by more concrete classes of MediaSession: `MedialRealTimeSession` and `MediaOfflineSession`.
     /// - Parameter hit: `MediaHit` to be queued.
     func handleQueueMediaHit(hit: MediaHit) {

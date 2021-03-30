@@ -13,7 +13,6 @@ import Foundation
 import AEPCore
 import AEPServices
 
-
 class MediaState {
     private let LOG_TAG = "MediaState"
 
@@ -94,7 +93,7 @@ class MediaState {
         self.ecid = identityData[MediaConstants.Identity.MARKETING_VISITOR_ID] as? String
         self.locHint = identityData[MediaConstants.Identity.LOC_HINT] as? Int
         self.blob = identityData[MediaConstants.Identity.BLOB] as? String
-        self.visitorCustomerIDs = identityData[MediaConstants.Identity.VISITOR_IDS_LIST] as? [[String:Any]]
+        self.visitorCustomerIDs = identityData[MediaConstants.Identity.VISITOR_IDS_LIST] as? [[String: Any]]
     }
 
     /// Extracts the analytics data from the provided shared state data.
