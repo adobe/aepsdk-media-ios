@@ -25,7 +25,7 @@ class MediaService: MediaProcessor {
     private var mediaState: MediaState
     private var dispatchQueue = DispatchQueue(label: "MediaService.DispatchQueue")
     private var mediaDBService: MediaDBService
-    
+
     init(mediaDBService: MediaDBService? = nil) {
         self.mediaState = MediaState()
         if let mediaDBService = mediaDBService {
@@ -33,7 +33,7 @@ class MediaService: MediaProcessor {
         } else {
             self.mediaDBService = MediaDBService(serialQueue: dispatchQueue)
         }
-        
+
         initPersistedSessions()
     }
 
@@ -48,7 +48,7 @@ class MediaService: MediaProcessor {
             }
         }
     }
-    
+
     func createSession(config: [String:Any]) -> String? {
         guard mediaState.privacyStatus != .optedOut else {
             Log.debug(label: LOG_TAG, "\(#function) - Could not start new media session. Privacy is opted out.")
