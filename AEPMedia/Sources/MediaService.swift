@@ -26,9 +26,14 @@ class MediaService : MediaProcessor {
     private var dispatchQueue = DispatchQueue(label: "MediaService.DispatchQueue")
     private var mediaDBService: MediaDBService
     
-    init(mediaDBService: MediaDBService = MediaDBService()) {
+    init(mediaDBService: MediaDBService? = nil) {
         self.mediaState = MediaState()
-        self.mediaDBService = mediaDBService
+        if let mediaDBService = mediaDBService {
+            self.mediaDBService = mediaDBService
+        } else {
+            self.mediaDBService = MediaDBService(serialQueue: dispatchQueue)
+        }
+        
         initPersistedSessions()
     }
     
@@ -45,16 +50,14 @@ class MediaService : MediaProcessor {
     }
     
     func createSession(config: [String:Any]) -> String? {
-        
         guard mediaState.privacyStatus != .optedOut else {
             Log.debug(label: LOG_TAG, "\(#function) - Could not start new media session. Privacy is opted out.")
             return nil
         }
         
-        let isDownloaded = false //TODO: Need to update how we determine isDownloaded
         let sessionId = UUID().uuidString
         var session: MediaSession
-        if isDownloaded {
+        if config[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false {
             session = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
         } else {
             session = MediaRealTimeSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue)

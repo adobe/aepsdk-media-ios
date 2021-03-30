@@ -17,6 +17,11 @@ class MockMediaDBService : MediaDBService {
     var persistedSessionId: [String] = []
     var persistedHits: [String: [MediaHit]] = [:]
     var getPersistedSessionIdsCalled = false
+    private var queue = DispatchQueue(label: "MockMediaDBService")
+
+    init() {
+        super.init(serialQueue: queue)
+    }
 
     override func getPersistedSessionIds() -> [String] {
         getPersistedSessionIdsCalled = true
