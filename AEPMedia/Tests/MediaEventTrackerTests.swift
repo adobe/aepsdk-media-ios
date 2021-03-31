@@ -62,7 +62,7 @@ class MediaEventTrackerTests: XCTestCase {
     var mediaTracker: MediaEventTracker!
     var eventGenerator: MediaEventGenerator!
         
-    func handleTrackAPI(incrementTS: Double = 0) -> Bool {
+    func handleTrackAPI() -> Bool {
         guard let event = eventGenerator.dispatchedEvent else {
             return false
         }
@@ -1152,8 +1152,9 @@ class MediaEventTrackerTests: XCTestCase {
         eventGenerator.trackPlay()
         XCTAssertTrue(handleTrackAPI())
         
+        eventGenerator.incrementTimeStamp(value: (24*60*60*1000)) //24 hours
         eventGenerator.updateCurrentPlayhead(time: 1)
-        XCTAssertTrue(handleTrackAPI(incrementTS: (24*60*60*1000))) //24 hours
+        XCTAssertTrue(handleTrackAPI())
         
         // Tracker is not idle after Media Session Restarted after MediaSessionTimeout(24hrs)
         XCTAssertFalse(mediaTracker.trackerIdle)
