@@ -55,9 +55,10 @@ class MediaService: MediaProcessor {
             return nil
         }
 
+        let isDownloaded = config[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
         let sessionId = UUID().uuidString
         var session: MediaSession
-        if config[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false {
+        if isDownloaded {
             session = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
         } else {
             session = MediaRealTimeSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue)

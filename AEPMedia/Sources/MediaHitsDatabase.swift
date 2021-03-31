@@ -157,6 +157,35 @@ class MediaHitsDatabase {
         }
     }
 
+    /// Gets all the session id's present in the `MediaHitsDatabase`.
+    /// - Returns: A set of `Strings` which contains all the session id's added to the database.
+    func getAllSessions() -> Set<String> {
+        return serialQueue.sync {
+            let queryRowStatement = """
+            SELECT sessionId FROM \(Self.TABLE_NAME);
+            """
+            guard let connection = connect() else {
+                return []
+            }
+            defer {
+                disconnect(database: connection)
+            }
+            guard let results = SQLiteWrapper.query(database: connection, sql: queryRowStatement) else {
+                Log.trace(label: Self.LOG_TAG, "Query returned no records: \(queryRowStatement).")
+                return []
+            }
+
+            var retrievedSessions: Set<String> = []
+            for result in results {
+                if let sessionId = result[TB_KEY_SESSION_ID] {
+                    retrievedSessions.insert(sessionId)
+                }
+            }
+
+            return retrievedSessions
+        }
+    }
+
     /// Opens the connection to the database.
     /// - Returns: the database connection
     private func connect() -> OpaquePointer? {

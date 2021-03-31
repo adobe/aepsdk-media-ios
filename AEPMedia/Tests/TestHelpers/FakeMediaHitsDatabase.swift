@@ -15,7 +15,7 @@ import AEPCore
 
 class FakeMediaHitsDatabase : MediaHitsDatabase {
     var addedData: [String:[Data]] = [:]
-    var sessionIds: [String] = []
+    var sessionIds: Set<String> = []
     private var queue = DispatchQueue(label: "FakeMediaHitsDatabase")
 
     init?() {
@@ -28,9 +28,7 @@ class FakeMediaHitsDatabase : MediaHitsDatabase {
         } else {
             addedData[sessionId]?.append(data)
         }
-        if !sessionIds.contains(sessionId) {
-            sessionIds.append(sessionId)
-        }
+        sessionIds.insert(sessionId)
         return true
     }
 
@@ -42,5 +40,9 @@ class FakeMediaHitsDatabase : MediaHitsDatabase {
 
     override func getDataFor(sessionId: String) -> [Data]? {
         return addedData[sessionId]
+    }
+
+    override func getAllSessions() -> Set<String> {
+        return sessionIds
     }
 }

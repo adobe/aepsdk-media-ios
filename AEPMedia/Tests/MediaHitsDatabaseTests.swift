@@ -146,4 +146,30 @@ class MediaHitsDatabaseTests: XCTestCase {
             index += 1
         }
     }
+    
+    func testGetAllSessionIds() throws {
+        // setup and test
+        var addedSessions: Set<String> = []
+        var secondSetOfAddedSessions: Set<String> = []
+        for i in 1 ... 10 {
+            let sessionId = UUID().uuidString
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let data = try JSONEncoder().encode(mediaHit)
+            _ = hitsDatabase.add(sessionId: sessionId, data: data)
+            addedSessions.insert(sessionId)
+        }
+        XCTAssertEqual(10, hitsDatabase.count())
+        for i in 11 ... 20 {
+            let anotherSessionId = UUID().uuidString
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let data = try JSONEncoder().encode(mediaHit)
+            _ = hitsDatabase.add(sessionId: anotherSessionId, data: data)
+            secondSetOfAddedSessions.insert(anotherSessionId)
+        }
+        // verify
+        XCTAssertEqual(20, hitsDatabase.count())
+        let retrievedSessions = hitsDatabase.getAllSessions()
+        let allSessions = addedSessions.union(secondSetOfAddedSessions)
+        XCTAssertEqual(allSessions, retrievedSessions)
+    }
 }

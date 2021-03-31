@@ -21,8 +21,7 @@ class MediaDBServiceTests: XCTestCase {
     
     override func setUp() {
         fakeMediaHitsDatabase = FakeMediaHitsDatabase()
-        mediaDbService = MediaDBService(serialQueue: queue)
-        mediaDbService.mediaHitsDatabase = fakeMediaHitsDatabase
+        mediaDbService = MediaDBService(serialQueue: queue, mediaHitsDatabase: fakeMediaHitsDatabase)
     }
     
     func testPersistHitsForSameSessionId() {
@@ -84,11 +83,11 @@ class MediaDBServiceTests: XCTestCase {
     
     func testGetPersistedSessionIds() {
         // setup
-        var sessionIds: [String] = []
+        var sessionIds: Set<String> = []
         // test
         for i in 1 ... 10 {
             let sessionId = UUID().uuidString
-            sessionIds.append(sessionId)
+            sessionIds.insert(sessionId)
             let hit = MediaHit(eventType: "sessionStart", playhead: Double(100 * i), ts: Date().timeIntervalSince1970)
             mediaDbService.persistHit(hit: hit, sessionId: sessionId)
         }
