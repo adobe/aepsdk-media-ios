@@ -16,7 +16,6 @@ class MockNetworking: Networking {
 
     var hasNetworkRequestReceived = false
 
-
     func connectAsync(networkRequest: NetworkRequest, completionHandler: ((HttpConnection) -> Void)?) {
         hasNetworkRequestReceived = true
     }
