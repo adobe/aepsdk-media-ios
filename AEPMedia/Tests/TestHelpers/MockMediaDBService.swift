@@ -12,7 +12,7 @@
 import Foundation
 @testable import AEPMedia
 
-class MockMediaDBService : MediaDBService {
+class MockMediaDBService: MediaDBService {
 
     var persistedSessionId: Set<String> = []
     var persistedHits: [String: [MediaHit]] = [:]
@@ -37,7 +37,7 @@ class MockMediaDBService : MediaDBService {
         }
     }
 
-    override func getHits(sessionId id: String) -> [MediaHit] {        
+    override func getHits(sessionId id: String) -> [MediaHit] {
         guard let hits = persistedHits[id] else {
             return [MediaHit]()
         }

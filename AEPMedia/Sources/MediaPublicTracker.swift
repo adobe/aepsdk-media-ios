@@ -34,7 +34,7 @@ class MediaPublicTracker: MediaTracker {
     var timer: Timer?
 
     // MediaTracker Impl
-    init(dispatch: @escaping dispatchFn, config: [String: Any]?) {
+    init(dispatch: dispatchFn?, config: [String: Any]?) {
         self.dispatch = dispatch
         self.config = config
         self.trackerId = UUID().uuidString
@@ -43,7 +43,7 @@ class MediaPublicTracker: MediaTracker {
         let eventData: [String: Any] = [MediaConstants.Tracker.ID: self.trackerId, MediaConstants.Tracker.EVENT_PARAM: self.config ?? [:]]
         let event = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
 
-        dispatch(event)
+        dispatch?(event)
         Log.debug(label: Self.LOG_TAG, "\(#function): Tracker request event was sent to event hub.")
     }
 

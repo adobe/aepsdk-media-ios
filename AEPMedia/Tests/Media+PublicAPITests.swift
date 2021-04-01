@@ -25,14 +25,14 @@ class MediaPublicAPITests: XCTestCase {
 
     private func registerMockExtension<T: Extension> (_ type: T.Type) {
         let semaphore = DispatchSemaphore(value: 0)
-        EventHub.shared.registerExtension(type) { (error) in
+        EventHub.shared.registerExtension(type) { (_) in
             semaphore.signal()
         }
 
         semaphore.wait()
     }
 
-    //MARK: MediaPublicAPI Unit Tests
+    // MARK: MediaPublicAPI Unit Tests
 
     // ==========================================================================
     // createTracker
@@ -43,10 +43,10 @@ class MediaPublicAPITests: XCTestCase {
 
         let mediaTracker = Media.createTracker()
 
-        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: MediaConstants.Media.EVENT_TYPE, source:  MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST) { (event) in
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST) { (event) in
             let eventData = event.data
             let trackerId = eventData?[MediaConstants.Tracker.ID] as? String
-            let trackerConfig = eventData?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+            let trackerConfig = eventData?[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any]
 
             XCTAssertEqual(2, eventData?.count ?? 0)
             XCTAssertFalse("" == trackerId)
@@ -63,12 +63,12 @@ class MediaPublicAPITests: XCTestCase {
         let expectation = XCTestExpectation(description: "createTracker should dispatch createTracker request an event")
         expectation.assertForOverFulfill = true
 
-        let mediaTracker = Media.createTrackerWith(config: ["downloaded":true])
+        let mediaTracker = Media.createTrackerWith(config: ["downloaded": true])
 
-        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: MediaConstants.Media.EVENT_TYPE, source:  MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST) { (event) in
+        EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST) { (event) in
             let eventData = event.data
             let trackerId = eventData?[MediaConstants.Tracker.ID] as? String
-            let trackerConfig = eventData?[MediaConstants.Tracker.EVENT_PARAM] as? [String:Any]
+            let trackerConfig = eventData?[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any]
 
             XCTAssertEqual(2, eventData?.count ?? 0)
             XCTAssertFalse("" == trackerId)
@@ -123,8 +123,8 @@ class MediaPublicAPITests: XCTestCase {
         let infoMap = Media.createAdBreakObjectWith(name: "adBreakName", position: 5, startTime: 0)
         XCTAssertFalse(infoMap?.isEmpty ?? true)
         XCTAssertEqual("adBreakName", infoMap?[MediaConstants.AdBreakInfo.NAME] as? String ?? "")
-        XCTAssertEqual(5 , infoMap?[MediaConstants.AdBreakInfo.POSITION] as? Int ?? 0)
-        XCTAssertEqual(0 , infoMap?[MediaConstants.AdBreakInfo.START_TIME] as? Double ?? 0.0)
+        XCTAssertEqual(5, infoMap?[MediaConstants.AdBreakInfo.POSITION] as? Int ?? 0)
+        XCTAssertEqual(0, infoMap?[MediaConstants.AdBreakInfo.START_TIME] as? Double ?? 0.0)
     }
 
     func testCreateAdBreakInfo_Invalid() {
@@ -145,7 +145,7 @@ class MediaPublicAPITests: XCTestCase {
     // createAdObjects
     // ==========================================================================
     func testCreateAdInfo() {
-        let infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 3 , length: 20)
+        let infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 3, length: 20)
         XCTAssertFalse(infoMap?.isEmpty ?? true)
         XCTAssertEqual("adName", infoMap?[MediaConstants.AdInfo.NAME] as? String ?? "")
         XCTAssertEqual("AdId", infoMap?[MediaConstants.AdInfo.ID] as? String ?? "")
@@ -202,13 +202,12 @@ class MediaPublicAPITests: XCTestCase {
         XCTAssertNil(infoMap)
     }
 
-
     // ==========================================================================
     // createQoEObjects
     // ==========================================================================
 
     func testCreateQoEInfo() {
-        let infoMap = Media.createQoEObjectWith(bitrate: 24.0,  startupTime: 0.5, fps: 30.0 ,droppedFrames: 2.0)
+        let infoMap = Media.createQoEObjectWith(bitrate: 24.0, startupTime: 0.5, fps: 30.0, droppedFrames: 2.0)
         XCTAssertFalse(infoMap?.isEmpty ?? true)
         XCTAssertEqual(24, infoMap?[MediaConstants.QoEInfo.BITRATE] as? Double ?? 0.0)
         XCTAssertEqual(0.5, infoMap?[MediaConstants.QoEInfo.STARTUP_TIME] as? Double ?? 0.0)
@@ -218,19 +217,19 @@ class MediaPublicAPITests: XCTestCase {
 
     func testCreateQoEInfo_Invalid() {
         // < 0 bitrate
-        var infoMap = Media.createQoEObjectWith(bitrate: -1,  startupTime: 0.5, fps: 30.0 ,droppedFrames: 2.0)
+        var infoMap = Media.createQoEObjectWith(bitrate: -1, startupTime: 0.5, fps: 30.0, droppedFrames: 2.0)
         XCTAssertNil(infoMap)
 
         // < 0 startupTime
-        infoMap = Media.createQoEObjectWith(bitrate: -2.5,  startupTime: 0.5, fps: 30.0 ,droppedFrames: 2.0)
+        infoMap = Media.createQoEObjectWith(bitrate: -2.5, startupTime: 0.5, fps: 30.0, droppedFrames: 2.0)
         XCTAssertNil(infoMap)
 
         // < 0 fps
-        infoMap = Media.createQoEObjectWith(bitrate: -15,  startupTime: 0.5, fps: 30.0 ,droppedFrames: 2.0)
+        infoMap = Media.createQoEObjectWith(bitrate: -15, startupTime: 0.5, fps: 30.0, droppedFrames: 2.0)
         XCTAssertNil(infoMap)
 
         // < 0 dropped frame
-        infoMap = Media.createQoEObjectWith(bitrate: -4.9,  startupTime: 0.5, fps: 30.0 ,droppedFrames: 2.0)
+        infoMap = Media.createQoEObjectWith(bitrate: -4.9, startupTime: 0.5, fps: 30.0, droppedFrames: 2.0)
         XCTAssertNil(infoMap)
     }
 

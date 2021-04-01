@@ -13,9 +13,9 @@ import XCTest
 @testable import AEPMedia
 
 class MediaCollectionHitGeneratorTests: XCTestCase {
-    private let emptyParams:[String: Any] = [:]
-    private let emptyQoeData:[String: Any] = [:]
-    private let emptyMetadata:[String: String] = [:]
+    private let emptyParams: [String: Any] = [:]
+    private let emptyQoeData: [String: Any] = [:]
+    private let emptyMetadata: [String: String] = [:]
     private var mediaInfo: MediaInfo!
     private var hitProcessor: FakeMediaHitProcessor!
     private var hitGenerator: MediaCollectionHitGenerator!
@@ -26,36 +26,36 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     private typealias EventType = MediaConstants.MediaCollection.EventType
     private typealias Media = MediaConstants.MediaCollection.Media
     private typealias QoE = MediaConstants.MediaCollection.QoE
-    
-    static let validAdbreakInfo : [String : Any] = [
-        MediaConstants.AdBreakInfo.NAME : "Adbreakname",
-        MediaConstants.AdBreakInfo.POSITION : 1,
-        MediaConstants.AdBreakInfo.START_TIME : 10.0
+
+    static let validAdbreakInfo: [String: Any] = [
+        MediaConstants.AdBreakInfo.NAME: "Adbreakname",
+        MediaConstants.AdBreakInfo.POSITION: 1,
+        MediaConstants.AdBreakInfo.START_TIME: 10.0
     ]
-    
-    static let validAdInfo : [String : Any] = [
-        MediaConstants.AdInfo.ID : "AdID",
-        MediaConstants.AdInfo.NAME : "AdName",
-        MediaConstants.AdInfo.POSITION : 1,
-        MediaConstants.AdInfo.LENGTH : 15.0
+
+    static let validAdInfo: [String: Any] = [
+        MediaConstants.AdInfo.ID: "AdID",
+        MediaConstants.AdInfo.NAME: "AdName",
+        MediaConstants.AdInfo.POSITION: 1,
+        MediaConstants.AdInfo.LENGTH: 15.0
     ]
-    
-    static let validChapterInfo : [String : Any] = [
-        MediaConstants.ChapterInfo.NAME : "ChapterName",
-        MediaConstants.ChapterInfo.POSITION : 1,
-        MediaConstants.ChapterInfo.START_TIME : 10.0,
-        MediaConstants.ChapterInfo.LENGTH : 30.0
+
+    static let validChapterInfo: [String: Any] = [
+        MediaConstants.ChapterInfo.NAME: "ChapterName",
+        MediaConstants.ChapterInfo.POSITION: 1,
+        MediaConstants.ChapterInfo.START_TIME: 10.0,
+        MediaConstants.ChapterInfo.LENGTH: 30.0
     ]
-    
-    static var validQoEInfo : [String : Any] = [
-        MediaConstants.QoEInfo.BITRATE : 24.0,
-        MediaConstants.QoEInfo.DROPPED_FRAMES : 2.0,
-        MediaConstants.QoEInfo.FPS : 30.0,
-        MediaConstants.QoEInfo.STARTUP_TIME : 0.0
+
+    static var validQoEInfo: [String: Any] = [
+        MediaConstants.QoEInfo.BITRATE: 24.0,
+        MediaConstants.QoEInfo.DROPPED_FRAMES: 2.0,
+        MediaConstants.QoEInfo.FPS: 30.0,
+        MediaConstants.QoEInfo.STARTUP_TIME: 0.0
     ]
 
     override func setUp() {
-        let info = ["media.id":"testId", "media.name":"testName", "media.streamtype":"video", "media.contenttype":"vod", "media.type":"video", "media.length": 10.0, "media.resume": false] as [String : Any]
+        let info = ["media.id": "testId", "media.name": "testName", "media.streamtype": "video", "media.contenttype": "vod", "media.type": "video", "media.length": 10.0, "media.resume": false] as [String: Any]
         mediaInfo = MediaInfo.init(info: info)
         let metadata = ["k1": "v1", "a.media.show": "show"]
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
@@ -69,8 +69,8 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         self.hitProcessor = nil
         self.hitGenerator = nil
     }
-    
-    //MARK: MediaCollectionHitGenerator Unit Tests
+
+    // MARK: MediaCollectionHitGenerator Unit Tests
     func testMediaStart() {
         // test
         hitGenerator.processMediaStart()
@@ -82,7 +82,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testMediaStartOnline() {
         // setup
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: false]
@@ -97,7 +97,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testMediaStartWithConfig() {
         // setup
         let config: [String: Any] = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true, MediaConstants.TrackerConfig.CHANNEL: "test-channel"]
@@ -113,7 +113,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testMediaStart_ForceResumeTrue() {
         // test
         hitGenerator.processMediaStart(forceResume: true)
@@ -126,7 +126,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testMediaComplete() {
         // test
         hitGenerator.processMediaComplete()
@@ -135,7 +135,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testMediaSkip() {
         // test
         hitGenerator.processMediaSkip()
@@ -144,7 +144,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testAdBreakStart() {
         // test
         hitGenerator.processAdBreakStart()
@@ -153,7 +153,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testAdBreakComplete() {
         // test
         hitGenerator.processAdBreakComplete()
@@ -162,7 +162,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testAdBreakSkip() {
         // test
         hitGenerator.processAdBreakSkip()
@@ -171,7 +171,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testAdStart() {
         // test
         hitGenerator.processAdStart()
@@ -180,7 +180,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testAdComplete() {
         // test
         hitGenerator.processAdComplete()
@@ -189,7 +189,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testAdSkip() {
         // test
         hitGenerator.processAdSkip()
@@ -198,7 +198,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testChapterStart() {
         // test
         hitGenerator.processChapterStart()
@@ -207,7 +207,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testChapterComplete() {
         // test
         hitGenerator.processChapterComplete()
@@ -216,7 +216,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testChapterSkip() {
         // test
         hitGenerator.processChapterSkip()
@@ -225,7 +225,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testProcessIdleStart() {
         // test
         hitGenerator.processSessionAbort()
@@ -234,25 +234,25 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
     }
-    
+
     func testProcessIdleComplete() {
         // setup
         let adBreakInfo = AdBreakInfo(info: Self.validAdbreakInfo)
         mediaContext.setAdBreak(info: adBreakInfo!)
 
         let adInfo = AdInfo(info: Self.validAdInfo)
-        let adMetadata = ["k1": "v1", "a.media.ad.advertiser":"advertiser"]
+        let adMetadata = ["k1": "v1", "a.media.ad.advertiser": "advertiser"]
         mediaContext.setAd(info: adInfo!, metadata: adMetadata)
 
         let chapterInfo = ChapterInfo(info: Self.validChapterInfo)
         let chapterMetadata = ["k1": "v1"]
         mediaContext.setChapter(info: chapterInfo!, metadata: chapterMetadata)
-        
+
         var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
         let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
-        
+
         mediaContext.enterPlaybackState(state: .Play)
         // test
         hitGenerator.processSessionRestart()
@@ -284,20 +284,20 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let playHit = hitProcessor.getHitFromActiveSession(index: 4)
         XCTAssertEqual(expectedPlayHit, playHit)
     }
-    
+
     func testProcessIdleCompleteOnline() {
         // setup
         let adBreakInfo = AdBreakInfo(info: Self.validAdbreakInfo)
         mediaContext.setAdBreak(info: adBreakInfo!)
 
         let adInfo = AdInfo(info: Self.validAdInfo)
-        let adMetadata = ["k1": "v1", "a.media.ad.advertiser":"advertiser"]
+        let adMetadata = ["k1": "v1", "a.media.ad.advertiser": "advertiser"]
         mediaContext.setAd(info: adInfo!, metadata: adMetadata)
 
         let chapterInfo = ChapterInfo(info: Self.validChapterInfo)
         let chapterMetadata = ["k1": "v1"]
         mediaContext.setChapter(info: chapterInfo!, metadata: chapterMetadata)
-        
+
         var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
         params[Media.DOWNLOADED] = false
         params[Media.RESUME] = true
@@ -335,7 +335,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let playHit = hitProcessor.getHitFromActiveSession(index: 4)
         XCTAssertEqual(expectedPlayHit, playHit)
     }
-    
+
     func testProcessIdleCompleteStateTrackingResumesAfterIdle() {
         // setup
         guard let fullscreenStateInfo = StateInfo(stateName: "fullscreen") else {
@@ -368,7 +368,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let playHit = hitProcessor.getHitFromActiveSession(index: 2)
         XCTAssertEqual(expectedPlayHit, playHit)
     }
-    
+
     func testProcessIdleCompleteStateNoActiveStates() {
         // setup
         mediaContext.enterPlaybackState(state: .Play)
@@ -391,7 +391,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let playHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedPlayHit, playHit)
     }
-    
+
     func testProcessIdleCompleteStateTrackingResumesAfterIdle2() {
         // setup
         guard let fullscreenStateInfo = StateInfo(stateName: "fullscreen") else {
@@ -427,7 +427,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let playHit = hitProcessor.getHitFromActiveSession(index: 2)
         XCTAssertEqual(expectedPlayHit, playHit)
     }
-    
+
     func testProcessPlaybackStateDifferentStates() {
         // setup
         var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
@@ -487,14 +487,14 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         XCTAssertEqual(expectedPauseHit, pauseHit)
         hitProcessor.clearHitsFromActiveSession()
     }
-    
+
     func testProcessStateStartWithNilState() {
         // test
         hitGenerator.processStateStart(stateInfo: nil)
         // verify no state start hit
         XCTAssertEqual(0, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
     }
-    
+
     func testProcessStateStartFullscreen() {
         // setup
         let stateInfo = StateInfo(stateName: "fullscreen")
@@ -507,7 +507,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let stateStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedStateStartHit, stateStartHit)
     }
-    
+
     func testProcessStateStartShouldSendQoEData() {
         // setup
         let qoeInfo = QoEInfo(info: Self.validQoEInfo)
@@ -522,7 +522,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let stateStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedStateStartHit, stateStartHit)
     }
-    
+
     func testProcessStateEndFullscreen() {
         // setup
         guard let stateInfo = StateInfo(stateName: "fullscreen") else {
@@ -538,7 +538,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let stateEndHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedStateEndHit, stateEndHit)
     }
-    
+
     func testProcessStateEndShouldSendQoEData() {
         // setup
         let qoeInfo = QoEInfo(info: Self.validQoEInfo)
@@ -556,14 +556,14 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let stateEndHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedStateEndHit, stateEndHit)
     }
-    
+
     func testProcessStateEndWithNilState() {
         // test
         hitGenerator.processStateEnd(stateInfo: nil)
         // verify no state end hit
         XCTAssertEqual(0, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
     }
-    
+
     func testProcessPlaybackStateSameStateOnline() {
         // setup
         mediaContext.enterPlaybackState(state: .Play)
@@ -586,7 +586,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitGenerator.processPlayback()
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
     }
-    
+
     func testProcessPlaybackSameStateInit() {
         // no hit due to the current state == previous state and offline ping interval not elapsed
         hitGenerator.processPlayback()
@@ -603,7 +603,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let pingHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPingHit, pingHit)
     }
-    
+
     func testProcessPlaybackSameStateInitOnline() {
         // setup
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: false]
@@ -626,7 +626,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         pingHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedPingHit, pingHit)
     }
-    
+
     func testprocessPlaybackSameStateTimeout() {
         // trigger play hit
         mediaContext.enterPlaybackState(state: .Play)
@@ -644,7 +644,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let pingHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPingHit, pingHit)
     }
-    
+
     func testprocessPlaybackFlush() {
         // trigger play hit
         mediaContext.enterPlaybackState(state: .Play)
@@ -662,7 +662,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let playHit2 = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPlayHit2, playHit2)
     }
-    
+
     func testprocessBitrateChange() {
         // trigger bitrate change hit
         hitGenerator.processBitrateChange()
@@ -672,7 +672,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let hit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, hit)
     }
-    
+
     func testProcessError() {
         // setup
         let qoeInfo = QoEInfo(info: Self.validQoEInfo)
@@ -687,7 +687,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let errorHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedErrorHit, errorHit)
     }
-    
+
     func testGenerateHitProcessQoEChange() {
         // setup
         let qoeInfo = QoEInfo(info: Self.validQoEInfo)
@@ -711,10 +711,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // clear hits
         hitProcessor.clearHitsFromActiveSession()
         // setup new qoeInfo
-        guard let qoeInfo2 = QoEInfo(info: [MediaConstants.QoEInfo.BITRATE : 48.0,
-                                            MediaConstants.QoEInfo.DROPPED_FRAMES : 4.0,
-                                            MediaConstants.QoEInfo.FPS : 60.0,
-                                            MediaConstants.QoEInfo.STARTUP_TIME : 1.0]) else {
+        guard let qoeInfo2 = QoEInfo(info: [MediaConstants.QoEInfo.BITRATE: 48.0,
+                                            MediaConstants.QoEInfo.DROPPED_FRAMES: 4.0,
+                                            MediaConstants.QoEInfo.FPS: 60.0,
+                                            MediaConstants.QoEInfo.STARTUP_TIME: 1.0]) else {
             XCTFail("qoe info creation failed")
             return
         }
@@ -727,8 +727,8 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let lastBitrateChangeHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(lastExpectedBitrateChangeHit, lastBitrateChangeHit)
     }
-    
-    //MARK: Negative Tests
+
+    // MARK: Negative Tests
     func testCreateMediaHitGeneratorWithNilContext() {
         // test
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
@@ -736,7 +736,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // verify
         XCTAssertNil(hitGenerator)
     }
-    
+
     func testMediaProcessorFailedToCreateSession() {
         // test
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true, "testFail": true]

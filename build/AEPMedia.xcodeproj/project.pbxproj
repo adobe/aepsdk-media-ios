@@ -36,8 +36,8 @@
 		AC36EC4125C9F11E00A37345 /* AEPMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = AC36EC3725C9F11E00A37345 /* AEPMedia.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AC36EC4225C9F11E00A37345 /* Media+PublicAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3825C9F11E00A37345 /* Media+PublicAPI.swift */; };
 		AC36EC4325C9F11E00A37345 /* MediaConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3925C9F11E00A37345 /* MediaConstants.swift */; };
-		AC36EC4925C9F12D00A37345 /* MediaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3025C9F11E00A37345 /* MediaTests.swift */; };
 		AC36EC4E25C9F13100A37345 /* TestableExtensionRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3225C9F11E00A37345 /* TestableExtensionRuntime.swift */; };
+		AC44A31226151968003EC125 /* MediaEventGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC44A31126151967003EC125 /* MediaEventGenerator.swift */; };
 		AC9E467B260D62530087FFF8 /* StateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9E4674260D62530087FFF8 /* StateInfo.swift */; };
 		AC9E467C260D62530087FFF8 /* AdInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9E4675260D62530087FFF8 /* AdInfo.swift */; };
 		AC9E467D260D62530087FFF8 /* MediaInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC9E4676260D62530087FFF8 /* MediaInfo.swift */; };
@@ -111,7 +111,6 @@
 		9A005F4C23C4E3410A1B7DF8 /* Pods-AEPMedia-AEPMediaTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia-AEPMediaTests.release.xcconfig"; path = "Target Support Files/Pods-AEPMedia-AEPMediaTests/Pods-AEPMedia-AEPMediaTests.release.xcconfig"; sourceTree = "<group>"; };
 		A13A8FBEC73F82AC2D6067A8 /* Pods_AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC36EC2E25C9F11E00A37345 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AC36EC3025C9F11E00A37345 /* MediaTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaTests.swift; sourceTree = "<group>"; };
 		AC36EC3225C9F11E00A37345 /* TestableExtensionRuntime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableExtensionRuntime.swift; sourceTree = "<group>"; };
 		AC36EC3325C9F11E00A37345 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC36EC3525C9F11E00A37345 /* MediaTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaTracker.swift; sourceTree = "<group>"; };
@@ -126,6 +125,7 @@
 		AC36EC6625C9F2CD00A37345 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		AC36EC6725C9F2CD00A37345 /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CODE_OF_CONDUCT.md; path = ../CODE_OF_CONDUCT.md; sourceTree = "<group>"; };
 		AC36EC6825C9F2CD00A37345 /* COPYRIGHT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYRIGHT; path = ../COPYRIGHT; sourceTree = "<group>"; };
+		AC44A31126151967003EC125 /* MediaEventGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaEventGenerator.swift; sourceTree = "<group>"; };
 		AC9E4674260D62530087FFF8 /* StateInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateInfo.swift; sourceTree = "<group>"; };
 		AC9E4675260D62530087FFF8 /* AdInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdInfo.swift; sourceTree = "<group>"; };
 		AC9E4676260D62530087FFF8 /* MediaInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaInfo.swift; sourceTree = "<group>"; };
@@ -257,7 +257,6 @@
 				D6658A7E25F15C0200D8593E /* MediaExtensionTests.swift */,
 				2E20D4AA25CA544000B5CCB8 /* MediaRuleEngineTests.swift */,
 				D634A03D25DEE32E001EC086 /* MediaCollectionHitGeneratorTests.swift */,
-				AC36EC3025C9F11E00A37345 /* MediaTests.swift */,
 				2EED4F5425CE299D00D2E88B /* MediaPublicTrackerTests.swift */,
 				2EEAC4C725D3723000759D3E /* MediaObjectTests.swift */,
 				2EEAC4CB25D4997600759D3E /* Media+PublicAPITests.swift */,
@@ -277,6 +276,7 @@
 			children = (
 				D662CF312600771F0018AEFC /* TestHelpers.swift */,
 				D634A04B25DEF40D001EC086 /* FakeMediaHitProcessor.swift */,
+				AC44A31126151967003EC125 /* MediaEventGenerator.swift */,
 				D6658A9225F16D0200D8593E /* MediaTestBase.swift */,
 				2EEAC4E925D61ACF00759D3E /* MockExtension.swift */,
 				AC36EC3225C9F11E00A37345 /* TestableExtensionRuntime.swift */,
@@ -576,10 +576,10 @@
 				D6658A7F25F15C0200D8593E /* MediaExtensionTests.swift in Sources */,
 				AC36EC4E25C9F13100A37345 /* TestableExtensionRuntime.swift in Sources */,
 				3D663AAF25FAF5FC00E96250 /* MockNetworking.swift in Sources */,
-				AC36EC4925C9F12D00A37345 /* MediaTests.swift in Sources */,
 				D662CF322600771F0018AEFC /* TestHelpers.swift in Sources */,
 				2EED4F5525CE299D00D2E88B /* MediaPublicTrackerTests.swift in Sources */,
 				3D663AAB25FAF0B800E96250 /* MediaRealTimeSessionTests.swift in Sources */,
+				AC44A31226151968003EC125 /* MediaEventGenerator.swift in Sources */,
 				3D663A9725FACB3800E96250 /* MockMediaDBService.swift in Sources */,
 				2E20D4AB25CA544000B5CCB8 /* MediaRuleEngineTests.swift in Sources */,
 				D6DAB4EA25FAD0A800260DA8 /* FakeMediaEventTracker.swift in Sources */,
