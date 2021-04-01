@@ -148,7 +148,7 @@ class MediaHitsDatabaseTests: XCTestCase {
             index += 1
         }
     }
-    
+
     func testGetAllSessionIds() throws {
         // setup and test
         var addedSessions: Set<String> = []

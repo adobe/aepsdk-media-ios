@@ -40,23 +40,24 @@ class MediaDBService {
             return
         }
 
-        if let success = mediaHitsDatabase?.add(sessionId: sessionId, data: data), success == true {
-            Log.trace(label: Self.LOG_TAG, "Successfully added hit for event type: \(hit.eventType).")
-            sessionIds.insert(sessionId)
-        } else {
+        guard mediaHitsDatabase?.add(sessionId: sessionId, data: data) ?? false else {
             Log.error(label: Self.LOG_TAG, "Failed to add hit for event type: \(hit.eventType).")
+            return
         }
+
+        Log.trace(label: Self.LOG_TAG, "Successfully added hit for event type: \(hit.eventType).")
+        sessionIds.insert(sessionId)
     }
 
     /// Deletes hits in the `MediaHitsDatabase` for the given session id.
     /// - Parameter sessionId: a `String` containing the session id of the hits to be deleted from the database
     func deleteHits(sessionId: String) {
-        if let success = mediaHitsDatabase?.deleteDataFor(sessionId: sessionId), success == true {
-            Log.trace(label: Self.LOG_TAG, "Deleted hits for session id: \(sessionId).")
-            sessionIds.remove(sessionId)
-        } else {
+        guard mediaHitsDatabase?.deleteDataFor(sessionId: sessionId) ?? false else {
             Log.error(label: Self.LOG_TAG, "Failed to delete hits for session id: \(sessionId).")
+            return
         }
+        Log.trace(label: Self.LOG_TAG, "Deleted hits for session id: \(sessionId).")
+        sessionIds.remove(sessionId)
     }
 
     /// Retrieves hits in the `MediaHitsDatabase` for the given session id.
