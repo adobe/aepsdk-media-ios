@@ -16,18 +16,12 @@ class MediaDBService {
     private static let LOG_TAG = "MediaDBService"
 
     private var mediaHitsDatabase: MediaHitsDatabase?
-    private var sessionIds: Set<String> = []
 
     /// Creates a  new `MediaDBService` which manages a `MediaHitsDatabase` to persist offline Media hits.
     /// - Parameters:
-    ///   - serialQueue: a serial dispatch queue used to perform database operations
-    init(serialQueue: DispatchQueue, mediaHitsDatabase: MediaHitsDatabase? = nil) {
-        if let mediaHitsDatabase = mediaHitsDatabase {
-            self.mediaHitsDatabase = mediaHitsDatabase
-        } else {
-            self.mediaHitsDatabase = MediaHitsDatabase(databaseName: MediaConstants.DATABASE_NAME, serialQueue: serialQueue)
-        }
-        self.sessionIds = initializeSessionIds()
+    ///   - mediaHitsDatabase: the database used to store offline `MediaHits`.
+    init(mediaHitsDatabase: MediaHitsDatabase?) {
+        self.mediaHitsDatabase = mediaHitsDatabase
     }
 
     /// Persists an offline `MediaHit` in the `MediaHitsDatabase`.
@@ -46,7 +40,6 @@ class MediaDBService {
         }
 
         Log.trace(label: Self.LOG_TAG, "Successfully added hit for event type: \(hit.eventType).")
-        sessionIds.insert(sessionId)
     }
 
     /// Deletes hits in the `MediaHitsDatabase` for the given session id.
@@ -57,7 +50,6 @@ class MediaDBService {
             return
         }
         Log.trace(label: Self.LOG_TAG, "Deleted hits for session id: \(sessionId).")
-        sessionIds.remove(sessionId)
     }
 
     /// Retrieves hits in the `MediaHitsDatabase` for the given session id.
@@ -78,12 +70,6 @@ class MediaDBService {
     /// Retrieves the session id's currently persisted in the `MediaHitsDatabase`.
     /// - Returns: a `Set` of `Strings` containing the session id's of hits currently stored in the database
     func getPersistedSessionIds() -> Set<String> {
-        return sessionIds
-    }
-
-    /// Initializes the `MediaDBService` with any session id's currently stored in the database.
-    /// - Returns: a `Set` of `Strings` containing the session id's of hits currently stored in the database
-    private func initializeSessionIds() -> Set<String> {
         return mediaHitsDatabase?.getAllSessions() ?? []
     }
 }

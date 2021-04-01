@@ -21,7 +21,7 @@ class MediaDBServiceTests: XCTestCase {
     
     override func setUp() {
         fakeMediaHitsDatabase = FakeMediaHitsDatabase()
-        mediaDbService = MediaDBService(serialQueue: queue, mediaHitsDatabase: fakeMediaHitsDatabase)
+        mediaDbService = MediaDBService(mediaHitsDatabase: fakeMediaHitsDatabase)
     }
     
     func testPersistHitsForSameSessionId() {

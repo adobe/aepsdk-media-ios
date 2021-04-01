@@ -25,13 +25,15 @@ class MediaService: MediaProcessor {
     private var mediaState: MediaState
     private var dispatchQueue = DispatchQueue(label: "MediaService.DispatchQueue")
     private var mediaDBService: MediaDBService
+    private var mediaHitsDatabase: MediaHitsDatabase?
 
     init(mediaDBService: MediaDBService? = nil) {
         self.mediaState = MediaState()
+        self.mediaHitsDatabase = MediaHitsDatabase(databaseName: MediaConstants.DATABASE_NAME, serialQueue: dispatchQueue)
         if let mediaDBService = mediaDBService {
             self.mediaDBService = mediaDBService
         } else {
-            self.mediaDBService = MediaDBService(serialQueue: dispatchQueue)
+            self.mediaDBService = MediaDBService(mediaHitsDatabase: mediaHitsDatabase)
         }
 
         initPersistedSessions()
