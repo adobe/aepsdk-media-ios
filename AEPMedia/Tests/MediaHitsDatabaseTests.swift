@@ -32,9 +32,10 @@ class MediaHitsDatabaseTests: XCTestCase {
     override func tearDown() {}
 
     internal static func removeDatabaseFileIfExists(_ fileName: String) {
-        let fileURL = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent(fileName)
-        if FileManager.default.fileExists(atPath: fileURL.path) {
-            try! FileManager.default.removeItem(at: fileURL)
+        if let fileURL = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent(fileName) {
+            if FileManager.default.fileExists(atPath: fileURL.path) {
+                try? FileManager.default.removeItem(at: fileURL)
+            }
         }
     }
 

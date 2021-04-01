@@ -81,7 +81,7 @@ class MediaDBService {
         return sessionIds
     }
 
-    /// Initializes the `MediaHitsDatabase` with any session id's currently stored in database.
+    /// Initializes the `MediaDBService` with any session id's currently stored in the database.
     /// - Returns: a `Set` of `Strings` containing the session id's of hits currently stored in the database
     private func initializeSessionIds() -> Set<String> {
         return mediaHitsDatabase?.getAllSessions() ?? []
