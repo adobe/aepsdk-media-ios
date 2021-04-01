@@ -18,8 +18,8 @@ class FakeMediaHitProcessor: MediaProcessor {
     private var processedHits: [String: [MediaHit]] = [:]
     private var currentSessionId: String = "-1"
     private var isSessionStartCalled = false
-    
-    func createSession(config: [String : Any]) -> String? {
+
+    func createSession(config: [String: Any]) -> String? {
         isSessionStartCalled = true
         var intSessionId = (Int(currentSessionId) ?? 0)
         intSessionId += 1
@@ -31,39 +31,39 @@ class FakeMediaHitProcessor: MediaProcessor {
         }
         return currentSessionId
     }
-    
+
     func endSession(sessionId: String) {
         sessionEnded = true
     }
-    
+
     func processHit(sessionId: String, hit: MediaHit) {
         processedHits[sessionId]?.append(hit)
     }
-    
+
     func getHitFromActiveSession(index: Int) -> MediaHit? {
         return getHit(sessionId: currentSessionId, index: index)
     }
-    
+
     private func getHit(sessionId: String, index: Int) -> MediaHit? {
         guard let hits = processedHits[sessionId], hits.count != 0 else {
             return nil
         }
-        
+
         if index >= hits.count {
             return nil
         }
-        
+
         return hits[index]
     }
-    
+
     func getHitCountFromActiveSession() -> Int {
         return getHitCount(sessionId: currentSessionId)
     }
-    
+
     func getHitCount(sessionId: String) -> Int {
         return processedHits[sessionId]?.count ?? 0
     }
-    
+
     func clearHitsFromActiveSession() {
         if processedHits[currentSessionId] != nil {
             processedHits[currentSessionId]?.removeAll()

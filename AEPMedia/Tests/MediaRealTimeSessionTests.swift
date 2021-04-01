@@ -14,7 +14,7 @@ import XCTest
 import AEPServices
 
 class MediaRealTimeSessionTests: XCTestCase {
-    
+
     func testQueueHit() {
         //prepare
         let sessionId = "sessionId"
@@ -22,56 +22,55 @@ class MediaRealTimeSessionTests: XCTestCase {
         let eventType = MediaConstants.EventName.SESSION_START
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         let mediaState = MediaState()
-        let sharedData = [MediaConstants.Configuration.SHARED_STATE_NAME:[MediaConstants.Configuration.MEDIA_COLLECTION_SERVER: collectionServerUrl]]
+        let sharedData = [MediaConstants.Configuration.SHARED_STATE_NAME: [MediaConstants.Configuration.MEDIA_COLLECTION_SERVER: collectionServerUrl]]
         mediaState.update(dataMap: sharedData)
-        let mediaSession: MediaSession = MediaRealTimeSession(id: sessionId, state: mediaState , dispatchQueue: DispatchQueue(label: ""))
+        let mediaSession: MediaSession = MediaRealTimeSession(id: sessionId, state: mediaState, dispatchQueue: DispatchQueue(label: ""))
         ServiceProvider.shared.networkService = MockNetworking()
-        
+
         //Action
         mediaSession.queue(hit: mediaHit)
         Thread.sleep(forTimeInterval: 1)
-        
+
         //Assert
         XCTAssertTrue((mediaSession as! MediaRealTimeSession).hits.contains { hit in
             return hit.eventType == eventType
         })
-        
+
         XCTAssertTrue((ServiceProvider.shared.networkService as! MockNetworking).hasNetworkRequestReceived)
     }
-    
+
     func testEndSession() {
         //prepare
-        let sessionId = "sessionId"        
+        let sessionId = "sessionId"
         let mediaState = MediaState()
-        let mediaSession = MediaRealTimeSession(id: sessionId, state: mediaState , dispatchQueue: DispatchQueue(label: ""))
-        
+        let mediaSession = MediaRealTimeSession(id: sessionId, state: mediaState, dispatchQueue: DispatchQueue(label: ""))
+
         //Action
         mediaSession.end()
         Thread.sleep(forTimeInterval: 1)
-        
+
         //Assert
         XCTAssertFalse(mediaSession.isSessionActive)
     }
-    
+
     func testAbortSession() {
         //prepare
         let sessionId = "sessionId"
         let eventType = MediaConstants.EventName.SESSION_START
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         let mediaState = MediaState()
-        let mediaSession = MediaRealTimeSession(id: sessionId, state: mediaState , dispatchQueue: DispatchQueue(label: ""))
+        let mediaSession = MediaRealTimeSession(id: sessionId, state: mediaState, dispatchQueue: DispatchQueue(label: ""))
         mediaSession.hits = [mediaHit]
         XCTAssertTrue(mediaSession.hits.count > 0)
-        
+
         //Action
         mediaSession.abort()
         Thread.sleep(forTimeInterval: 1)
-        
+
         //Assert
         XCTAssertFalse(mediaSession.isSessionActive)
         XCTAssertTrue(mediaSession.hits.count == 0)
     }
-    
-    
+
     //TODO Add more test cases for testing success/failure handling of networking when we have MediaState class.
 }

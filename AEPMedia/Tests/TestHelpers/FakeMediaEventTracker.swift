@@ -14,7 +14,7 @@ import Foundation
 import AEPServices
 @testable import AEPMedia
 
-class FakeMediaEventTracker : MediaEventTracker {
+class FakeMediaEventTracker: MediaEventTracker {
 
     var trackCalled = false
 

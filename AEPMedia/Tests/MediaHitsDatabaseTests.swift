@@ -15,29 +15,29 @@ import XCTest
 import AEPServices
 
 class MediaHitsDatabaseTests: XCTestCase {
-    
+
     private var hitsDatabase: MediaHitsDatabase!
     private let databaseFilePath = FileManager.SearchPathDirectory.cachesDirectory
     private let fileName = "MediaOfflineDatabaseTests"
     private let params = ["key": "value", "true": true] as [String: Any]
     private let metadata = ["isUserLoggedIn": "false", "tvStation": "SampleTVStation"] as [String: String]
     private let qoeData = ["qoe.startuptime": 0, "qoe.fps": 24, "qoe.droppedframes": 10, "qoe.bitrate": 60000] as [String: Any]
-    
+
     override func setUp() {
         MediaHitsDatabaseTests.removeDatabaseFileIfExists(fileName)
         let dispatchQueue = DispatchQueue.init(label: fileName)
         hitsDatabase = MediaHitsDatabase(databaseName: fileName, databaseFilePath: databaseFilePath, serialQueue: dispatchQueue)
     }
-    
+
     override func tearDown() {}
-    
+
     internal static func removeDatabaseFileIfExists(_ fileName: String) {
         let fileURL = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent(fileName)
         if FileManager.default.fileExists(atPath: fileURL.path) {
             try! FileManager.default.removeItem(at: fileURL)
         }
     }
-    
+
     private func createHitFromData(data: Data) -> MediaHit? {
         var hit: MediaHit?
         if let retrievedHit = try? JSONDecoder().decode(MediaHit.self, from: data) {
@@ -45,7 +45,7 @@ class MediaHitsDatabaseTests: XCTestCase {
         }
         return hit
     }
-    
+
     func testCreateDatabaseWithInvalidDatabaseName() throws {
         // setup
         let dispatchQueue = DispatchQueue.init(label: fileName)
@@ -53,7 +53,7 @@ class MediaHitsDatabaseTests: XCTestCase {
         // verify
         XCTAssertNil(hitsDatabase)
     }
-    
+
     func testDatabaseAdd() throws {
         // setup and test
         let sessionId = UUID().uuidString
@@ -77,7 +77,7 @@ class MediaHitsDatabaseTests: XCTestCase {
             index += 1
         }
     }
-    
+
     func testDatabaseAddWithNonWholeNumbers() throws {
         // setup and test
         let sessionId = UUID().uuidString
@@ -101,7 +101,7 @@ class MediaHitsDatabaseTests: XCTestCase {
             index += 1
         }
     }
-    
+
     func testDatabaseClear() throws {
         // setup and test
         let sessionId = UUID().uuidString
@@ -115,7 +115,7 @@ class MediaHitsDatabaseTests: XCTestCase {
         XCTAssertTrue(hitsDatabase.clear())
         XCTAssertEqual(0, hitsDatabase.count())
     }
-    
+
     func testDatabaseDeleteForSessionId() throws {
         // setup and test
         let sessionId = UUID().uuidString
