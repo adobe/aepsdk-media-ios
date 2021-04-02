@@ -28,16 +28,17 @@ struct MediaHit: Codable {
     /// The current playhead
     private (set) var playhead: Double = 0
 
-    /// The current timestamp
+    /// The current timestamps
     private (set) var timestamp: TimeInterval
+
+    private (set) var playerTime: [String: Double]?
 
     enum CodingKeys: String, CodingKey {
         case eventType = "eventType"
         case params = "params"
-        case metadata = "metadata"
+        case metadata = "customMetadata"
         case qoeData = "qoeData"
-        case playhead = "playhead"
-        case timestamp = "timestamp"
+        case playerTime = "playerTime"
     }
 
     init(eventType: String, playhead: Double, ts: TimeInterval, params: [String: Any]? = nil, customMetadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
@@ -47,18 +48,20 @@ struct MediaHit: Codable {
         self.qoeData = qoeData
         self.playhead = playhead
         self.timestamp = ts
+        self.playerTime = [MediaConstants.MediaCollection.PlayerTime.TS: ts, MediaConstants.MediaCollection.PlayerTime.PLAYHEAD: playhead]
     }
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.eventType = try values.decode(String.self, forKey: .eventType)
-        let anyCodableParams = try values.decode([String: AnyCodable].self, forKey: .params)
-        self.params = anyCodableParams.asDictionary()
-        self.metadata = try values.decode([String: String].self, forKey: .metadata)
-        let anyCodableQoeData = try values.decode([String: AnyCodable].self, forKey: .qoeData)
-        self.qoeData = anyCodableQoeData.asDictionary()
-        self.playhead = try values.decode(Double.self, forKey: .playhead)
-        self.timestamp = try values.decode(Double.self, forKey: .timestamp)
+        let anyCodableParams = try? values.decode([String: AnyCodable].self, forKey: .params)
+        self.params = anyCodableParams?.asDictionary()
+        self.metadata = try? values.decode([String: String].self, forKey: .metadata)
+        let anyCodableQoeData = try? values.decode([String: AnyCodable].self, forKey: .qoeData)
+        self.qoeData = anyCodableQoeData?.asDictionary()
+        self.playerTime = try values.decode([String: Double].self, forKey: CodingKeys.playerTime)
+        timestamp = playerTime?["ts"] ?? 0
+        playhead = playerTime?["playhead"] ?? 0
     }
 
     func encode(to encoder: Encoder) throws {
@@ -67,7 +70,6 @@ struct MediaHit: Codable {
         try container.encode(AnyCodable.from(dictionary: params), forKey: .params)
         try container.encode(metadata, forKey: .metadata)
         try container.encode(AnyCodable.from(dictionary: qoeData), forKey: .qoeData)
-        try container.encode(playhead, forKey: .playhead)
-        try container.encode(timestamp, forKey: .timestamp)
+        try container.encode(playerTime, forKey: .playerTime)
     }
 }
