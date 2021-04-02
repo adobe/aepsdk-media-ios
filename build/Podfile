@@ -10,11 +10,16 @@ target 'AEPMedia' do
   pod 'AEPServices'
   pod 'AEPIdentity'
   pod 'AEPRulesEngine'
+end
 
-target 'AEPMediaTests' do
+target 'AEPMediaUnitTests' do
   pod 'AEPCore'
   pod 'AEPServices'
   pod 'AEPRulesEngine'
 end
 
+target 'AEPMediaFunctionalTests' do
+  pod 'AEPCore'
+  pod 'AEPServices'
+  pod 'AEPRulesEngine'
 end
