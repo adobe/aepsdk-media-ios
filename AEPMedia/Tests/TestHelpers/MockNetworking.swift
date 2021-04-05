@@ -12,10 +12,27 @@ import Foundation
 import AEPServices
 
 class MockNetworking: Networking {
+    public var connectAsyncCalled: Bool = false
+    public var connectAsyncCalledWithNetworkRequest: NetworkRequest?
+    public var connectAsyncCalledWithCompletionHandler: ((HttpConnection) -> Void)?
+    public var expectedResponse: HttpConnection?
+    public var calledNetworkRequests: [NetworkRequest?] = []
 
-    var hasNetworkRequestReceived = false
+    func connectAsync(networkRequest: NetworkRequest, completionHandler: ((HttpConnection) -> Void)? = nil) {
+        print("Do nothing \(networkRequest)")
+        connectAsyncCalled = true
+        connectAsyncCalledWithNetworkRequest = networkRequest
+        connectAsyncCalledWithCompletionHandler = completionHandler
+        if let expectedResponse = expectedResponse, let completionHandler = completionHandler {
+            completionHandler(expectedResponse)
+        }
+        calledNetworkRequests.append(networkRequest)
+    }
 
-    func connectAsync(networkRequest: NetworkRequest, completionHandler: ((HttpConnection) -> Void)?) {
-        hasNetworkRequestReceived = true
+    func reset() {
+        connectAsyncCalled = false
+        connectAsyncCalledWithNetworkRequest = nil
+        connectAsyncCalledWithCompletionHandler = nil
+        calledNetworkRequests = []
     }
 }

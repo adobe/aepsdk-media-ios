@@ -104,8 +104,4 @@ class MediaEventGenerator: MediaTracker {
     func incrementTimeStamp(value: TimeInterval) {
         tracker.incrementTimeStamp(value: value)
     }
-    
-    func getTrackerId() -> String {
-        return tracker.trackerId ?? ""
-    }
 }

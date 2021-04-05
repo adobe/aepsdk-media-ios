@@ -18,6 +18,7 @@ import AEPServices
 class MediaFunctionalTestBase: XCTestCase {
     var media: Media!
     var mockRuntime: TestableExtensionRuntime!
+    var mockNetworkService: MockNetworking!
 
     let analyticsSharedState: [String: Any] = [
         MediaConstants.Analytics.ANALYTICS_VISITOR_ID: "aid",
@@ -32,6 +33,8 @@ class MediaFunctionalTestBase: XCTestCase {
     ]
 
     func setupBase(disableIdRequest: Bool = true) {
+        mockNetworkService = MockNetworking()
+        ServiceProvider.shared.networkService = mockNetworkService
         resetExtension()
     }
 
