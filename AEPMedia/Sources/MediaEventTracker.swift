@@ -110,13 +110,14 @@ class MediaEventTracker: MediaEventTracking {
         var inPrerollInterval = false
         var trackerIdle = false
         var mediaContext: MediaContext?
+        var hitProcessor: MediaProcessor
     #else
         private var inPrerollInterval = false
         private var trackerIdle = false
         private var mediaContext: MediaContext?
+        private var hitProcessor: MediaProcessor
     #endif
 
-    private let hitProcessor: MediaProcessor
     private var hitGenerator: MediaCollectionHitGenerator?
     private let config: [String: Any]?
     private var mediaIdle = false
