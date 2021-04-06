@@ -25,7 +25,7 @@ class MediaHitsDatabase {
     /// Creates a  new `MediaHitsDatabase` with a database file path and a serial dispatch queue
     /// If it fails to create database or table, a `nil` will be returned.
     /// - Parameters:
-    ///   - databaseName: the database name used to create SQLite database
+    ///   - databaseName: the database name used to create a SQLite database
     ///   - databaseFilePath: the SQLite database file will be stored in this directory, the default value is `.cachesDirectory`
     ///   - serialQueue: a serial dispatch queue used to perform database operations
     init?(databaseName: String, databaseFilePath: FileManager.SearchPathDirectory = .cachesDirectory, serialQueue: DispatchQueue) {
@@ -38,11 +38,11 @@ class MediaHitsDatabase {
         }
     }
 
-    /// Adds a `Data` object representing a MediaHit to the MediaHitsDatabase.
+    /// Adds a `Data` object representing a `MediaHit` to the `MediaHitsDatabase`.
     /// - Parameters:
-    ///   - sessionId: a string containing the session id of the media hit
-    ///   - data: a Data object representing a MediaHit
-    /// - Returns: A bool which will be true if the data was successfully added to the database and false otherwise.
+    ///   - sessionId: a `String` containing the session id of the `MediaHit`
+    ///   - data: a `Data` object representing a `MediaHit`
+    /// - Returns: A `Bool` which will be true if the data was successfully added to the database and false otherwise
     func add(sessionId: String, data: Data) -> Bool {
         return serialQueue.sync {
             let dataString = String(data: data, encoding: .utf8) ?? ""
@@ -63,9 +63,9 @@ class MediaHitsDatabase {
         }
     }
 
-    /// Retrieves the`Data` objects from the MediaHitsDatabase which match the given session id.
-    /// - Parameter sessionId: a string containing the session id to use for retrieving data
-    /// - Returns: An array of Data objects or nil if the session id did not match any database entries.
+    /// Retrieves the`Data` objects from the `MediaHitsDatabase` which match the given session id.
+    /// - Parameter sessionId: a `String` containing the session id to use for retrieving data from the database
+    /// - Returns: An array of `Data` objects or `nil` if the session id did not match any database entries
     func getDataFor(sessionId: String) -> [Data]? {
         return serialQueue.sync {
             let queryRowStatement = """
@@ -91,9 +91,9 @@ class MediaHitsDatabase {
         }
     }
 
-    /// Deletes the`Data` objects from the MediaHitsDatabase which match the given session id.
-    /// - Parameter sessionId: a string containing the session id to use for retrieving data
-    /// - Returns: A bool which will be true if the data was successfully deleted from the database and false otherwise.
+    /// Deletes the`Data` objects from the `MediaHitsDatabase` which match the given session id.
+    /// - Parameter sessionId: a `String` containing the session id to use for deleting data
+    /// - Returns: A `Bool` which will be true if the data was successfully deleted from the database and false otherwise
     func deleteDataFor(sessionId: String) -> Bool {
         return serialQueue.sync {
             guard let connection = connect() else {
@@ -113,8 +113,8 @@ class MediaHitsDatabase {
         }
     }
 
-    /// Clears all `Data` objects from the MediaHitsDatabase.
-    /// - Returns: A bool which will be true if all the data was successfully cleared from the database and false otherwise.
+    /// Clears all `Data` objects from the `MediaHitsDatabase`.
+    /// - Returns: A bool which will be true if all the data was successfully cleared from the database and false otherwise
     func clear() -> Bool {
         return serialQueue.sync {
             let dropTableStatement = """
@@ -135,8 +135,8 @@ class MediaHitsDatabase {
         }
     }
 
-    /// Gets the count of the `Data` objects currently present in the MediaHitsDatabase.
-    /// - Returns: An int which contains the number of data objects in the database.
+    /// Gets the count of the `Data` objects currently present in the `MediaHitsDatabase`.
+    /// - Returns: An `Int` which contains the number of data objects in the database
     func count() -> Int {
         return serialQueue.sync {
             let queryRowStatement = """
@@ -154,6 +154,35 @@ class MediaHitsDatabase {
             }
 
             return Int(countAsString) ?? 0
+        }
+    }
+
+    /// Gets all the session id's present in the `MediaHitsDatabase`.
+    /// - Returns: A set of `Strings` which contains all the session id's added to the database.
+    func getAllSessions() -> Set<String> {
+        return serialQueue.sync {
+            let queryRowStatement = """
+            SELECT sessionId FROM \(Self.TABLE_NAME);
+            """
+            guard let connection = connect() else {
+                return []
+            }
+            defer {
+                disconnect(database: connection)
+            }
+            guard let results = SQLiteWrapper.query(database: connection, sql: queryRowStatement) else {
+                Log.trace(label: Self.LOG_TAG, "Query returned no records: \(queryRowStatement).")
+                return []
+            }
+
+            var retrievedSessions: Set<String> = []
+            for result in results {
+                if let sessionId = result[TB_KEY_SESSION_ID] {
+                    retrievedSessions.insert(sessionId)
+                }
+            }
+
+            return retrievedSessions
         }
     }
 
@@ -175,7 +204,7 @@ class MediaHitsDatabase {
 
     /// Creates a table in the database with the given table name.
     /// - Parameter tableName: a string containing the table name
-    /// - Returns: A bool which will be true if the table was successfully created and false otherwise.
+    /// - Returns: A `Bool` which will be true if the table was successfully created and false otherwise
     private func createTableIfNotExists(tableName: String) -> Bool {
         guard let connection = connect() else {
             return false
@@ -205,8 +234,8 @@ class MediaHitsDatabase {
     }
 
     /// Creates a `Data` object from the provided database row.
-    /// - Parameter row: a dictionary containing the contents of one database row.
-    /// - Returns: A Data object if the passed in row contains valid data.
+    /// - Parameter row: a dictionary containing the contents of one database row
+    /// - Returns: A `Data` object if the passed in row contains valid data
     private func dataFromSQLRow(row: [String: String]) -> Data? {
         guard let dataString = row[TB_KEY_DATA] else {
             Log.trace(label: Self.LOG_TAG, "Database record did not have valid data.")
