@@ -25,7 +25,7 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
         waitForProcessing(interval: 1)
     }
 
-    func testdownloadedContentSession() {
+    func testDownloadedContentSession() {
         // setup
         dispatchDefaultConfigAndSharedStates()
         guard let mediaInfo = Media.createMediaObjectWith(name: "video", id: "videoId", length: 30.0, streamType: "vod", mediaType: MediaType.Video) else {

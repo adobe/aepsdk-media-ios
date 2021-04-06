@@ -66,7 +66,7 @@ class MediaOfflineSessionTests: XCTestCase {
         Thread.sleep(forTimeInterval: 2)
         
         //Assert
-        XCTAssertTrue(mockNetworking.hasNetworkRequestReceived)
+        XCTAssertTrue(mockNetworking.connectAsyncCalled)
         XCTAssertFalse((mediaSession as! MediaOfflineSession).isSessionActive)
     }
     

@@ -46,3 +46,18 @@ extension MediaHit: Equatable {
         return NSDictionary(dictionary: lhs ?? emptyDict).isEqual(to: rhs ?? emptyDict)
     }
 }
+
+/// Attempts to convert provided hit payload to [String: Any] using JSONSerialization.
+/// - Parameter jsonString: hit payload to be converted to [String: Any]
+/// - Returns: the json string payload as [String: Any] or empty if an error occured
+func convertToDictionary(jsonString: String?) -> [String: Any] {
+    guard let data = jsonString?.data(using: .utf8) else {
+        return [:]
+    }
+    guard let dataAsDictionary = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+        print("asFlattenDictionary - Unable to convert to [String: Any], data: \(String(data: data, encoding: .utf8) ?? "")")
+        return [:]
+    }
+
+    return dataAsDictionary
+}

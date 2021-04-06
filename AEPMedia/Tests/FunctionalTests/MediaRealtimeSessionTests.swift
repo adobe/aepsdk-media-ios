@@ -25,7 +25,7 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         waitForProcessing(interval: 1)
     }
 
-    func testdownloadedContentSession() {
+    func testRealtimeContentSession() {
         // setup
         dispatchDefaultConfigAndSharedStates()
         guard let mediaInfo = Media.createMediaObjectWith(name: "video", id: "videoId", length: 30.0, streamType: "vod", mediaType: MediaType.Video) else {
@@ -33,27 +33,43 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
             return
         }
         let metadata = ["SampleContextData": "SampleValue", "a.media.show": "show"]
-        let qoeInfo = [MediaConstants.QoEInfo.BITRATE: 1000, MediaConstants.QoEInfo.DROPPED_FRAMES: 6, MediaConstants.QoEInfo.FPS: 14, MediaConstants.QoEInfo.STARTUP_TIME: 2]
-        let qoeInfo2 = [MediaConstants.QoEInfo.BITRATE: 2000, MediaConstants.QoEInfo.DROPPED_FRAMES: 33, MediaConstants.QoEInfo.FPS: 24, MediaConstants.QoEInfo.STARTUP_TIME: 4]
+        guard let qoeInfo = Media.createQoEObjectWith(bitrate: 1000, startupTime: 2, fps: 14, droppedFrames: 6), let qoeInfo2 = Media.createQoEObjectWith(bitrate: 2000, startupTime: 4, fps: 24, droppedFrames: 33) else {
+            XCTFail("failed to create qoe info objects")
+            return
+        }
 
         // test
+        let timestamp = Date().timeIntervalSince1970
+        tracker.setTimeStamp(value: timestamp)
         tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
-        let sessionStartTs = Date().getUnixTimeInSeconds()
         tracker.updateQoEObject(qoe: qoeInfo)
-        tracker.trackPlay()
         tracker.updateCurrentPlayhead(time: 1)
-        sleep(2)
+        tracker.trackPlay()
+        usleep(2000)
         tracker.updateCurrentPlayhead(time: 5)
         tracker.updateQoEObject(qoe: qoeInfo2)
         tracker.trackPause()
-        sleep(51) // trigger ping event
+        usleep(11000)
         tracker.trackPlay()
         tracker.updateCurrentPlayhead(time: 10)
         tracker.trackComplete()
         waitForProcessing()
         // verify
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-        // verify session hit payload after MediaCollectionReportHelper implemented
-        let sessionHit = mockNetworkService?.calledNetworkRequests[0]
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 5)
+        let sessionStart = mockNetworkService?.calledNetworkRequests[0]
+        let sessionStartPayload = convertToDictionary(jsonString: sessionStart?.connectPayload)
+        verifyEvent(eventName: "sessionStart", payload: sessionStartPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: timestamp)
+        let play = mockNetworkService?.calledNetworkRequests[1]
+        let playPayload = convertToDictionary(jsonString: play?.connectPayload)
+        verifyEvent(eventName: "play", payload: playPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo, playhead: 1, ts: timestamp)
+        let pause = mockNetworkService?.calledNetworkRequests[2]
+        let pausePayload = convertToDictionary(jsonString: pause?.connectPayload)
+        verifyEvent(eventName: "pauseStart", payload: pausePayload, expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo2, playhead: 5, ts: timestamp)
+        let play2 = mockNetworkService?.calledNetworkRequests[3]
+        let play2Payload = convertToDictionary(jsonString:play2?.connectPayload)
+        verifyEvent(eventName: "play", payload: play2Payload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: timestamp)
+        let sessionComplete = mockNetworkService?.calledNetworkRequests[4]
+        let sessionCompletePayload = convertToDictionary(jsonString:sessionComplete?.connectPayload)
+        verifyEvent(eventName: "sessionComplete", payload: sessionCompletePayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: timestamp)
     }
 }

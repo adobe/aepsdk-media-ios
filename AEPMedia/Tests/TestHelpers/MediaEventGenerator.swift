@@ -40,61 +40,63 @@ class MediaEventGenerator: MediaTracker {
     var usingProvidedDispatchFn = false
 
     init(config: [String: Any]? = nil, dispatch: ((Event) -> Void)? = nil) {
-        tracker = MediaPublicTrackerMock(dispatch: dispatch, config: config)
         guard let dispatch = dispatch else {
+            tracker = MediaPublicTrackerMock(dispatch: nil, config: config)
             tracker.dispatch = { (event: Event) in
                 self.dispatchedEvent = event
                 self.semaphore.signal()
             }
             return
         }
+        // using the passed in dispatch function
         usingProvidedDispatchFn = true
+        tracker = MediaPublicTrackerMock(dispatch: dispatch, config: config)
         tracker.dispatch = dispatch
     }
 
     func trackSessionStart(info: [String: Any], metadata: [String: String]? = nil) {
         tracker.trackSessionStart(info: info, metadata: metadata)
-        if !usingProvidedDispatchFn { semaphore.wait() }
+        waitForTrackerRequest()
     }
 
     func trackPlay() {
         tracker.trackPlay()
-        if !usingProvidedDispatchFn { semaphore.wait() }
+        waitForTrackerRequest()
     }
 
     func trackPause() {
         tracker.trackPause()
-        if !usingProvidedDispatchFn { semaphore.wait() }
+        waitForTrackerRequest()
     }
 
     func trackComplete() {
         tracker.trackComplete()
-        if !usingProvidedDispatchFn { semaphore.wait() }
+        waitForTrackerRequest()
     }
 
     func trackSessionEnd() {
         tracker.trackSessionEnd()
-        if !usingProvidedDispatchFn { semaphore.wait() }
+        waitForTrackerRequest()
     }
 
     func trackError(errorId: String) {
         tracker.trackError(errorId: errorId)
-        if !usingProvidedDispatchFn { semaphore.wait() }
+        waitForTrackerRequest()
     }
 
     func trackEvent(event: MediaEvent, info: [String: Any]? = nil, metadata: [String: String]? = nil) {
         tracker.trackEvent(event: event, info: info, metadata: metadata)
-        if !usingProvidedDispatchFn { semaphore.wait() }
+        waitForTrackerRequest()
     }
 
     func updateCurrentPlayhead(time: Double) {
         tracker.updateCurrentPlayhead(time: time)
-        if !usingProvidedDispatchFn { semaphore.wait() }
+        waitForTrackerRequest()
     }
 
     func updateQoEObject(qoe: [String: Any]) {
         tracker.updateQoEObject(qoe: qoe)
-        if !usingProvidedDispatchFn { semaphore.wait() }
+        waitForTrackerRequest()
     }
 
     func setTimeStamp(value: TimeInterval) {
@@ -103,5 +105,13 @@ class MediaEventGenerator: MediaTracker {
 
     func incrementTimeStamp(value: TimeInterval) {
         tracker.incrementTimeStamp(value: value)
+    }
+    
+    private func waitForTrackerRequest() {
+        if !usingProvidedDispatchFn {
+            semaphore.wait()
+            return
+        }
+        usleep(500)
     }
 }
