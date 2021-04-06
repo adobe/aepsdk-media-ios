@@ -103,24 +103,15 @@ class MediaCollectionReportHelperTests: XCTestCase {
         XCTAssertNil(sessionId)
     }
     
-    func testGenerateHitReportWithEmptyHitsCollection() {
-        //Setup
-        let hits = [MediaHit]()
-        //Action
-        let report = MediaCollectionReportHelper.generateHitReport(state: MediaState(), hit: hits)
-        //Assert
-        XCTAssertNil(report)
-    }
-    
     func testGenerateHitReport() {
         
         //Setup
-        let hits = [mediaOfflineHitsMock.sessionStart!]
+        let hit = mediaOfflineHitsMock.sessionStart!
         let state = mediaOfflineHitsMock.mediaState
         let jsonDecoder = JSONDecoder()
         
         //Action
-        let response = MediaCollectionReportHelper.generateHitReport(state: state!, hit: hits)
+        let response = MediaCollectionReportHelper.generateHitReport(state: state!, hit: hit)
         
         let mediaHitActual = try! jsonDecoder.decode(MediaHit.self, from: response!.data(using: .utf8)!)
         let mediaHitExpected = try! jsonDecoder.decode(MediaHit.self, from: mediaOfflineHitsMock.sessionStartJson!.data(using: .utf8)!)

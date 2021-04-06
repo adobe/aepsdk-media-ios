@@ -58,13 +58,7 @@ class MediaCollectionReportHelper {
     ///   - state: Current Media state
     ///   - hit: Media hit to be send
     ///- Returns: The payload for Media hit
-    static func generateHitReport(state: MediaState, hit: [MediaHit]) -> String? {
-        
-        guard let hit = hit.first else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to generate hit report, MediaHit Array is empty.")
-            return nil
-        }
-        
+    static func generateHitReport(state: MediaState, hit: MediaHit) -> String? {
         let updatedHit = updateMediaHit(state: state, mediaHit: hit)
         if let data = try? JSONEncoder().encode(updatedHit) {
             return String(data: data, encoding: .utf8)

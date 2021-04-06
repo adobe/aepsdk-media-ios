@@ -41,7 +41,7 @@ class MediaOfflineSessionTests: XCTestCase {
     func testEndSession() {
         //Setup
         let sessionId = "sessionid"
-        let eventType = "event_type"
+        let eventType = MediaConstants.MediaCollection.EventType.SESSION_START
         let mockMediaDBService = MockMediaDBService()
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         mockMediaDBService.persistedHits[sessionId] = [mediaHit]
