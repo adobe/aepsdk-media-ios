@@ -13,7 +13,7 @@ import XCTest
 import AEPCore
 @testable import AEPMedia
 
-class MediaExtensionTests: MediaTestBase {
+class MediaExtensionTests: MediaFunctionalTestBase {
 
     static let config: [String: Any] = [:]
     var fakeMediaService: FakeMediaService!
