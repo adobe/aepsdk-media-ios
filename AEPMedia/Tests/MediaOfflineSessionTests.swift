@@ -16,9 +16,9 @@ import AEPCore
 @testable import AEPMedia
 
 class MediaOfflineSessionTests: XCTestCase {
-    
+
     var dispatchQueue = DispatchQueue(label: "dispatchQueue")
-    
+
     func testQueueMediaHit() {
         //Setup
         let sessionId = "sessionid"
@@ -26,18 +26,18 @@ class MediaOfflineSessionTests: XCTestCase {
         let mediaDBService = MockMediaDBService()
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: MediaState(), dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
-        
+
         //Action
         mediaSession.queue(hit: mediaHit)
-        
+
         Thread.sleep(forTimeInterval: 1)
-        
+
         //Assert
         XCTAssertEqual(mediaDBService.persistedHits[sessionId]?.count ?? 0, 1)
         XCTAssertEqual(mediaDBService.persistedHits[sessionId]?[0].eventType ?? "", eventType)
-        
+
     }
-    
+
     func testEndSession() {
         //Setup
         let sessionId = "sessionid"
@@ -57,19 +57,18 @@ class MediaOfflineSessionTests: XCTestCase {
         MediaConstants.Identity.SHARED_STATE_NAME: [MediaConstants.Identity.MARKETING_VISITOR_ID: "ecid"]]
         let state = MediaState()
         state.update(dataMap: sharedData)
-        
+
         let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: state, dispatchQueue: dispatchQueue, mediaDBService: mockMediaDBService)
-        
+
         //Action
         mediaSession.end()
-        
         Thread.sleep(forTimeInterval: 2)
-        
+
         //Assert
         XCTAssertTrue(mockNetworking.hasNetworkRequestReceived)
         XCTAssertFalse((mediaSession as! MediaOfflineSession).isSessionActive)
     }
-    
+
     func testAbortSession() {
         //Setup
         var hasSessionEnded: Bool = false
@@ -79,23 +78,20 @@ class MediaOfflineSessionTests: XCTestCase {
 
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         mediaDBService.persistedHits[sessionId] = [mediaHit]
-        
+
         let mediaSession: MediaSession = MediaOfflineSession(id: sessionId, state: MediaState(), dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
-        
+
         //Action
         mediaSession.abort {
             hasSessionEnded = true
         }
-        
+
         Thread.sleep(forTimeInterval: 1)
-        
+
         //Assert
         XCTAssertTrue(hasSessionEnded)
         XCTAssertFalse((mediaSession as! MediaOfflineSession).isSessionActive)
         XCTAssertEqual(mediaDBService.persistedHits.count, 0)
     }
-    
-    
+
 }
-
-

@@ -54,22 +54,35 @@ struct MediaHit: Codable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         self.eventType = try values.decode(String.self, forKey: .eventType)
-        let anyCodableParams = try? values.decode([String: AnyCodable].self, forKey: .params)
-        self.params = anyCodableParams?.asDictionary()
-        self.metadata = try? values.decode([String: String].self, forKey: .metadata)
-        let anyCodableQoeData = try? values.decode([String: AnyCodable].self, forKey: .qoeData)
-        self.qoeData = anyCodableQoeData?.asDictionary()
+
+        if let anyCodableParams = try? values.decode([String: AnyCodable].self, forKey: .params) {
+            self.params = anyCodableParams.asDictionary()
+        }
+        if let metadata = try? values.decode([String: String].self, forKey: .metadata) {
+            self.metadata = metadata
+        }
+        if let anyCodableQoeData = try? values.decode([String: AnyCodable].self, forKey: .qoeData) {
+            self.qoeData = anyCodableQoeData.asDictionary()
+        }
         self.playerTime = try values.decode([String: Double].self, forKey: CodingKeys.playerTime)
         timestamp = playerTime?["ts"] ?? 0
         playhead = playerTime?["playhead"] ?? 0
+
     }
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(eventType, forKey: .eventType)
-        try container.encode(AnyCodable.from(dictionary: params), forKey: .params)
-        try container.encode(metadata, forKey: .metadata)
-        try container.encode(AnyCodable.from(dictionary: qoeData), forKey: .qoeData)
+
+        if let params = params {
+            try container.encode(AnyCodable.from(dictionary: params), forKey: .params)
+        }
+        if let metadata = metadata {
+            try container.encode(metadata, forKey: .metadata)
+        }
+        if let qoeData = qoeData {
+            try container.encode(AnyCodable.from(dictionary: qoeData), forKey: .qoeData)
+        }
         try container.encode(playerTime, forKey: .playerTime)
     }
 }

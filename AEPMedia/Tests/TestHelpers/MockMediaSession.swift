@@ -12,28 +12,28 @@
 import Foundation
 @testable import AEPMedia
 
-class MockMediaSession : MediaSession {
-    
+class MockMediaSession: MediaSession {
+
     var LOG_TAG: String = ""
     var hits: [MediaHit] = []
     var hasQueueHitCalled = false
     var hasSessionEndCalled = false
     var hasSesionAbortCalled = false
-    
+
     override init(id: String, state: MediaState, dispatchQueue: DispatchQueue) {
         super.init(id: id, state: state, dispatchQueue: dispatchQueue)
     }
-    
+
     override func handleSessionEnd() {
         hasSessionEndCalled = true
         sessionEndHandler?()
     }
-    
+
     override func handleSessionAbort() {
         hasSesionAbortCalled = true
         sessionEndHandler?()
     }
-    
+
     override func handleQueueMediaHit(hit: MediaHit) {
         hasQueueHitCalled = true
         hits.append(hit)

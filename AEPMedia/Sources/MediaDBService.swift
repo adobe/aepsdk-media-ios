@@ -10,25 +10,66 @@
  */
 
 import Foundation
+import AEPServices
 
 class MediaDBService {
+    private static let LOG_TAG = "MediaDBService"
 
+    private var mediaHitsDatabase: MediaHitsDatabase?
+
+    /// Creates a  new `MediaDBService` which manages a `MediaHitsDatabase` to persist offline Media hits.
+    /// - Parameters:
+    ///   - mediaHitsDatabase: the database used to store offline `MediaHits`.
+    init(mediaHitsDatabase: MediaHitsDatabase?) {
+        self.mediaHitsDatabase = mediaHitsDatabase
+    }
+
+    /// Persists an offline `MediaHit` in the `MediaHitsDatabase`.
+    /// - Parameters:
+    ///   - hit: the `MediaHit` to be persisted
+    ///   - sessionId: a `String` containing the session id of the hit to be added
     func persistHit(hit: MediaHit, sessionId: String) {
-        //TODO implement this function.
+        guard let data = try? JSONEncoder().encode(hit) else {
+            Log.error(label: Self.LOG_TAG, "Failed to encode hit for event type: \(hit.eventType).")
+            return
+        }
+
+        guard mediaHitsDatabase?.add(sessionId: sessionId, data: data) ?? false else {
+            Log.error(label: Self.LOG_TAG, "Failed to add hit for event type: \(hit.eventType).")
+            return
+        }
+
+        Log.trace(label: Self.LOG_TAG, "Successfully added hit for event type: \(hit.eventType).")
     }
 
-    func deleteHits(sessionId id: String) {
-        //TODO implement this function.
+    /// Deletes hits in the `MediaHitsDatabase` for the given session id.
+    /// - Parameter sessionId: a `String` containing the session id of the hits to be deleted from the database
+    func deleteHits(sessionId: String) {
+        guard mediaHitsDatabase?.deleteDataFor(sessionId: sessionId) ?? false else {
+            Log.error(label: Self.LOG_TAG, "Failed to delete hits for session id: \(sessionId).")
+            return
+        }
+        Log.trace(label: Self.LOG_TAG, "Deleted hits for session id: \(sessionId).")
     }
 
-    func getHits(sessionId id: String) -> [MediaHit] {
-        //TODO implement this function.
-        return [MediaHit]()
+    /// Retrieves hits in the `MediaHitsDatabase` for the given session id.
+    /// - Parameter sessionId: a `String` containing the session id of the hits to be retrieved from the database
+    /// - Returns: an array of `MediaHit` objects which match the given session id
+    func getHits(sessionId: String) -> [MediaHit] {
+        var retrievedHits: [MediaHit] = []
+        Log.trace(label: Self.LOG_TAG, "Retrieving hits for session id: \(sessionId).")
+        let retrievedData = mediaHitsDatabase?.getDataFor(sessionId: sessionId) ?? []
+        for data in retrievedData {
+            if let hit = try? JSONDecoder().decode(MediaHit.self, from: data) {
+                retrievedHits.append(hit)
+            }
+        }
+        return retrievedHits
     }
 
-    func getPersistedSessionIds() -> [String] {
-        //TODO implement this function.
-        return [String]()
+    /// Retrieves the session id's currently persisted in the `MediaHitsDatabase`.
+    /// - Returns: a `Set` of `Strings` containing the session id's of hits currently stored in the database
+    func getPersistedSessionIds() -> Set<String> {
+        return mediaHitsDatabase?.getAllSessions() ?? []
     }
-
 }

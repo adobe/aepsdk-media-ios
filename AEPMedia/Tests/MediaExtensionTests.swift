@@ -14,10 +14,10 @@ import AEPCore
 @testable import AEPMedia
 
 class MediaExtensionTests: MediaTestBase {
-    
-    static let config: [String:Any] = [:]
+
+    static let config: [String: Any] = [:]
     var fakeMediaService: FakeMediaService!
-    
+
     override func setUp() {
         super.setupBase()
         fakeMediaService = FakeMediaService()
@@ -27,14 +27,14 @@ class MediaExtensionTests: MediaTestBase {
     override func tearDown() {
 
     }
-    
+
     // MARK: readyForEvent tests
     func testReadyForEventHappyPath() {
         // setup
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "testTracker",
-            MediaConstants.Tracker.EVENT_PARAM: ["test":"value"]
+            MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
         let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
         // test
@@ -44,12 +44,12 @@ class MediaExtensionTests: MediaTestBase {
         // verify
         XCTAssertTrue(readyForEvent)
     }
-    
+
     func testReadyForEventWhenConfigAndIdentitySharedStateNotReady() {
         // setup
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "testTracker",
-            MediaConstants.Tracker.EVENT_PARAM: ["test":"value"]
+            MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
         let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
         // test
@@ -59,14 +59,14 @@ class MediaExtensionTests: MediaTestBase {
         // verify
         XCTAssertFalse(readyForEvent)
     }
-    
+
     // MARK: handleMediaTrackerRequest tests
     func testCreateTrackerHappyPath() {
         // setup
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "testTracker",
-            MediaConstants.Tracker.EVENT_PARAM: ["test":"value"]
+            MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
         let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
         // test
@@ -77,7 +77,7 @@ class MediaExtensionTests: MediaTestBase {
         let tracker = media.trackers["testTracker"]
         XCTAssertNotNil(tracker)
     }
-    
+
     func testCreateTrackerWithEmptyConfig() {
         // setup
         dispatchDefaultConfigAndSharedStates()
@@ -94,7 +94,7 @@ class MediaExtensionTests: MediaTestBase {
         let tracker = media.trackers["testTracker"]
         XCTAssertNotNil(tracker)
     }
-    
+
     func testCreateTrackerWithNoTrackerConfig() {
         // setup
         dispatchDefaultConfigAndSharedStates()
@@ -110,7 +110,7 @@ class MediaExtensionTests: MediaTestBase {
         let tracker = media.trackers["testTracker"]
         XCTAssertNotNil(tracker)
     }
-    
+
     func testCreateTrackerWithInvalidTrackerId() {
         // setup
         dispatchDefaultConfigAndSharedStates()
@@ -125,7 +125,7 @@ class MediaExtensionTests: MediaTestBase {
         // verify
         XCTAssertEqual(media.trackers.count, 0)
     }
-    
+
     func testCreateTrackerWithInvalidEvent() {
         // setup
         dispatchDefaultConfigAndSharedStates()
@@ -136,18 +136,18 @@ class MediaExtensionTests: MediaTestBase {
         // verify
         XCTAssertEqual(media.trackers.count, 0)
     }
-    
+
     func testCreateMultipleTrackers() {
         // setup
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "testTracker1",
-            MediaConstants.Tracker.EVENT_PARAM: ["test":"value"]
+            MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
         let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
         let eventData2: [String: Any] = [
             MediaConstants.Tracker.ID: "testTracker2",
-            MediaConstants.Tracker.EVENT_PARAM: ["test":"value"]
+            MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
         let createTrackerEvent2 = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData2)
         // test
@@ -162,13 +162,13 @@ class MediaExtensionTests: MediaTestBase {
         XCTAssertNotNil(tracker)
         XCTAssertNotNil(tracker2)
     }
-    
+
     func testCreateTrackerThenPrivacyOptedOut() {
         // setup
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "testTracker",
-            MediaConstants.Tracker.EVENT_PARAM: ["test":"value"]
+            MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
         let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
         // test
@@ -179,13 +179,13 @@ class MediaExtensionTests: MediaTestBase {
         let tracker = media.trackers["testTracker"]
         XCTAssertNotNil(tracker)
         // set privacy to opt out
-        dispatchDefaultConfigAndSharedStates(configData: ["global.privacy" : "optedout"])
+        dispatchDefaultConfigAndSharedStates(configData: ["global.privacy": "optedout"])
         waitForProcessing()
         // verify trackers are cleared and media service sessions aborted
         XCTAssertEqual(media.trackers.count, 0)
         XCTAssertTrue(fakeMediaService.abortAllSessionsCalled)
     }
-    
+
     // MARK: handleMediaTrack tests
     func testHandleMediaTrackHappyPath() {
         // setup
@@ -194,8 +194,8 @@ class MediaExtensionTests: MediaTestBase {
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "trackerId",
-            MediaConstants.Tracker.EVENT_NAME : MediaConstants.EventName.PLAY,
-            MediaConstants.Tracker.EVENT_INTERNAL : false
+            MediaConstants.Tracker.EVENT_NAME: MediaConstants.EventName.PLAY,
+            MediaConstants.Tracker.EVENT_INTERNAL: false
         ]
         let mediaTrackEvent = Event(name: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA, data: eventData)
         // test
@@ -213,8 +213,8 @@ class MediaExtensionTests: MediaTestBase {
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "differentTrackerId",
-            MediaConstants.Tracker.EVENT_NAME : MediaConstants.EventName.PLAY,
-            MediaConstants.Tracker.EVENT_INTERNAL : false
+            MediaConstants.Tracker.EVENT_NAME: MediaConstants.EventName.PLAY,
+            MediaConstants.Tracker.EVENT_INTERNAL: false
         ]
         let mediaTrackEvent = Event(name: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA, data: eventData)
         // test
@@ -232,8 +232,8 @@ class MediaExtensionTests: MediaTestBase {
         dispatchDefaultConfigAndSharedStates()
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "",
-            MediaConstants.Tracker.EVENT_NAME : MediaConstants.EventName.PLAY,
-            MediaConstants.Tracker.EVENT_INTERNAL : false
+            MediaConstants.Tracker.EVENT_NAME: MediaConstants.EventName.PLAY,
+            MediaConstants.Tracker.EVENT_INTERNAL: false
         ]
         let mediaTrackEvent = Event(name: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA, data: eventData)
         // test
@@ -257,7 +257,7 @@ class MediaExtensionTests: MediaTestBase {
         let tracker = media.trackers["trackerId"] as! FakeMediaEventTracker
         XCTAssertFalse(tracker.trackCalled)
     }
-    
+
     // MARK: handleSharedStateUpdate tests
     func testHandleSharedStateUpdate() {
         // setup

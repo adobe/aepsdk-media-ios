@@ -13,7 +13,7 @@
 import AEPCore
 @testable import AEPMedia
 
-class FakeMediaService : MediaService {
+class FakeMediaService: MediaService {
 
     var updateMediaStateCalled = false
     var abortAllSessionsCalled = false
@@ -21,7 +21,7 @@ class FakeMediaService : MediaService {
     override func updateMediaState(event: Event, getSharedState: (String, Event, Bool) -> SharedStateResult?) {
         super.updateMediaState(event: event, getSharedState: getSharedState)
         updateMediaStateCalled = true
-    }        
+    }
 
     override func abortAllSessions() {
         abortAllSessionsCalled = true
