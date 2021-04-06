@@ -134,12 +134,12 @@ class MediaRealTimeSession: MediaSession {
     private func generateHitUrlAndBody(_ isSessionStartHit: Bool, _ hit: MediaHit) -> (String, String) {
         var urlString = ""
         if isSessionStartHit {
-            urlString = MediaCollectionReportHelper.getTrackingURL(url: state.getMediaCollectionServer())
+            urlString = MediaCollectionReportHelper.getTrackingURL(host: state.getMediaCollectionServer())
         } else {
-            urlString = MediaCollectionReportHelper.getTrackingURLForEvents(url: state.getMediaCollectionServer(), sessionId: sessionId)
+            urlString = MediaCollectionReportHelper.getTrackingURLForEvents(host: state.getMediaCollectionServer(), sessionId: sessionId)
         }
 
-        let body = MediaCollectionReportHelper.generateHitReport(state: state, hit: [hit])
+        let body = MediaCollectionReportHelper.generateHitReport(state: state, hit: [hit]) ?? ""
         Log.debug(label: LOG_TAG, "trySendHit - Generated url (\(urlString)), Generated body (\(body))")
         return (urlString, body)
     }

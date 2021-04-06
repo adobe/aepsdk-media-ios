@@ -66,8 +66,8 @@ class MediaOfflineSession: MediaSession {
             return
         }
 
-        let urlString = MediaCollectionReportHelper.getTrackingURL(url: state.getMediaCollectionServer())
-        let body = MediaCollectionReportHelper.generateHitReport(state: state, hit: hits)
+        let urlString = MediaCollectionReportHelper.getTrackingURL(host: state.getMediaCollectionServer())
+        let body = MediaCollectionReportHelper.generateHitReport(state: state, hit: hits) ?? ""
 
         guard !urlString.isEmpty, !body.isEmpty else {
             Log.debug(label: LOG_TAG, "\(#function) - Could not generate downloaded content report from persisted hits for session (\(id)), Clearing persisted pings")
