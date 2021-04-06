@@ -113,13 +113,13 @@ class MediaCollectionReportHelperTests: XCTestCase {
         //Action
         let response = MediaCollectionReportHelper.generateHitReport(state: state!, hit: hit)
         
-        let mediaHitActual = try! jsonDecoder.decode(MediaHit.self, from: response!.data(using: .utf8)!)
-        let mediaHitExpected = try! jsonDecoder.decode(MediaHit.self, from: mediaOfflineHitsMock.sessionStartJson!.data(using: .utf8)!)
-        let mediaHitUpdated = MediaCollectionReportHelper.updateMediaHit(state: mediaOfflineHitsMock.mediaState, mediaHit: mediaHitExpected)
+        let mediaHitActual = try? jsonDecoder.decode(MediaHit.self, from: response!.data(using: .utf8)!)
+        let mediaHitExpected = try? jsonDecoder.decode(MediaHit.self, from: mediaOfflineHitsMock.sessionStartJson!.data(using: .utf8)!)
+        let mediaHitUpdated = MediaCollectionReportHelper.updateMediaHit(state: mediaOfflineHitsMock.mediaState, mediaHit: mediaHitExpected!)
         
         //Assert
         XCTAssertNotNil(response)
-        XCTAssertTrue(compareMediaHits(actual: mediaHitActual, expected: mediaHitUpdated))
+        XCTAssertTrue(compareMediaHits(actual: mediaHitActual!, expected: mediaHitUpdated))
     }
     
     func testGenerateDownloadReportWithEmptyList() {
@@ -308,13 +308,15 @@ class MediaCollectionReportHelperTests: XCTestCase {
     
     func compareJsonArray(expected:[String], payload: String, state: MediaState) -> Bool {
         var result = true
-        let jsonArray = try! JSONSerialization.jsonObject(with: payload.data(using: .utf8)!, options: []) as! [[String: Any]]
+        guard let jsonArray = try? JSONSerialization.jsonObject(with: payload.data(using: .utf8)!, options: []) as? [[String: Any]] else {
+            return false
+        }
         for (i, jsonObj) in jsonArray.enumerated() {
             let playertime = jsonObj["playerTime"] as! [String: Double]
             let actualMediaHit = MediaHit(eventType: jsonObj["eventType"] as! String, playhead: playertime["playhead"]!, ts: playertime["ts"]!, params: jsonObj["params"] as? [String:Any], customMetadata: jsonObj["customMetadata"] as? [String:String], qoeData: jsonObj["qoeData"] as? [String:Any])
             
-            let expectedMediaHit = try! JSONDecoder().decode(MediaHit.self, from: expected[i].data(using: .utf8)!)
-            result = result && compareMediaHits(actual: actualMediaHit, expected: MediaCollectionReportHelper.updateMediaHit(state: state, mediaHit: expectedMediaHit))
+            let expectedMediaHit = try? JSONDecoder().decode(MediaHit.self, from: expected[i].data(using: .utf8)!)
+            result = result && compareMediaHits(actual: actualMediaHit, expected: MediaCollectionReportHelper.updateMediaHit(state: state, mediaHit: expectedMediaHit!))
         }
         return result
     }

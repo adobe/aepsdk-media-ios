@@ -47,7 +47,7 @@ class MediaOfflineSessionTests: XCTestCase {
         mockMediaDBService.persistedHits[sessionId] = [mediaHit]
         let mockNetworking = MockNetworking()
         ServiceProvider.shared.networkService = mockNetworking
-        
+
         let sharedData = [MediaConstants.Configuration.SHARED_STATE_NAME: [
             MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn.rawValue,
             MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID:"orgid",
