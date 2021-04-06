@@ -61,6 +61,8 @@
 		D6658A7F25F15C0200D8593E /* MediaExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6658A7E25F15C0200D8593E /* MediaExtensionTests.swift */; };
 		D6658A9325F16D0200D8593E /* MediaTestBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6658A9225F16D0200D8593E /* MediaTestBase.swift */; };
 		D6658AD925F2D9C100D8593E /* Double+Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6658AD825F2D9C100D8593E /* Double+Media.swift */; };
+		D66F0AA62613887A0018E779 /* MediaDBServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66F0AA52613887A0018E779 /* MediaDBServiceTests.swift */; };
+		D66F0AAA2613A4E80018E779 /* FakeMediaHitsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D66F0AA92613A4E80018E779 /* FakeMediaHitsDatabase.swift */; };
 		D6DAB46725F97E6200260DA8 /* MediaHitsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB46625F97E6200260DA8 /* MediaHitsDatabase.swift */; };
 		D6DAB46B25F9822800260DA8 /* SQLiteWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB46A25F9822800260DA8 /* SQLiteWrapper.swift */; };
 		D6DAB4EA25FAD0A800260DA8 /* FakeMediaEventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB4E625FAD06E00260DA8 /* FakeMediaEventTracker.swift */; };
@@ -148,6 +150,8 @@
 		D6658A7E25F15C0200D8593E /* MediaExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaExtensionTests.swift; sourceTree = "<group>"; };
 		D6658A9225F16D0200D8593E /* MediaTestBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaTestBase.swift; sourceTree = "<group>"; };
 		D6658AD825F2D9C100D8593E /* Double+Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Double+Media.swift"; sourceTree = "<group>"; };
+		D66F0AA52613887A0018E779 /* MediaDBServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaDBServiceTests.swift; sourceTree = "<group>"; };
+		D66F0AA92613A4E80018E779 /* FakeMediaHitsDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeMediaHitsDatabase.swift; sourceTree = "<group>"; };
 		D6DAB46625F97E6200260DA8 /* MediaHitsDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaHitsDatabase.swift; sourceTree = "<group>"; };
 		D6DAB46A25F9822800260DA8 /* SQLiteWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteWrapper.swift; sourceTree = "<group>"; };
 		D6DAB4E625FAD06E00260DA8 /* FakeMediaEventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeMediaEventTracker.swift; sourceTree = "<group>"; };
@@ -262,6 +266,7 @@
 				2EEB0B9D25F067CF0041B31D /* MediaContextTests.swift */,
 				2EEB0BB125F19FC80041B31D /* MediaEventTrackerTests.swift */,
 				D64CCFEB2602C7D200F4761F /* MediaHitsDatabaseTests.swift */,
+				D66F0AA52613887A0018E779 /* MediaDBServiceTests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -280,6 +285,7 @@
 				3D663AAE25FAF5FC00E96250 /* MockNetworking.swift */,
 				D6DAB4E625FAD06E00260DA8 /* FakeMediaEventTracker.swift */,
 				D6DAB50325FBD4FD00260DA8 /* FakeMediaService.swift */,
+				D66F0AA92613A4E80018E779 /* FakeMediaHitsDatabase.swift */,
 			);
 			path = TestHelpers;
 			sourceTree = "<group>";
@@ -557,8 +563,10 @@
 				D6658A9325F16D0200D8593E /* MediaTestBase.swift in Sources */,
 				D6DAB50425FBD4FD00260DA8 /* FakeMediaService.swift in Sources */,
 				D634A03E25DEE32E001EC086 /* MediaCollectionHitGeneratorTests.swift in Sources */,
+				D66F0AAA2613A4E80018E779 /* FakeMediaHitsDatabase.swift in Sources */,
 				2EEB0B9E25F067CF0041B31D /* MediaContextTests.swift in Sources */,
 				2EEAC4CC25D4997600759D3E /* Media+PublicAPITests.swift in Sources */,
+				D66F0AA62613887A0018E779 /* MediaDBServiceTests.swift in Sources */,
 				3D663ACA26015A9B00E96250 /* MediaOfflineSessionTests.swift in Sources */,
 				2EEB0BB225F19FC80041B31D /* MediaEventTrackerTests.swift in Sources */,
 				2EEAC4EA25D61ACF00759D3E /* MockExtension.swift in Sources */,
