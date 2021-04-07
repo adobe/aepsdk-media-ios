@@ -23,3 +23,13 @@ target 'AEPMediaFunctionalTests' do
   pod 'AEPServices'
   pod 'AEPRulesEngine'
 end
+
+target 'MediaSampleApp' do
+  pod 'AEPCore'
+  pod 'AEPServices'
+  pod 'AEPRulesEngine'
+  pod 'AEPLifecycle'
+  pod 'AEPIdentity'
+  pod 'AEPAnalytics'
+  pod 'AEPAssurance'
+end
