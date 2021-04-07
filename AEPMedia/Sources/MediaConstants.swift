@@ -309,6 +309,30 @@ enum MediaConstants {
             static let CHANNEL = "media.channel"
             static let PUBLISHER = "media.publisher"
             static let SDK_VERSION = "media.sdkVersion"
+        }                
+
+        enum PlayerTime {
+            static let TS = "ts"
+            static let PLAYHEAD = "playhead"
+        }
+
+        enum Session {
+            static let ANALYTICS_TRACKING_SERVER = "analytics.trackingServer"
+            static let ANALYTICS_SSL = "analytics.enableSSL"
+            static let ANALYTICS_RSID = "analytics.reportSuite"
+            static let ANALYTICS_VISITOR_ID = "analytics.visitorId"
+            static let ANALYTICS_AID = "analytics.aid"
+            static let VISITOR_MCORG_ID = "visitor.marketingCloudOrgId"
+            static let VISITOR_MCUSER_ID = "visitor.marketingCloudUserId"
+            static let VISITOR_AAM_LOC_HINT = "visitor.aamLocationHint"
+            static let VISITOR_CUSTOMER_IDS = "visitor.customerIDs"
+            static let MEDIA_CHANNEL = "media.channel"
+            static let MEDIA_PLAYER_NAME = "media.playerName"
+            static let SDK_VERSION = "media.sdkVersion"
+            static let MEDIA_VERSION = "media.libraryVersion"
+            static let VISITOR_ID_TYPE = "id_type"
+            static let VISITOR_ID = "id"
+            static let VISITOR_ID_AUTHENTICATION_STATE = "authentication_state"
         }
     }
 }
