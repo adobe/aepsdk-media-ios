@@ -330,9 +330,9 @@ enum MediaConstants {
             static let MEDIA_PLAYER_NAME = "media.playerName"
             static let SDK_VERSION = "media.sdkVersion"
             static let MEDIA_VERSION = "media.libraryVersion"
-            static let ID_TYPE = "id"
-            static let ID_VALUE = "value"
-            static let AUTH_STATE = "authstate"
+            static let VISITOR_ID_TYPE = "id_type"
+            static let VISITOR_ID = "id"
+            static let VISITOR_ID_AUTHENTICATION_STATE = "authentication_state"
         }
     }
 }

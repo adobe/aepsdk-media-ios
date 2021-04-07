@@ -188,7 +188,7 @@ class MediaCollectionReportHelper {
     private static func serializeCustomerId(customerIds: [[String:Any]]) -> [String: [String: Any]] {
         var serializedCustomerIds: [String: [String: Any]] = [:]
         for customerId in customerIds {
-            if let idType = customerId[MediaConstants.MediaCollection.Session.ID_TYPE] as? String, let idValue = customerId[MediaConstants.MediaCollection.Session.ID_VALUE] as? String, let authState = customerId[MediaConstants.MediaCollection.Session.AUTH_STATE] as? Int {
+            if let idType = customerId[MediaConstants.MediaCollection.Session.VISITOR_ID_TYPE] as? String, let idValue = customerId[MediaConstants.MediaCollection.Session.VISITOR_ID] as? String, let authState = customerId[MediaConstants.MediaCollection.Session.VISITOR_ID_AUTHENTICATION_STATE] as? Int {
                 serializedCustomerIds[idType] = ["id": idValue, "authState":authState]
             }
         }

@@ -324,8 +324,8 @@ class MediaCollectionReportHelperTests: XCTestCase {
     func compareMediaHits(actual: MediaHit, expected: MediaHit) -> Bool {
         var result = true
         result = result && actual.eventType == expected.eventType
-        result = result && actual.playerTime![MediaConstants.MediaCollection.PlayerTime.TS] == expected.playerTime![MediaConstants.MediaCollection.PlayerTime.TS]
-        result = result && actual.playerTime![MediaConstants.MediaCollection.PlayerTime.PLAYHEAD] == expected.playerTime![MediaConstants.MediaCollection.PlayerTime.PLAYHEAD]
+        result = result && actual.timestamp == expected.timestamp
+        result = result && actual.playhead == expected.playhead
         result = result && actual.params?.count ?? 0 == expected.params?.count ?? 0
         result = result && actual.metadata?.count ?? 0 == expected.metadata?.count ?? 0
         result = result && actual.qoeData?.count ?? 0 == expected.qoeData?.count ?? 0

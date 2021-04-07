@@ -29,9 +29,7 @@ struct MediaHit: Codable {
     private (set) var playhead: Double = 0
 
     /// The current timestamps
-    private (set) var timestamp: TimeInterval
-
-    private (set) var playerTime: [String: Double]?
+    private (set) var timestamp: TimeInterval = 0
 
     enum CodingKeys: String, CodingKey {
         case eventType = "eventType"
@@ -48,7 +46,6 @@ struct MediaHit: Codable {
         self.qoeData = qoeData
         self.playhead = playhead
         self.timestamp = ts
-        self.playerTime = [MediaConstants.MediaCollection.PlayerTime.TS: ts, MediaConstants.MediaCollection.PlayerTime.PLAYHEAD: playhead]
     }
 
     init(from decoder: Decoder) throws {
@@ -64,10 +61,10 @@ struct MediaHit: Codable {
         if let anyCodableQoeData = try? values.decode([String: AnyCodable].self, forKey: .qoeData) {
             self.qoeData = anyCodableQoeData.asDictionary()
         }
-        self.playerTime = try values.decode([String: Double].self, forKey: CodingKeys.playerTime)
-        timestamp = playerTime?["ts"] ?? 0
-        playhead = playerTime?["playhead"] ?? 0
-
+        if let playerTime = try? values.decode([String: Double].self, forKey: .playerTime) {
+            timestamp = playerTime[MediaConstants.MediaCollection.PlayerTime.TS] ?? 0
+            playhead = playerTime[MediaConstants.MediaCollection.PlayerTime.PLAYHEAD] ?? 0
+        }
     }
 
     func encode(to encoder: Encoder) throws {
@@ -83,6 +80,10 @@ struct MediaHit: Codable {
         if let qoeData = qoeData {
             try container.encode(AnyCodable.from(dictionary: qoeData), forKey: .qoeData)
         }
+        let playerTime: [String: Double] = [
+            MediaConstants.MediaCollection.PlayerTime.TS: timestamp,
+            MediaConstants.MediaCollection.PlayerTime.PLAYHEAD: playhead
+        ]
         try container.encode(playerTime, forKey: .playerTime)
     }
 }
