@@ -15,7 +15,7 @@ import AEPCore
 import AEPServices
 @testable import AEPMedia
 
-class MediaTestBase: XCTestCase {
+class MediaFunctionalTestBase: XCTestCase {
     var media: Media!
     var mockRuntime: TestableExtensionRuntime!
 
