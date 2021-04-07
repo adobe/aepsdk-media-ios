@@ -137,7 +137,7 @@ class MediaFunctionalTestBase: XCTestCase {
             MediaConstants.Configuration.MEDIA_OVP: "ovp",
             MediaConstants.Configuration.MEDIA_CHANNEL: "channel",
             MediaConstants.Configuration.MEDIA_PLAYER_NAME: "player",
-            MediaConstants.Configuration.MEDIA_APP_VERSION: "1.0",
+            MediaConstants.Configuration.MEDIA_APP_VERSION: Media.extensionVersion,
             MediaConstants.Configuration.MEDIA_DEBUG_LOGGING: true,
             MediaConstants.Configuration.MEDIA_TRACKING_SERVER: "media-tracking-test.com",
             MediaConstants.Configuration.MEDIA_COLLECTION_SERVER: "media-collection-test.com"
@@ -204,21 +204,25 @@ class MediaFunctionalTestBase: XCTestCase {
         // verify offline or realtime
         XCTAssertEqual(isDownloadedSession, actualParams[MediaConstants.MediaCollection.Media.DOWNLOADED] as? Bool)
         // verify analytics config
-        XCTAssertEqual("analytics-test.com", actualParams[MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER] as? String)
-        XCTAssertEqual("rsid", actualParams[MediaConstants.Configuration.ANALYTICS_RSID] as? String)
-        XCTAssertEqual("orgid", actualParams[MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID] as? String)
+        XCTAssertEqual("analytics-test.com", actualParams[MediaConstants.MediaCollection.Session.ANALYTICS_TRACKING_SERVER] as? String)
+        XCTAssertEqual("rsid", actualParams[MediaConstants.MediaCollection.Session.ANALYTICS_RSID] as? String)
+        XCTAssertEqual("vid", actualParams[MediaConstants.MediaCollection.Session.ANALYTICS_VISITOR_ID] as? String)
+        XCTAssertEqual("aid", actualParams[MediaConstants.MediaCollection.Session.ANALYTICS_AID] as? String)
         // verify identity
         Identity.getExperienceCloudId { (retrievedEcid, error) in
-            XCTAssertEqual(retrievedEcid ?? "", actualParams[MediaConstants.Identity.MARKETING_VISITOR_ID] as? String)
+            XCTAssertEqual(retrievedEcid ?? "", actualParams[MediaConstants.MediaCollection.Session.VISITOR_MCUSER_ID] as? String)
         }
+        XCTAssertEqual("orgid", actualParams[MediaConstants.MediaCollection.Session.VISITOR_MCORG_ID] as? String)
         // verify mediaInfo
         XCTAssertEqual(expectedInfo[MediaConstants.MediaInfo.NAME] as? String, actualParams[MediaConstants.MediaCollection.Media.NAME] as? String)
         XCTAssertEqual(expectedInfo[MediaConstants.MediaInfo.ID] as? String, actualParams[MediaConstants.MediaCollection.Media.ID] as? String)
         XCTAssertEqual(expectedInfo[MediaConstants.MediaInfo.LENGTH] as? Double, actualParams[MediaConstants.MediaCollection.Media.LENGTH] as? Double)
-        XCTAssertEqual(expectedInfo[MediaConstants.MediaInfo.STREAM_TYPE] as? String, actualParams[MediaConstants.MediaCollection.Media.STREAM_TYPE] as? String)
-        XCTAssertEqual(expectedInfo[MediaConstants.MediaInfo.MEDIA_TYPE] as? String, actualParams[MediaConstants.MediaCollection.Media.CONTENT_TYPE] as? String)
+        XCTAssertEqual(expectedInfo[MediaConstants.MediaInfo.STREAM_TYPE] as? String, actualParams[MediaConstants.MediaCollection.Media.CONTENT_TYPE] as? String)
         XCTAssertEqual(expectedInfo[MediaConstants.MediaInfo.RESUMED] as? Bool, actualParams[MediaConstants.MediaCollection.Media.RESUME] as? Bool)
-        XCTAssertEqual(Media.extensionVersion(), actualParams[MediaConstants.MediaCollection.Media.SDK_VERSION] as? String)
+        XCTAssertEqual(Media.extensionVersion, actualParams[MediaConstants.MediaCollection.Media.SDK_VERSION] as? String)
+        // verify media config
+        XCTAssertEqual("player", actualParams[MediaConstants.Configuration.MEDIA_PLAYER_NAME] as? String)
+        XCTAssertEqual("channel", actualParams[MediaConstants.Configuration.MEDIA_CHANNEL] as? String)
     }
     
     /// Returns true if the two passed in dictionaries are equal, false otherwise
