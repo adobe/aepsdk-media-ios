@@ -58,13 +58,7 @@ class MediaCollectionReportHelper {
     ///   - state: Current Media state
     ///   - hit: Media hit to be send
     ///- Returns: The payload for Media hit
-    static func generateHitReport(state: MediaState, hit: [MediaHit]) -> String? {
-        
-        guard let hit = hit.first else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to generate hit report, MediaHit Array is empty.")
-            return nil
-        }
-        
+    static func generateHitReport(state: MediaState, hit: MediaHit) -> String? {
         let updatedHit = updateMediaHit(state: state, mediaHit: hit)
         if let data = try? JSONEncoder().encode(updatedHit) {
             return String(data: data, encoding: .utf8)
@@ -194,7 +188,7 @@ class MediaCollectionReportHelper {
     private static func serializeCustomerId(customerIds: [[String:Any]]) -> [String: [String: Any]] {
         var serializedCustomerIds: [String: [String: Any]] = [:]
         for customerId in customerIds {
-            if let idType = customerId[MediaConstants.MediaCollection.Session.ID_TYPE] as? String, let idValue = customerId[MediaConstants.MediaCollection.Session.ID_VALUE] as? String, let authState = customerId[MediaConstants.MediaCollection.Session.AUTH_STATE] as? Int {
+            if let idType = customerId[MediaConstants.MediaCollection.Session.VISITOR_ID_TYPE] as? String, let idValue = customerId[MediaConstants.MediaCollection.Session.VISITOR_ID] as? String, let authState = customerId[MediaConstants.MediaCollection.Session.VISITOR_ID_AUTHENTICATION_STATE] as? Int {
                 serializedCustomerIds[idType] = ["id": idValue, "authState":authState]
             }
         }

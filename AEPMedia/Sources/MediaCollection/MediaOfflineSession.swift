@@ -67,7 +67,7 @@ class MediaOfflineSession: MediaSession {
         }
 
         let urlString = MediaCollectionReportHelper.getTrackingURL(host: state.getMediaCollectionServer())
-        let body = MediaCollectionReportHelper.generateHitReport(state: state, hit: hits) ?? ""
+        let body = MediaCollectionReportHelper.generateDownloadReport(state: state, hits: hits) ?? ""
 
         guard !urlString.isEmpty, !body.isEmpty else {
             Log.debug(label: LOG_TAG, "\(#function) - Could not generate downloaded content report from persisted hits for session (\(id)), Clearing persisted pings")
@@ -83,9 +83,9 @@ class MediaOfflineSession: MediaSession {
 
         isReportingSession = true
         let networkService = ServiceProvider.shared.networkService
-        let networkrequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: MediaConstants.Networking.REQUEST_HEADERS, connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
+        let networkRequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: MediaConstants.Networking.REQUEST_HEADERS, connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
 
-        networkService.connectAsync(networkRequest: networkrequest) {[weak self] connection in
+        networkService.connectAsync(networkRequest: networkRequest) {[weak self] connection in
             self?.dispatchQueue.async {
                 if let error = connection.error {
                     //Handle the network Error case

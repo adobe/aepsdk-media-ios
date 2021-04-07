@@ -17,7 +17,7 @@ class MediaRealTimeSession: MediaSession {
 
     private let LOG_TAG = "MediaRealTimeSession"
     private static let MAX_ALLOWED_DURATION_BETWEEN_HITS: TimeInterval = 60
-    private static let MAX_ALLOWED_FAILURE = 2 //The maximun number of times SDK retries to send hit on failure, after that drop the hit.
+    private static let MAX_ALLOWED_FAILURE = 2 //The maximum number of times SDK retries to send hit on failure, after that drop the hit.
 
     #if DEBUG
         var hits: [MediaHit] = []
@@ -101,8 +101,8 @@ class MediaRealTimeSession: MediaSession {
         isSendingHit = true
 
         let networkService = ServiceProvider.shared.networkService
-        let networkrequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: MediaConstants.Networking.REQUEST_HEADERS, connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
-        networkService.connectAsync(networkRequest: networkrequest) {[weak self] connection in
+        let networkRequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: MediaConstants.Networking.REQUEST_HEADERS, connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
+        networkService.connectAsync(networkRequest: networkRequest) {[weak self] connection in
             self?.dispatchQueue.async {
 
                 guard connection.error == nil, let responseCode = connection.response?.statusCode, MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(responseCode) else {
@@ -139,7 +139,7 @@ class MediaRealTimeSession: MediaSession {
             urlString = MediaCollectionReportHelper.getTrackingURLForEvents(host: state.getMediaCollectionServer(), sessionId: sessionId)
         }
 
-        let body = MediaCollectionReportHelper.generateHitReport(state: state, hit: [hit]) ?? ""
+        let body = MediaCollectionReportHelper.generateHitReport(state: state, hit: hit) ?? ""
         Log.debug(label: LOG_TAG, "trySendHit - Generated url (\(urlString)), Generated body (\(body))")
         return (urlString, body)
     }
@@ -171,7 +171,7 @@ class MediaRealTimeSession: MediaSession {
             trySendHit()
             return
         }
-        if !isSessionActive { //Session is ended
+        if !isSessionActive { //Session has ended
             sessionEndHandler?()
         }
     }
