@@ -39,10 +39,14 @@ class MediaSession {
     func isReadyToSendHit() -> Bool {
 
         guard state.privacyStatus == .optedIn else {
+            Log.debug(label: LOG_TAG, "\(#function) Unable to send MediaHit, privacy status is not optedin.")
             return false
         }
 
-        //TODO: implement rest of the conditions.
+        guard MediaCollectionReportHelper.hasAllTrackingParams(state: state) else {
+            Log.debug(label: LOG_TAG, "Unable to send MediaHit. Tracking parameter is missing.")
+            return false
+        }
 
         return true
     }
