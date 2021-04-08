@@ -720,6 +720,7 @@
 				3D663AA725FAD85200E96250 /* MockMediaSession.swift in Sources */,
 				D6162357261BBE3D0045D590 /* MediaHitsDatabaseTests.swift in Sources */,
 				AC36EC4E25C9F13100A37345 /* TestableExtensionRuntime.swift in Sources */,
+				D62E1E97261D290D00635977 /* MediaEventTrackerTests.swift in Sources */,
 				3D663AAF25FAF5FC00E96250 /* MockNetworking.swift in Sources */,
 				D616235C261BBE3D0045D590 /* MediaEventTrackerTests.swift in Sources */,
 				D6162356261BBE3D0045D590 /* MediaOfflineSessionTests.swift in Sources */,
@@ -732,6 +733,7 @@
 				D6162358261BBE3D0045D590 /* Media+PublicAPITests.swift in Sources */,
 				3D663A9725FACB3800E96250 /* MockMediaDBService.swift in Sources */,
 				D6DAB4EA25FAD0A800260DA8 /* FakeMediaEventTracker.swift in Sources */,
+				D62E1E90261D290D00635977 /* MediaPublicTrackerTests.swift in Sources */,
 				D634A04C25DEF40D001EC086 /* FakeMediaHitProcessor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -744,6 +746,7 @@
 				D62E1E4E261BD6B200635977 /* MediaRealtimeSessionTests.swift in Sources */,
 				D6162364261BBE490045D590 /* MediaExtensionTests.swift in Sources */,
 				D66F0B6B2616929C0018E779 /* FakeMediaService.swift in Sources */,
+				D62E1EB0261D298C00635977 /* MediaFunctionalTestBase.swift in Sources */,
 				D66F0B712616929C0018E779 /* MockExtension.swift in Sources */,
 				D6162370261BBF020045D590 /* FakeMediaHitsDatabase.swift in Sources */,
 				D66F0B722616929C0018E779 /* MockMediaSession.swift in Sources */,
