@@ -67,7 +67,7 @@ class MediaContext {
         adMetadata = metadata
     }
 
-    /// Clears AdInfo and metadata.
+    /// Clears `AdInfo` and metadata.
     func clearAd() {
         adInfo = nil
         adMetadata = [:]
@@ -82,7 +82,7 @@ class MediaContext {
         chapterMetadata = metadata
     }
 
-    /// Clears ChapterInfo and metadata.
+    /// Clears `ChapterInfo` and metadata.
     func clearChapter() {
         chapterInfo = nil
         chapterMetadata = [:]
@@ -120,7 +120,7 @@ class MediaContext {
         }
     }
 
-    /// Returns if the player is in a particular `MediaPlaybackState`.
+    /// Returns `true` if the player is in a particular `MediaPlaybackState`.
     ///- Parameters:
     ///    - state: MediaPlaybackState value.
     func isInMediaPlaybackState(state: MediaPlaybackState) -> Bool {
@@ -137,7 +137,7 @@ class MediaContext {
         return retVal
     }
 
-    /// Returns true the player is in seeking, buffering state or not in play state.
+    /// Returns `true` if the player is in seeking, buffering state or not in play state.
     func isIdle() -> Bool {
         return !isInMediaPlaybackState(state: .Play) ||
             isInMediaPlaybackState(state: .Seek) ||
@@ -177,14 +177,14 @@ class MediaContext {
         return true
     }
 
-    /// Returns if the state is actively being tracked or not.
+    /// Returns `true` if the state is actively being tracked or not.
     ///- Parameters:
     ///    - info: `StateInfo` object that contains custom state name.
     func isInState(info: StateInfo) -> Bool {
         return trackedStates[info.stateName] ?? false
     }
 
-    /// Returns if the state is actively being tracked or is inactive but had been already tracked.
+    /// Returns `true` if the state is actively being tracked or is inactive but had been already tracked.
     ///- Parameters:
     ///    - info: `StateInfo` object that contains custom state name
     func hasTrackedState(info: StateInfo) -> Bool {
@@ -208,7 +208,7 @@ class MediaContext {
         return activeStates
     }
 
-    /// Returns if the  maximum allowed number of custom states to be tracked in a session has been reached.
+    /// Returns `true` if the maximum allowed number of custom states to be tracked in a session has been reached.
     func didReachMaxStateLimit() -> Bool {
         return trackedStates.count >= MediaConstants.StateInfo.STATE_LIMIT
     }

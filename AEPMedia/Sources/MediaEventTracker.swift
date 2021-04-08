@@ -150,9 +150,9 @@ class MediaEventTracker: MediaEventTracking {
         mediaIdleStartTS = TimeInterval()
     }
 
-    /// Handles all the track API calls
+    /// Handles all the track API calls.
     ///- Parameters:
-    ///    - eventData: EventData for the track API consisting of eventName, playhead, timeStamp, params and metadata
+    ///    - eventData: EventData for the track API consisting of eventName, playhead, timeStamp, params and metadata.
     @discardableResult
     func track(eventData: [String: Any]?) -> Bool {
         guard let eventData = eventData else {
@@ -803,7 +803,7 @@ class MediaEventTracker: MediaEventTracking {
         return true
     }
 
-    /// Handle content start (play) ping. Sends 1 play ping per session after detecting first second of main content playback
+    /// Handle content start (play) ping. Sends 1 play ping per session after detecting the first second of main content playback
     ///- Parameters:
     ///    - rule: EventName corresponding to API call
     ///    - context: Data passed with the corresponding API call
