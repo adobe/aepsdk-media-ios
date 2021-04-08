@@ -22,11 +22,7 @@ class MediaRealTimeSessionTests: XCTestCase {
         let eventType = MediaConstants.MediaCollection.EventType.SESSION_START
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         let mediaState = MediaState()
-        let sharedData = [MediaConstants.Configuration.SHARED_STATE_NAME: [MediaConstants.Configuration.MEDIA_COLLECTION_SERVER: collectionServerUrl, MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER: "analytics-test.com",
-                                                                           MediaConstants.Configuration.ANALYTICS_RSID: "rsid",
-                                                                           MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: "optedin",
-                                                                           MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID: "orgid",
-                                                                           MediaConstants.Configuration.MEDIA_TRACKING_SERVER: "media-tracking-test.com"]]
+        let sharedData = [MediaConstants.Configuration.SHARED_STATE_NAME: TestConstants.configSharedState]
         mediaState.update(dataMap: sharedData)
         let identityData = [MediaConstants.Identity.SHARED_STATE_NAME: [MediaConstants.Identity.MARKETING_VISITOR_ID: "ecid"]]
         mediaState.update(dataMap: identityData)

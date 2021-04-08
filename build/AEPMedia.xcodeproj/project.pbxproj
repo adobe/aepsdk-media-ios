@@ -86,6 +86,8 @@
 		D6DAB46B25F9822800260DA8 /* SQLiteWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB46A25F9822800260DA8 /* SQLiteWrapper.swift */; };
 		D6DAB4EA25FAD0A800260DA8 /* FakeMediaEventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB4E625FAD06E00260DA8 /* FakeMediaEventTracker.swift */; };
 		D6DAB50425FBD4FD00260DA8 /* FakeMediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB50325FBD4FD00260DA8 /* FakeMediaService.swift */; };
+		D6E82261261FB0280092C7DE /* TestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E82260261FB0280092C7DE /* TestConstants.swift */; };
+		D6E82262261FB0280092C7DE /* TestConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6E82260261FB0280092C7DE /* TestConstants.swift */; };
 		DC89B4423DA2A9700E635F58 /* Pods_AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A13A8FBEC73F82AC2D6067A8 /* Pods_AEPMedia.framework */; };
 /* End PBXBuildFile section */
 
@@ -193,6 +195,7 @@
 		D6DAB46A25F9822800260DA8 /* SQLiteWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteWrapper.swift; sourceTree = "<group>"; };
 		D6DAB4E625FAD06E00260DA8 /* FakeMediaEventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeMediaEventTracker.swift; sourceTree = "<group>"; };
 		D6DAB50325FBD4FD00260DA8 /* FakeMediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeMediaService.swift; sourceTree = "<group>"; };
+		D6E82260261FB0280092C7DE /* TestConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
 		DA7A230EB2C613CA8DFB6B53 /* Pods-AEPMedia.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMedia.debug.xcconfig"; path = "Target Support Files/Pods-AEPMedia/Pods-AEPMedia.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -327,6 +330,7 @@
 				D6DAB50325FBD4FD00260DA8 /* FakeMediaService.swift */,
 				D66F0AA92613A4E80018E779 /* FakeMediaHitsDatabase.swift */,
 				3D2213CD2615473C00C8121F /* MockMediaOfflineHits.swift */,
+				D6E82260261FB0280092C7DE /* TestConstants.swift */,
 			);
 			path = TestHelpers;
 			sourceTree = "<group>";
@@ -720,8 +724,8 @@
 				3D663AA725FAD85200E96250 /* MockMediaSession.swift in Sources */,
 				D6162357261BBE3D0045D590 /* MediaHitsDatabaseTests.swift in Sources */,
 				AC36EC4E25C9F13100A37345 /* TestableExtensionRuntime.swift in Sources */,
-				D62E1E97261D290D00635977 /* MediaEventTrackerTests.swift in Sources */,
 				3D663AAF25FAF5FC00E96250 /* MockNetworking.swift in Sources */,
+				D6E82261261FB0280092C7DE /* TestConstants.swift in Sources */,
 				D616235C261BBE3D0045D590 /* MediaEventTrackerTests.swift in Sources */,
 				D6162356261BBE3D0045D590 /* MediaOfflineSessionTests.swift in Sources */,
 				D662CF322600771F0018AEFC /* TestHelpers.swift in Sources */,
@@ -733,7 +737,6 @@
 				D6162358261BBE3D0045D590 /* Media+PublicAPITests.swift in Sources */,
 				3D663A9725FACB3800E96250 /* MockMediaDBService.swift in Sources */,
 				D6DAB4EA25FAD0A800260DA8 /* FakeMediaEventTracker.swift in Sources */,
-				D62E1E90261D290D00635977 /* MediaPublicTrackerTests.swift in Sources */,
 				D634A04C25DEF40D001EC086 /* FakeMediaHitProcessor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -746,11 +749,11 @@
 				D62E1E4E261BD6B200635977 /* MediaRealtimeSessionTests.swift in Sources */,
 				D6162364261BBE490045D590 /* MediaExtensionTests.swift in Sources */,
 				D66F0B6B2616929C0018E779 /* FakeMediaService.swift in Sources */,
-				D62E1EB0261D298C00635977 /* MediaFunctionalTestBase.swift in Sources */,
 				D66F0B712616929C0018E779 /* MockExtension.swift in Sources */,
 				D6162370261BBF020045D590 /* FakeMediaHitsDatabase.swift in Sources */,
 				D66F0B722616929C0018E779 /* MockMediaSession.swift in Sources */,
 				D66F0B762616929C0018E779 /* TestableExtensionRuntime.swift in Sources */,
+				D6E82262261FB0280092C7DE /* TestConstants.swift in Sources */,
 				D66F0B772616929C0018E779 /* MockNetworking.swift in Sources */,
 				D66F0B782616929C0018E779 /* TestHelpers.swift in Sources */,
 				D62E1E76261CEF6F00635977 /* MockMediaOfflineHits.swift in Sources */,
