@@ -32,4 +32,5 @@ target 'MediaSampleApp' do
   pod 'AEPIdentity'
   pod 'AEPAnalytics'
   pod 'AEPAssurance'
+  pod 'ACPCore', :git => 'https://github.com/adobe/aepsdk-compatibility-ios.git', :branch => 'main'
 end

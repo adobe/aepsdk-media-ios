@@ -16,15 +16,8 @@ import AEPMedia
 
 
 class VideoAnalyticsProvider: NSObject{
-    let PLAYER_NAME = "iOS basic media player"
     let VIDEO_ID    = "bipbop"
     let VIDEO_NAME  = "Bip bop video"
-
-    let HEARTBEAT_TRACKING_SERVER    = "obumobile1.hb.omtrdc.net"
-    let HEARTBEAT_CHANNEL            = "test-channel"
-    let HEARTBEAT_OVP_NAME           = "test-ovp"
-    let HEARTBEAT_APP_VERSION        = "VHL2 Sample Player v1.0"
-
     let VIDEO_LENGTH = 1800
 
     let logTag = "#VideoAnalyticsProvider"
@@ -32,13 +25,16 @@ class VideoAnalyticsProvider: NSObject{
     var _tracker: MediaTracker!
     var _pendingSessionStart: Bool!
     var _pendingPlay: Bool!
+    
+    
+    
 
     @objc func initWithPlayer(player: VideoPlayer) {
         _player = player
         
         var config: [String: Any] = [:]
         config[AEPMediaConstants.AEPMediaKeyConfigChannel] = "custom-swift-channel" // Override channel
-        config[AEPMediaConstants.AEPMediaKeyConfigDownloadedContent] = true    // Creates downloaded content tracker configured from launch
+        config[AEPMediaConstants.AEPMediaKeyConfigDownloadedContent] = false    // Creates downloaded content tracker configured from launch
        
         _tracker = Media.createTrackerWith(config: config);
         setupPlayerNotifications()
@@ -57,7 +53,6 @@ class VideoAnalyticsProvider: NSObject{
         let playhead = _player.getCurrentPlaybackTime()
         NSLog("\(logTag) updatePlayhead() - updated playhead value to %f", playhead)
         _tracker.updateCurrentPlayhead(time: playhead)
-        //return _playerDelegate.getCurrentPlaybackTime()
     }
 
     func destroy() {
@@ -77,9 +72,8 @@ class VideoAnalyticsProvider: NSObject{
         //customMetadata
         videoMetadata["isUserLoggedIn"] = "false"
         videoMetadata["tvStation"] = "Sample TV station"
-
-        _tracker.trackSessionStart(mediaObject, data: videoMetadata)
-
+        
+        _tracker.trackSessionStart(info: mediaObject!, metadata: videoMetadata)
     }
 
     @objc func onMainVideoUnloaded(notification: NSNotification)  {
@@ -89,12 +83,12 @@ class VideoAnalyticsProvider: NSObject{
 
     @objc func onPlay(notification: NSNotification)  {
         NSLog("\(logTag) onPlay()")
-        _tracker.trackPlay()
+        //_tracker.trackPlay()
     }
 
     @objc func onStop(notification: NSNotification)  {
         NSLog("\(logTag) onStop()")
-        _tracker.trackPause()
+        //_tracker.trackPause()
     }
 
     @objc func onComplete(notification: NSNotification)  {
@@ -119,14 +113,14 @@ class VideoAnalyticsProvider: NSObject{
 
         let chapterData = notification.userInfo
 
-        let chapterObject = Media.createChapterObject(withName: chapterData!["name"] as! String, position: chapterData!["position"] as! Double, length: chapterData!["length"] as! Double, startTime: chapterData!["time"] as! Double)
-
+        let chapterObject = Media.createChapterObjectWith(name: chapterData!["name"] as! String, position: chapterData!["position"] as! Int, length: chapterData!["length"] as! Double, startTime: chapterData!["time"] as! Double)
+       
         _tracker.trackEvent(event: MediaEvent.ChapterStart, info: chapterObject, metadata: chapterDictionary)
     }
 
     @objc func onChapterComplete(notification: NSNotification)  {
         NSLog("\(logTag) onChapterComplete()")
-        _tracker.trackEvent(event: MediaEvent.ChapterComplete, info: nil, metadata: nil)
+       _tracker.trackEvent(event: MediaEvent.ChapterComplete, info: nil, metadata: nil)
     }
 
     @objc func onAdStart(notification: NSNotification)  {
@@ -135,10 +129,10 @@ class VideoAnalyticsProvider: NSObject{
         let adBreakData = notification.userInfo!["adbreak"] as! [String: Any]
         let adData = notification.userInfo!["ad"] as! [String: Any]
 
-        let adBreakObject = Media.createAdBreakObjectWith(Name: adBreakData["name"] as! String, position: adBreakData["position"] as! Double, startTime: adBreakData["time"] as! Double)
-
-        let adObject = Media.createAdObjectWith(Name: adData["name"] as! String, adId: adData["id"] as! String, position: adData["position"] as! Double, length: adData["length"] as! Double)
-
+        let adBreakObject = Media.createAdBreakObjectWith(name: adBreakData["name"] as! String, position: adBreakData["position"] as! Int, startTime: adBreakData["time"] as! Double)
+       
+        let adObject = Media.createAdObjectWith(name: adData["name"] as! String, adId: adData["id"] as! String, position: adData["position"] as! Int, length: adData["length"] as! Double)
+       
         var adMetadata:[String:String] = [:]
        //standardAdMetadata
         adMetadata[AEPMediaConstants.AEPAdMetadataKeyAdvertiser] = "Sample Advertiser"
@@ -148,10 +142,10 @@ class VideoAnalyticsProvider: NSObject{
        adMetadata["affiliate"] = "Sample affiliate"
 
         //AdBreakStart
-        _tracker.trackEvent(event: MediaEvent.AdBreakStart, info: adBreakObject, metadata: nil)
+       _tracker.trackEvent(event: MediaEvent.AdBreakStart, info: adBreakObject, metadata: nil)
 
         //AdStart
-        _tracker.trackEvent(event: MediaEvent.adStart, info: adObject, metadata: adMetadata)
+       _tracker.trackEvent(event: MediaEvent.AdStart, info: adObject, metadata: adMetadata)
     }
 
     @objc func onAdComplete(notification: NSNotification)  {
@@ -216,8 +210,7 @@ class VideoAnalyticsProvider: NSObject{
          NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onMuteUpdate), name: NSNotification.Name(rawValue: PLAYER_EVENT_MUTE_CHANGE), object: nil)
 
     }
+    
 }
-
-
 
 

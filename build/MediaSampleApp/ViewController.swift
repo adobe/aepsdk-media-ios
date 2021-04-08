@@ -11,13 +11,17 @@
  */
 
 import UIKit
+import AEPAssurance
+
 
 class ViewController: UIViewController {
     var adLabel: UILabel!
     var videoAnalyticsProvider: VideoAnalyticsProvider?
     var videoPlayer: VideoPlayer!
     
-    override func viewDidAppear(_ animated: Bool) {
+    var assuranceSessionUrl: String = "https://aepmedia/?adb_validation_sessionid=0bfdd010-b944-4874-9773-7cca2738aff9"
+        
+    override func viewWillAppear(_ animated: Bool) {
         let videoUrl = "http://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"
         
         var videoInfo: [String: Any] = [:]
@@ -64,9 +68,9 @@ class ViewController: UIViewController {
     }
     
     func addNotificationHandlers() {
-//        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdStart), name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_START), object: nil)
-//
-//        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdComplete), name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_COMPLETE), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdStart), name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_START), object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdComplete), name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_COMPLETE), object: nil)
     }
     
     @objc func onAdStart(notification: NSNotification)  {
@@ -90,7 +94,17 @@ class ViewController: UIViewController {
         reset()
     }
     
+    @IBOutlet weak var assuranceUrl: UITextField!
     
+    @IBAction func startAssurnaceSession (_ sender: Any) {
+        if let url = URL(string: assuranceUrl.text ?? ""){
+          AEPAssurance.startSession(url)
+        }
+    }
+
+//    @IBAction func startAssurnaceSession (_ sender: Any) {
+//        if let url = URL(string: self.assuranceSessionUrl){
+//          AEPAssurance.startSession(url)
+//       }
+//    }
 }
-
-

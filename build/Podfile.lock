@@ -1,7 +1,11 @@
 PODS:
-  - ACPCore (2.9.3):
-    - ACPCore/main (= 2.9.3)
-  - ACPCore/main (2.9.3)
+  - ACPCore (2.9.9):
+    - AEPCore
+    - AEPIdentity
+    - AEPLifecycle
+    - AEPRulesEngine
+    - AEPServices
+    - AEPSignal
   - AEPAnalytics (3.0.1):
     - AEPCore
     - AEPServices
@@ -19,8 +23,11 @@ PODS:
     - AEPCore (= 3.1.0)
   - AEPRulesEngine (1.0.0)
   - AEPServices (3.1.0)
+  - AEPSignal (3.1.0):
+    - AEPCore (= 3.1.0)
 
 DEPENDENCIES:
+  - ACPCore (from `https://github.com/adobe/aepsdk-compatibility-ios.git`, branch `main`)
   - AEPAnalytics
   - AEPAssurance
   - AEPCore
@@ -31,7 +38,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - ACPCore
     - AEPAnalytics
     - AEPAssurance
     - AEPCore
@@ -39,9 +45,20 @@ SPEC REPOS:
     - AEPLifecycle
     - AEPRulesEngine
     - AEPServices
+    - AEPSignal
+
+EXTERNAL SOURCES:
+  ACPCore:
+    :branch: main
+    :git: https://github.com/adobe/aepsdk-compatibility-ios.git
+
+CHECKOUT OPTIONS:
+  ACPCore:
+    :commit: deec3800bce117f7f760eb6644af4559489c2aae
+    :git: https://github.com/adobe/aepsdk-compatibility-ios.git
 
 SPEC CHECKSUMS:
-  ACPCore: 5f00fcf7aba597b29b359e4c14f7f4f1f95503f3
+  ACPCore: 67e4b855bf16cfb6a63024a4ddb73d15c0fd30e5
   AEPAnalytics: 13353b3ea333be0af7cfc4845830d87d360726e2
   AEPAssurance: c9c21b7e57bf993db210766631db2ef3732d4fa4
   AEPCore: 026568b04d8c302ad801a6b4ed6ec3c160817ef6
@@ -49,7 +66,8 @@ SPEC CHECKSUMS:
   AEPLifecycle: 59b2de8c96a93647a258a982f1d5b2e16a425360
   AEPRulesEngine: 8bbc694fce6900cd33b2496c7d4b33ee2eeffc46
   AEPServices: cc1ec2987185ab01d62f6d41be0bb94a1b892efb
+  AEPSignal: 68dce891ed648057d0282b137040a5766a95c963
 
-PODFILE CHECKSUM: 489df598737ae58732504387a7cc769084ebd8c6
+PODFILE CHECKSUM: 27421ba85f63f9eeb0cfafeea57b618cd9e84038
 
 COCOAPODS: 1.10.0

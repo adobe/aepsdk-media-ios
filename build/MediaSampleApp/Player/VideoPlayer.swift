@@ -39,7 +39,7 @@ class VideoPlayer: AVPlayer {
     
     var _isInChapter: Bool!
     var _isInAd: Bool!
-    var _chapterPosition:Double!
+    var _chapterPosition:Int!
     
     
     let AD_START_POS:Double = 15
@@ -284,11 +284,11 @@ class VideoPlayer: AVPlayer {
         
         let adBreakInfo = ["name": "First AD-Break",
                            "time": AD_START_POS,
-                           "position": 1 as Double] as [String : Any]
+                           "position": 1 as Int] as [String : Any]
         
         let adInfo = ["name": "Sample AD",
                       "id": "001",
-                      "position": 1 as Double,
+                      "position": 1 as Int,
                       "length": AD_LENGTH] as [String : Any]
         
         let userInfo = [ "adbreak": adBreakInfo,

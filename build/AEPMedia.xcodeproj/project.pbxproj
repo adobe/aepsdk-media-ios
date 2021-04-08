@@ -25,7 +25,8 @@
 		3D663AAF25FAF5FC00E96250 /* MockNetworking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D663AAE25FAF5FC00E96250 /* MockNetworking.swift */; };
 		3D9D531F25D5ED3E00F33EB7 /* MediaProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9D531E25D5ED3E00F33EB7 /* MediaProcessor.swift */; };
 		8392622CD75401FB7D26D412 /* Pods_AEPMediaUnitTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2E9CBDC7450F0B88A42FD8E9 /* Pods_AEPMediaUnitTests.framework */; };
-		8C5E99545029552DC5DE0FE4 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		8C5E99545029552DC5DE0FE4 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		9501321E261E77C4006F4D70 /* MediaConstants+Public.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9501321D261E77C4006F4D70 /* MediaConstants+Public.swift */; };
 		95D03309261D35AE0003AFE1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D03308261D35AE0003AFE1 /* AppDelegate.swift */; };
 		95D0330B261D35AE0003AFE1 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D0330A261D35AE0003AFE1 /* SceneDelegate.swift */; };
 		95D0330D261D35AE0003AFE1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D0330C261D35AE0003AFE1 /* ViewController.swift */; };
@@ -89,7 +90,7 @@
 		D66F0B7E2616929C0018E779 /* FakeMediaEventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB4E625FAD06E00260DA8 /* FakeMediaEventTracker.swift */; };
 		D66F0B7F2616929C0018E779 /* FakeMediaHitProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D634A04B25DEF40D001EC086 /* FakeMediaHitProcessor.swift */; };
 		D66F0B812616929C0018E779 /* AEPMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2EFF1B5125BF57FC00375965 /* AEPMedia.framework */; };
-		D66F0B822616929C0018E779 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		D66F0B822616929C0018E779 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		D6DAB46725F97E6200260DA8 /* MediaHitsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB46625F97E6200260DA8 /* MediaHitsDatabase.swift */; };
 		D6DAB46B25F9822800260DA8 /* SQLiteWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB46A25F9822800260DA8 /* SQLiteWrapper.swift */; };
 		D6DAB4EA25FAD0A800260DA8 /* FakeMediaEventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6DAB4E625FAD06E00260DA8 /* FakeMediaEventTracker.swift */; };
@@ -142,6 +143,7 @@
 		4F22D74BCECCF533CCCF7F3E /* Pods-MediaSampleApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediaSampleApp.debug.xcconfig"; path = "Target Support Files/Pods-MediaSampleApp/Pods-MediaSampleApp.debug.xcconfig"; sourceTree = "<group>"; };
 		55639DE390B9DDE2985FCEB2 /* Pods-AEPMediaFunctionalTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AEPMediaFunctionalTests.debug.xcconfig"; path = "Target Support Files/Pods-AEPMediaFunctionalTests/Pods-AEPMediaFunctionalTests.debug.xcconfig"; sourceTree = "<group>"; };
 		8839DC692957BB9AEF3F478E /* Pods_AEPMedia.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AEPMedia.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9501321D261E77C4006F4D70 /* MediaConstants+Public.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MediaConstants+Public.swift"; sourceTree = "<group>"; };
 		95D03306261D35AE0003AFE1 /* MediaSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MediaSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95D03308261D35AE0003AFE1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		95D0330A261D35AE0003AFE1 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -231,7 +233,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2EFF1B5B25BF57FC00375965 /* AEPMedia.framework in Frameworks */,
-				8C5E99545029552DC5DE0FE4 /* BuildFile in Frameworks */,
+				8C5E99545029552DC5DE0FE4 /* (null) in Frameworks */,
 				8392622CD75401FB7D26D412 /* Pods_AEPMediaUnitTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -249,7 +251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D66F0B812616929C0018E779 /* AEPMedia.framework in Frameworks */,
-				D66F0B822616929C0018E779 /* BuildFile in Frameworks */,
+				D66F0B822616929C0018E779 /* (null) in Frameworks */,
 				A813B3DCABC179F61EBE68DD /* Pods_AEPMediaFunctionalTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -406,6 +408,7 @@
 				AC36EC3725C9F11E00A37345 /* AEPMedia.h */,
 				D6658AD825F2D9C100D8593E /* Double+Media.swift */,
 				AC9E4687260D62820087FFF8 /* Event+Media.swift */,
+				9501321D261E77C4006F4D70 /* MediaConstants+Public.swift */,
 				AC36EC3625C9F11E00A37345 /* Media.swift */,
 				AC36EC3825C9F11E00A37345 /* Media+PublicAPI.swift */,
 				AC36EC3925C9F11E00A37345 /* MediaConstants.swift */,
@@ -831,6 +834,7 @@
 				AC9E4688260D62820087FFF8 /* MediaHit.swift in Sources */,
 				D662CF2826006FE10018AEFC /* MediaEventTracking.swift in Sources */,
 				2E20D4A725CA154C00B5CCB8 /* MediaRuleEngine.swift in Sources */,
+				9501321E261E77C4006F4D70 /* MediaConstants+Public.swift in Sources */,
 				AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */,
 				D6DAB46725F97E6200260DA8 /* MediaHitsDatabase.swift in Sources */,
 				2E20D4A625CA154C00B5CCB8 /* MediaRule.swift in Sources */,
