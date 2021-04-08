@@ -125,4 +125,16 @@ class MediaInfo: Equatable {
 
         return mediaInfoMap
     }
+
+    func toMediaCollectionHitMap() -> [String: Any] {
+        var mediaCollectionHitMap: [String: Any] = [:]
+        mediaCollectionHitMap[MediaConstants.MediaCollection.Media.ID] = self.id
+        mediaCollectionHitMap[MediaConstants.MediaCollection.Media.NAME] = self.name
+        mediaCollectionHitMap[MediaConstants.MediaCollection.Media.LENGTH] = self.length
+        mediaCollectionHitMap[MediaConstants.MediaCollection.Media.CONTENT_TYPE] = self.streamType
+        mediaCollectionHitMap[MediaConstants.MediaCollection.Media.STREAM_TYPE] = self.mediaType.rawValue
+        mediaCollectionHitMap[MediaConstants.MediaCollection.Media.RESUME] = self.resumed
+
+        return mediaCollectionHitMap
+    }
 }

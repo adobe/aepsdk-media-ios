@@ -76,4 +76,14 @@ class AdBreakInfo: Equatable {
 
         return adBreakInfoMap
     }
+
+    func toMediaCollectionHitMap() -> [String: Any] {
+        var mediaCollectionHitMap: [String: Any] = [:]
+        mediaCollectionHitMap[MediaConstants.MediaCollection.AdBreak.POD_FRIENDLY_NAME] = self.name
+        mediaCollectionHitMap[MediaConstants.MediaCollection.AdBreak.POD_INDEX] = self.position
+        mediaCollectionHitMap[MediaConstants.MediaCollection.AdBreak.POD_SECOND] = self.startTime
+
+        return mediaCollectionHitMap
+    }
+
 }

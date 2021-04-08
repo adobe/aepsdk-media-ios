@@ -75,9 +75,9 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processMediaStart()
         // verify
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
-        let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
+        let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let expectedHit = MediaHit.init(eventType: "sessionStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: metadata, qoeData: emptyQoeData)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
@@ -90,9 +90,9 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processMediaStart()
         // verify
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = false
-        let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
+        let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let expectedHit = MediaHit.init(eventType: "sessionStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: metadata, qoeData: emptyQoeData)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
@@ -105,10 +105,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processMediaStart()
         // verify
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.CHANNEL] = "test-channel"
-        let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
+        let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let expectedHit = MediaHit.init(eventType: "sessionStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: metadata, qoeData: emptyQoeData)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
@@ -118,10 +118,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // test
         hitGenerator.processMediaStart(forceResume: true)
         // verify
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
-        let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
+        let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let expectedHit = MediaHit.init(eventType: "sessionStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: metadata, qoeData: emptyQoeData)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedHit, generatedHit)
@@ -248,10 +248,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let chapterMetadata = ["k1": "v1"]
         mediaContext.setChapter(info: chapterInfo!, metadata: chapterMetadata)
 
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
-        let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
+        let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
 
         mediaContext.enterPlaybackState(state: .Play)
         // test
@@ -263,19 +263,19 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let mediaStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedMediaStartHit, mediaStartHit)
         // verify chapter start hit
-        let expectedChapterParams = MediaCollectionHelper.extractChapterParams(mediaContext: mediaContext)
+        let expectedChapterParams = MediaCollectionHelper.generateChapterParams(chapterInfo: mediaContext.chapterInfo)
         let expectedChapterMetadata = mediaContext.chapterMetadata
         let expectedChapterStartHit = MediaHit.init(eventType: "chapterStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: expectedChapterParams, customMetadata: expectedChapterMetadata, qoeData: emptyQoeData)
         let chapterStartHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedChapterStartHit, chapterStartHit)
         // verify ad break start hit
-        let expectedAdBreakParams = MediaCollectionHelper.extractAdBreakParams(mediaContext: mediaContext)
+        let expectedAdBreakParams = MediaCollectionHelper.generateAdBreakParams(adBreakInfo: mediaContext.adBreakInfo)
         let expectedAdBreakStartHit = MediaHit.init(eventType: "adBreakStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: expectedAdBreakParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
         let adBreakStartHit = hitProcessor.getHitFromActiveSession(index: 2)
         XCTAssertEqual(adBreakStartHit, expectedAdBreakStartHit)
         // verify ad start
-        let expectedAdParams = MediaCollectionHelper.extractAdParams(mediaContext: mediaContext)
-        let expectedAdMetadata = MediaCollectionHelper.extractAdMetadata(mediaContext: mediaContext)
+        let expectedAdParams = MediaCollectionHelper.generateAdParams(adInfo: mediaContext.adInfo, adMetadata: mediaContext.adMetadata)
+        let expectedAdMetadata = MediaCollectionHelper.generateAdMetadata(adMetadata: mediaContext.adMetadata)
         let expectedAdStartHit = MediaHit.init(eventType: "adStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: expectedAdParams, customMetadata: expectedAdMetadata, qoeData: emptyQoeData)
         let adStartHit = hitProcessor.getHitFromActiveSession(index: 3)
         XCTAssertEqual(adStartHit, expectedAdStartHit)
@@ -298,10 +298,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let chapterMetadata = ["k1": "v1"]
         mediaContext.setChapter(info: chapterInfo!, metadata: chapterMetadata)
 
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = false
         params[Media.RESUME] = true
-        let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
+        let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         mediaContext.enterPlaybackState(state: .Play)
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: false]
         self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
@@ -314,19 +314,19 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let mediaStartHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedMediaStartHit, mediaStartHit)
         // verify chapter start hit
-        let expectedChapterParams = MediaCollectionHelper.extractChapterParams(mediaContext: mediaContext)
+        let expectedChapterParams = MediaCollectionHelper.generateChapterParams(chapterInfo: mediaContext.chapterInfo)
         let expectedChapterMetadata = mediaContext.chapterMetadata
         let expectedChapterStartHit = MediaHit.init(eventType: "chapterStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: expectedChapterParams, customMetadata: expectedChapterMetadata, qoeData: emptyQoeData)
         let chapterStartHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedChapterStartHit, chapterStartHit)
         // verify ad break start hit
-        let expectedAdBreakParams = MediaCollectionHelper.extractAdBreakParams(mediaContext: mediaContext)
+        let expectedAdBreakParams = MediaCollectionHelper.generateAdBreakParams(adBreakInfo: mediaContext.adBreakInfo)
         let expectedAdBreakStartHit = MediaHit.init(eventType: "adBreakStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: expectedAdBreakParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
         let adBreakStartHit = hitProcessor.getHitFromActiveSession(index: 2)
         XCTAssertEqual(adBreakStartHit, expectedAdBreakStartHit)
         // verify ad start
-        let expectedAdParams = MediaCollectionHelper.extractAdParams(mediaContext: mediaContext)
-        let expectedAdMetadata = MediaCollectionHelper.extractAdMetadata(mediaContext: mediaContext)
+        let expectedAdParams = MediaCollectionHelper.generateAdParams(adInfo: mediaContext.adInfo, adMetadata: mediaContext.adMetadata)
+        let expectedAdMetadata = MediaCollectionHelper.generateAdMetadata(adMetadata: mediaContext.adMetadata)
         let expectedAdStartHit = MediaHit.init(eventType: "adStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: expectedAdParams, customMetadata: expectedAdMetadata, qoeData: emptyQoeData)
         let adStartHit = hitProcessor.getHitFromActiveSession(index: 3)
         XCTAssertEqual(adStartHit, expectedAdStartHit)
@@ -344,10 +344,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         }
         mediaContext.enterPlaybackState(state: .Play)
         _ = mediaContext.startState(info: fullscreenStateInfo)
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
-        let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
+        let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
         self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
         // test
@@ -372,10 +372,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     func testProcessIdleCompleteStateNoActiveStates() {
         // setup
         mediaContext.enterPlaybackState(state: .Play)
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
-        let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
+        let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
         self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
         // test
@@ -403,10 +403,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         mediaContext.startState(info: fullscreenStateInfo)
         mediaContext.endState(info: fullscreenStateInfo)
         mediaContext.startState(info: fullscreenStateInfo)
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
-        let metadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
+        let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
         self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
         // test
@@ -430,7 +430,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
 
     func testProcessPlaybackStateDifferentStates() {
         // setup
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
@@ -569,7 +569,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         mediaContext.enterPlaybackState(state: .Play)
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: false]
         self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = false
         // verify play hit
         hitGenerator.processPlayback()

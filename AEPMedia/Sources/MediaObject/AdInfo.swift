@@ -90,4 +90,16 @@ class AdInfo: Equatable {
 
         return adInfoMap
     }
+
+    func toMediaCollectionHitMap() -> [String: Any] {
+        var mediaCollectionHitMap: [String: Any] = [:]
+
+        mediaCollectionHitMap[MediaConstants.MediaCollection.Ad.ID] = self.id
+        mediaCollectionHitMap[MediaConstants.MediaCollection.Ad.LENGTH] = self.length
+        mediaCollectionHitMap[MediaConstants.MediaCollection.Ad.NAME] = self.name
+        mediaCollectionHitMap[MediaConstants.MediaCollection.Ad.POD_POSITION] = self.position
+
+        return mediaCollectionHitMap
+    }
+
 }
