@@ -143,4 +143,30 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         // verify
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
     }
+
+    func testRealtimeContentSessionRequestRetriedWhenInitialNetworkRequestReceivedConnectionError() {
+        // setup
+        dispatchDefaultConfigAndSharedStates()
+        guard let mediaInfo = Media.createMediaObjectWith(name: "video", id: "videoId", length: 30.0, streamType: "vod", mediaType: MediaType.Video) else {
+            XCTFail("failed to create media info")
+            return
+        }
+        let metadata = ["SampleContextData": "SampleValue", "a.media.show": "show"]
+        // setup mock network to return a connection error
+        mockNetworkService?.shouldReturnConnectionError = true
+
+        // test
+        let timestamp = getCurrentTimeStamp()
+        tracker.setTimeStamp(value: timestamp)
+        tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
+        waitForProcessing()
+        // setup mock network to return a valid connection and wait 31 seconds for retried request
+        mockNetworkService?.shouldReturnConnectionError = false
+        sleep(31)
+        // verify two session start network requests due to initial session start request getting an error response and the request being retried
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
+        let sessionStart = mockNetworkService?.calledNetworkRequests[1]
+        let sessionStartPayload = convertToDictionary(jsonString: sessionStart?.connectPayload)
+        verifyEvent(eventName: "sessionStart", payload: sessionStartPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: timestamp)
+    }
 }

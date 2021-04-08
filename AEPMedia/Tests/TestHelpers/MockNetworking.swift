@@ -17,14 +17,27 @@ class MockNetworking: Networking {
     public var connectAsyncCalledWithCompletionHandler: ((HttpConnection) -> Void)?
     public var expectedResponse: HttpConnection?
     public var calledNetworkRequests: [NetworkRequest?] = []
+    public var shouldReturnConnectionError: Bool = false
+    public var shouldReturnGenericError: Bool = false
+    private enum error: Error {
+        case genericError
+    }
+    private let notConnectedToInternetErrorConnection: HttpConnection = HttpConnection(data: nil, response: nil, error: URLError(URLError.notConnectedToInternet))
+    private let genericErrorConnection: HttpConnection = HttpConnection(data: nil, response: nil, error: error.genericError)
 
     func connectAsync(networkRequest: NetworkRequest, completionHandler: ((HttpConnection) -> Void)? = nil) {
         print("Do nothing \(networkRequest)")
         connectAsyncCalled = true
         connectAsyncCalledWithNetworkRequest = networkRequest
         connectAsyncCalledWithCompletionHandler = completionHandler
-        if let expectedResponse = expectedResponse, let completionHandler = completionHandler {
-            completionHandler(expectedResponse)
+        if shouldReturnConnectionError {
+            if let completionHandler = completionHandler {
+                completionHandler(notConnectedToInternetErrorConnection)
+            }
+        } else {
+            if let expectedResponse = expectedResponse, let completionHandler = completionHandler {
+                completionHandler(expectedResponse)
+            }
         }
         calledNetworkRequests.append(networkRequest)
     }
@@ -34,5 +47,7 @@ class MockNetworking: Networking {
         connectAsyncCalledWithNetworkRequest = nil
         connectAsyncCalledWithCompletionHandler = nil
         calledNetworkRequests = []
+        shouldReturnConnectionError = false
+        shouldReturnGenericError = false
     }
 }

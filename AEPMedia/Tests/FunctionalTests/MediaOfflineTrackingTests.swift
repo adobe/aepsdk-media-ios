@@ -139,4 +139,56 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
         // verify
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
     }
+
+    func testDownloadedContentSessionRequestRetriedWhenInitialNetworkRequestReceivedConnectionError() {
+        // setup
+        dispatchDefaultConfigAndSharedStates()
+        guard let mediaInfo = Media.createMediaObjectWith(name: "video", id: "videoId", length: 30.0, streamType: "vod", mediaType: MediaType.Video) else {
+            XCTFail("failed to create media info")
+            return
+        }
+        let metadata = ["SampleContextData": "SampleValue", "a.media.show": "show"]
+        guard let qoeInfo = Media.createQoEObjectWith(bitrate: 1000, startupTime: 2, fps: 14, droppedFrames: 6), let qoeInfo2 = Media.createQoEObjectWith(bitrate: 2000, startupTime: 4, fps: 24, droppedFrames: 33) else {
+            XCTFail("failed to create qoe info objects")
+            return
+        }
+        // setup mock network to return a connection error
+        mockNetworkService?.shouldReturnConnectionError = true
+
+        // test
+        let timestamp = getCurrentTimeStamp()
+        tracker.setTimeStamp(value: timestamp)
+        tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
+        tracker.updateQoEObject(qoe: qoeInfo)
+        tracker.updateCurrentPlayhead(time: 1)
+        tracker.trackPlay()
+        waitFor(2, currentPlayhead: 1, trackAction: "play", tracker: tracker, semaphore: semaphore)
+        semaphore.wait()
+        tracker.updateCurrentPlayhead(time: 5)
+        tracker.updateQoEObject(qoe: qoeInfo2)
+        tracker.trackPause()
+        waitFor(51, currentPlayhead: 5, trackAction: "pause", tracker: tracker, semaphore: semaphore)
+        semaphore.wait()
+        tracker.trackPlay()
+        tracker.updateCurrentPlayhead(time: 10)
+        tracker.trackComplete()
+        waitForProcessing()
+        // setup mock network to return a valid connection and wait 31 seconds for retried request
+        mockNetworkService?.shouldReturnConnectionError = false
+        sleep(31)
+        // verify two session start network requests due to initial session start request getting an error response and the request being retried
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
+        let sessionHit = mockNetworkService?.calledNetworkRequests[1]
+        guard let sessionHitData = sessionHit?.connectPayload.data(using: .utf8) else {
+            XCTFail("Failed to convert session hit payload to data")
+            return
+        }
+        let payloadAsJson: [[String: Any]]? = try? JSONSerialization.jsonObject(with: sessionHitData, options: []) as? [[String: Any]]
+        verifyEvent(eventName: "sessionStart", payload: payloadAsJson?[0] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "play", payload: payloadAsJson?[1] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo, playhead: 1, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "pauseStart", payload: payloadAsJson?[2] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo2, playhead: 5, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "play", payload: payloadAsJson?[3] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "sessionComplete", payload: payloadAsJson?[4] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: timestamp, isDownloadedSession: true)
+    }
+
 }
