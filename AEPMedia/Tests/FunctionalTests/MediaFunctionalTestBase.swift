@@ -27,7 +27,7 @@ class MediaFunctionalTestBase: XCTestCase {
     ]
 
     let identitySharedState: [String: Any] = [
-        MediaConstants.Identity.MARKETING_VISITOR_ID: "mid",
+        MediaConstants.Identity.MARKETING_VISITOR_ID: "ecid",
         MediaConstants.Identity.BLOB: "blob",
         MediaConstants.Identity.LOC_HINT: "lochint",
         MediaConstants.Identity.VISITOR_IDS_LIST: [["id_origin": "orig1", "id_type": "type1", "id": "u111111111", "authentication_state": 0],["id_origin": "orig1", "id_type": "type2", "id": "1234567890", "authentication_state": 1],["id_origin": "orig1", "id_type": "type3", "id": "testPushId", "authentication_state": 2]]
@@ -213,9 +213,7 @@ class MediaFunctionalTestBase: XCTestCase {
         XCTAssertEqual("vid", actualParams[MediaConstants.MediaCollection.Session.ANALYTICS_VISITOR_ID] as? String)
         XCTAssertEqual("aid", actualParams[MediaConstants.MediaCollection.Session.ANALYTICS_AID] as? String)
         // verify identity
-        Identity.getExperienceCloudId { (retrievedEcid, error) in
-            XCTAssertEqual(retrievedEcid ?? "", actualParams[MediaConstants.MediaCollection.Session.VISITOR_MCUSER_ID] as? String)
-        }
+        XCTAssertEqual("ecid", actualParams[MediaConstants.MediaCollection.Session.VISITOR_MCUSER_ID] as? String)
         XCTAssertEqual("orgid", actualParams[MediaConstants.MediaCollection.Session.VISITOR_MCORG_ID] as? String)
         verifySerializedCustomerIds(idsToVerify: actualParams[MediaConstants.MediaCollection.Session.VISITOR_CUSTOMER_IDS] as? [String: [String: Any]])
         // verify mediaInfo
