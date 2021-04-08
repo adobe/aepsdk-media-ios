@@ -69,4 +69,74 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
         verifyEvent(eventName: "play", payload: payloadAsJson?[3] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: timestamp, isDownloadedSession: true)
         verifyEvent(eventName: "sessionComplete", payload: payloadAsJson?[4] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: timestamp, isDownloadedSession: true)
     }
+
+    func testDownloadedContentSessionWhenPrivacyOptedOut() {
+        // setup
+        dispatchDefaultConfigAndSharedStates(configData: [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: "optedout"])
+        guard let mediaInfo = Media.createMediaObjectWith(name: "video", id: "videoId", length: 30.0, streamType: "vod", mediaType: MediaType.Video) else {
+            XCTFail("failed to create media info")
+            return
+        }
+        let metadata = ["SampleContextData": "SampleValue", "a.media.show": "show"]
+        guard let qoeInfo = Media.createQoEObjectWith(bitrate: 1000, startupTime: 2, fps: 14, droppedFrames: 6), let qoeInfo2 = Media.createQoEObjectWith(bitrate: 2000, startupTime: 4, fps: 24, droppedFrames: 33) else {
+            XCTFail("failed to create qoe info objects")
+            return
+        }
+
+        // test
+        let timestamp = getCurrentTimeStamp()
+        tracker.setTimeStamp(value: timestamp)
+        tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
+        tracker.updateQoEObject(qoe: qoeInfo)
+        tracker.updateCurrentPlayhead(time: 1)
+        tracker.trackPlay()
+        waitFor(1, currentPlayhead: 1, tracker: tracker, semaphore: semaphore)
+        semaphore.wait()
+        tracker.updateCurrentPlayhead(time: 5)
+        tracker.updateQoEObject(qoe: qoeInfo2)
+        tracker.trackPause()
+        waitFor(1, currentPlayhead: 5, tracker: tracker, semaphore: semaphore)
+        semaphore.wait()
+        tracker.trackPlay()
+        tracker.updateCurrentPlayhead(time: 10)
+        tracker.trackComplete()
+        waitForProcessing()
+        // verify
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
+    }
+
+    func testDownloadedContentSessionWhenPrivacyUnknown() {
+        // setup
+        dispatchDefaultConfigAndSharedStates(configData: [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: "optedout"])
+        guard let mediaInfo = Media.createMediaObjectWith(name: "video", id: "videoId", length: 30.0, streamType: "vod", mediaType: MediaType.Video) else {
+            XCTFail("failed to create media info")
+            return
+        }
+        let metadata = ["SampleContextData": "SampleValue", "a.media.show": "show"]
+        guard let qoeInfo = Media.createQoEObjectWith(bitrate: 1000, startupTime: 2, fps: 14, droppedFrames: 6), let qoeInfo2 = Media.createQoEObjectWith(bitrate: 2000, startupTime: 4, fps: 24, droppedFrames: 33) else {
+            XCTFail("failed to create qoe info objects")
+            return
+        }
+
+        // test
+        let timestamp = getCurrentTimeStamp()
+        tracker.setTimeStamp(value: timestamp)
+        tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
+        tracker.updateQoEObject(qoe: qoeInfo)
+        tracker.updateCurrentPlayhead(time: 1)
+        tracker.trackPlay()
+        waitFor(1, currentPlayhead: 1, tracker: tracker, semaphore: semaphore)
+        semaphore.wait()
+        tracker.updateCurrentPlayhead(time: 5)
+        tracker.updateQoEObject(qoe: qoeInfo2)
+        tracker.trackPause()
+        waitFor(1, currentPlayhead: 5, tracker: tracker, semaphore: semaphore)
+        semaphore.wait()
+        tracker.trackPlay()
+        tracker.updateCurrentPlayhead(time: 10)
+        tracker.trackComplete()
+        waitForProcessing()
+        // verify
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
+    }
 }

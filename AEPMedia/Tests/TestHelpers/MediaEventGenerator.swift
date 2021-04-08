@@ -113,6 +113,5 @@ class MediaEventGenerator: MediaTracker {
             semaphore.wait()
             return
         }
-        usleep(500000) // wait for 0.5 seconds
     }
 }
