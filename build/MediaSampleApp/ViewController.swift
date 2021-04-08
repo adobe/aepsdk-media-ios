@@ -19,8 +19,6 @@ class ViewController: UIViewController {
     var videoAnalyticsProvider: VideoAnalyticsProvider?
     var videoPlayer: VideoPlayer!
     
-    var assuranceSessionUrl: String = "https://aepmedia/?adb_validation_sessionid=0bfdd010-b944-4874-9773-7cca2738aff9"
-        
     override func viewWillAppear(_ animated: Bool) {
         let videoUrl = "http://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"
         
@@ -101,10 +99,4 @@ class ViewController: UIViewController {
           AEPAssurance.startSession(url)
         }
     }
-
-//    @IBAction func startAssurnaceSession (_ sender: Any) {
-//        if let url = URL(string: self.assuranceSessionUrl){
-//          AEPAssurance.startSession(url)
-//       }
-//    }
 }

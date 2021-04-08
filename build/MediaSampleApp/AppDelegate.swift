@@ -26,12 +26,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         MobileCore.setLogLevel(.trace)
+        let appState = application.applicationState;
+        
         MobileCore.registerExtensions([Identity.self, Analytics.self, Lifecycle.self, Media.self, AEPAssurance.self], {
             // Use the App id assigned to this application via Adobe Launch
             MobileCore.configureWith(appId: self.LAUNCH_ENVIRONMENT_FILE_ID)
+            
+            if appState != .background {
+                            // only start lifecycle if the application is not in the background
+                            MobileCore.lifecycleStart(additionalContextData: ["contextDataKey": "contextDataVal"])
+                        }
         })
         
-        print("Initialized Media Extension:", Media.extensionVersion + " core:", MobileCore.extensionVersion + " analyticsExt:", Analytics.extensionVersion + " IdentityExt:", Identity.extensionVersion)
+        print("Initialized Media Extension:", Media.extensionVersion + " core:", MobileCore.extensionVersion + " analyticsExt:", Analytics.extensionVersion + " IdentityExt:", Identity.extensionVersion + " LifecycleExt:", Lifecycle.extensionVersion + " AssuranceExt:", AEPAssurance.extensionVersion)
 
         return true
     }
