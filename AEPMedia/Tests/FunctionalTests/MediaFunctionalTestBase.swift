@@ -281,13 +281,17 @@ class MediaFunctionalTestBase: XCTestCase {
         return Date().timeIntervalSince1970
     }
 
-    func waitFor(_ secondsToWait: Int, currentPlayhead: Double, tracker: MediaEventGenerator, semaphore: DispatchSemaphore) {
+    func waitFor(_ secondsToWait: Int, currentPlayhead: Double, trackAction: String, tracker: MediaEventGenerator, semaphore: DispatchSemaphore) {
         var elapsedTime = 0
         let queue = DispatchQueue(label: "trackerTimer")
         timer = DispatchSource.makeTimerSource(queue: queue)
         timer.schedule(deadline: .now(), repeating: .seconds(1))
         timer.setEventHandler { [weak self] in
-            tracker.updateCurrentPlayhead(time: currentPlayhead)
+            if trackAction == "play" {
+                tracker.updateCurrentPlayhead(time: currentPlayhead + Double(elapsedTime))
+            } else {
+                tracker.updateCurrentPlayhead(time: currentPlayhead)
+            }
             if elapsedTime >= secondsToWait {
                 self?.timer = nil
                 semaphore.signal()

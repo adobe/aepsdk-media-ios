@@ -44,12 +44,12 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
         tracker.updateQoEObject(qoe: qoeInfo)
         tracker.updateCurrentPlayhead(time: 1)
         tracker.trackPlay()
-        waitFor(2, currentPlayhead: 1, tracker: tracker, semaphore: semaphore)
+        waitFor(2, currentPlayhead: 1, trackAction: "play", tracker: tracker, semaphore: semaphore)
         semaphore.wait()
         tracker.updateCurrentPlayhead(time: 5)
         tracker.updateQoEObject(qoe: qoeInfo2)
         tracker.trackPause()
-        waitFor(51, currentPlayhead: 5, tracker: tracker, semaphore: semaphore)
+        waitFor(51, currentPlayhead: 5, trackAction: "pause", tracker: tracker, semaphore: semaphore)
         semaphore.wait()
         tracker.trackPlay()
         tracker.updateCurrentPlayhead(time: 10)
@@ -62,12 +62,12 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
             XCTFail("Failed to convert session hit payload to data")
             return
         }
-        let payloadAsJson: [Any]? = try? JSONSerialization.jsonObject(with: sessionHitData, options: []) as? [Any]
-        verifyEvent(eventName: "sessionStart", payload: payloadAsJson?[0] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: timestamp, isDownloadedSession: true)
-        verifyEvent(eventName: "play", payload: payloadAsJson?[1] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo, playhead: 1, ts: timestamp, isDownloadedSession: true)
-        verifyEvent(eventName: "pauseStart", payload: payloadAsJson?[2] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo2, playhead: 5, ts: timestamp, isDownloadedSession: true)
-        verifyEvent(eventName: "play", payload: payloadAsJson?[3] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: timestamp, isDownloadedSession: true)
-        verifyEvent(eventName: "sessionComplete", payload: payloadAsJson?[4] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: timestamp, isDownloadedSession: true)
+        let payloadAsJson: [[String: Any]]? = try? JSONSerialization.jsonObject(with: sessionHitData, options: []) as? [[String: Any]]
+        verifyEvent(eventName: "sessionStart", payload: payloadAsJson?[0] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "play", payload: payloadAsJson?[1] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo, playhead: 1, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "pauseStart", payload: payloadAsJson?[2] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo2, playhead: 5, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "play", payload: payloadAsJson?[3] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "sessionComplete", payload: payloadAsJson?[4] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: timestamp, isDownloadedSession: true)
     }
 
     func testDownloadedContentSessionWhenPrivacyOptedOut() {
@@ -90,12 +90,12 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
         tracker.updateQoEObject(qoe: qoeInfo)
         tracker.updateCurrentPlayhead(time: 1)
         tracker.trackPlay()
-        waitFor(1, currentPlayhead: 1, tracker: tracker, semaphore: semaphore)
+        waitFor(1, currentPlayhead: 1, trackAction: "play", tracker: tracker, semaphore: semaphore)
         semaphore.wait()
         tracker.updateCurrentPlayhead(time: 5)
         tracker.updateQoEObject(qoe: qoeInfo2)
         tracker.trackPause()
-        waitFor(1, currentPlayhead: 5, tracker: tracker, semaphore: semaphore)
+        waitFor(1, currentPlayhead: 5, trackAction: "pause", tracker: tracker, semaphore: semaphore)
         semaphore.wait()
         tracker.trackPlay()
         tracker.updateCurrentPlayhead(time: 10)
@@ -107,7 +107,7 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
 
     func testDownloadedContentSessionWhenPrivacyUnknown() {
         // setup
-        dispatchDefaultConfigAndSharedStates(configData: [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: "optedout"])
+        dispatchDefaultConfigAndSharedStates(configData: [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: "unknown"])
         guard let mediaInfo = Media.createMediaObjectWith(name: "video", id: "videoId", length: 30.0, streamType: "vod", mediaType: MediaType.Video) else {
             XCTFail("failed to create media info")
             return
@@ -125,12 +125,12 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
         tracker.updateQoEObject(qoe: qoeInfo)
         tracker.updateCurrentPlayhead(time: 1)
         tracker.trackPlay()
-        waitFor(1, currentPlayhead: 1, tracker: tracker, semaphore: semaphore)
+        waitFor(1, currentPlayhead: 1, trackAction: "play", tracker: tracker, semaphore: semaphore)
         semaphore.wait()
         tracker.updateCurrentPlayhead(time: 5)
         tracker.updateQoEObject(qoe: qoeInfo2)
         tracker.trackPause()
-        waitFor(1, currentPlayhead: 5, tracker: tracker, semaphore: semaphore)
+        waitFor(1, currentPlayhead: 5, trackAction: "pause", tracker: tracker, semaphore: semaphore)
         semaphore.wait()
         tracker.trackPlay()
         tracker.updateCurrentPlayhead(time: 10)
