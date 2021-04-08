@@ -77,7 +77,12 @@ class MediaCollectionHelper {
     static func generateMediaParams(mediaInfo: MediaInfo, metadata: [String: String]) -> [String: Any] {
         var retDict = [String: Any]()
 
-        retDict = mediaInfo.toMediaCollectionHitMap()
+        retDict[MediaConstants.MediaCollection.Media.ID] = mediaInfo.id
+        retDict[MediaConstants.MediaCollection.Media.NAME] = mediaInfo.name
+        retDict[MediaConstants.MediaCollection.Media.LENGTH] = mediaInfo.length
+        retDict[MediaConstants.MediaCollection.Media.CONTENT_TYPE] = mediaInfo.streamType
+        retDict[MediaConstants.MediaCollection.Media.STREAM_TYPE] = mediaInfo.mediaType.rawValue
+        retDict[MediaConstants.MediaCollection.Media.RESUME] = mediaInfo.resumed
 
         // standard metadata keys are transformed and reported as part of media param
         for (key, value) in metadata {
@@ -110,7 +115,9 @@ class MediaCollectionHelper {
             return retDict
         }
 
-        retDict = adBreakInfo.toMediaCollectionHitMap()
+        retDict[MediaConstants.MediaCollection.AdBreak.POD_FRIENDLY_NAME] = adBreakInfo.name
+        retDict[MediaConstants.MediaCollection.AdBreak.POD_INDEX] = adBreakInfo.position
+        retDict[MediaConstants.MediaCollection.AdBreak.POD_SECOND] = adBreakInfo.startTime
 
         return retDict
     }
@@ -123,7 +130,10 @@ class MediaCollectionHelper {
             return retDict
         }
 
-        retDict = adInfo.toMediaCollectionHitMap()
+        retDict[MediaConstants.MediaCollection.Ad.ID] = adInfo.id
+        retDict[MediaConstants.MediaCollection.Ad.LENGTH] = adInfo.length
+        retDict[MediaConstants.MediaCollection.Ad.NAME] = adInfo.name
+        retDict[MediaConstants.MediaCollection.Ad.POD_POSITION] = adInfo.position
 
         let adMetadata = adMetadata
         // standard ad metadata keys are transformed and reported as part of ad params

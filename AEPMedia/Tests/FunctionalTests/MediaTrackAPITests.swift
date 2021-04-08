@@ -25,7 +25,6 @@ class MediaTrackerAPITests: MediaFunctionalTestBase {
     override func setUp() {
         super.setupBase()
         fakeMediaService = FakeMediaHitProcessor()
-
     }
 
     func getExpectedSessionStartHit(info: MediaInfo, metadata: [String: String] = [:], qoeData: [String: Any] = [:], downloaded: Bool = false, ts: Double = 0, playhead: Double = 0) -> MediaHit {

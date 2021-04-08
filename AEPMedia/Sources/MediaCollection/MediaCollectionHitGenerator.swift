@@ -210,7 +210,8 @@ class MediaCollectionHitGenerator {
             return
         }
 
-        generateHit(eventType: EventType.STATE_START, params: stateInfo.toMediaCollectionHitMap())
+        let  params: [String: Any] = [MediaConstants.StateInfo.STATE_NAME_KEY: stateInfo.stateName]
+        generateHit(eventType: EventType.STATE_START, params: params)
     }
 
     func processStateEnd(stateInfo: StateInfo?) {
@@ -219,7 +220,8 @@ class MediaCollectionHitGenerator {
             return
         }
 
-        generateHit(eventType: EventType.STATE_END, params: stateInfo.toMediaCollectionHitMap())
+        let  params: [String: Any] = [MediaConstants.StateInfo.STATE_NAME_KEY: stateInfo.stateName]
+        generateHit(eventType: EventType.STATE_END, params: params)
     }
 
     private func startTrackingSession() {

@@ -59,11 +59,4 @@ class StateInfo: Equatable {
 
         return stateInfoMap
     }
-
-    func toMediaCollectionHitMap() -> [String: Any] {
-        var mediaCollectionHitMap: [String: Any] = [:]
-        mediaCollectionHitMap[MediaConstants.StateInfo.STATE_NAME_KEY] = self.stateName
-
-        return mediaCollectionHitMap
-    }
 }

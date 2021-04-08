@@ -46,7 +46,6 @@ class MediaContext {
         self.mediaMetadata = metadata ?? [:]
     }
 
-    // AdBreak
     /// Sets `AdBreakInfo` for the AdBreak being tracked
     ///- Parameters:
     ///    - info: `AdBreakInfo` object.
@@ -59,7 +58,6 @@ class MediaContext {
         adBreakInfo = nil
     }
 
-    // Ad
     /// Sets `AdInfo` and metadata for the Ad being tracked
     ///- Parameters:
     ///    - info: `AdInfo` object.
@@ -75,7 +73,6 @@ class MediaContext {
         adMetadata = [:]
     }
 
-    // Chapter
     /// Sets `ChapterInfo` and metadata for the Chapter being tracked
     ///- Parameters:
     ///    - info: `ChapterInfo` object.
@@ -147,7 +144,6 @@ class MediaContext {
             isInMediaPlaybackState(state: .Buffer)
     }
 
-    // State
     /// Starts tracking customState.
     ///- Parameters:
     ///    - info: `StateInfo` object that contains custom state name.
