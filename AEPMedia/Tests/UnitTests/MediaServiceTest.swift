@@ -17,7 +17,7 @@ class MediaServiceTest: XCTestCase {
     func testInitPersistedSessions() {
 
         //setup
-        let persistedSessionIds: Set<String> = ["sessionId1","sessionId2"]
+        let persistedSessionIds: Set<String> = ["sessionId1", "sessionId2"]
         let mockDBService = MockMediaDBService()
         mockDBService.persistedSessionIds = persistedSessionIds
 

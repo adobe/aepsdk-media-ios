@@ -14,11 +14,10 @@ import XCTest
 @testable import AEPMedia
 import AEPCore
 
-
 class MediaCollectionReportHelperTests: XCTestCase {
-    
+
     let mediaOfflineHitsMock = MockMediaOfflineHits()
-    
+
     func testGetTrackingUrl() {
         //Setup
         let host = "abc.com"
@@ -27,7 +26,7 @@ class MediaCollectionReportHelperTests: XCTestCase {
         //Assert
         XCTAssertEqual(url, "https://\(host)/api/v1/sessions")
     }
-    
+
     func testGetTrackingUrlForEvents() {
         //Setup
         let host = "abc.com"
@@ -37,13 +36,13 @@ class MediaCollectionReportHelperTests: XCTestCase {
         //Assert
         XCTAssertEqual(url, "https://\(host)/api/v1/sessions/\(sessionId)/events")
     }
-    
+
     func testHasAllTrackingParameterReturnsTrue() {
         //Setup
         let sharedData = [
             MediaConstants.Configuration.SHARED_STATE_NAME: [
                 MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn.rawValue,
-                MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID:"orgid",
+                MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID: "orgid",
                 MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER: "analytics_tracking_Server",
                 MediaConstants.Configuration.MEDIA_COLLECTION_SERVER: "media_collection_Server",
                 MediaConstants.Configuration.ANALYTICS_RSID: "analytics_rsid"
@@ -56,11 +55,11 @@ class MediaCollectionReportHelperTests: XCTestCase {
         //Action
         state.update(dataMap: sharedData)
         let hasAllTrackingParams = MediaCollectionReportHelper.hasAllTrackingParams(state: state)
-        
+
         //Assert
         XCTAssertTrue(hasAllTrackingParams)
     }
-    
+
     func testHasAllTrackingParameterReturnsFalse() {
         //Setup
         let sharedData = [
@@ -78,11 +77,11 @@ class MediaCollectionReportHelperTests: XCTestCase {
         //Action
         state.update(dataMap: sharedData)
         let hasAllTrackingParams = MediaCollectionReportHelper.hasAllTrackingParams(state: state)
-        
+
         //Assert
         XCTAssertFalse(hasAllTrackingParams)
     }
-    
+
     func testExtractSessionIdSuccess() {
         //Setup
         let sessionIdActual = "1337d8e42b67c1c9be55b5b3ebdd3ea145006c3adb5877949ed407fe2d50ec5d"
@@ -92,7 +91,7 @@ class MediaCollectionReportHelperTests: XCTestCase {
         //Assert
         XCTAssertEqual(sessionId, sessionIdActual)
     }
-    
+
     func testExtractSessionIdFailure() {
         //Setup
         let sessionIdActual = "1337d8e42b67c1c9be55b5b3ebdd3ea145006c3adb5877949ed407fe2d50ec5d"
@@ -102,38 +101,37 @@ class MediaCollectionReportHelperTests: XCTestCase {
         //Assert
         XCTAssertNil(sessionId)
     }
-    
+
     func testGenerateHitReport() {
-        
+
         //Setup
         let hit = mediaOfflineHitsMock.sessionStart!
         let state = mediaOfflineHitsMock.mediaState
         let jsonDecoder = JSONDecoder()
-        
+
         //Action
         let response = MediaCollectionReportHelper.generateHitReport(state: state!, hit: hit)
-        
+
         let mediaHitActual = try? jsonDecoder.decode(MediaHit.self, from: response!.data(using: .utf8)!)
         let mediaHitExpected = try? jsonDecoder.decode(MediaHit.self, from: mediaOfflineHitsMock.sessionStartJson!.data(using: .utf8)!)
         let mediaHitUpdated = MediaCollectionReportHelper.updateMediaHit(state: mediaOfflineHitsMock.mediaState, mediaHit: mediaHitExpected!)
-        
+
         //Assert
         XCTAssertNotNil(response)
         XCTAssertTrue(compareMediaHits(actual: mediaHitActual!, expected: mediaHitUpdated))
     }
-    
+
     func testGenerateDownloadReportWithEmptyList() {
         //setup
         let hits = [MediaHit]()
-        
+
         //Action
         let report = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaState, hits: hits)
-        
+
         //Assert
         XCTAssertNil(report)
     }
-    
-    
+
     func testGenerateReportEmptyMediaState() {
         var hits = [MediaHit]()
         hits.append(mediaOfflineHitsMock.sessionStart)
@@ -144,7 +142,7 @@ class MediaCollectionReportHelperTests: XCTestCase {
         hits.append(mediaOfflineHitsMock.adBreakComplete)
         hits.append(mediaOfflineHitsMock.ping)
         hits.append(mediaOfflineHitsMock.complete)
-        
+
         var expectedResponse = [String]()
         expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
         expectedResponse.append(mediaOfflineHitsMock.playJson)
@@ -154,12 +152,12 @@ class MediaCollectionReportHelperTests: XCTestCase {
         expectedResponse.append(mediaOfflineHitsMock.adBreakCompleteJson)
         expectedResponse.append(mediaOfflineHitsMock.pingJson)
         expectedResponse.append(mediaOfflineHitsMock.completeJson)
-        
+
         let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
-        
+
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateEmpty))
     }
-    
+
     func testGenerateReportProperMediaState() {
         var hits = [MediaHit]()
         hits.append(mediaOfflineHitsMock.sessionStart)
@@ -170,7 +168,7 @@ class MediaCollectionReportHelperTests: XCTestCase {
         hits.append(mediaOfflineHitsMock.adBreakComplete)
         hits.append(mediaOfflineHitsMock.ping)
         hits.append(mediaOfflineHitsMock.complete)
-        
+
         var expectedResponse = [String]()
         expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
         expectedResponse.append(mediaOfflineHitsMock.playJson)
@@ -180,58 +178,55 @@ class MediaCollectionReportHelperTests: XCTestCase {
         expectedResponse.append(mediaOfflineHitsMock.adBreakCompleteJson)
         expectedResponse.append(mediaOfflineHitsMock.pingJson)
         expectedResponse.append(mediaOfflineHitsMock.completeJson)
-        
+
         let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaState, hits: hits)
-        
+
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaState))
     }
-    
+
     func testGenerateReportSessionStartChannelPresent() {
         var hits = [MediaHit]()
         hits.append(mediaOfflineHitsMock.sessionStartChannel)
         hits.append(mediaOfflineHitsMock.play)
         hits.append(mediaOfflineHitsMock.ping)
         hits.append(mediaOfflineHitsMock.complete)
-        
-        
+
         var expectedResponse = [String]()
         expectedResponse.append(mediaOfflineHitsMock.sessionStartChannelJson)
         expectedResponse.append(mediaOfflineHitsMock.playJson)
         expectedResponse.append(mediaOfflineHitsMock.pingJson)
         expectedResponse.append(mediaOfflineHitsMock.completeJson)
-        
+
         let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
-        
+
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateEmpty))
     }
-    
+
     func test_generateReport_missingSessionStart() {
-        
+
         var hits = [MediaHit]()
         hits.append(mediaOfflineHitsMock.play)
         hits.append(mediaOfflineHitsMock.ping)
         hits.append(mediaOfflineHitsMock.complete)
-        
-        
+
         var expectedResponse = [String]()
         expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
         expectedResponse.append(mediaOfflineHitsMock.playJson)
         expectedResponse.append(mediaOfflineHitsMock.pingJson)
         expectedResponse.append(mediaOfflineHitsMock.completeJson)
-        
+
         let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
-        
+
         XCTAssertNil(payload)
     }
-    
-    
+
     func testGenerateReportMissingSessionEndOrComplete() {
-            
+
         var hits = [MediaHit]()
         hits.append(mediaOfflineHitsMock.sessionStart)
         hits.append(mediaOfflineHitsMock.play)
         hits.append(mediaOfflineHitsMock.ping)
-            
+
         var expectedResponse = [String]()
         expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
         expectedResponse.append(mediaOfflineHitsMock.playJson)
@@ -239,10 +234,10 @@ class MediaCollectionReportHelperTests: XCTestCase {
         expectedResponse.append(mediaOfflineHitsMock.forceSessionEndJson)
 
         let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
-            
+
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateEmpty))
     }
-    
+
     func testGenerateReportDropHitsTillSessionStart() {
         var hits = [MediaHit]()
         hits.append(mediaOfflineHitsMock.play)
@@ -251,76 +246,73 @@ class MediaCollectionReportHelperTests: XCTestCase {
         hits.append(mediaOfflineHitsMock.play)
         hits.append(mediaOfflineHitsMock.ping)
         hits.append(mediaOfflineHitsMock.complete)
-        
-        
+
         var expectedResponse = [String]()
         expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
         expectedResponse.append(mediaOfflineHitsMock.playJson)
         expectedResponse.append(mediaOfflineHitsMock.pingJson)
         expectedResponse.append(mediaOfflineHitsMock.completeJson)
-        
+
         let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
-        
-        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateEmpty))
-    }
-    
-    func testGenerateReportLocHintException() {
-        
-        var hits = [MediaHit]()
-        hits.append(mediaOfflineHitsMock.sessionStart)
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.ping)
-        hits.append(mediaOfflineHitsMock.complete)
-        
-        var expectedResponse = [String]()
-        expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.playJson)
-        expectedResponse.append(mediaOfflineHitsMock.pingJson)
-        expectedResponse.append(mediaOfflineHitsMock.completeJson)
-        
-        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateLocHintException, hits: hits)
-        
-        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateLocHintException))
-    }
-    
-    func testGenerateReportDropHitsAfterSessionEnd() {
-        
-        var hits = [MediaHit]()
-        hits.append(mediaOfflineHitsMock.sessionStart)
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.ping)
-        hits.append(mediaOfflineHitsMock.complete)
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.ping)
-        
-        var expectedResponse = [String]()
-        expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.playJson)
-        expectedResponse.append(mediaOfflineHitsMock.pingJson)
-        expectedResponse.append(mediaOfflineHitsMock.completeJson)
-        
-        
-        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
-        
+
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateEmpty))
     }
 
-    
-    func compareJsonArray(expected:[String], payload: String, state: MediaState) -> Bool {
+    func testGenerateReportLocHintException() {
+
+        var hits = [MediaHit]()
+        hits.append(mediaOfflineHitsMock.sessionStart)
+        hits.append(mediaOfflineHitsMock.play)
+        hits.append(mediaOfflineHitsMock.ping)
+        hits.append(mediaOfflineHitsMock.complete)
+
+        var expectedResponse = [String]()
+        expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
+        expectedResponse.append(mediaOfflineHitsMock.playJson)
+        expectedResponse.append(mediaOfflineHitsMock.pingJson)
+        expectedResponse.append(mediaOfflineHitsMock.completeJson)
+
+        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateLocHintException, hits: hits)
+
+        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateLocHintException))
+    }
+
+    func testGenerateReportDropHitsAfterSessionEnd() {
+
+        var hits = [MediaHit]()
+        hits.append(mediaOfflineHitsMock.sessionStart)
+        hits.append(mediaOfflineHitsMock.play)
+        hits.append(mediaOfflineHitsMock.ping)
+        hits.append(mediaOfflineHitsMock.complete)
+        hits.append(mediaOfflineHitsMock.play)
+        hits.append(mediaOfflineHitsMock.ping)
+
+        var expectedResponse = [String]()
+        expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
+        expectedResponse.append(mediaOfflineHitsMock.playJson)
+        expectedResponse.append(mediaOfflineHitsMock.pingJson)
+        expectedResponse.append(mediaOfflineHitsMock.completeJson)
+
+        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
+
+        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateEmpty))
+    }
+
+    func compareJsonArray(expected: [String], payload: String, state: MediaState) -> Bool {
         var result = true
         guard let jsonArray = try? JSONSerialization.jsonObject(with: payload.data(using: .utf8)!, options: []) as? [[String: Any]] else {
             return false
         }
         for (i, jsonObj) in jsonArray.enumerated() {
             let playertime = jsonObj["playerTime"] as! [String: Double]
-            let actualMediaHit = MediaHit(eventType: jsonObj["eventType"] as! String, playhead: playertime["playhead"]!, ts: playertime["ts"]!, params: jsonObj["params"] as? [String:Any], customMetadata: jsonObj["customMetadata"] as? [String:String], qoeData: jsonObj["qoeData"] as? [String:Any])
-            
+            let actualMediaHit = MediaHit(eventType: jsonObj["eventType"] as! String, playhead: playertime["playhead"]!, ts: playertime["ts"]!, params: jsonObj["params"] as? [String: Any], customMetadata: jsonObj["customMetadata"] as? [String: String], qoeData: jsonObj["qoeData"] as? [String: Any])
+
             let expectedMediaHit = try? JSONDecoder().decode(MediaHit.self, from: expected[i].data(using: .utf8)!)
             result = result && compareMediaHits(actual: actualMediaHit, expected: MediaCollectionReportHelper.updateMediaHit(state: state, mediaHit: expectedMediaHit!))
         }
         return result
     }
-    
+
     func compareMediaHits(actual: MediaHit, expected: MediaHit) -> Bool {
         var result = true
         result = result && actual.eventType == expected.eventType
