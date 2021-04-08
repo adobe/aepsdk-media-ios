@@ -65,7 +65,7 @@ class MediaOfflineSessionTests: XCTestCase {
         Thread.sleep(forTimeInterval: 2)
 
         //Assert
-        XCTAssertTrue(mockNetworking.hasNetworkRequestReceived)
+        XCTAssertTrue(mockNetworking.connectAsyncCalled)
         XCTAssertFalse((mediaSession as! MediaOfflineSession).isSessionActive)
     }
 
@@ -93,5 +93,4 @@ class MediaOfflineSessionTests: XCTestCase {
         XCTAssertFalse((mediaSession as! MediaOfflineSession).isSessionActive)
         XCTAssertEqual(mediaDBService.persistedHits.count, 0)
     }
-
 }

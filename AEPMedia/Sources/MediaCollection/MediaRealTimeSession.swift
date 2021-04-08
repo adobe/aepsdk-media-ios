@@ -30,10 +30,6 @@ class MediaRealTimeSession: MediaSession {
     private var sessionRetryCount = 0
 
     override func handleQueueMediaHit(hit: MediaHit) {
-        guard isReadyToSendHit() else {
-            Log.debug(label: LOG_TAG, "\(#function) - Exiting as session (\(id) is not ready for sending hits")
-            return
-        }
         Log.trace(label: LOG_TAG, "\(#function) - Queuing hit for Session (\(id)) with event type (\(hit.eventType))")
         hits.append(hit)
         trySendHit()
@@ -52,6 +48,10 @@ class MediaRealTimeSession: MediaSession {
 
     ///Sends the first `MediaHit` from the collected hits to Media Collection Server
     private func trySendHit() {
+        guard isReadyToSendHit() else {
+            Log.debug(label: LOG_TAG, "\(#function) - Exiting as session (\(id) is not ready for sending hits")
+            return
+        }
         guard !hits.isEmpty else {
             Log.trace(label: LOG_TAG, "\(#function) - MediaHit collection is empty")
             return
