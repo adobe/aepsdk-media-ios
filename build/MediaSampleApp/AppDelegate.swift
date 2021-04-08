@@ -21,23 +21,23 @@ import AEPMedia
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    private let LAUNCH_ENVIRONMENT_FILE_ID = "94f571f308d5/39273f51e930/launch-00ac4ce72151-development"
+    private let LAUNCH_ENVIRONMENT_FILE_ID = ""
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         MobileCore.setLogLevel(.trace)
-        let appState = application.applicationState;
-        
+        let appState = application.applicationState
+
         MobileCore.registerExtensions([Identity.self, Analytics.self, Lifecycle.self, Media.self, AEPAssurance.self], {
             // Use the App id assigned to this application via Adobe Launch
             MobileCore.configureWith(appId: self.LAUNCH_ENVIRONMENT_FILE_ID)
-            
+
             if appState != .background {
-                            // only start lifecycle if the application is not in the background
-                            MobileCore.lifecycleStart(additionalContextData: ["contextDataKey": "contextDataVal"])
-                        }
+                // only start lifecycle if the application is not in the background
+                MobileCore.lifecycleStart(additionalContextData: ["contextDataKey": "contextDataVal"])
+            }
         })
-        
+
         print("Initialized Media Extension:", Media.extensionVersion + " core:", MobileCore.extensionVersion + " analyticsExt:", Analytics.extensionVersion + " IdentityExt:", Identity.extensionVersion + " LifecycleExt:", Lifecycle.extensionVersion + " AssuranceExt:", AEPAssurance.extensionVersion)
 
         return true
@@ -57,4 +57,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 }
-

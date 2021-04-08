@@ -25,12 +25,12 @@ target 'AEPMediaFunctionalTests' do
 end
 
 target 'MediaSampleApp' do
-  pod 'AEPCore', :modular_headers => true
-  pod 'AEPServices', :modular_headers => true
-  pod 'AEPRulesEngine', :modular_headers => true
-  pod 'AEPLifecycle', :modular_headers => true
-  pod 'AEPIdentity', :modular_headers => true
-  pod 'AEPAnalytics', :modular_headers => true
-  pod 'AEPAssurance', :modular_headers => true
+  pod 'AEPCore'
+  pod 'AEPServices'
+  pod 'AEPRulesEngine'
+  pod 'AEPLifecycle'
+  pod 'AEPIdentity'
+  pod 'AEPAnalytics'
+  pod 'AEPAssurance'
   pod 'ACPCore', :git => 'https://github.com/adobe/aepsdk-compatibility-ios.git', :branch => 'main'
 end
