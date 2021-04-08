@@ -29,7 +29,7 @@ class MediaService: MediaProcessor {
 
     init(mediaDBService: MediaDBService? = nil) {
         self.mediaState = MediaState()
-        self.mediaHitsDatabase = MediaHitsDatabase(databaseName: MediaConstants.DATABASE_NAME, serialQueue: dispatchQueue)
+        self.mediaHitsDatabase = MediaHitsDatabase(databaseName: MediaConstants.DATABASE_NAME)
         if let mediaDBService = mediaDBService {
             self.mediaDBService = mediaDBService
         } else {

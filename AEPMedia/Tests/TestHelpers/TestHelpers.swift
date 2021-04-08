@@ -19,6 +19,18 @@ extension EventHub {
     }
 }
 
+extension FileManager {
+    func clearCache() {
+        if let _ = self.urls(for: .cachesDirectory, in: .userDomainMask).first {
+            do {
+                try self.removeItem(at: URL(fileURLWithPath: "Library/Caches/\(MediaConstants.DATABASE_NAME)"))
+            } catch {
+                print("ERROR DESCRIPTION: \(error)")
+            }
+        }
+    }
+}
+
 extension MediaHit: Equatable {
     private static let emptyDict: [String: Any] = [:]
 

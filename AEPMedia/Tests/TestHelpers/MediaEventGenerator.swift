@@ -40,6 +40,7 @@ class MediaEventGenerator: MediaTracker {
     var usingProvidedDispatchFn = false
 
     init(config: [String: Any]? = nil, dispatch: ((Event) -> Void)? = nil) {
+        // if the passed in dispatch function is nil then create one
         guard let dispatch = dispatch else {
             tracker = MediaPublicTrackerMock(dispatch: nil, config: config)
             tracker.dispatch = { (event: Event) in
@@ -48,7 +49,7 @@ class MediaEventGenerator: MediaTracker {
             }
             return
         }
-        // using the passed in dispatch function
+        // otherwise use the passed in dispatch function
         usingProvidedDispatchFn = true
         tracker = MediaPublicTrackerMock(dispatch: dispatch, config: config)
         tracker.dispatch = dispatch
@@ -106,12 +107,12 @@ class MediaEventGenerator: MediaTracker {
     func incrementTimeStamp(value: TimeInterval) {
         tracker.incrementTimeStamp(value: value)
     }
-    
+
     private func waitForTrackerRequest() {
         if !usingProvidedDispatchFn {
             semaphore.wait()
             return
         }
-        usleep(500)
+        usleep(500000) // wait for 0.5 seconds
     }
 }

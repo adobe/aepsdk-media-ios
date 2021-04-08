@@ -3,7 +3,6 @@
  This file is licensed to you under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License. You may obtain a copy
  of the License at http://www.apache.org/licenses/LICENSE-2.0
- 
  Unless required by applicable law or agreed to in writing, software distributed under
  the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  OF ANY KIND, either express or implied. See the License for the specific language
@@ -18,11 +17,11 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
 
     static let config: [String: Any] = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
     var tracker: MediaEventGenerator!
+    let semaphore = DispatchSemaphore(value: 0)
 
     override func setUp() {
         super.setupBase()
         tracker = MediaEventGenerator(config: Self.config, dispatch: mockRuntime.dispatch(event:))
-        waitForProcessing(interval: 1)
     }
 
     func testDownloadedContentSession() {
@@ -33,27 +32,41 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
             return
         }
         let metadata = ["SampleContextData": "SampleValue", "a.media.show": "show"]
-        let qoeInfo = [MediaConstants.QoEInfo.BITRATE: 1000, MediaConstants.QoEInfo.DROPPED_FRAMES: 6, MediaConstants.QoEInfo.FPS: 14, MediaConstants.QoEInfo.STARTUP_TIME: 2]
-        let qoeInfo2 = [MediaConstants.QoEInfo.BITRATE: 2000, MediaConstants.QoEInfo.DROPPED_FRAMES: 33, MediaConstants.QoEInfo.FPS: 24, MediaConstants.QoEInfo.STARTUP_TIME: 4]
+        guard let qoeInfo = Media.createQoEObjectWith(bitrate: 1000, startupTime: 2, fps: 14, droppedFrames: 6), let qoeInfo2 = Media.createQoEObjectWith(bitrate: 2000, startupTime: 4, fps: 24, droppedFrames: 33) else {
+            XCTFail("failed to create qoe info objects")
+            return
+        }
 
         // test
+        let timestamp = getCurrentTimeStamp()
+        tracker.setTimeStamp(value: timestamp)
         tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
-        let sessionStartTs = Date().getUnixTimeInSeconds()
         tracker.updateQoEObject(qoe: qoeInfo)
-        tracker.trackPlay()
         tracker.updateCurrentPlayhead(time: 1)
-        sleep(2)
+        tracker.trackPlay()
+        waitFor(2, currentPlayhead: 1, tracker: tracker, semaphore: semaphore)
+        semaphore.wait()
         tracker.updateCurrentPlayhead(time: 5)
         tracker.updateQoEObject(qoe: qoeInfo2)
         tracker.trackPause()
-		sleep(51) // trigger ping event
+        waitFor(51, currentPlayhead: 5, tracker: tracker, semaphore: semaphore)
+        semaphore.wait()
         tracker.trackPlay()
         tracker.updateCurrentPlayhead(time: 10)
         tracker.trackComplete()
         waitForProcessing()
         // verify
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 1)
-        // verify session hit payload after MediaCollectionReportHelper implemented
         let sessionHit = mockNetworkService?.calledNetworkRequests[0]
+        guard let sessionHitData = sessionHit?.connectPayload.data(using: .utf8) else {
+            XCTFail("Failed to convert session hit payload to data")
+            return
+        }
+        let payloadAsJson: [Any]? = try? JSONSerialization.jsonObject(with: sessionHitData, options: []) as? [Any]
+        verifyEvent(eventName: "sessionStart", payload: payloadAsJson?[0] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "play", payload: payloadAsJson?[1] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo, playhead: 1, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "pauseStart", payload: payloadAsJson?[2] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo2, playhead: 5, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "play", payload: payloadAsJson?[3] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: timestamp, isDownloadedSession: true)
+        verifyEvent(eventName: "sessionComplete", payload: payloadAsJson?[4] as? [String: Any] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: timestamp, isDownloadedSession: true)
     }
 }

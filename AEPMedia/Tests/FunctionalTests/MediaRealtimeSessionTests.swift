@@ -3,7 +3,6 @@
  This file is licensed to you under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License. You may obtain a copy
  of the License at http://www.apache.org/licenses/LICENSE-2.0
- 
  Unless required by applicable law or agreed to in writing, software distributed under
  the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  OF ANY KIND, either express or implied. See the License for the specific language
@@ -18,11 +17,11 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
 
     static let config: [String: Any] = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: false]
     var tracker: MediaEventGenerator!
+    let semaphore = DispatchSemaphore(value: 0)
 
     override func setUp() {
         super.setupBase()
         tracker = MediaEventGenerator(config: Self.config, dispatch: mockRuntime.dispatch(event:))
-        waitForProcessing(interval: 1)
     }
 
     func testRealtimeContentSession() {
@@ -39,17 +38,19 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         }
 
         // test
-        let timestamp = Date().timeIntervalSince1970
+        let timestamp = getCurrentTimeStamp()
         tracker.setTimeStamp(value: timestamp)
         tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
         tracker.updateQoEObject(qoe: qoeInfo)
         tracker.updateCurrentPlayhead(time: 1)
         tracker.trackPlay()
-        usleep(2000)
+        waitFor(2, currentPlayhead: 1, tracker: tracker, semaphore: semaphore)
+        semaphore.wait()
         tracker.updateCurrentPlayhead(time: 5)
         tracker.updateQoEObject(qoe: qoeInfo2)
         tracker.trackPause()
-        usleep(11000)
+        waitFor(11, currentPlayhead: 5, tracker: tracker, semaphore: semaphore)
+        semaphore.wait()
         tracker.trackPlay()
         tracker.updateCurrentPlayhead(time: 10)
         tracker.trackComplete()

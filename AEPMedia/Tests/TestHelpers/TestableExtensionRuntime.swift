@@ -50,7 +50,7 @@ class TestableExtensionRuntime: ExtensionRuntime {
             simulateComingEvent(event: event)
         }
     }
-    
+
     func dispatch(event: Event, semaphore: DispatchSemaphore) {
         dispatchedEvents += [event]
         if event.source == "com.adobe.eventsource.media.requesttracker" || event.source == "com.adobe.eventsource.media.trackmedia" {
@@ -77,7 +77,7 @@ class TestableExtensionRuntime: ExtensionRuntime {
         }
         return state
     }
-    
+
     func getXDMSharedState(extensionName: String, event: Event?, barrier: Bool) -> SharedStateResult? {
         // no-op
         return nil
