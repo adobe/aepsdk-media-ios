@@ -9,119 +9,118 @@
  governing permissions and limitations under the License.
  */
 
-
 import Foundation
 @testable import AEPMedia
 import AEPCore
 
 class MockMediaOfflineHits {
-    
-    var analyticsSharedState: [String : Any]!
-    var identitySharedState: [String : Any]!
-    var configSharedState: [String : Any]!
-    var configSharedStateOptOut: [String : Any]!
-    var configSharedStateUnknown: [String : Any]!
-    var configSharedStateOptIn: [String : Any]!
-    
+
+    var analyticsSharedState: [String: Any]!
+    var identitySharedState: [String: Any]!
+    var configSharedState: [String: Any]!
+    var configSharedStateOptOut: [String: Any]!
+    var configSharedStateUnknown: [String: Any]!
+    var configSharedStateOptIn: [String: Any]!
+
     var mediaState: MediaState!
     var mediaStateEmpty: MediaState!
     var mediaStateLocHintException: MediaState!
-    
+
     var sessionStart: MediaHit!
     var sessionStartJson: String!
     var sessionStartJsonWithState: String!
     var session_start_json_with_configuration_identity_state: String!
-    
+
     var sessionStartChannel: MediaHit!
     var sessionStartChannelJson: String!
-    
+
     var adBreakStart: MediaHit!
     var adBreakStartJson: String!
-    
+
     var adBreakComplete: MediaHit!
     var adBreakCompleteJson: String!
-    
+
     var adStart: MediaHit!
     var adStartJson: String!
     var adStartJsonWithState: String!
-    
+
     var adComplete: MediaHit!
     var adCompleteJson: String!
-    
+
     var play: MediaHit!
     var playJson: String!
-    
+
     var pause: MediaHit!
     var pauseJson: String!
-    
+
     var ping: MediaHit!
     var pingJson: String!
-    
+
     var complete: MediaHit!
     var completeJson: String!
-    
+
     var forceSessionEndJson: String!
     var forceSessionEndAfterRelaunchJson: String!
-    
+
     init() {
         mediaStateEmpty = MediaState()
-        
+
         configSharedStateOptOut = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedOut]
         configSharedStateOptIn = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn]
         configSharedStateUnknown = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.unknown]
-        
+
         //Config shared state
         configSharedState = [
             MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn,
-            MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID:"org_id",
+            MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID: "org_id",
             MediaConstants.Configuration.ANALYTICS_RSID: "rsid",
             MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER: "analytics_server",
-            MediaConstants.Configuration.MEDIA_TRACKING_SERVER:"media_server",
-            MediaConstants.Configuration.MEDIA_COLLECTION_SERVER:"media_collection_server",
-            MediaConstants.Configuration.MEDIA_CHANNEL:"channel",
-            MediaConstants.Configuration.MEDIA_OVP:"ovp",
-            MediaConstants.Configuration.MEDIA_PLAYER_NAME:"player_name",
-            MediaConstants.Configuration.MEDIA_APP_VERSION:"app_version",
-            MediaConstants.Configuration.MEDIA_DEBUG_LOGGING:false
+            MediaConstants.Configuration.MEDIA_TRACKING_SERVER: "media_server",
+            MediaConstants.Configuration.MEDIA_COLLECTION_SERVER: "media_collection_server",
+            MediaConstants.Configuration.MEDIA_CHANNEL: "channel",
+            MediaConstants.Configuration.MEDIA_OVP: "ovp",
+            MediaConstants.Configuration.MEDIA_PLAYER_NAME: "player_name",
+            MediaConstants.Configuration.MEDIA_APP_VERSION: "app_version",
+            MediaConstants.Configuration.MEDIA_DEBUG_LOGGING: false
         ]
-        
+
         //Identity shared state
         identitySharedState = [
-            MediaConstants.Identity.LOC_HINT:"9",
+            MediaConstants.Identity.LOC_HINT: "9",
             MediaConstants.Identity.BLOB: "blob",
-            MediaConstants.Identity.MARKETING_VISITOR_ID:"mid",
+            MediaConstants.Identity.MARKETING_VISITOR_ID: "mid",
         ]
-        
-        var visitorIdList = [[String:Any]]()
-        visitorIdList.append(["id":"id_type1","value":"u111111111","authstate":0])
-        visitorIdList.append(["id":"id_type2","value":"1234567890","authstate":1])
-        visitorIdList.append(["id":"id_type2","value":"testPushId","authstate":2])
-        
+
+        var visitorIdList = [[String: Any]]()
+        visitorIdList.append(["id": "id_type1", "value": "u111111111", "authstate": 0])
+        visitorIdList.append(["id": "id_type2", "value": "1234567890", "authstate": 1])
+        visitorIdList.append(["id": "id_type2", "value": "testPushId", "authstate": 2])
+
         identitySharedState[MediaConstants.Identity.VISITOR_IDS_LIST] = visitorIdList
 
         //analytics shared state
         analyticsSharedState = [
             MediaConstants.Analytics.VISITOR_ID: "vid",
-            MediaConstants.Analytics.ANALYTICS_VISITOR_ID:"aid"
+            MediaConstants.Analytics.ANALYTICS_VISITOR_ID: "aid"
         ]
-        
+
         //setup Media State
-        var sharedState = [String:[String:Any]]()
+        var sharedState = [String: [String: Any]]()
         sharedState[MediaConstants.Configuration.SHARED_STATE_NAME] = configSharedState
         sharedState[MediaConstants.Identity.SHARED_STATE_NAME] = identitySharedState
         sharedState[MediaConstants.Analytics.SHARED_STATE_NAME] = analyticsSharedState
         mediaState = MediaState()
         mediaState.update(dataMap: sharedState)
-        
+
         mediaStateLocHintException = MediaState()
         var identitySharedData = [String: Any]()
         identitySharedData[MediaConstants.Identity.LOC_HINT] = "exception"
         mediaStateLocHintException.update(dataMap: [
             MediaConstants.Identity.SHARED_STATE_NAME: identitySharedData
         ])
-        
+
         //Session Start
-        
+
         var params = [String: Any]()
         params["media.name"] = "media_name"
         params["media.id"] = "media_id"
@@ -130,18 +129,18 @@ class MockMediaOfflineHits {
         params["media.length"] = 1800
         params["media.resume"] = false
         params["media.downloaded"] = true
-        
+
         var metadata = [String: String]()
         metadata["key1"] = "value1"
-        
+
         var qoeData = [String: Any]()
         qoeData["media.qoe.bitrate"] = 100000
         qoeData["media.qoe.droppedFrames"] = 2
         qoeData["media.qoe.framesPerSecond"] = 23.5
         qoeData["media.qoe.timeToStart"] = 20
-        
+
         sessionStart = MediaHit(eventType: MediaConstants.MediaCollection.EventType.SESSION_START, playhead: 0, ts: 0, params: params, customMetadata: metadata, qoeData: qoeData)
-        
+
         sessionStartJson = """
         {
         "playerTime" : {
@@ -171,11 +170,11 @@ class MockMediaOfflineHits {
         }
         }
         """
-        
+
         //channel already present in media hit.
         params["media.channel"] = "media_channel"
         sessionStartChannel = MediaHit(eventType: MediaConstants.MediaCollection.EventType.SESSION_START, playhead: 0, ts: 0, params: params, customMetadata: metadata, qoeData: qoeData)
-        
+
         sessionStartChannelJson = """
         {
         "playerTime" : {
@@ -205,9 +204,9 @@ class MockMediaOfflineHits {
         "media.qoe.timeToStart" : 20
         }
         }
-        
+
         """
-                                                        
+
         sessionStartJsonWithState = """
         {
          "playerTime" : {
@@ -260,7 +259,7 @@ class MockMediaOfflineHits {
         "media.qoe.timeToStart" : 20
         }
         }
-            
+
         """
 
         session_start_json_with_configuration_identity_state = """
@@ -313,17 +312,16 @@ class MockMediaOfflineHits {
         }
         }
         """
-                    
-    
+
         //AdBreak Start
-        let paramsAdBreak: [String:Any] = [
-            "media.ad.podFriendlyName":"adbreak_name",
-            "media.ad.podIndex":1,
-            "media.ad.podSecond":10.0
+        let paramsAdBreak: [String: Any] = [
+            "media.ad.podFriendlyName": "adbreak_name",
+            "media.ad.podIndex": 1,
+            "media.ad.podSecond": 10.0
         ]
-    
+
         adBreakStart = MediaHit(eventType: MediaConstants.MediaCollection.EventType.ADBREAK_START, playhead: 10, ts: 10000, params: paramsAdBreak, customMetadata: nil, qoeData: nil)
-                
+
         adBreakStartJson = """
         {
         "playerTime" : {
@@ -338,7 +336,6 @@ class MockMediaOfflineHits {
         }
         }
         """
-                
 
         //AdBreak Complete
         adBreakComplete = MediaHit(eventType: MediaConstants.MediaCollection.EventType.ADBREAK_COMPLETE, playhead: 10, ts: 30000, params: nil, customMetadata: nil, qoeData: nil)
@@ -352,16 +349,16 @@ class MockMediaOfflineHits {
         "eventType" : "adBreakComplete"
         }
         """
-        
+
         //Ad Start
-        var paramsAdStart: [String:Any] = [
-            "media.ad.id":"ad_id",
-            "media.ad.name":"ad_name",
-            "media.ad.podPosition":1,
-            "media.ad.length":20
+        var paramsAdStart: [String: Any] = [
+            "media.ad.id": "ad_id",
+            "media.ad.name": "ad_name",
+            "media.ad.podPosition": 1,
+            "media.ad.length": 20
         ]
-        
-        adStart = MediaHit(eventType: MediaConstants.MediaCollection.EventType.AD_START, playhead: 10, ts: 10000, params: paramsAdStart, customMetadata: [String:String](), qoeData: [String:Any]())
+
+        adStart = MediaHit(eventType: MediaConstants.MediaCollection.EventType.AD_START, playhead: 10, ts: 10000, params: paramsAdStart, customMetadata: [String: String](), qoeData: [String: Any]())
 
         adStartJson =
             """
@@ -409,10 +406,10 @@ class MockMediaOfflineHits {
         "eventType" : "adComplete"
         }
         """
-        
+
         //Play
         play = MediaHit(eventType: MediaConstants.MediaCollection.EventType.PLAY, playhead: 0, ts: 100, params: nil, customMetadata: nil, qoeData: nil)
-                                            
+
         playJson = """
         {
         "playerTime" : {
@@ -425,7 +422,6 @@ class MockMediaOfflineHits {
 
         //Pause
         pause = MediaHit(eventType: MediaConstants.MediaCollection.EventType.PAUSE_START, playhead: 0, ts: 100, params: nil, customMetadata: nil, qoeData: nil)
-                                                                
 
         pauseJson = """
                 {
@@ -449,7 +445,6 @@ class MockMediaOfflineHits {
                "eventType" : "ping"
                }
         """
-                    
 
         //Session End
         forceSessionEndJson = """
@@ -461,7 +456,6 @@ class MockMediaOfflineHits {
                           "eventType" : "sessionEnd"
                           }
         """
-                    
 
         //Session End After relaunch
         forceSessionEndAfterRelaunchJson = """
@@ -473,7 +467,6 @@ class MockMediaOfflineHits {
                           "eventType" : "sessionEnd"
                           }
         """
-                    
 
         //Complete
         complete = MediaHit(eventType: MediaConstants.MediaCollection.EventType.SESSION_COMPLETE, playhead: 60, ts: 80000, params: nil, customMetadata: nil, qoeData: nil)
@@ -488,6 +481,5 @@ class MockMediaOfflineHits {
                           }
         """
     }
-    
 
 }

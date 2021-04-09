@@ -27,7 +27,6 @@ class MediaCollectionHitGenerator {
     private var qoeInfoUpdated = false
     private typealias EventType = MediaConstants.MediaCollection.EventType
     private typealias Media = MediaConstants.MediaCollection.Media
-    private typealias QoE = MediaConstants.MediaCollection.QoE
 
     #if DEBUG
         var mediaContext: MediaContext
@@ -56,7 +55,7 @@ class MediaCollectionHitGenerator {
     }
 
     func processMediaStart(forceResume: Bool = false) {
-        var params = MediaCollectionHelper.extractMediaParams(mediaContext: mediaContext)
+        var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
 
         if forceResume {
             params[Media.RESUME] = true
@@ -68,7 +67,7 @@ class MediaCollectionHitGenerator {
             params[Media.CHANNEL] = channel
         }
 
-        let customMetadata = MediaCollectionHelper.extractMediaMetadata(mediaContext: mediaContext)
+        let customMetadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
 
         generateHit(eventType: EventType.SESSION_START, params: params, metadata: customMetadata)
     }
@@ -84,7 +83,7 @@ class MediaCollectionHitGenerator {
     }
 
     func processAdBreakStart() {
-        let params = MediaCollectionHelper.extractAdBreakParams(mediaContext: mediaContext)
+        let params = MediaCollectionHelper.generateAdBreakParams(adBreakInfo: mediaContext.adBreakInfo)
         generateHit(eventType: EventType.ADBREAK_START, params: params)
     }
 
@@ -108,8 +107,8 @@ class MediaCollectionHitGenerator {
             reportingInterval = MediaConstants.PingInterval.DEFAULT_ONLINE
         }
 
-        let params = MediaCollectionHelper.extractAdParams(mediaContext: mediaContext)
-        let metadata = MediaCollectionHelper.extractAdMetadata(mediaContext: mediaContext)
+        let params = MediaCollectionHelper.generateAdParams(adInfo: mediaContext.adInfo, adMetadata: mediaContext.adMetadata)
+        let metadata = MediaCollectionHelper.generateAdMetadata(adMetadata: mediaContext.adMetadata)
 
         generateHit(eventType: EventType.AD_START, params: params, metadata: metadata)
     }
@@ -125,7 +124,7 @@ class MediaCollectionHitGenerator {
     }
 
     func processChapterStart() {
-        let params = MediaCollectionHelper.extractChapterParams(mediaContext: mediaContext)
+        let params = MediaCollectionHelper.generateChapterParams(chapterInfo: mediaContext.chapterInfo)
         let metadata = mediaContext.chapterMetadata
 
         generateHit(eventType: EventType.CHAPTER_START, params: params, metadata: metadata)
@@ -178,11 +177,8 @@ class MediaCollectionHitGenerator {
     }
 
     func processError(errorId: String) {
-        var qoeData = mediaContext.qoeInfo?.toMap()
-        qoeData?[QoE.ERROR_ID] = errorId
-        qoeData?[QoE.ERROR_SOURCE] = QoE.ERROR_SOURCE_PLAYER
-
-        generateHit(eventType: EventType.ERROR, qoeData: qoeData)
+        let qoeDataWithError = MediaCollectionHelper.generateErrorParam(qoeInfo: mediaContext.qoeInfo, errorId: errorId)
+        generateHit(eventType: EventType.ERROR, qoeData: qoeDataWithError)
     }
 
     func setRefTS(ts: Double) {
@@ -213,9 +209,8 @@ class MediaCollectionHitGenerator {
             Log.debug(label: Self.LOG_TAG, "\(#function) - Received nil stateInfo, will not generate a start state hit.")
             return
         }
-        var params = [String: Any]()
-        params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.stateName
 
+        let  params: [String: Any] = [MediaConstants.StateInfo.STATE_NAME_KEY: stateInfo.stateName]
         generateHit(eventType: EventType.STATE_START, params: params)
     }
 
@@ -224,9 +219,8 @@ class MediaCollectionHitGenerator {
             Log.debug(label: Self.LOG_TAG, "\(#function) - Received nil stateInfo, will not generate an end state hit.")
             return
         }
-        var params = [String: Any]()
-        params[MediaConstants.StateInfo.STATE_NAME_KEY] = stateInfo.stateName
 
+        let  params: [String: Any] = [MediaConstants.StateInfo.STATE_NAME_KEY: stateInfo.stateName]
         generateHit(eventType: EventType.STATE_END, params: params)
     }
 
@@ -242,8 +236,11 @@ class MediaCollectionHitGenerator {
     }
 
     private func endTrackingSession() {
-        mediaHitProcessor.endSession(sessionId: sessionId)
-        isTracking = false
+        if isTracking {
+            Log.trace(label: Self.LOG_TAG, "\(#function) - Ending session with id \(sessionId).")
+            mediaHitProcessor.endSession(sessionId: sessionId)
+            isTracking = false
+        }
     }
 
     private func generateHit(eventType: String, params: [String: Any]? = nil, metadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {

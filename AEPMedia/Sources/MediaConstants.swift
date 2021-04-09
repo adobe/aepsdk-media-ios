@@ -309,7 +309,7 @@ enum MediaConstants {
             static let CHANNEL = "media.channel"
             static let PUBLISHER = "media.publisher"
             static let SDK_VERSION = "media.sdkVersion"
-        }                
+        }
 
         enum PlayerTime {
             static let TS = "ts"

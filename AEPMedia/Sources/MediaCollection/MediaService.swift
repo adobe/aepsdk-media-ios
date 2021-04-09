@@ -51,7 +51,7 @@ class MediaService: MediaProcessor {
         }
     }
 
-    func createSession(config: [String:Any]) -> String? {
+    func createSession(config: [String: Any]) -> String? {
         guard mediaState.privacyStatus != .optedOut else {
             Log.debug(label: LOG_TAG, "\(#function) - Could not start new media session. Privacy is opted out.")
             return nil

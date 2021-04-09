@@ -13,8 +13,8 @@
 import AEPCore
 @testable import AEPMedia
 
-class FakeMediaHitsDatabase : MediaHitsDatabase {
-    var addedData: [String:[Data]] = [:]
+class FakeMediaHitsDatabase: MediaHitsDatabase {
+    var addedData: [String: [Data]] = [:]
     var sessionIds: Set<String> = []
 
     init?() {
