@@ -64,7 +64,7 @@ class MediaRealTimeSession: MediaSession {
         }
         let eventType = hit.eventType
 
-        let isSessionStartHit = eventType == MediaConstants.EventName.SESSION_START
+        let isSessionStartHit = eventType == MediaConstants.MediaCollection.EventType.SESSION_START
         if !isSessionStartHit && sessionId?.isEmpty ?? true {
             Log.trace(label: LOG_TAG, "\(#function) - Dropping event (\(eventType)) as session id is unavailable.")
             hits.removeFirst()
