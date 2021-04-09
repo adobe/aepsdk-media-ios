@@ -150,6 +150,9 @@ class MediaEventTracker: MediaEventTracking {
         mediaIdleStartTS = TimeInterval()
     }
 
+    /// Handles all the track API calls.
+    ///- Parameters:
+    ///    - eventData: EventData for the track API consisting of eventName, playhead, timeStamp, params and metadata.
     @discardableResult
     func track(eventData: [String: Any]?) -> Bool {
         guard let eventData = eventData else {
@@ -193,6 +196,10 @@ class MediaEventTracker: MediaEventTracking {
         return processRule(rule: rule, context: ruleContext)
     }
 
+    /// Processes rules through preset conditions set in the state machine
+    ///- Parameters:
+    ///    - rule: EventName corresponding to API call
+    ///    - context: Data passed with the corresponding API call
     @discardableResult
     private func processRule(rule: RuleName, context: [String: Any]) -> Bool {
         let result = ruleEngine.processRule(name: rule.rawValue, context: context)
@@ -204,6 +211,10 @@ class MediaEventTracker: MediaEventTracking {
         return result.success
     }
 
+    /// Setup state machine i.e. conditions and actions for each Rule
+    ///- Parameters:
+    ///    - rule: EventName corresponding to API call
+    ///    - context: Data passed with the corresponding API call
     private func setupRules() {
         ruleEngine.onEnterRule(enterFn: cmdEnterAction(rule:context:))
         ruleEngine.onExitRule(exitFn: cmdExitAction(rule:context:))
@@ -727,7 +738,10 @@ class MediaEventTracker: MediaEventTracking {
         return false
     }
 
-    // Abort and restart the current media Session if active for more than 24hrs
+    /// Check the duration of current session and abort if active for more than 24 hours
+    ///- Parameters:
+    ///    - rule: EventName corresponding to API call
+    ///    - context: Data passed with the corresponding API call
     @discardableResult
     private func cmdSessionTimeoutDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         let refTS = getRefTS(context: context)
@@ -748,7 +762,10 @@ class MediaEventTracker: MediaEventTracking {
         return true
     }
 
-    // Abort the session if the player is idle (not in play) for more than 30 minutes
+    /// Detect if the player is idle (not in play) and abort current session if idle for more than 30 minutes
+    ///- Parameters:
+    ///    - rule: EventName corresponding to API call
+    ///    - context: Data passed with the corresponding API call
     @discardableResult
     private func cmdIdleDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaContext = mediaContext else {
@@ -786,7 +803,10 @@ class MediaEventTracker: MediaEventTracking {
         return true
     }
 
-    // Detect 1 sec of main content playback and send the content start (play) ping
+    /// Handle content start (play) ping. Sends 1 play ping per session after detecting the first second of main content playback
+    ///- Parameters:
+    ///    - rule: EventName corresponding to API call
+    ///    - context: Data passed with the corresponding API call
     @discardableResult
     private func cmdContentStartDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         guard let mediaContext = mediaContext else {

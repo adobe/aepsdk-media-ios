@@ -50,7 +50,7 @@ class MediaOfflineSessionTests: XCTestCase {
 
         let sharedData = [MediaConstants.Configuration.SHARED_STATE_NAME: [
             MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn.rawValue,
-            MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID:"orgid",
+            MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID: "orgid",
             MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER: "analytics_tracking_Server",
             MediaConstants.Configuration.MEDIA_COLLECTION_SERVER: "media_collection_Server",
             MediaConstants.Configuration.ANALYTICS_RSID: "analytics_rsid"],

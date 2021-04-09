@@ -18,12 +18,12 @@ class MediaDBServiceTests: XCTestCase {
     private var mediaDbService: MediaDBService!
     private var fakeMediaHitsDatabase: FakeMediaHitsDatabase!
     private var queue = DispatchQueue(label: "MediaDBServiceTests")
-    
+
     override func setUp() {
         fakeMediaHitsDatabase = FakeMediaHitsDatabase()
         mediaDbService = MediaDBService(mediaHitsDatabase: fakeMediaHitsDatabase)
     }
-    
+
     func testPersistHitsForSameSessionId() {
         // setup
         var addedHits: [MediaHit] = []
@@ -40,7 +40,7 @@ class MediaDBServiceTests: XCTestCase {
             XCTAssertEqual(retrievedHits[i], addedHits[i])
         }
     }
-    
+
     func testPersistHitsForDifferentSessionIdsThenDeleteHitsForOneSession() {
         // setup
         var addedHits: [MediaHit] = []
@@ -52,7 +52,7 @@ class MediaDBServiceTests: XCTestCase {
             let hit = MediaHit(eventType: "sessionStart", playhead: Double(100 * i), ts: Date().timeIntervalSince1970)
             mediaDbService.persistHit(hit: hit, sessionId: sessionId)
             addedHits.append(hit)
-            
+
         }
         sessionId = UUID().uuidString
         sessionIds.append(sessionId)
@@ -80,7 +80,7 @@ class MediaDBServiceTests: XCTestCase {
         }
         XCTAssertEqual([], mediaDbService.getHits(sessionId: sessionIds[2]))
     }
-    
+
     func testGetPersistedSessionIds() {
         // setup
         var sessionIds: Set<String> = []
