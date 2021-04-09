@@ -160,9 +160,9 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         tracker.setTimeStamp(value: timestamp)
         tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
         waitForProcessing()
-        // setup mock network to return a valid connection and wait 31 seconds for retried request
+        // setup mock network to return a valid connection and wait 33 seconds for retried request
         mockNetworkService?.shouldReturnConnectionError = false
-        sleep(31)
+        sleep(33)
         // verify two session start network requests due to initial session start request getting an error response and the request being retried
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
         let sessionStart = mockNetworkService?.calledNetworkRequests[1]

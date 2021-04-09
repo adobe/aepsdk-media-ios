@@ -71,6 +71,8 @@ class TestConstants {
         MediaConstants.Identity.VISITOR_IDS_LIST: [["id_origin": "orig1", "id_type": "type1", "id": "u111111111", "authentication_state": 0],["id_origin": "orig1", "id_type": "type2", "id": "1234567890", "authentication_state": 1],["id_origin": "orig1", "id_type": "type3", "id": "testPushId", "authentication_state": 2]]
     ]
 
+    static let expectedSerializedCustomerIds = ["type1":["id":"u111111111","authState":0],"type2":["id":"1234567890","authState":1],"type3":["id":"testPushId","authState":2]]
+
     static let configSharedState: [String: Any] = [
         MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER: "analytics-test.com",
         MediaConstants.Configuration.ANALYTICS_RSID: "rsid",
@@ -84,7 +86,5 @@ class TestConstants {
         MediaConstants.Configuration.MEDIA_TRACKING_SERVER: "media-tracking-test.com",
         MediaConstants.Configuration.MEDIA_COLLECTION_SERVER: "media-collection-test.com"
     ]
-
-    static let expectedSerializedCustomerIds = ["type1":["id":"u111111111","authState":0],"type2":["id":"1234567890","authState":1],"type3":["id":"testPushId","authState":2]]
 
 }
