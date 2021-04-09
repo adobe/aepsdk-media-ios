@@ -19,7 +19,6 @@ class MediaFunctionalTestBase: XCTestCase {
     var media: Media!
     var mockRuntime: TestableExtensionRuntime!
     var mockNetworkService: MockNetworking!
-    var timer: DispatchSourceTimer!
 
     func setupBase(disableIdRequest: Bool = true) {
         FileManager.default.clearCache()
@@ -180,22 +179,15 @@ class MediaFunctionalTestBase: XCTestCase {
 
     func waitFor(_ secondsToWait: Int, currentPlayhead: Double, trackAction: String, tracker: MediaEventGenerator, semaphore: DispatchSemaphore) {
         var elapsedTime = 0
-        let queue = DispatchQueue(label: "trackerTimer")
-        timer = DispatchSource.makeTimerSource(queue: queue)
-        timer.schedule(deadline: .now(), repeating: .seconds(1))
-        timer.setEventHandler { [weak self] in
+        for _ in 1 ... secondsToWait {
             if trackAction == "play" {
                 tracker.updateCurrentPlayhead(time: currentPlayhead + Double(elapsedTime))
             } else {
                 tracker.updateCurrentPlayhead(time: currentPlayhead)
             }
-            if elapsedTime >= secondsToWait {
-                self?.timer = nil
-                semaphore.signal()
-            }
             elapsedTime += 1
         }
-        timer.resume()
+        semaphore.signal()
     }
 
     /// Returns true if the two passed in dictionaries are equal, false otherwise
