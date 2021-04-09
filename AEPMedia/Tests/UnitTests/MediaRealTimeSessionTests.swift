@@ -19,7 +19,7 @@ class MediaRealTimeSessionTests: XCTestCase {
         //prepare
         let sessionId = "sessionId"
         let collectionServerUrl = "https://fakeurl.com"
-        let eventType = MediaConstants.EventName.SESSION_START
+        let eventType = MediaConstants.MediaCollection.EventType.SESSION_START
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         let mediaState = MediaState()
         let sharedData = [MediaConstants.Configuration.SHARED_STATE_NAME: [MediaConstants.Configuration.MEDIA_COLLECTION_SERVER: collectionServerUrl]]
