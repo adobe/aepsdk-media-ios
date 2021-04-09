@@ -80,12 +80,12 @@ class VideoAnalyticsProvider: NSObject {
 
     @objc func onPlay(notification: NSNotification) {
         NSLog("\(logTag) onPlay()")
-        // _tracker.trackPlay()
+        _tracker.trackPlay()
     }
 
     @objc func onStop(notification: NSNotification) {
         NSLog("\(logTag) onStop()")
-        // _tracker.trackPause()
+        _tracker.trackPause()
     }
 
     @objc func onComplete(notification: NSNotification) {

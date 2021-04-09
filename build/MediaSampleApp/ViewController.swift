@@ -88,7 +88,7 @@ class ViewController: UIViewController {
             AEPAssurance.startSession(url)
         }
     }
-    
+
     func reset() {
         videoPlayer = nil
         videoAnalyticsProvider = nil
