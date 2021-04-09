@@ -22,7 +22,7 @@ pod-update: pod-repo-update
 	(cd build && pod update)
 
 bundle-exec-pod-install:
-    (cd build && bundle exec pod install)
+	(cd build && bundle exec pod install)
 
 open:
 	open build/$(PROJECT_NAME).xcworkspace
