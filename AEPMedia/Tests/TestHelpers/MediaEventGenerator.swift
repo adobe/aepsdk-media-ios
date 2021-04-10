@@ -114,11 +114,11 @@ class MediaEventGenerator: MediaTracker {
             return
         }
     }
-    
+
     func getCurrentTimeStamp() -> TimeInterval {
         return tracker.mockTimeStamp
     }
-    
+
     func getLastEventTimeStamp() -> TimeInterval {
         return tracker.lastEventTs
     }
