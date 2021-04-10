@@ -59,6 +59,12 @@ extension MediaHit: Equatable {
     }
 }
 
+extension Double {
+    func isAlmostEqualWithinDelta(_ doubleToCompare: Double, delta: TimeInterval) -> Bool {
+        return fabs(self - doubleToCompare) < delta
+    }
+}
+
 /// Attempts to convert provided hit payload to [String: Any] using JSONSerialization.
 /// - Parameter jsonString: hit payload to be converted to [String: Any]
 /// - Returns: the json string payload as [String: Any] or empty if an error occured

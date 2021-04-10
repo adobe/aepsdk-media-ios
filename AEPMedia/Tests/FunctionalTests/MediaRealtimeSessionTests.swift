@@ -38,12 +38,12 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         }
 
         // test
-        let timestamp = getCurrentTimeStamp()
-        tracker.setTimeStamp(value: timestamp)
+        let sessionStartTs = TimeInterval(0)
+        tracker.setTimeStamp(value: sessionStartTs)
         tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
         tracker.updateQoEObject(qoe: qoeInfo)
-        tracker.updateCurrentPlayhead(time: 1)
         tracker.trackPlay()
+        tracker.updateCurrentPlayhead(time: 1)
         waitFor(2, currentPlayhead: 1, trackAction: "play", tracker: tracker, semaphore: semaphore)
         semaphore.wait()
         tracker.updateCurrentPlayhead(time: 5)
@@ -56,22 +56,28 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         tracker.trackComplete()
         waitForProcessing()
         // verify
-        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 5)
+        XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 7)
         let sessionStart = mockNetworkService?.calledNetworkRequests[0]
         let sessionStartPayload = convertToDictionary(jsonString: sessionStart?.connectPayload)
-        verifyEvent(eventName: "sessionStart", payload: sessionStartPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: timestamp)
+        verifyEvent(eventName: "sessionStart", payload: sessionStartPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: sessionStartTs, isDownloadedSession: false)
         let play = mockNetworkService?.calledNetworkRequests[1]
         let playPayload = convertToDictionary(jsonString: play?.connectPayload)
-        verifyEvent(eventName: "play", payload: playPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo, playhead: 1, ts: timestamp)
-        let pause = mockNetworkService?.calledNetworkRequests[2]
-        let pausePayload = convertToDictionary(jsonString: pause?.connectPayload)
-        verifyEvent(eventName: "pauseStart", payload: pausePayload, expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo2, playhead: 5, ts: timestamp)
-        let play2 = mockNetworkService?.calledNetworkRequests[3]
-        let play2Payload = convertToDictionary(jsonString:play2?.connectPayload)
-        verifyEvent(eventName: "play", payload: play2Payload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: timestamp)
-        let sessionComplete = mockNetworkService?.calledNetworkRequests[4]
-        let sessionCompletePayload = convertToDictionary(jsonString:sessionComplete?.connectPayload)
-        verifyEvent(eventName: "sessionComplete", payload: sessionCompletePayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: timestamp)
+        verifyEvent(eventName: "play", payload: playPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo, playhead: 0, ts: sessionStartTs, isDownloadedSession: true)
+        let contentStart = mockNetworkService?.calledNetworkRequests[2]
+        let contentStartPayload = convertToDictionary(jsonString: contentStart?.connectPayload)
+        verifyEvent(eventName: "play", payload: contentStartPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 3, ts: sessionStartTs + 3.0, isDownloadedSession: true)
+        let pauseStart = mockNetworkService?.calledNetworkRequests[3]
+        let pauseStartPayload = convertToDictionary(jsonString: pauseStart?.connectPayload)
+        verifyEvent(eventName: "pauseStart", payload: pauseStartPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo2, playhead: 5, ts: sessionStartTs + 4.0, isDownloadedSession: true)
+        let ping = mockNetworkService?.calledNetworkRequests[4]
+        let pingPayload = convertToDictionary(jsonString: ping?.connectPayload)
+        verifyEvent(eventName: "ping", payload: pingPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: sessionStartTs + 14.0, isDownloadedSession: false)
+        let play2 = mockNetworkService?.calledNetworkRequests[5]
+        let play2Payload = convertToDictionary(jsonString: play2?.connectPayload)
+        verifyEvent(eventName: "play", payload: play2Payload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: sessionStartTs + 15.0, isDownloadedSession: false)
+        let sessionComplete = mockNetworkService?.calledNetworkRequests[6]
+        let sessionCompletePayload = convertToDictionary(jsonString: sessionComplete?.connectPayload)
+        verifyEvent(eventName: "sessionComplete", payload: sessionCompletePayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: sessionStartTs + 15.0, isDownloadedSession: false)
     }
 
     func testRealtimeContentSessionWhenPrivacyOptedOut() {
@@ -82,27 +88,11 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
             return
         }
         let metadata = ["SampleContextData": "SampleValue", "a.media.show": "show"]
-        guard let qoeInfo = Media.createQoEObjectWith(bitrate: 1000, startupTime: 2, fps: 14, droppedFrames: 6), let qoeInfo2 = Media.createQoEObjectWith(bitrate: 2000, startupTime: 4, fps: 24, droppedFrames: 33) else {
-            XCTFail("failed to create qoe info objects")
-            return
-        }
 
         // test
-        let timestamp = getCurrentTimeStamp()
-        tracker.setTimeStamp(value: timestamp)
+        let sessionStartTs = TimeInterval(0)
+        tracker.setTimeStamp(value: sessionStartTs)
         tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
-        tracker.updateQoEObject(qoe: qoeInfo)
-        tracker.updateCurrentPlayhead(time: 1)
-        tracker.trackPlay()
-        waitFor(1, currentPlayhead: 1, trackAction: "play", tracker: tracker, semaphore: semaphore)
-        semaphore.wait()
-        tracker.updateCurrentPlayhead(time: 5)
-        tracker.updateQoEObject(qoe: qoeInfo2)
-        tracker.trackPause()
-        waitFor(1, currentPlayhead: 5, trackAction: "pause", tracker: tracker, semaphore: semaphore)
-        semaphore.wait()
-        tracker.trackPlay()
-        tracker.updateCurrentPlayhead(time: 10)
         tracker.trackComplete()
         waitForProcessing()
         // verify
@@ -117,27 +107,11 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
             return
         }
         let metadata = ["SampleContextData": "SampleValue", "a.media.show": "show"]
-        guard let qoeInfo = Media.createQoEObjectWith(bitrate: 1000, startupTime: 2, fps: 14, droppedFrames: 6), let qoeInfo2 = Media.createQoEObjectWith(bitrate: 2000, startupTime: 4, fps: 24, droppedFrames: 33) else {
-            XCTFail("failed to create qoe info objects")
-            return
-        }
 
         // test
-        let timestamp = getCurrentTimeStamp()
-        tracker.setTimeStamp(value: timestamp)
+        let sessionStartTs = TimeInterval(0)
+        tracker.setTimeStamp(value: sessionStartTs)
         tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
-        tracker.updateQoEObject(qoe: qoeInfo)
-        tracker.updateCurrentPlayhead(time: 1)
-        tracker.trackPlay()
-        waitFor(1, currentPlayhead: 1, trackAction: "play", tracker: tracker, semaphore: semaphore)
-        semaphore.wait()
-        tracker.updateCurrentPlayhead(time: 5)
-        tracker.updateQoEObject(qoe: qoeInfo2)
-        tracker.trackPause()
-        waitFor(1, currentPlayhead: 5, trackAction: "pause", tracker: tracker, semaphore: semaphore)
-        semaphore.wait()
-        tracker.trackPlay()
-        tracker.updateCurrentPlayhead(time: 10)
         tracker.trackComplete()
         waitForProcessing()
         // verify
@@ -156,8 +130,8 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         mockNetworkService?.shouldReturnConnectionError = true
 
         // test
-        let timestamp = getCurrentTimeStamp()
-        tracker.setTimeStamp(value: timestamp)
+        let sessionStartTs = TimeInterval(0)
+        tracker.setTimeStamp(value: sessionStartTs)
         tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
         waitForProcessing()
         // setup mock network to return a valid connection and wait 33 seconds for retried request
@@ -167,6 +141,6 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 2)
         let sessionStart = mockNetworkService?.calledNetworkRequests[1]
         let sessionStartPayload = convertToDictionary(jsonString: sessionStart?.connectPayload)
-        verifyEvent(eventName: "sessionStart", payload: sessionStartPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: timestamp)
+        verifyEvent(eventName: "sessionStart", payload: sessionStartPayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: sessionStartTs, isDownloadedSession: false)
     }
 }

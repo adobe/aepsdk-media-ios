@@ -19,6 +19,7 @@ class MediaFunctionalTestBase: XCTestCase {
     var media: Media!
     var mockRuntime: TestableExtensionRuntime!
     var mockNetworkService: MockNetworking!
+    var timer: DispatchSourceTimer!
 
     func setupBase(disableIdRequest: Bool = true) {
         FileManager.default.clearCache()
@@ -106,26 +107,27 @@ class MediaFunctionalTestBase: XCTestCase {
     }
 
     private func verifyPlayerTime(eventName: String, actualPlayerTime: [String: Any], expectedPlayhead: Double, expectedTs: TimeInterval) {
+        let delta = TimeInterval(2)
         // verify playhead
         guard let actualPlayhead = actualPlayerTime[MediaConstants.MediaCollection.PlayerTime.PLAYHEAD] as? Double else {
             XCTFail("Unable to get actual playhead for event: \(eventName)")
             return
         }
         let expectation = XCTestExpectation(description: "for event \(eventName), the actual playhead \(actualPlayhead) should almost be equal to the expected playhead \(expectedPlayhead)")
-        if actualPlayhead.isAlmostEqual(expectedPlayhead) {
+        if actualPlayhead.isAlmostEqualWithinDelta(expectedPlayhead, delta: delta) {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: 0.1)
         // verify timestamp
         guard let actualTs = actualPlayerTime[MediaConstants.MediaCollection.PlayerTime.TS] as? TimeInterval else {
             XCTFail("Unable to get actual timestamp for event: \(eventName)")
             return
         }
         let expectation2 = XCTestExpectation(description: "for event \(eventName), the actual timestamp \(actualTs) should almost be equal to the expected timestamp \(expectedTs)")
-        if actualTs.isAlmostEqual(expectedTs) {
+        if actualTs.isAlmostEqualWithinDelta(expectedTs, delta: delta) {
             expectation2.fulfill()
         }
-        wait(for: [expectation2], timeout: 0.5)
+        wait(for: [expectation2], timeout: 0.1)
     }
 
     private func verifySessionStartParams(expectedInfo: [String: Any], actualParams: [String: Any], isDownloadedSession: Bool) {
@@ -178,16 +180,28 @@ class MediaFunctionalTestBase: XCTestCase {
     }
 
     func waitFor(_ secondsToWait: Int, currentPlayhead: Double, trackAction: String, tracker: MediaEventGenerator, semaphore: DispatchSemaphore) {
+        let timestampIncrement = TimeInterval(1)
         var elapsedTime = 0
-        for _ in 1 ... secondsToWait {
-            if trackAction == "play" {
-                tracker.updateCurrentPlayhead(time: currentPlayhead + Double(elapsedTime))
-            } else {
-                tracker.updateCurrentPlayhead(time: currentPlayhead)
+        let queue = DispatchQueue(label: "trackerTimer")
+        timer = DispatchSource.makeTimerSource(queue: queue)
+        timer.schedule(deadline: .now(), repeating: .seconds(1))
+        timer.setEventHandler { [weak self] in
+            if elapsedTime == secondsToWait {
+                self?.timer = nil
+                semaphore.signal()
+            }
+            // only update the playhead if the timestamp has changed
+            if tracker.getCurrentTimeStamp() != tracker.getLastEventTimeStamp() {
+                if trackAction == "play" {
+                    tracker.updateCurrentPlayhead(time: currentPlayhead + Double(elapsedTime))
+                } else {
+                    tracker.updateCurrentPlayhead(time: currentPlayhead)
+                }
             }
             elapsedTime += 1
+            tracker.incrementTimeStamp(value: timestampIncrement)
         }
-        semaphore.signal()
+        timer.resume()
     }
 
     /// Returns true if the two passed in dictionaries are equal, false otherwise
@@ -215,9 +229,5 @@ class MediaFunctionalTestBase: XCTestCase {
             }
         }
         return true
-    }
-
-    func getCurrentTimeStamp() -> TimeInterval {
-        return Date().timeIntervalSince1970
     }
 }
