@@ -20,18 +20,19 @@ class VideoAnalyticsProvider: NSObject {
     let VIDEO_LENGTH = 1800
 
     let logTag = "#VideoAnalyticsProvider"
-    var _player: VideoPlayer!
-    var _tracker: MediaTracker!
-    var _pendingSessionStart: Bool!
-    var _pendingPlay: Bool!
+    var _player: VideoPlayer?
+    var _tracker: MediaTracker?
+    var _pendingSessionStart: Bool?
+    var _pendingPlay: Bool?
 
     @objc func initWithPlayer(player: VideoPlayer) {
+
         _player = player
 
         var config: [String: Any] = [:]
         // TO DO: Use Public Constants
         config["config.channel"] = "custom-swift-channel" // Override channel
-        config["config.downloadedcontent"] = false    // Creates downloaded content tracker configured from launch
+        // config["config.downloadedcontent"] = true    // Creates downloaded content tracker configured from launch
 
         _tracker = Media.createTrackerWith(config: config)
         setupPlayerNotifications()
@@ -46,9 +47,12 @@ class VideoAnalyticsProvider: NSObject {
     }
 
     @objc func updateCurrentPlaybackTime(notification: NSNotification) {
-        let playhead = _player.getCurrentPlaybackTime()
+        guard let playhead = _player?.getCurrentPlaybackTime() else {
+            return
+        }
+
         NSLog("\(logTag) updatePlayhead() - updated playhead value to %f", playhead)
-        _tracker.updateCurrentPlayhead(time: playhead)
+        _tracker?.updateCurrentPlayhead(time: playhead)
     }
 
     func destroy() {
@@ -60,7 +64,9 @@ class VideoAnalyticsProvider: NSObject {
     @objc func onMainVideoLoaded(notification: NSNotification) {
         NSLog("\(logTag) onMainVideoLoaded()")
         // TO DO: Use Public Constants
-        let mediaObject = Media.createMediaObjectWith(name: VIDEO_NAME, id: VIDEO_ID, length: Double(VIDEO_LENGTH), streamType: "vod", mediaType: MediaType.Audio)
+        guard let mediaObject = Media.createMediaObjectWith(name: VIDEO_NAME, id: VIDEO_ID, length: Double(VIDEO_LENGTH), streamType: "vod", mediaType: MediaType.Audio) else {
+            return
+        }
         var videoMetadata: [String: String] = [:]
         // standardVideoMetadata
         videoMetadata["a.media.show"] = "Sample show"
@@ -70,37 +76,37 @@ class VideoAnalyticsProvider: NSObject {
         videoMetadata["isUserLoggedIn"] = "false"
         videoMetadata["tvStation"] = "Sample TV station"
 
-        _tracker.trackSessionStart(info: mediaObject!, metadata: videoMetadata)
+        _tracker?.trackSessionStart(info: mediaObject, metadata: videoMetadata)
     }
 
     @objc func onMainVideoUnloaded(notification: NSNotification) {
         NSLog("\(logTag) onMainVideoUnloaded()")
-        _tracker.trackSessionEnd()
+        _tracker?.trackSessionEnd()
     }
 
     @objc func onPlay(notification: NSNotification) {
         NSLog("\(logTag) onPlay()")
-        _tracker.trackPlay()
+        _tracker?.trackPlay()
     }
 
     @objc func onStop(notification: NSNotification) {
         NSLog("\(logTag) onStop()")
-        _tracker.trackPause()
+        _tracker?.trackPause()
     }
 
     @objc func onComplete(notification: NSNotification) {
         NSLog("\(logTag) onComplete()")
-        _tracker.trackComplete()
+        _tracker?.trackComplete()
     }
 
     @objc func onSeekStart(notification: NSNotification) {
         NSLog("\(logTag) onSeekStart()")
-        _tracker.trackEvent(event: MediaEvent.SeekStart, info: nil, metadata: nil)
+        _tracker?.trackEvent(event: MediaEvent.SeekStart, info: nil, metadata: nil)
     }
 
     @objc func onSeekComplete(notification: NSNotification) {
         NSLog("\(logTag) onSeekComplete()")
-        _tracker.trackEvent(event: MediaEvent.SeekComplete, info: nil, metadata: nil)
+        _tracker?.trackEvent(event: MediaEvent.SeekComplete, info: nil, metadata: nil)
     }
 
     @objc func onChapterStart(notification: NSNotification) {
@@ -112,12 +118,12 @@ class VideoAnalyticsProvider: NSObject {
 
         let chapterObject = Media.createChapterObjectWith(name: chapterData!["name"] as! String, position: chapterData!["position"] as! Int, length: chapterData!["length"] as! Double, startTime: chapterData!["time"] as! Double)
 
-        _tracker.trackEvent(event: MediaEvent.ChapterStart, info: chapterObject, metadata: chapterDictionary)
+        _tracker?.trackEvent(event: MediaEvent.ChapterStart, info: chapterObject, metadata: chapterDictionary)
     }
 
     @objc func onChapterComplete(notification: NSNotification) {
         NSLog("\(logTag) onChapterComplete()")
-        _tracker.trackEvent(event: MediaEvent.ChapterComplete, info: nil, metadata: nil)
+        _tracker?.trackEvent(event: MediaEvent.ChapterComplete, info: nil, metadata: nil)
     }
 
     @objc func onAdStart(notification: NSNotification) {
@@ -140,19 +146,19 @@ class VideoAnalyticsProvider: NSObject {
         adMetadata["affiliate"] = "Sample affiliate"
 
         // AdBreakStart
-        _tracker.trackEvent(event: MediaEvent.AdBreakStart, info: adBreakObject, metadata: nil)
+        _tracker?.trackEvent(event: MediaEvent.AdBreakStart, info: adBreakObject, metadata: nil)
 
         // AdStart
-        _tracker.trackEvent(event: MediaEvent.AdStart, info: adObject, metadata: adMetadata)
+        _tracker?.trackEvent(event: MediaEvent.AdStart, info: adObject, metadata: adMetadata)
     }
 
     @objc func onAdComplete(notification: NSNotification) {
         NSLog("\(logTag) onAdComplete()")
         // AdComplete
-        _tracker.trackEvent(event: MediaEvent.AdComplete, info: nil, metadata: nil)
+        _tracker?.trackEvent(event: MediaEvent.AdComplete, info: nil, metadata: nil)
 
         // AdBreakComplete
-        _tracker.trackEvent(event: MediaEvent.AdBreakComplete, info: nil, metadata: nil)
+        _tracker?.trackEvent(event: MediaEvent.AdBreakComplete, info: nil, metadata: nil)
     }
 
     @objc func onMuteUpdate(notification: NSNotification) {
@@ -163,7 +169,7 @@ class VideoAnalyticsProvider: NSObject {
         let muteState = Media.createStateObjectWith(stateName: "mute")
         let event = muted ? MediaEvent.StateStart : MediaEvent.StateEnd
 
-        _tracker.trackEvent(event: event, info: muteState, metadata: nil)
+        _tracker?.trackEvent(event: event, info: muteState, metadata: nil)
     }
 
     @objc func onCCUpdate(notification: NSNotification) {
@@ -174,7 +180,7 @@ class VideoAnalyticsProvider: NSObject {
         let ccState = Media.createStateObjectWith(stateName: "closedCaptioning")
         let event = ccActive ? MediaEvent.StateStart : MediaEvent.StateEnd
 
-        _tracker.trackEvent(event: event, info: ccState, metadata: nil)
+        _tracker?.trackEvent(event: event, info: ccState, metadata: nil)
     }
 
     func setupPlayerNotifications() {
@@ -210,4 +216,3 @@ class VideoAnalyticsProvider: NSObject {
     }
 
 }
-

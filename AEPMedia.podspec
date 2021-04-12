@@ -20,7 +20,7 @@ The Media library provides APIs that allow use of the Media Analytics product in
   s.dependency 'AEPIdentity'
   s.dependency 'AEPServices'
 
-  s.source_files          = 'AEPMedia/Sources/*.swift'
+  s.source_files          = 'AEPMedia/Sources/**/*.swift'
 
 
 end

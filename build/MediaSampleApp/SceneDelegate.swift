@@ -54,4 +54,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         MobileCore.lifecyclePause()
     }
 }
-

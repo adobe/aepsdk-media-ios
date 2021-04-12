@@ -31,15 +31,15 @@ let PLAYER_EVENT_CC_CHANGE = "player_cc_change"
 let PLAYER_EVENT_MUTE_CHANGE = "player_mute_change"
 
 class VideoPlayer: AVPlayer {
-    var _videoLoaded: Bool!
-    var _seeking: Bool!
-    var _paused: Bool!
-    var _isMuted: Bool!
-    var _isCCActive: Bool!
+    var _videoLoaded: Bool?
+    var _seeking: Bool?
+    var _paused: Bool?
+    var _isMuted: Bool?
+    var _isCCActive: Bool?
 
-    var _isInChapter: Bool!
-    var _isInAd: Bool!
-    var _chapterPosition: Int!
+    var _isInChapter: Bool?
+    var _isInAd: Bool?
+    var _chapterPosition: Int?
 
     let AD_START_POS: Double = 15
     let AD_END_POS: Double = 30
@@ -133,7 +133,7 @@ class VideoPlayer: AVPlayer {
             if self.playerViewController.player!.rate == 0.0 {
                 pausePlayback()
             } else {
-                if _seeking {
+                if _seeking ?? false {
                     NSLog("Stop seeking.")
                     _seeking = false
                     doPostSeekComputations()
@@ -177,7 +177,7 @@ class VideoPlayer: AVPlayer {
     // player helper methods
     func openVideoIfNecessary() {
 
-        if !_videoLoaded {
+        if !(_videoLoaded ?? false) {
             resetInternalState()
             startVideo()
 
@@ -188,7 +188,7 @@ class VideoPlayer: AVPlayer {
     }
 
     func pauseIfSeekHasNotStarted() {
-        if !_seeking {
+        if !(_seeking ?? false) {
             pausePlayback()
         } else {
             NSLog("This pause is caused by a seek operation. Skipping.")
@@ -304,11 +304,11 @@ class VideoPlayer: AVPlayer {
         // Seek inside the first chapter.
         if vTime < CHAPTER1_END_POS {
             // If we were not inside the first chapter before, trigger a chapter start
-            if !_isInChapter || _chapterPosition != 1 {
+            if !(_isInChapter ?? false) || _chapterPosition != 1 {
                 startChapter1()
 
                 // If we were in the ad, clear the ad and ad-break info, but don't send the AD_COMPLETE event.
-                if _isInAd {
+                if _isInAd ?? false {
                     _isInAd = false
                 }
             }
@@ -317,7 +317,7 @@ class VideoPlayer: AVPlayer {
         // Seek inside ad.
         else if vTime >= AD_START_POS && vTime < AD_END_POS {
             // If we were not inside the ad before, trigger an ad-start.
-            if !_isInAd {
+            if !(_isInAd ?? false) {
                 startAd()
 
                 // Also, clear the chapter info, without sending the CHAPTER_COMPLETE event.
@@ -326,11 +326,11 @@ class VideoPlayer: AVPlayer {
         } else // Seek inside the second chapter.
         {
             // If we were not inside the 2nd chapter before, trigger a chapter start
-            if !_isInChapter || _chapterPosition != 2 {
+            if !(_isInChapter ?? false) || _chapterPosition != 2 {
                 startChapter2()
 
                 // If we were in the ad, clear the ad and ad-break info, but don't send the AD_COMPLETE event.
-                if _isInAd {
+                if _isInAd ?? false {
                     _isInAd = false
                 }
             }
@@ -340,7 +340,7 @@ class VideoPlayer: AVPlayer {
     @objc func onTimerTick() {
         // NSLog("Timer Ticked")
 
-        if _seeking || _paused {
+        if _seeking ?? false || (_paused != nil) {
             return
         }
 
@@ -349,12 +349,12 @@ class VideoPlayer: AVPlayer {
 
         // If we are inside the ad content:
         if vTime >= AD_START_POS && vTime < AD_END_POS {
-            if _isInChapter {
+            if _isInChapter ?? false {
                 // If for some reason we were inside a chapter, close it.
                 completeChapter()
             }
 
-            if !_isInAd {
+            if !(_isInAd ?? false) {
                 // Start the ad (if not already started).
                 startAd()
             }
@@ -362,28 +362,28 @@ class VideoPlayer: AVPlayer {
 
         // Otherwise, we are outside the ad content:
         else {
-            if _isInAd {
+            if _isInAd ?? false {
                 // Complete the ad (if needed).
                 completeAd()
             }
 
             if vTime < CHAPTER1_END_POS {
-                if _isInChapter && _chapterPosition != 1 {
+                if _isInChapter ?? false && _chapterPosition != 1 {
                     // If we were inside another chapter, complete it.
                     completeChapter()
                 }
 
-                if !_isInChapter {
+                if !(_isInChapter ?? false) {
                     // Start the first chapter.
                     startChapter1()
                 }
             } else {
-                if _isInChapter && _chapterPosition != 2 {
+                if _isInChapter ?? false && _chapterPosition != 2 {
                     // If we were inside another chapter, complete it.
                     completeChapter()
                 }
 
-                if !_isInChapter {
+                if !(_isInChapter ?? false) {
                     // Start the second chapter.
                     startChapter2()
                 }
@@ -393,4 +393,3 @@ class VideoPlayer: AVPlayer {
         self.detectCCChange()
     }
 }
-
