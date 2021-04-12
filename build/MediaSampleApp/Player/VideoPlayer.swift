@@ -246,6 +246,9 @@ class VideoPlayer: AVPlayer {
                            "time": CHAPTER1_START_POS] as [String: Any]
 
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_CHAPTER_START), object: self, userInfo: chapterInfo)
+
+        // test UpdateQoE
+        // NotificationCenter.default.post(name: NSNotification.Name(rawValue:PLAYER_EVENT_QOE_UPDATE), object: self)
     }
 
     func startChapter2() {
@@ -340,7 +343,7 @@ class VideoPlayer: AVPlayer {
     @objc func onTimerTick() {
         // NSLog("Timer Ticked")
 
-        if _seeking ?? false || (_paused != nil) {
+        if _seeking ?? false || (_paused ?? false) {
             return
         }
 

@@ -42,8 +42,14 @@ class VideoAnalyticsProvider: NSObject {
         destroy()
     }
 
-    @objc func getQoSObject() -> NSDictionary {
-        return Media.createQoEObjectWith(bitrate: 500000, startupTime: 2, fps: 24, droppedFrames: 10)! as NSDictionary
+    @objc func updateQoE(notification: NSNotification) {
+        NSLog("\(logTag) onUpdateQoE() - updated QOE")
+
+        guard let qoeObject = Media.createQoEObjectWith(bitrate: 50000, startupTime: 2, fps: 24, droppedFrames: 10) else {
+            return
+        }
+
+        _tracker?.updateQoEObject(qoe: qoeObject)
     }
 
     @objc func updateCurrentPlaybackTime(notification: NSNotification) {
@@ -206,6 +212,8 @@ class VideoAnalyticsProvider: NSObject {
         NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdStart), name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_START), object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdComplete), name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_COMPLETE), object: nil)
+
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.updateQoE(notification:)), name: NSNotification.Name(rawValue: PLAYER_EVENT_QOE_UPDATE), object: nil)
 
         NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.updateCurrentPlaybackTime), name: NSNotification.Name(rawValue: PLAYER_EVENT_PLAYHEAD_UPDATE), object: nil)
 
