@@ -351,7 +351,7 @@ class MockMediaOfflineHits {
         """
 
         //Ad Start
-        let paramsAdStart: [String: Any] = [
+        var paramsAdStart: [String: Any] = [
             "media.ad.id": "ad_id",
             "media.ad.name": "ad_name",
             "media.ad.podPosition": 1,

@@ -22,17 +22,17 @@ class MediaCollectionReportHelper {
     ///Returns the `URL` for session start. The response contains the `sessionId`
     ///- Parameter host: The tracking server url host component
     ///- Returns: Session start request URL
-    static func getTrackingURL(host: String) -> URL? {
+    static func getTrackingURL(host: String) -> String {
         guard !host.isEmpty else {
             Log.warning(label: LOG_TAG, "\(#function) Unable to create tracking url. Arguement url is empty.")
-            return nil
+            return ""
         }
 
         var urlcomponents = URLComponents()
         urlcomponents.scheme = "https"
         urlcomponents.host = host
         urlcomponents.path = "/api/v1/sessions"
-        return urlcomponents.url
+        return urlcomponents.string ?? ""
     }
 
     ///Returns the URL for sending `MediaHits`
@@ -40,17 +40,17 @@ class MediaCollectionReportHelper {
     /// - host: Host component of the URL
     /// - sessionId: the session id of the Media session
     /// - Returns: URL for sending media hits
-    static func getTrackingURLForEvents(host: String, sessionId: String?) -> URL? {
+    static func getTrackingURLForEvents(host: String, sessionId: String?) -> String {
         guard !host.isEmpty, let sessionId = sessionId, !sessionId.isEmpty else {
             Log.warning(label: LOG_TAG, "\(#function) Unable to create tracking url for events. Arguement url or sessionId is empty.")
-            return nil
+            return ""
         }
 
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
         urlComponents.host = host
         urlComponents.path = "/api/v1/sessions/\(sessionId)/events"
-        return urlComponents.url
+        return urlComponents.string ?? ""
     }
 
     ///Generates the payload for `MediaHit` in `MediaRealTimeSession`
@@ -94,23 +94,20 @@ class MediaCollectionReportHelper {
     /// - Parameter state: Current `MediaState`
     /// - Returns: `true` if all the required tracking parameters are present else returns `false`
     static func hasAllTrackingParams(state: MediaState) -> Bool {
-        if (state.mediaCollectionServer ?? "").isEmpty {
+        if state.getMediaCollectionServer().isEmpty {
+            Log.debug(label: LOG_TAG, "\(#function) - MediaCollectionServer is missing")
             return false
-        }
-
-        if (state.analyticsTrackingServer ?? "").isEmpty {
+        } else if (state.analyticsTrackingServer ?? "").isEmpty {
+            Log.debug(label: LOG_TAG, "\(#function) - analyticsTrackingServer is missing")
             return false
-        }
-
-        if (state.analyticsRsid ?? "").isEmpty {
+        } else if (state.analyticsRsid ?? "").isEmpty {
+            Log.debug(label: LOG_TAG, "\(#function) - analyticsRsid is missing")
             return false
-        }
-
-        if (state.mcOrgId ?? "").isEmpty {
+        } else if (state.mcOrgId ?? "").isEmpty {
+            Log.debug(label: LOG_TAG, "\(#function) - mcOrgId is missing")
             return false
-        }
-
-        if (state.ecid ?? "").isEmpty {
+        } else if (state.ecid ?? "").isEmpty {
+            Log.debug(label: LOG_TAG, "\(#function) - ecid is missing")
             return false
         }
 

@@ -24,7 +24,7 @@ class MediaCollectionReportHelperTests: XCTestCase {
         //Action
         let url = MediaCollectionReportHelper.getTrackingURL(host: host)
         //Assert
-        XCTAssertEqual(url, URL(string: "https://\(host)/api/v1/sessions"))
+        XCTAssertEqual(url, "https://\(host)/api/v1/sessions")
     }
 
     func testGetTrackingUrlForEvents() {
@@ -34,7 +34,7 @@ class MediaCollectionReportHelperTests: XCTestCase {
         //Action
         let url = MediaCollectionReportHelper.getTrackingURLForEvents(host: host, sessionId: sessionId)
         //Assert
-        XCTAssertEqual(url, URL(string: "https://\(host)/api/v1/sessions/\(sessionId)/events"))
+        XCTAssertEqual(url, "https://\(host)/api/v1/sessions/\(sessionId)/events")
     }
 
     func testHasAllTrackingParameterReturnsTrue() {

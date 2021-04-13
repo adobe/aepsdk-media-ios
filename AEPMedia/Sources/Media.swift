@@ -34,11 +34,7 @@ public class Media: NSObject, Extension {
     /// Initializes the Media extension and it's dependencies
     public required init(runtime: ExtensionRuntime) {
         self.runtime = runtime
-
-        let mediaHitsDatabase = MediaHitsDatabase(databaseName: MediaConstants.DATABASE_NAME, serialQueue: DispatchQueue(label: "MediaHitsDatabase.DispatchQueue"))
-        let mediaDBService = MediaDBService(mediaHitsDatabase: mediaHitsDatabase)
-        self.mediaService = MediaService(mediaDBService: mediaDBService)
-
+        self.mediaService = MediaService()
         self.trackers = [:]
     }
 
@@ -53,10 +49,12 @@ public class Media: NSObject, Extension {
     /// Invoked when the Media extension has been unregistered by the `EventHub`, currently a no-op.
     public func onUnregistered() { }
 
-    // Media extension is always ready for processing `Event`
+    // Media extension is ready for an `Event` once configuration and identity shared state is available
     /// - Parameter event: an `Event`
     public func readyForEvent(_ event: Event) -> Bool {
-        return true
+        let configurationStatus = getSharedState(extensionName: MediaConstants.Configuration.SHARED_STATE_NAME, event: event)?.status ?? .none
+        let identityStatus = getSharedState(extensionName: MediaConstants.Identity.SHARED_STATE_NAME, event: event)?.status ?? .none
+        return configurationStatus == .set && identityStatus == .set
     }
 
     /// Passes Shared State Update events to the MediaService to update the MediaState.

@@ -12,6 +12,5 @@ import Foundation
 
 protocol MediaEventTracking {
 
-    @discardableResult
     func track(eventData: [String: Any]?) -> Bool
 }

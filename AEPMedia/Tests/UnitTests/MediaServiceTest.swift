@@ -10,7 +10,6 @@
  */
 
 import XCTest
-@testable import AEPCore
 @testable import AEPMedia
 
 class MediaServiceTest: XCTestCase {
@@ -24,7 +23,6 @@ class MediaServiceTest: XCTestCase {
 
         //Action
         _ = MediaService(mediaDBService: mockDBService)
-        Thread.sleep(forTimeInterval: 0.25)
 
         //Assert
         XCTAssertTrue(mockDBService.getPersistedSessionIdsCalled)
@@ -63,7 +61,7 @@ class MediaServiceTest: XCTestCase {
         let mockMediaSession = MockMediaSession(id: sessionId!, state: MediaState(), dispatchQueue: DispatchQueue(label: ""))
         mediaService.mediaSessions[sessionId!] = mockMediaSession
         mediaService.processHit(sessionId: sessionId!, hit: mediaHit)
-        Thread.sleep(forTimeInterval: 0.25)
+        Thread.sleep(until: .init(timeIntervalSinceNow: 1))
 
         //Assert
         XCTAssertTrue(mockMediaSession.hasQueueHitCalled)
@@ -84,7 +82,7 @@ class MediaServiceTest: XCTestCase {
         let mockMediaSession = MockMediaSession(id: sessionId!, state: MediaState(), dispatchQueue: DispatchQueue(label: ""))
         mediaService.mediaSessions[sessionId!] = mockMediaSession
         mediaService.endSession(sessionId: sessionId!)
-        Thread.sleep(forTimeInterval: 0.25)
+        Thread.sleep(until: .init(timeIntervalSinceNow: 1))
 
         //Assert
         XCTAssertTrue(mockMediaSession.hasSessionEndCalled)
@@ -102,17 +100,8 @@ class MediaServiceTest: XCTestCase {
         let sessionId = mediaService.createSession(config: emptyConfig)
         let mockMediaSession = MockMediaSession(id: sessionId!, state: MediaState(), dispatchQueue: DispatchQueue(label: ""))
         mediaService.mediaSessions[sessionId!] = mockMediaSession
-
-        let event = Event(name: "", type: "", source: "", data: nil)
-        mediaService.updateMediaState(event: event) { (state: String, _: Event, _: Bool) -> SharedStateResult? in
-            if state == MediaConstants.Configuration.SHARED_STATE_NAME {
-                let configSharedState = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedOut.rawValue]
-                return SharedStateResult(status: .set, value: configSharedState)
-            } else {
-                return nil
-            }
-        }
-        Thread.sleep(forTimeInterval: 0.25)
+        mediaService.abort(sessionId: sessionId!)
+        Thread.sleep(until: .init(timeIntervalSinceNow: 1))
 
         //Assert
         XCTAssertTrue(mockMediaSession.hasSesionAbortCalled)

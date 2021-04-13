@@ -16,13 +16,12 @@ import AEPServices
 class MediaOfflineSession: MediaSession {
 
     private let LOG_TAG = "MediaOfflineSession"
-    private static let MAX_ALLOWED_FAILURE = 3 //The maximun number of times SDK retries to send hit on failure, after that drop the hit.
-    private static let DURATION_BETWEEN_HITS_ON_FAILURE = 60 // Retry duration in case of failure
-    private let mediaDBService: MediaDBService
+    private static let MAX_ALLOWED_FAILURE = 2 //The maximun number of times SDK retries to send hit on failure, after that drop the hit.
+    private var mediaDBService: MediaDBService
     private var isReportingSession = false
     private var failureCount = 0
 
-    ///Initializer for `MediaOfflineSession`
+    ///Initializer for `MediaSession`
     ///- Parameters:
     ///    - id: Unique `MediaSession id`
     ///    - state: `MediaState` object
@@ -34,124 +33,112 @@ class MediaOfflineSession: MediaSession {
     }
 
     override func handleQueueMediaHit(hit: MediaHit) {
-        Log.trace(label: LOG_TAG, "\(#function) - [Session (\(id))] Persisting hit of event type (\(hit.eventType))")
+        Log.trace(label: LOG_TAG, "\(#function) - Persisting hit for Session (\(id)) with event type (\(hit.eventType))")
         mediaDBService.persistHit(hit: hit, sessionId: id)
     }
 
     override func handleSessionEnd() {
-        Log.trace(label: LOG_TAG, "\(#function) - [Session (\(id))] End")
-        tryReportSession()
+        Log.trace(label: LOG_TAG, "\(#function) - Ending Session (\(id))")
+        reportSession()
     }
 
     override func handleSessionAbort() {
-        Log.trace(label: LOG_TAG, "\(#function) - [Session (\(id))] Abort")
+        Log.trace(label: LOG_TAG, "\(#function) - Aborting Session (\(id))")
         clearSession()
     }
 
-    override func handleMediaStateUpdate() {
-        Log.trace(label: LOG_TAG, "\(#function) - [Session (\(id))] Handling media state update")
-
-        // Manually trigger sessionEnd if required shared states are updated after the session had ended.
-        if !isSessionActive {
-            tryReportSession()
-        }
-    }
-
     ///Create media collection report for session and send to Media Collection Server.
-    private func tryReportSession() {
-        guard state.privacyStatus == .optedIn else {
-            Log.debug(label: LOG_TAG, "\(#function) - [Session (\(id)] Exiting as privacy is not opted-in")
-            return
-        }
-
-        guard MediaCollectionReportHelper.hasAllTrackingParams(state: state) else {
-            Log.debug(label: LOG_TAG, "\(#function) - [Session (\(id)] Exiting as media state does not have required params")
-            return
-        }
-
+    private func reportSession() {
         guard !isReportingSession else {
-            Log.debug(label: LOG_TAG, "\(#function) - [Session (\(id))] Exiting as it is currently reporting")
+            Log.debug(label: LOG_TAG, "\(#function) - Exiting as we are currently sending session report (\(id)")
             return
         }
 
-        guard let url = MediaCollectionReportHelper.getTrackingURL(host: state.mediaCollectionServer ?? "") else {
-            Log.debug(label: LOG_TAG, "\(#function) - [Session (\(id))] Exiting as it is not able to generate a valid URL")
+        guard isReadyToSendHit() else {
+            Log.debug(label: LOG_TAG, "\(#function) - Exiting as session (\(id) is not ready for sending hits")
             return
         }
 
         let hits = mediaDBService.getHits(sessionId: id)
         guard !hits.isEmpty else {
-            Log.debug(label: LOG_TAG, "\(#function) - [Session (\(id))] Unable to report, No persisted hits found")
-            clearSession()
+            Log.debug(label: LOG_TAG, "\(#function) - Unable to report session (\(id)), No persisted hits found")
+            handleInvalidSession()
             return
         }
 
-        guard let body = MediaCollectionReportHelper.generateDownloadReport(state: state, hits: hits) else {
-            Log.debug(label: LOG_TAG, "\(#function) - [Session (\(id))] Could not generate downloaded content report from persisted hits, Clearing persisted pings")
-            clearSession()
+        let urlString = MediaCollectionReportHelper.getTrackingURL(host: state.getMediaCollectionServer())
+        let body = MediaCollectionReportHelper.generateDownloadReport(state: state, hits: hits) ?? ""
+
+        guard !urlString.isEmpty, !body.isEmpty else {
+            Log.debug(label: LOG_TAG, "\(#function) - Could not generate downloaded content report from persisted hits for session (\(id)), Clearing persisted pings")
+            handleInvalidSession()
+            return
+        }
+
+        guard let url = URL.init(string: urlString) else {
+            Log.debug(label: LOG_TAG, "\(#function) - Failed to report Session (\(id)). Unable to create URL.")
+            handleInvalidSession()
             return
         }
 
         isReportingSession = true
-
+        let networkService = ServiceProvider.shared.networkService
         let networkRequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: MediaConstants.Networking.REQUEST_HEADERS, connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
 
-        ServiceProvider.shared.networkService.connectAsync(networkRequest: networkRequest) {[weak self] connection in
+        networkService.connectAsync(networkRequest: networkRequest) {[weak self] connection in
             self?.dispatchQueue.async {
-                guard let self = self else {return}
-
-                self.isReportingSession = false
-
                 if let error = connection.error {
-                    Log.trace(label: self.LOG_TAG, "[Session (\(self.id))] Http Request failed with error \(error.localizedDescription)")
-
-                    var deviceOffline = false
+                    //Handle the network Error case
                     if let urlError = error as? URLError, urlError.code == URLError.Code.notConnectedToInternet {
-                        deviceOffline = true
+                        // MARK: TODO: Revisit the No internet connection handling logic
+                        self?.onSessionReportFailure()   //Reporting error due to no internet connection
+                        return
                     }
-                    self.onSessionReportFailure(deviceOffline)
+                    self?.onSessionReportFailure()
                     return
                 }
 
-                let statusCode = connection.responseCode ?? -1
-                Log.trace(label: self.LOG_TAG, "[Session (\(self.id))] Http Request completed with status code \(statusCode)")
-                if MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
-                    self.onSessionReportSuccess()
-                } else {
-                    self.onSessionReportFailure()
+                if let statusCode = connection.response?.statusCode, MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
+                    Log.trace(label: self?.LOG_TAG ?? "", "\(#function) - Session (\(self?.id ?? "") successfully reported")
+                    self?.onSessionReportSuccess()
+                    return
                 }
+
+                Log.debug(label: self?.LOG_TAG ?? "", "\(#function) - Session (\(self?.id ?? "")) reporting failed. HTTP request failed with response code (\(connection.response?.statusCode ?? MediaConstants.Networking.INVALID_RESPONSE))")
+                self?.onSessionReportFailure()
             }
         }
     }
 
     ///Clears the persisted session hits after session is successfully reported to Media collection server.
     private func onSessionReportSuccess() {
-        Log.trace(label: LOG_TAG, "[Session (\(self.id))] Reported successfully")
+        Log.trace(label: LOG_TAG, "\(#function) - Clearing persisted pings for Session (\(self.id))")
+        isReportingSession = false
         clearSession()
     }
 
     ///Handles the response when session reporting is failed
-    private func onSessionReportFailure(_ deviceOffline: Bool = false) {
+    private func onSessionReportFailure() {
+        isReportingSession = false
         if failureCount >= MediaOfflineSession.MAX_ALLOWED_FAILURE {
-            Log.trace(label: LOG_TAG, "[Session (\(self.id))] Exceeded retry count")
+            Log.trace(label: LOG_TAG, "\(#function) - Clearing persisted pings for Session (\(self.id)).")
             clearSession()
-            return
-        }
-
-        // Don't increase failure count if device is offline
-        if !deviceOffline {
+        } else {
             failureCount += 1
+            dispatchQueue.asyncAfter(deadline: .now() + .seconds(MediaSession.DURATION_BETWEEN_HITS_ON_FAILURE)) {
+                self.reportSession()
+            }
         }
+    }
 
-        Log.trace(label: LOG_TAG, "[Session (\(self.id))] Retrying after \(Self.DURATION_BETWEEN_HITS_ON_FAILURE)")
-        dispatchQueue.asyncAfter(deadline: .now() + .seconds(Self.DURATION_BETWEEN_HITS_ON_FAILURE)) { [weak self] in
-            self?.tryReportSession()
-        }
+    ///Handles if the session is invalid for ex: session reporting url is invalid or no hits are persisted of session.
+    private func handleInvalidSession() {
+        Log.trace(label: LOG_TAG, "\(#function) - Clearing persisted pings for Session (\(self.id)).")
+        clearSession()
     }
 
     ///Removes the persisted hits.
     private func clearSession() {
-        Log.trace(label: LOG_TAG, "[Session (\(self.id))] Clearing persisted hits")
         mediaDBService.deleteHits(sessionId: id)
         sessionEndHandler?()
     }
