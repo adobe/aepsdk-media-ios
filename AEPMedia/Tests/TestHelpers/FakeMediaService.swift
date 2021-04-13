@@ -18,6 +18,9 @@ class FakeMediaService: MediaService {
     var updateMediaStateCalled = false
     var abortAllSessionsCalled = false
 
+    init() {
+        super.init(mediaDBService: MediaDBService(mediaHitsDatabase: nil))
+    }
     override func updateMediaState(event: Event, getSharedState: (String, Event, Bool) -> SharedStateResult?) {
         super.updateMediaState(event: event, getSharedState: getSharedState)
         updateMediaStateCalled = true
