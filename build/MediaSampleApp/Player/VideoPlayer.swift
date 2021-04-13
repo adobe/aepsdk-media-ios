@@ -247,8 +247,7 @@ class VideoPlayer: AVPlayer {
 
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_CHAPTER_START), object: self, userInfo: chapterInfo)
 
-        // test UpdateQoE
-        // NotificationCenter.default.post(name: NSNotification.Name(rawValue:PLAYER_EVENT_QOE_UPDATE), object: self)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue:PLAYER_EVENT_QOE_UPDATE), object: self)
     }
 
     func startChapter2() {
