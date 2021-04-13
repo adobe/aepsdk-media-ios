@@ -38,6 +38,7 @@ class MediaEventGenerator: MediaTracker {
     let semaphore = DispatchSemaphore(value: 0)
     var dispatchedEvent: Event?
     var usingProvidedDispatchFn = false
+    var previousPlayhead: Double = 0
 
     init(config: [String: Any]? = nil, dispatch: ((Event) -> Void)? = nil) {
         // if the passed in dispatch function is nil then create one
@@ -93,6 +94,7 @@ class MediaEventGenerator: MediaTracker {
     func updateCurrentPlayhead(time: Double) {
         tracker.updateCurrentPlayhead(time: time)
         waitForTrackerRequest()
+        self.previousPlayhead = time
     }
 
     func updateQoEObject(qoe: [String: Any]) {

@@ -179,7 +179,7 @@ class MediaFunctionalTestBase: XCTestCase {
         }
     }
 
-    func waitFor(_ secondsToWait: Int, currentPlayhead: Double, trackAction: String, tracker: MediaEventGenerator, semaphore: DispatchSemaphore) {
+    func waitFor(_ secondsToWait: Int, updatePlayhead: Bool, tracker: MediaEventGenerator, semaphore: DispatchSemaphore) {
         let timestampIncrement = TimeInterval(1)
         var elapsedTime = 0
         let queue = DispatchQueue(label: "trackerTimer")
@@ -190,12 +190,14 @@ class MediaFunctionalTestBase: XCTestCase {
                 self?.timer = nil
                 semaphore.signal()
             }
-            // only update the playhead if the timestamp has changed
+            /// only update the playhead if the timestamp has changed
             if tracker.getCurrentTimeStamp() != tracker.getLastEventTimeStamp() {
-                if trackAction == "play" {
-                    tracker.updateCurrentPlayhead(time: currentPlayhead + Double(elapsedTime))
+                if updatePlayhead {
+                    tracker.updateCurrentPlayhead(time: tracker.previousPlayhead + Double(elapsedTime))
                 } else {
-                    tracker.updateCurrentPlayhead(time: currentPlayhead)
+                    /// for paused, seek, or buffer events we want to call updateCurrentPlayhead without incrementing it
+                    /// (similar to the behavior of the MediaPublicTracker dispatching an internal track event)
+                    tracker.updateCurrentPlayhead(time: tracker.previousPlayhead)
                 }
             }
             elapsedTime += 1
