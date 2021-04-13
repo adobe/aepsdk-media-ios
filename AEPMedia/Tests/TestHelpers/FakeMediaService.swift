@@ -22,8 +22,4 @@ class FakeMediaService: MediaService {
         super.updateMediaState(event: event, getSharedState: getSharedState)
         updateMediaStateCalled = true
     }
-
-    override func abortAllSessions() {
-        abortAllSessionsCalled = true
-    }
 }
