@@ -67,7 +67,7 @@ class MediaRealTimeSession: MediaSession {
         }
 
         guard !isSendingHit else {
-            Log.trace(label: LOG_TAG, "\(#function) - Exiting as it is currently sending a hit")
+            Log.trace(label: LOG_TAG, "\(#function) - [Session (\(id)] Exiting as it is currently sending a hit")
             return
         }
 
@@ -81,8 +81,7 @@ class MediaRealTimeSession: MediaSession {
 
         if !isSessionStartHit && (mcSessionId ?? "").isEmpty {
             Log.trace(label: LOG_TAG, "\(#function) -  [Session (\(id)] Dropping hit (\(eventType)), media collection session id is unavailable.")
-            hits.removeFirst()
-            trySendHit()
+            sendNextHit()
             return
         }
 
@@ -90,14 +89,12 @@ class MediaRealTimeSession: MediaSession {
 
         guard let url = generateHitUrl(isSessionStartHit) else {
             Log.debug(label: LOG_TAG, "\(#function) -  [Session (\(id)] Dropping hit (\(eventType)), unable to create url")
-            hits.removeFirst()
-            trySendHit()
+            sendNextHit()
             return
         }
         guard let body = MediaCollectionReportHelper.generateHitReport(state: state, hit: hit), !body.isEmpty else {
             Log.debug(label: LOG_TAG, "\(#function) -  [Session (\(id)] Dropping hit (\(eventType)), unable to generate hit body")
-            hits.removeFirst()
-            trySendHit()
+            sendNextHit()
             return
         }
 
