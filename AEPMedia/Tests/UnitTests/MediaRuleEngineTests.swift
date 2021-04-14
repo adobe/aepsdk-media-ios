@@ -274,7 +274,7 @@ class MediaTests: XCTestCase {
         //setup
         let ruleEngine = MediaRuleEngine()
         let testRule = MediaRule(name: 1, description: "rule1")
-        var contextData: [String: Any] = ["k1": "v1"]
+        let contextData: [String: Any] = ["k1": "v1"]
 
         //test
         let test1 = "Test error 1"
