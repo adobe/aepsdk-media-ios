@@ -95,22 +95,27 @@ class MediaCollectionReportHelper {
     /// - Returns: `true` if all the required tracking parameters are present else returns `false`
     static func hasAllTrackingParams(state: MediaState) -> Bool {
         if (state.mediaCollectionServer ?? "").isEmpty {
+            Log.debug(label: LOG_TAG, "\(#function) - mediaCollectionServer is missing")
             return false
         }
 
         if (state.analyticsTrackingServer ?? "").isEmpty {
+            Log.debug(label: LOG_TAG, "\(#function) - analyticsTrackingServer is missing")
             return false
         }
 
         if (state.analyticsRsid ?? "").isEmpty {
+            Log.debug(label: LOG_TAG, "\(#function) - analyticsRsid is missing")
             return false
         }
 
         if (state.mcOrgId ?? "").isEmpty {
+            Log.debug(label: LOG_TAG, "\(#function) - mcOrgId is missing")
             return false
         }
 
         if (state.ecid ?? "").isEmpty {
+            Log.debug(label: LOG_TAG, "\(#function) - ecid is missing")
             return false
         }
 
