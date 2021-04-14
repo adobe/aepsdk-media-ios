@@ -95,27 +95,27 @@ class MediaCollectionReportHelper {
     /// - Returns: `true` if all the required tracking parameters are present else returns `false`
     static func hasAllTrackingParams(state: MediaState) -> Bool {
         if (state.mediaCollectionServer ?? "").isEmpty {
-            Log.debug(label: LOG_TAG, "\(#function) - mediaCollectionServer is missing")
+            Log.debug(label: LOG_TAG, "\(#function) - \(MediaConstants.Configuration.MEDIA_COLLECTION_SERVER) is not available")
             return false
         }
 
         if (state.analyticsTrackingServer ?? "").isEmpty {
-            Log.debug(label: LOG_TAG, "\(#function) - analyticsTrackingServer is missing")
+            Log.debug(label: LOG_TAG, "\(#function) - \(MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER) is not available")
             return false
         }
 
         if (state.analyticsRsid ?? "").isEmpty {
-            Log.debug(label: LOG_TAG, "\(#function) - analyticsRsid is missing")
+            Log.debug(label: LOG_TAG, "\(#function) - \(MediaConstants.Configuration.ANALYTICS_RSID) is not available")
             return false
         }
 
         if (state.mcOrgId ?? "").isEmpty {
-            Log.debug(label: LOG_TAG, "\(#function) - mcOrgId is missing")
+            Log.debug(label: LOG_TAG, "\(#function) - \(MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID) is not available")
             return false
         }
 
         if (state.ecid ?? "").isEmpty {
-            Log.debug(label: LOG_TAG, "\(#function) - ecid is missing")
+            Log.debug(label: LOG_TAG, "\(#function) - Ecid(Identity shared state) is not available")
             return false
         }
 
