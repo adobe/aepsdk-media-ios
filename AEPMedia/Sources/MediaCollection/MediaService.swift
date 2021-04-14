@@ -79,13 +79,13 @@ class MediaService: MediaProcessor {
     ///    - sessionId: UniqueId of session to which `MediaHit` belongs.
     ///    - hit: `Object` of type `MediaHit`
     func processHit(sessionId: String, hit: MediaHit) {
-        dispatchQueue.async {
-            guard self.mediaSessions.keys.contains(sessionId) else {
+        dispatchQueue.async { [self] in
+            guard mediaSessions.keys.contains(sessionId) else {
                 Log.debug(label: Self.LOG_TAG, "\(#function) - Can not process session (\(sessionId)). SessionId is invalid.")
                 return
             }
 
-            let session = self.mediaSessions[sessionId]
+            let session = mediaSessions[sessionId]
             session?.queue(hit: hit)
             Log.trace(label: Self.LOG_TAG, "\(#function) - Successfully queued hit (\(hit.eventType) for Session (\(sessionId)).")
         }
@@ -95,13 +95,13 @@ class MediaService: MediaProcessor {
     ///
     /// - Parameter sessionId: Unique session id for session to end.
     func endSession(sessionId: String) {
-        dispatchQueue.async {
-            guard self.mediaSessions.keys.contains(sessionId) else {
+        dispatchQueue.async { [self] in
+            guard mediaSessions.keys.contains(sessionId) else {
                 Log.debug(label: Self.LOG_TAG, "\(#function) - Can not end media session (\(sessionId)). Invalid session id.")
                 return
             }
 
-            self.mediaSessions[sessionId]?.end {
+            mediaSessions[sessionId]?.end {
                 self.mediaSessions.removeValue(forKey: sessionId)
                 Log.trace(label: Self.LOG_TAG, "\(#function) - Successfully ended media session (\(sessionId))")
             }
@@ -143,14 +143,14 @@ class MediaService: MediaProcessor {
         for extensionName in dependencies {
             sharedStates[extensionName] = getSharedState(extensionName, event, true)?.value
         }
-        dispatchQueue.async {
-            self.mediaState.update(dataMap: sharedStates)
-            if self.mediaState.privacyStatus == .optedOut {
-                self.mediaSessions.forEach { sessionId, _ in self.abort(sessionId: sessionId) }
+        dispatchQueue.async { [self] in
+            mediaState.update(dataMap: sharedStates)
+            if mediaState.privacyStatus == .optedOut {
+                mediaSessions.forEach { sessionId, _ in abort(sessionId: sessionId) }
                 return
             }
 
-            self.mediaSessions.forEach { sessionId, _ in self.notifyMediaStateUpdate(sessionId: sessionId) }
+            mediaSessions.forEach { sessionId, _ in notifyMediaStateUpdate(sessionId: sessionId) }
         }
     }
 }

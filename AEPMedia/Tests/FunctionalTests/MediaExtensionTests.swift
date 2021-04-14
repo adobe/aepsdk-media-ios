@@ -44,7 +44,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
         // verify
         XCTAssertTrue(readyForEvent)
     }
-
+    
     // MARK: handleMediaTrackerRequest tests
     func testCreateTrackerHappyPath() {
         // setup
@@ -167,7 +167,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
         dispatchDefaultConfigAndSharedStates(configData: ["global.privacy": "optedout"])
         waitForProcessing()
         // verify trackers are cleared and media service sessions aborted
-        XCTAssertEqual(media.trackers.count, 0)
+        XCTAssertEqual(media.trackers.count, 0)        
     }
 
     // MARK: handleMediaTrack tests
