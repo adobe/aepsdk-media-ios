@@ -35,7 +35,7 @@ public class Media: NSObject, Extension {
     public required init(runtime: ExtensionRuntime) {
         self.runtime = runtime
 
-        let mediaHitsDatabase = MediaHitsDatabase(databaseName: MediaConstants.DATABASE_NAME, serialQueue: DispatchQueue(label: "MediaHitsDatabase.DispatchQueue"))
+        let mediaHitsDatabase = MediaHitsDatabase(databaseName: MediaConstants.DATABASE_NAME)
         let mediaDBService = MediaDBService(mediaHitsDatabase: mediaHitsDatabase)
         self.mediaService = MediaService(mediaDBService: mediaDBService)
 
