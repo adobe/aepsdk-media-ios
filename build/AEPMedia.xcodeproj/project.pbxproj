@@ -52,10 +52,8 @@
 		D62E1E93261D290D00635977 /* Media+PublicAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62E1E88261D290D00635977 /* Media+PublicAPITests.swift */; };
 		D62E1E94261D290D00635977 /* MediaRuleEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62E1E89261D290D00635977 /* MediaRuleEngineTests.swift */; };
 		D62E1E95261D290D00635977 /* MediaServiceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62E1E8A261D290D00635977 /* MediaServiceTest.swift */; };
-		D62E1E96261D290D00635977 /* MediaRealTimeSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62E1E8B261D290D00635977 /* MediaRealTimeSessionTests.swift */; };
 		D62E1E97261D290D00635977 /* MediaEventTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62E1E8C261D290D00635977 /* MediaEventTrackerTests.swift */; };
 		D62E1E98261D290D00635977 /* MediaCollectionHitGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62E1E8D261D290D00635977 /* MediaCollectionHitGeneratorTests.swift */; };
-		D62E1E99261D290D00635977 /* MediaOfflineSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62E1E8E261D290D00635977 /* MediaOfflineSessionTests.swift */; };
 		D62E1E9A261D290D00635977 /* MediaObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62E1E8F261D290D00635977 /* MediaObjectTests.swift */; };
 		D62E1EA9261D298900635977 /* MediaExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D62E1E9E261D291B00635977 /* MediaExtensionTests.swift */; };
 		D62E1EB0261D298C00635977 /* MediaFunctionalTestBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6658A9225F16D0200D8593E /* MediaFunctionalTestBase.swift */; };
@@ -165,10 +163,8 @@
 		D62E1E88261D290D00635977 /* Media+PublicAPITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Media+PublicAPITests.swift"; sourceTree = "<group>"; };
 		D62E1E89261D290D00635977 /* MediaRuleEngineTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaRuleEngineTests.swift; sourceTree = "<group>"; };
 		D62E1E8A261D290D00635977 /* MediaServiceTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaServiceTest.swift; sourceTree = "<group>"; };
-		D62E1E8B261D290D00635977 /* MediaRealTimeSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaRealTimeSessionTests.swift; sourceTree = "<group>"; };
 		D62E1E8C261D290D00635977 /* MediaEventTrackerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaEventTrackerTests.swift; sourceTree = "<group>"; };
 		D62E1E8D261D290D00635977 /* MediaCollectionHitGeneratorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaCollectionHitGeneratorTests.swift; sourceTree = "<group>"; };
-		D62E1E8E261D290D00635977 /* MediaOfflineSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaOfflineSessionTests.swift; sourceTree = "<group>"; };
 		D62E1E8F261D290D00635977 /* MediaObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaObjectTests.swift; sourceTree = "<group>"; };
 		D62E1E9E261D291B00635977 /* MediaExtensionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaExtensionTests.swift; sourceTree = "<group>"; };
 		D634A04B25DEF40D001EC086 /* FakeMediaHitProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeMediaHitProcessor.swift; sourceTree = "<group>"; };
@@ -396,9 +392,7 @@
 				D62E1E8C261D290D00635977 /* MediaEventTrackerTests.swift */,
 				D62E1E87261D290D00635977 /* MediaHitsDatabaseTests.swift */,
 				D62E1E8F261D290D00635977 /* MediaObjectTests.swift */,
-				D62E1E8E261D290D00635977 /* MediaOfflineSessionTests.swift */,
 				D62E1E85261D290D00635977 /* MediaPublicTrackerTests.swift */,
-				D62E1E8B261D290D00635977 /* MediaRealTimeSessionTests.swift */,
 				D62E1E89261D290D00635977 /* MediaRuleEngineTests.swift */,
 				D62E1E8A261D290D00635977 /* MediaServiceTest.swift */,
 			);
@@ -717,9 +711,7 @@
 				3D663A9725FACB3800E96250 /* MockMediaDBService.swift in Sources */,
 				D62E1E93261D290D00635977 /* Media+PublicAPITests.swift in Sources */,
 				3D10A508261E71360049BDA1 /* MediaDBServiceTests.swift in Sources */,
-				D62E1E99261D290D00635977 /* MediaOfflineSessionTests.swift in Sources */,
 				D62E1E9A261D290D00635977 /* MediaObjectTests.swift in Sources */,
-				D62E1E96261D290D00635977 /* MediaRealTimeSessionTests.swift in Sources */,
 				D6DAB4EA25FAD0A800260DA8 /* FakeMediaEventTracker.swift in Sources */,
 				D62E1E90261D290D00635977 /* MediaPublicTrackerTests.swift in Sources */,
 				D634A04C25DEF40D001EC086 /* FakeMediaHitProcessor.swift in Sources */,
