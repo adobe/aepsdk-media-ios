@@ -17,6 +17,7 @@ class MediaHitsDatabase {
 
     private let databaseName: String
     private let databaseFilePath: FileManager.SearchPathDirectory
+    /// The `MediaHitsDatabase` needs it's own queue as it is accessed from an async task in the `MediaOfflineSession` class.
     private let serialQueue: DispatchQueue
     private static let TABLE_NAME: String = "TB_MEDIA_ANALYTICS_OFFLINE_HITS"
     private let TB_KEY_SESSION_ID = "sessionId"
@@ -27,11 +28,10 @@ class MediaHitsDatabase {
     /// - Parameters:
     ///   - databaseName: the database name used to create a SQLite database
     ///   - databaseFilePath: the SQLite database file will be stored in this directory, the default value is `.cachesDirectory`
-    ///   - serialQueue: a serial dispatch queue used to perform database operations
-    init?(databaseName: String, databaseFilePath: FileManager.SearchPathDirectory = .cachesDirectory, serialQueue: DispatchQueue) {
+    init?(databaseName: String, databaseFilePath: FileManager.SearchPathDirectory = .cachesDirectory) {
         self.databaseName = databaseName
         self.databaseFilePath = databaseFilePath
-        self.serialQueue = serialQueue
+        self.serialQueue = DispatchQueue.init(label: databaseName)
         guard createTableIfNotExists(tableName: Self.TABLE_NAME) else {
             Log.warning(label: Self.LOG_TAG, "Failed to initialize MediaHitsDatabase with database name '\(databaseName)'.")
             return nil

@@ -245,7 +245,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
     // MARK: handleSharedStateUpdate tests
     func testHandleSharedStateUpdate() {
         // setup
-        let sharedStateUpdateEvent = Event(name: "shared state update", type: EventType.hub, source: EventSource.sharedState, data: identitySharedState)
+        let sharedStateUpdateEvent = Event(name: "shared state update", type: EventType.hub, source: EventSource.sharedState, data: TestConstants.identitySharedState)
         // test
         mockRuntime.simulateComingEvent(event: sharedStateUpdateEvent)
         waitForProcessing()

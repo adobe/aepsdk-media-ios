@@ -19,6 +19,18 @@ extension EventHub {
     }
 }
 
+extension FileManager {
+    func clearCache() {
+        if let _ = self.urls(for: .cachesDirectory, in: .userDomainMask).first {
+            do {
+                try self.removeItem(at: URL(fileURLWithPath: "Library/Caches/\(MediaConstants.DATABASE_NAME)"))
+            } catch {
+                print("ERROR DESCRIPTION: \(error)")
+            }
+        }
+    }
+}
+
 extension MediaHit: Equatable {
     private static let emptyDict: [String: Any] = [:]
 
@@ -45,4 +57,25 @@ extension MediaHit: Equatable {
         // two empty dictionaries or two identical dictionaries
         return NSDictionary(dictionary: lhs ?? emptyDict).isEqual(to: rhs ?? emptyDict)
     }
+}
+
+extension Double {
+    func isAlmostEqualWithinDelta(_ doubleToCompare: Double, delta: TimeInterval) -> Bool {
+        return fabs(self - doubleToCompare) < delta
+    }
+}
+
+/// Attempts to convert provided hit payload to [String: Any] using JSONSerialization.
+/// - Parameter jsonString: hit payload to be converted to [String: Any]
+/// - Returns: the json string payload as [String: Any] or empty if an error occured
+func convertToDictionary(jsonString: String?) -> [String: Any] {
+    guard let data = jsonString?.data(using: .utf8) else {
+        return [:]
+    }
+    guard let dataAsDictionary = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
+        print("asFlattenDictionary - Unable to convert to [String: Any], data: \(String(data: data, encoding: .utf8) ?? "")")
+        return [:]
+    }
+
+    return dataAsDictionary
 }
