@@ -36,6 +36,7 @@ class VideoPlayer: AVPlayer {
     var _videoLoaded: Bool = false
     var _seeking: Bool = false
     var _paused: Bool = false
+
     var _isMuted: Bool = false
     var _isCCActive: Bool = false
 
@@ -54,6 +55,12 @@ class VideoPlayer: AVPlayer {
     let CHAPTER2_START_POS: Double = 30
     let CHAPTER2_LENGTH: Double = 30
 
+    let QOEINFO_BITRATRE: Double = 50000
+    let QOEINFO_STARTUPTIME: Double = 1800
+    let QOEINFO_FPS: Double = 24
+    let QOEINFO_DROPPEDFRAMES: Double = 10
+    let VIDEO_LENGTH: Double = 1800
+
     let MONITOR_TIMER_INTERVAL = 0.5 // 500 milliseconds
 
     let kStatusKey                = "status"
@@ -70,7 +77,7 @@ class VideoPlayer: AVPlayer {
 
     var timer: Timer?
 
-    func load(videoInfo: [String: Any], url: URL) {
+    func loadContentURL(url: URL) {
 
         _videoLoaded = false
         _seeking = false
@@ -203,11 +210,16 @@ class VideoPlayer: AVPlayer {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_PAUSE), object: self)
     }
 
+
     func startVideo() {
         // Prepare the video info.
+        let videoInfo = ["id": "bipbop",
+                         "length": VIDEO_LENGTH,
+                         "name": "Bip bop video"] as [String: Any]
+
         _videoLoaded = true
         NSLog("Video started")
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_VIDEO_LOAD), object: self)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_VIDEO_LOAD), object: self, userInfo: videoInfo)
     }
 
     func completeVideo() {
@@ -249,7 +261,8 @@ class VideoPlayer: AVPlayer {
 
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CHAPTER_START), object: self, userInfo: chapterInfo)
 
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_QOE_UPDATE), object: self)
+        //qoe update
+        qoeUpdate()
     }
 
     func startChapter2() {
@@ -299,6 +312,17 @@ class VideoPlayer: AVPlayer {
 
         // Clear the ad and ad-break info.
         _isInAd = false
+    }
+
+    func qoeUpdate() {
+        NSLog("update QoE")
+        // Update QoE
+        let qoeInfo = ["bitrate": QOEINFO_BITRATRE,
+                       "startupTime": QOEINFO_STARTUPTIME,
+                       "fps": QOEINFO_FPS,
+                       "droppedFrames": QOEINFO_DROPPEDFRAMES] as [String: Any]
+
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_QOE_UPDATE), object: self, userInfo: qoeInfo)
     }
 
     // Timeline helper methods

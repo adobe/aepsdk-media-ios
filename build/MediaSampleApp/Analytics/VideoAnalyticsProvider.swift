@@ -22,12 +22,6 @@ class VideoAnalyticsProvider: NSObject {
     var _pendingSessionStart: Bool?
     var _pendingPlay: Bool?
 
-    let QOEINFO_BITRATRE: Double = 50000
-    let QOEINFO_STARTUPTIME: Double = 1800
-    let QOEINFO_FPS: Double = 24
-    let QOEINFO_DROPPEDFRAMES: Double = 10
-    let VIDEO_LENGTH: Double = 1800
-
     @objc func initWithPlayer(player: VideoPlayer) {
 
         _player = player
@@ -35,7 +29,7 @@ class VideoAnalyticsProvider: NSObject {
         var config: [String: Any] = [:]
         // TO DO: Use Public Constants
         config["config.channel"] = "custom-swift-channel" // Override channel
-        // config["config.downloadedcontent"] = true    // Creates downloaded content tracker configured from launch
+        //config["config.downloadedcontent"] = true    // Creates downloaded content tracker configured from launch
 
         _tracker = Media.createTrackerWith(config: config)
         setupPlayerNotifications()
@@ -46,17 +40,11 @@ class VideoAnalyticsProvider: NSObject {
     }
 
     @objc func updateQoE(notification: NSNotification) {
-        NSLog("\(logTag) onUpdateQoE() - updated QOE")
+        NSLog("\(logTag) onUpdateQoE()")
 
-        let qoeInfo = ["bitrate": QOEINFO_BITRATRE,
-                       "startupTime": QOEINFO_STARTUPTIME,
-                       "fps": QOEINFO_FPS,
-                       "droppedFrames": QOEINFO_DROPPEDFRAMES
-        ] as [String: Any]
+        let qoeData = notification.userInfo
 
-        guard let qoeObject = Media.createQoEObjectWith(bitrate: qoeInfo["bitrate"] as? Double ?? 0, startupTime: qoeInfo["startupTime"] as? Double ?? 0, fps: qoeInfo["fps"] as? Double ?? 0, droppedFrames: qoeInfo["droppedFrames"] as? Double ?? 0) else {
-            return
-        }
+        guard let qoeObject = Media.createQoEObjectWith(bitrate: qoeData?["bitrate"] as? Double ?? 0, startupTime: qoeData?["startupTime"] as? Double ?? 0, fps: qoeData?["fps"] as? Double ?? 0, droppedFrames: qoeData?["droppedFrames"] as? Double ?? 0) else { return }
 
         _tracker?.updateQoEObject(qoe: qoeObject)
     }
@@ -78,13 +66,11 @@ class VideoAnalyticsProvider: NSObject {
 
     @objc func onMainVideoLoaded(notification: NSNotification) {
         NSLog("\(logTag) onMainVideoLoaded()")
-        let videoInfo = ["id": "bipbop",
-                         "length": VIDEO_LENGTH,
-                         "name": "Bip bop video"
-        ] as [String: Any]
+
+        let videoData = notification.userInfo
 
         // TO DO: Use Public Constants
-        guard let mediaObject = Media.createMediaObjectWith(name: videoInfo["name"] as? String ?? "", id: videoInfo["id"] as? String ?? "", length: videoInfo["length"] as? Double ?? 0, streamType: "vod", mediaType: MediaType.Audio) else {
+        guard let mediaObject = Media.createMediaObjectWith(name: videoData?["name"] as? String ?? "", id: videoData?["id"] as? String ?? "", length: videoData?["length"] as? Double ?? 0, streamType: "vod", mediaType: MediaType.Video) else {
             return
         }
 

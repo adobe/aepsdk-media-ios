@@ -24,14 +24,9 @@ class ViewController: UIViewController {
             return
         }
 
-        var videoInfo: [String: Any] = [:]
-        videoInfo["name"] = "Bip bop video"
-        videoInfo["id"] = "bipbop"
-        videoInfo["length"] = 1800
-
         if videoPlayer == nil {
             videoPlayer = VideoPlayer()
-            videoPlayer.load(videoInfo: videoInfo, url: videoUrl)
+            videoPlayer.loadContentURL(url: videoUrl)
             createAdLabel()
             renderVideoPlayer()
         }
