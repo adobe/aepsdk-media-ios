@@ -106,12 +106,4 @@ class MediaState {
         self.aid = analyticsData[MediaConstants.Analytics.ANALYTICS_VISITOR_ID] as? String
         self.vid = analyticsData[MediaConstants.Analytics.VISITOR_ID] as? String
     }
-
-    func getPrivacyStatus() -> PrivacyStatus {
-        return privacyStatus
-    }
-
-    func getMediaCollectionServer() -> String {
-        return mediaCollectionServer ?? ""
-    }
 }

@@ -15,31 +15,32 @@ import AEPServices
 
 class MediaService: MediaProcessor {
 
-    private let LOG_TAG = "MediaService"
-    private let dependencies = [MediaConstants.Configuration.SHARED_STATE_NAME, MediaConstants.Identity.SHARED_STATE_NAME, MediaConstants.Analytics.SHARED_STATE_NAME]
+    private static let LOG_TAG = "MediaService"
+
+    private let dependencies = [
+        MediaConstants.Configuration.SHARED_STATE_NAME,
+        MediaConstants.Identity.SHARED_STATE_NAME,
+        MediaConstants.Analytics.SHARED_STATE_NAME
+    ]
+    private let dispatchQueue = DispatchQueue(label: "MediaService.DispatchQueue")
+    private let mediaState: MediaState
+    private let mediaDBService: MediaDBService
     #if DEBUG
         var mediaSessions: [String: MediaSession] = [:]
     #else
         private var mediaSessions: [String: MediaSession] = [:]
     #endif
-    private var mediaState: MediaState
-    private var dispatchQueue = DispatchQueue(label: "MediaService.DispatchQueue")
-    private var mediaDBService: MediaDBService
-    private var mediaHitsDatabase: MediaHitsDatabase?
 
-    init(mediaDBService: MediaDBService? = nil) {
+    init(mediaDBService: MediaDBService) {
         self.mediaState = MediaState()
-        self.mediaHitsDatabase = MediaHitsDatabase(databaseName: MediaConstants.DATABASE_NAME, serialQueue: dispatchQueue)
-        if let mediaDBService = mediaDBService {
-            self.mediaDBService = mediaDBService
-        } else {
-            self.mediaDBService = MediaDBService(mediaHitsDatabase: mediaHitsDatabase)
-        }
+        self.mediaDBService = mediaDBService
 
-        initPersistedSessions()
+        dispatchQueue.async {
+            self.initPersistedSessions()
+        }
     }
 
-    ///Reads the persisted offline session in DB, create `MediaSession` objects for them and initiate the reporting of `MediaSessions.`
+    ///Read persisted offline session from DB and create `MediaSession` objects for them and initiate the reporting of `MediaSessions.`
     private func initPersistedSessions() {
         let persistedSessionIds = mediaDBService.getPersistedSessionIds()
         persistedSessionIds.forEach { sessionId in
@@ -52,23 +53,25 @@ class MediaService: MediaProcessor {
     }
 
     func createSession(config: [String: Any]) -> String? {
-        guard mediaState.privacyStatus != .optedOut else {
-            Log.debug(label: LOG_TAG, "\(#function) - Could not start new media session. Privacy is opted out.")
-            return nil
-        }
+        dispatchQueue.sync {
+            guard mediaState.privacyStatus != .optedOut else {
+                Log.debug(label: Self.LOG_TAG, "\(#function) - Could not start new media session. Privacy is opted out.")
+                return nil
+            }
 
-        let isDownloaded = config[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
-        let sessionId = UUID().uuidString
-        var session: MediaSession
-        if isDownloaded {
-            session = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
-        } else {
-            session = MediaRealTimeSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue)
-        }
+            let isDownloaded = config[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
+            let sessionId = UUID().uuidString
+            var session: MediaSession
+            if isDownloaded {
+                session = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
+            } else {
+                session = MediaRealTimeSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue)
+            }
 
-        mediaSessions[sessionId] = session
-        Log.trace(label: LOG_TAG, "\(#function) - Created a new session (\(sessionId))")
-        return sessionId
+            mediaSessions[sessionId] = session
+            Log.trace(label: Self.LOG_TAG, "\(#function) - Created a new session (\(sessionId))")
+            return sessionId
+        }
     }
 
     /// Queues the `MediaHit` hit in session `sessionId`
@@ -76,57 +79,63 @@ class MediaService: MediaProcessor {
     ///    - sessionId: UniqueId of session to which `MediaHit` belongs.
     ///    - hit: `Object` of type `MediaHit`
     func processHit(sessionId: String, hit: MediaHit) {
-        guard mediaSessions.keys.contains(sessionId) else {
-            Log.debug(label: LOG_TAG, "\(#function) - Can not process session (\(sessionId)). SessionId is invalid.")
-            return
-        }
+        dispatchQueue.async {
+            guard self.mediaSessions.keys.contains(sessionId) else {
+                Log.debug(label: Self.LOG_TAG, "\(#function) - Can not process session (\(sessionId)). SessionId is invalid.")
+                return
+            }
 
-        let session = mediaSessions[sessionId]
-        session?.queue(hit: hit)
-        Log.trace(label: LOG_TAG, "\(#function) - Successfully queued hit (\(hit.eventType) for Session (\(sessionId)).")
+            let session = self.mediaSessions[sessionId]
+            session?.queue(hit: hit)
+            Log.trace(label: Self.LOG_TAG, "\(#function) - Successfully queued hit (\(hit.eventType) for Session (\(sessionId)).")
+        }
     }
 
-    /// Ends the session `sessionId`. In case of Offline session, sends the report to MediaAnalytics collection server.
+    /// Ends the session `sessionId`.
     ///
     /// - Parameter sessionId: Unique session id for session to end.
     func endSession(sessionId: String) {
+        dispatchQueue.async {
+            guard self.mediaSessions.keys.contains(sessionId) else {
+                Log.debug(label: Self.LOG_TAG, "\(#function) - Can not end media session (\(sessionId)). Invalid session id.")
+                return
+            }
 
-        guard mediaSessions.keys.contains(sessionId) else {
-            Log.debug(label: LOG_TAG, "\(#function) - Can not end media session (\(sessionId)). Invalid session id.")
-            return
+            self.mediaSessions[sessionId]?.end {
+                self.mediaSessions.removeValue(forKey: sessionId)
+                Log.trace(label: Self.LOG_TAG, "\(#function) - Successfully ended media session (\(sessionId))")
+            }
+
+            Log.trace(label: Self.LOG_TAG, "\(#function) - Scheduled end for media session (\(sessionId))")
         }
-
-        mediaSessions[sessionId]?.end {
-            self.mediaSessions.removeValue(forKey: sessionId)
-            Log.trace(label: self.LOG_TAG, "\(#function) - Successfully ended media session (\(sessionId))")
-        }
-
-        Log.trace(label: LOG_TAG, "\(#function) - Scheduled end of the media session (\(sessionId))")
     }
 
     /// Abort the session `sessionId`.
     ///
     /// - Parameter sessionId: Unique sessionId of session to be aborted.
-    func abort(sessionId: String) {
-
+    private func abort(sessionId: String) {
         guard mediaSessions.keys.contains(sessionId) else {
-            Log.debug(label: LOG_TAG, "\(#function) - can not abort media session (\(sessionId)). SessionId is invalid.")
+            Log.debug(label: Self.LOG_TAG, "\(#function) - Can not abort media session (\(sessionId)). SessionId is invalid.")
             return
         }
 
         mediaSessions[sessionId]?.abort {
             self.mediaSessions.removeValue(forKey: sessionId)
-            Log.trace(label: self.LOG_TAG, "\(#function) - Successfully aborted media session (\(sessionId)).")
+            Log.trace(label: Self.LOG_TAG, "\(#function) - Successfully aborted media session (\(sessionId)).")
         }
 
-        Log.trace(label: LOG_TAG, "\(#function) - Scheduled session abort for Session (\(sessionId).")
+        Log.trace(label: Self.LOG_TAG, "\(#function) - Scheduled abort for media session (\(sessionId).")
     }
 
-    /// Aborts all the active sessions.
-    func abortAllSessions() {
-        for (sessionId, _) in mediaSessions {
-            abort(sessionId: sessionId)
+    /// Notify MediaState updates
+    /// - Parameter sessionId: Unique sessionId of session
+    private func notifyMediaStateUpdate(sessionId: String) {
+        guard mediaSessions.keys.contains(sessionId) else {
+            Log.debug(label: Self.LOG_TAG, "\(#function) - Can not notify states changes for media session (\(sessionId)). SessionId is invalid.")
+            return
         }
+
+        mediaSessions[sessionId]?.handleMediaStateUpdate()
     }
 
     func updateMediaState(event: Event, getSharedState: (String, Event, Bool) -> SharedStateResult?) {
@@ -134,9 +143,14 @@ class MediaService: MediaProcessor {
         for extensionName in dependencies {
             sharedStates[extensionName] = getSharedState(extensionName, event, true)?.value
         }
-        mediaState.update(dataMap: sharedStates)
-        if mediaState.getPrivacyStatus() == .optedOut {
-            abortAllSessions()
+        dispatchQueue.async {
+            self.mediaState.update(dataMap: sharedStates)
+            if self.mediaState.privacyStatus == .optedOut {
+                self.mediaSessions.forEach { sessionId, _ in self.abort(sessionId: sessionId) }
+                return
+            }
+
+            self.mediaSessions.forEach { sessionId, _ in self.notifyMediaStateUpdate(sessionId: sessionId) }
         }
     }
 }

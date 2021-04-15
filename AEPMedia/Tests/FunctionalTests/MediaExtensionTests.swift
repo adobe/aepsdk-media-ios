@@ -45,21 +45,6 @@ class MediaExtensionTests: MediaFunctionalTestBase {
         XCTAssertTrue(readyForEvent)
     }
 
-    func testReadyForEventWhenConfigAndIdentitySharedStateNotReady() {
-        // setup
-        let eventData: [String: Any] = [
-            MediaConstants.Tracker.ID: "testTracker",
-            MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
-        ]
-        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
-        // test
-        mockRuntime.simulateComingEvent(event: createTrackerEvent)
-        waitForProcessing()
-        let readyForEvent = media.readyForEvent(createTrackerEvent)
-        // verify
-        XCTAssertFalse(readyForEvent)
-    }
-
     // MARK: handleMediaTrackerRequest tests
     func testCreateTrackerHappyPath() {
         // setup
@@ -183,7 +168,6 @@ class MediaExtensionTests: MediaFunctionalTestBase {
         waitForProcessing()
         // verify trackers are cleared and media service sessions aborted
         XCTAssertEqual(media.trackers.count, 0)
-        XCTAssertTrue(fakeMediaService.abortAllSessionsCalled)
     }
 
     // MARK: handleMediaTrack tests
@@ -261,7 +245,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
     // MARK: handleSharedStateUpdate tests
     func testHandleSharedStateUpdate() {
         // setup
-        let sharedStateUpdateEvent = Event(name: "shared state update", type: EventType.hub, source: EventSource.sharedState, data: identitySharedState)
+        let sharedStateUpdateEvent = Event(name: "shared state update", type: EventType.hub, source: EventSource.sharedState, data: TestConstants.identitySharedState)
         // test
         mockRuntime.simulateComingEvent(event: sharedStateUpdateEvent)
         waitForProcessing()

@@ -25,8 +25,7 @@ class MediaHitsDatabaseTests: XCTestCase {
 
     override func setUp() {
         MediaHitsDatabaseTests.removeDatabaseFileIfExists(fileName)
-        let dispatchQueue = DispatchQueue.init(label: fileName)
-        hitsDatabase = MediaHitsDatabase(databaseName: fileName, databaseFilePath: databaseFilePath, serialQueue: dispatchQueue)
+        hitsDatabase = MediaHitsDatabase(databaseName: fileName, databaseFilePath: databaseFilePath)
     }
 
     override func tearDown() {}
@@ -49,8 +48,7 @@ class MediaHitsDatabaseTests: XCTestCase {
 
     func testCreateDatabaseWithInvalidDatabaseName() throws {
         // setup
-        let dispatchQueue = DispatchQueue.init(label: fileName)
-        hitsDatabase = MediaHitsDatabase(databaseName: "", databaseFilePath: databaseFilePath, serialQueue: dispatchQueue)
+        hitsDatabase = MediaHitsDatabase(databaseName: "", databaseFilePath: databaseFilePath)
         // verify
         XCTAssertNil(hitsDatabase)
     }

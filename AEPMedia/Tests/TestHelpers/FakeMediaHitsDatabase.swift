@@ -16,10 +16,9 @@ import AEPCore
 class FakeMediaHitsDatabase: MediaHitsDatabase {
     var addedData: [String: [Data]] = [:]
     var sessionIds: Set<String> = []
-    private var queue = DispatchQueue(label: "FakeMediaHitsDatabase")
 
     init?() {
-        super.init(databaseName: "FakeMediaHitsDatabase", serialQueue: queue)
+        super.init(databaseName: "FakeMediaHitsDatabase")
     }
 
     override func add(sessionId: String, data: Data) -> Bool {

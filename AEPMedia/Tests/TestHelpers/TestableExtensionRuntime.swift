@@ -45,6 +45,10 @@ class TestableExtensionRuntime: ExtensionRuntime {
 
     func dispatch(event: Event) {
         dispatchedEvents += [event]
+        if event.source == "com.adobe.eventsource.media.requesttracker" || event.source == "com.adobe.eventsource.media.trackmedia" {
+            // if this is a create tracker or track media request the event needs to be dispatched to the Media Extension
+            simulateComingEvent(event: event)
+        }
     }
 
     func createSharedState(data: [String: Any], event _: Event?) {
