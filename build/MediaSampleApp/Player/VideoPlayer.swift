@@ -14,31 +14,33 @@ import Foundation
 import AVKit
 import AVFoundation
 
-let PLAYER_EVENT_VIDEO_LOAD = "player_video_load"
-let PLAYER_EVENT_VIDEO_UNLOAD = "player_video_unload"
-let PLAYER_EVENT_PLAY = "player_play"
-let PLAYER_EVENT_PAUSE = "player_pause"
-let PLAYER_EVENT_COMPLETE = "player_complete"
-let PLAYER_EVENT_SEEK_START = "player_seek_start"
-let PLAYER_EVENT_SEEK_COMPLETE = "player_seek_complete"
-let PLAYER_EVENT_AD_START = "player_ad_start"
-let PLAYER_EVENT_AD_COMPLETE = "player_ad_complete"
-let PLAYER_EVENT_CHAPTER_START = "player_chapter_start"
-let PLAYER_EVENT_CHAPTER_COMPLETE = "player_chapter_complete"
-let PLAYER_EVENT_PLAYHEAD_UPDATE = "player_playhead_updates"
-let PLAYER_EVENT_QOE_UPDATE = "player_qoe_update"
-let PLAYER_EVENT_CC_CHANGE = "player_cc_change"
-let PLAYER_EVENT_MUTE_CHANGE = "player_mute_change"
+class PlayerEvent {
+    static let PLAYER_EVENT_VIDEO_LOAD = "player_video_load"
+    static let PLAYER_EVENT_VIDEO_UNLOAD = "player_video_unload"
+    static let PLAYER_EVENT_PLAY = "player_play"
+    static let PLAYER_EVENT_PAUSE = "player_pause"
+    static let PLAYER_EVENT_COMPLETE = "player_complete"
+    static let PLAYER_EVENT_SEEK_START = "player_seek_start"
+    static let PLAYER_EVENT_SEEK_COMPLETE = "player_seek_complete"
+    static let PLAYER_EVENT_AD_START = "player_ad_start"
+    static let PLAYER_EVENT_AD_COMPLETE = "player_ad_complete"
+    static let PLAYER_EVENT_CHAPTER_START = "player_chapter_start"
+    static let PLAYER_EVENT_CHAPTER_COMPLETE = "player_chapter_complete"
+    static let PLAYER_EVENT_PLAYHEAD_UPDATE = "player_playhead_updates"
+    static let PLAYER_EVENT_QOE_UPDATE = "player_qoe_update"
+    static let PLAYER_EVENT_CC_CHANGE = "player_cc_change"
+    static let PLAYER_EVENT_MUTE_CHANGE = "player_mute_change"
+}
 
 class VideoPlayer: AVPlayer {
-    var _videoLoaded: Bool?
-    var _seeking: Bool?
-    var _paused: Bool?
-    var _isMuted: Bool?
-    var _isCCActive: Bool?
+    var _videoLoaded: Bool = false
+    var _seeking: Bool = false
+    var _paused: Bool = false
+    var _isMuted: Bool = false
+    var _isCCActive: Bool = false
 
-    var _isInChapter: Bool?
-    var _isInAd: Bool?
+    var _isInChapter: Bool = false
+    var _isInAd: Bool = false
     var _chapterPosition: Int?
 
     let AD_START_POS: Double = 15
@@ -64,11 +66,11 @@ class VideoPlayer: AVPlayer {
 
     var player: AVPlayer = AVPlayer()
     var playerViewController: AVPlayerViewController = AVPlayerViewController()
-    private var VHLMediaPlayerKVOContext = 0
+    private var MediaPlayerKVOContext = 0
 
-    var timer: Timer!
+    var timer: Timer?
 
-    func loadContentURL(url: URL) {
+    func load(videoInfo: [String: Any], url: URL) {
 
         _videoLoaded = false
         _seeking = false
@@ -81,9 +83,9 @@ class VideoPlayer: AVPlayer {
         player = AVPlayer(url: url)
         playerViewController.player = player
 
-        playerViewController.player!.addObserver(self, forKeyPath: kRateKey, options: [], context: &VHLMediaPlayerKVOContext)
-        playerViewController.player!.addObserver(self, forKeyPath: kStatusKey, options: [], context: &VHLMediaPlayerKVOContext)
-        playerViewController.player!.addObserver(self, forKeyPath: kMuteKey, options: [], context: &VHLMediaPlayerKVOContext)
+        playerViewController.player?.addObserver(self, forKeyPath: kRateKey, options: [], context: &MediaPlayerKVOContext)
+        playerViewController.player?.addObserver(self, forKeyPath: kStatusKey, options: [], context: &MediaPlayerKVOContext)
+        playerViewController.player?.addObserver(self, forKeyPath: kMuteKey, options: [], context: &MediaPlayerKVOContext)
 
         NotificationCenter.default.addObserver(self, selector: #selector(onMediaFinishedPlaying), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: nil)
     }
@@ -108,7 +110,7 @@ class VideoPlayer: AVPlayer {
 
     deinit {
         if timer != nil {
-            timer.invalidate()
+            timer?.invalidate()
         }
         NotificationCenter.default.removeObserver(self)
     }
@@ -121,7 +123,7 @@ class VideoPlayer: AVPlayer {
     // getting events from player
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
 
-        if context != &VHLMediaPlayerKVOContext {
+        if context != &MediaPlayerKVOContext {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
 
@@ -133,18 +135,18 @@ class VideoPlayer: AVPlayer {
             if self.playerViewController.player!.rate == 0.0 {
                 pausePlayback()
             } else {
-                if _seeking ?? false {
+                if _seeking {
                     NSLog("Stop seeking.")
                     _seeking = false
                     doPostSeekComputations()
 
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_SEEK_COMPLETE), object: self)
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_SEEK_COMPLETE), object: self)
                 } else {
                     NSLog("Resume playback.")
                     openVideoIfNecessary()
                     _paused = false
 
-                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_PLAY), object: self)
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_PLAY), object: self)
                 }
             }
         } else if keyPath == kMuteKey {
@@ -152,7 +154,7 @@ class VideoPlayer: AVPlayer {
                 _isMuted = self.playerViewController.player!.isMuted
                 var info: [String: Any] = [:]
                 info["muted"] = _isMuted
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_MUTE_CHANGE), object: self, userInfo: info)
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_MUTE_CHANGE), object: self, userInfo: info)
             }
         }
 
@@ -170,14 +172,14 @@ class VideoPlayer: AVPlayer {
             _isCCActive = ccStatus
             var info: [String: Any] = [:]
             info["ccActive"] = _isCCActive
-            NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_CC_CHANGE), object: self, userInfo: info)
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CC_CHANGE), object: self, userInfo: info)
         }
     }
 
     // player helper methods
     func openVideoIfNecessary() {
 
-        if !(_videoLoaded ?? false) {
+        if !(_videoLoaded ) {
             resetInternalState()
             startVideo()
 
@@ -188,7 +190,7 @@ class VideoPlayer: AVPlayer {
     }
 
     func pauseIfSeekHasNotStarted() {
-        if !(_seeking ?? false) {
+        if !(_seeking) {
             pausePlayback()
         } else {
             NSLog("This pause is caused by a seek operation. Skipping.")
@@ -198,31 +200,31 @@ class VideoPlayer: AVPlayer {
     // Call APIs
     func pausePlayback() {
         NSLog("Video paused")
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_PAUSE), object: self)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_PAUSE), object: self)
     }
 
     func startVideo() {
         // Prepare the video info.
         _videoLoaded = true
         NSLog("Video started")
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_VIDEO_LOAD), object: self)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_VIDEO_LOAD), object: self)
     }
 
     func completeVideo() {
         // Complete the second chapter.
         completeChapter()
         NSLog("Video complete")
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_COMPLETE), object: self)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_COMPLETE), object: self)
 
         unloadVideo()
     }
 
     func unloadVideo() {
         NSLog("Video end")
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_VIDEO_UNLOAD), object: self)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_VIDEO_UNLOAD), object: self)
 
         if timer != nil {
-            timer.invalidate()
+            timer?.invalidate()
         }
         resetInternalState()
     }
@@ -245,9 +247,9 @@ class VideoPlayer: AVPlayer {
                            "position": _chapterPosition as Any,
                            "time": CHAPTER1_START_POS] as [String: Any]
 
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_CHAPTER_START), object: self, userInfo: chapterInfo)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CHAPTER_START), object: self, userInfo: chapterInfo)
 
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue:PLAYER_EVENT_QOE_UPDATE), object: self)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_QOE_UPDATE), object: self)
     }
 
     func startChapter2() {
@@ -260,14 +262,14 @@ class VideoPlayer: AVPlayer {
                            "position": _chapterPosition as Any,
                            "time": CHAPTER2_START_POS] as [String: Any]
 
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_CHAPTER_START), object: self, userInfo: chapterInfo)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CHAPTER_START), object: self, userInfo: chapterInfo)
     }
 
     func completeChapter() {
         NSLog("complete chapter")
         _isInChapter = false
 
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_CHAPTER_COMPLETE), object: self)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CHAPTER_COMPLETE), object: self)
     }
 
     func startAd() {
@@ -287,13 +289,13 @@ class VideoPlayer: AVPlayer {
                          "ad": adInfo]
 
         // Start the ad.
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_START), object: self, userInfo: userInfo)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_AD_START), object: self, userInfo: userInfo)
     }
 
     func completeAd() {
         NSLog("complete Ad")
         // Complete the ad.
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_COMPLETE), object: self)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_AD_COMPLETE), object: self)
 
         // Clear the ad and ad-break info.
         _isInAd = false
@@ -306,11 +308,11 @@ class VideoPlayer: AVPlayer {
         // Seek inside the first chapter.
         if vTime < CHAPTER1_END_POS {
             // If we were not inside the first chapter before, trigger a chapter start
-            if !(_isInChapter ?? false) || _chapterPosition != 1 {
+            if !(_isInChapter) || _chapterPosition != 1 {
                 startChapter1()
 
                 // If we were in the ad, clear the ad and ad-break info, but don't send the AD_COMPLETE event.
-                if _isInAd ?? false {
+                if _isInAd {
                     _isInAd = false
                 }
             }
@@ -319,7 +321,7 @@ class VideoPlayer: AVPlayer {
         // Seek inside ad.
         else if vTime >= AD_START_POS && vTime < AD_END_POS {
             // If we were not inside the ad before, trigger an ad-start.
-            if !(_isInAd ?? false) {
+            if !(_isInAd) {
                 startAd()
 
                 // Also, clear the chapter info, without sending the CHAPTER_COMPLETE event.
@@ -328,11 +330,11 @@ class VideoPlayer: AVPlayer {
         } else // Seek inside the second chapter.
         {
             // If we were not inside the 2nd chapter before, trigger a chapter start
-            if !(_isInChapter ?? false) || _chapterPosition != 2 {
+            if !(_isInChapter) || _chapterPosition != 2 {
                 startChapter2()
 
                 // If we were in the ad, clear the ad and ad-break info, but don't send the AD_COMPLETE event.
-                if _isInAd ?? false {
+                if _isInAd {
                     _isInAd = false
                 }
             }
@@ -342,21 +344,21 @@ class VideoPlayer: AVPlayer {
     @objc func onTimerTick() {
         // NSLog("Timer Ticked")
 
-        if _seeking ?? false || (_paused ?? false) {
+        if _seeking || (_paused) {
             return
         }
 
         let vTime = getCurrentPlaybackTime()
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PLAYER_EVENT_PLAYHEAD_UPDATE), object: self)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_PLAYHEAD_UPDATE), object: self)
 
         // If we are inside the ad content:
         if vTime >= AD_START_POS && vTime < AD_END_POS {
-            if _isInChapter ?? false {
+            if _isInChapter {
                 // If for some reason we were inside a chapter, close it.
                 completeChapter()
             }
 
-            if !(_isInAd ?? false) {
+            if !(_isInAd) {
                 // Start the ad (if not already started).
                 startAd()
             }
@@ -364,28 +366,28 @@ class VideoPlayer: AVPlayer {
 
         // Otherwise, we are outside the ad content:
         else {
-            if _isInAd ?? false {
+            if _isInAd {
                 // Complete the ad (if needed).
                 completeAd()
             }
 
             if vTime < CHAPTER1_END_POS {
-                if _isInChapter ?? false && _chapterPosition != 1 {
+                if _isInChapter && _chapterPosition != 1 {
                     // If we were inside another chapter, complete it.
                     completeChapter()
                 }
 
-                if !(_isInChapter ?? false) {
+                if !(_isInChapter) {
                     // Start the first chapter.
                     startChapter1()
                 }
             } else {
-                if _isInChapter ?? false && _chapterPosition != 2 {
+                if _isInChapter && _chapterPosition != 2 {
                     // If we were inside another chapter, complete it.
                     completeChapter()
                 }
 
-                if !(_isInChapter ?? false) {
+                if !(_isInChapter) {
                     // Start the second chapter.
                     startChapter2()
                 }

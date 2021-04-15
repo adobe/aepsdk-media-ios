@@ -19,7 +19,10 @@ class ViewController: UIViewController {
     var videoPlayer: VideoPlayer!
 
     override func viewWillAppear(_ animated: Bool) {
-        let videoUrl = "http://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"
+
+        guard let videoUrl: URL = URL(string: "http://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8") else {
+            return
+        }
 
         var videoInfo: [String: Any] = [:]
         videoInfo["name"] = "Bip bop video"
@@ -28,14 +31,14 @@ class ViewController: UIViewController {
 
         if videoPlayer == nil {
             videoPlayer = VideoPlayer()
-            videoPlayer.loadContentURL(url: URL(string: videoUrl)!)
+            videoPlayer.load(videoInfo: videoInfo, url: videoUrl)
             createAdLabel()
             renderVideoPlayer()
         }
 
         if videoAnalyticsProvider == nil {
             videoAnalyticsProvider = VideoAnalyticsProvider()
-            videoAnalyticsProvider!.initWithPlayer(player: videoPlayer!)
+            videoAnalyticsProvider?.initWithPlayer(player: videoPlayer!)
         }
     }
 
@@ -64,9 +67,9 @@ class ViewController: UIViewController {
     }
 
     func addNotificationHandlers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdStart), name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_START), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdStart), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_AD_START), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdComplete), name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_COMPLETE), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdComplete), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_AD_COMPLETE), object: nil)
     }
 
     @objc func onAdStart(notification: NSNotification) {
@@ -83,7 +86,7 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var assuranceUrl: UITextField!
 
-    @IBAction func startAssurnaceSession (_ sender: Any) {
+    @IBAction func startAssuranceSession (_ sender: Any) {
         if let url = URL(string: assuranceUrl.text ?? "") {
             AEPAssurance.startSession(url)
         }

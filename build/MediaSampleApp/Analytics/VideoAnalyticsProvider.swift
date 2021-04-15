@@ -15,15 +15,18 @@ import AVFoundation
 import AEPMedia
 
 class VideoAnalyticsProvider: NSObject {
-    let VIDEO_ID    = "bipbop"
-    let VIDEO_NAME  = "Bip bop video"
-    let VIDEO_LENGTH = 1800
 
     let logTag = "#VideoAnalyticsProvider"
     var _player: VideoPlayer?
     var _tracker: MediaTracker?
     var _pendingSessionStart: Bool?
     var _pendingPlay: Bool?
+
+    let QOEINFO_BITRATRE: Double = 50000
+    let QOEINFO_STARTUPTIME: Double = 1800
+    let QOEINFO_FPS: Double = 24
+    let QOEINFO_DROPPEDFRAMES: Double = 10
+    let VIDEO_LENGTH: Double = 1800
 
     @objc func initWithPlayer(player: VideoPlayer) {
 
@@ -45,7 +48,13 @@ class VideoAnalyticsProvider: NSObject {
     @objc func updateQoE(notification: NSNotification) {
         NSLog("\(logTag) onUpdateQoE() - updated QOE")
 
-        guard let qoeObject = Media.createQoEObjectWith(bitrate: 50000, startupTime: 2, fps: 24, droppedFrames: 10) else {
+        let qoeInfo = ["bitrate": QOEINFO_BITRATRE,
+                       "startupTime": QOEINFO_STARTUPTIME,
+                       "fps": QOEINFO_FPS,
+                       "droppedFrames": QOEINFO_DROPPEDFRAMES
+        ] as [String: Any]
+
+        guard let qoeObject = Media.createQoEObjectWith(bitrate: qoeInfo["bitrate"] as? Double ?? 0, startupTime: qoeInfo["startupTime"] as? Double ?? 0, fps: qoeInfo["fps"] as? Double ?? 0, droppedFrames: qoeInfo["droppedFrames"] as? Double ?? 0) else {
             return
         }
 
@@ -69,10 +78,16 @@ class VideoAnalyticsProvider: NSObject {
 
     @objc func onMainVideoLoaded(notification: NSNotification) {
         NSLog("\(logTag) onMainVideoLoaded()")
+        let videoInfo = ["id": "bipbop",
+                         "length": VIDEO_LENGTH,
+                         "name": "Bip bop video"
+        ] as [String: Any]
+
         // TO DO: Use Public Constants
-        guard let mediaObject = Media.createMediaObjectWith(name: VIDEO_NAME, id: VIDEO_ID, length: Double(VIDEO_LENGTH), streamType: "vod", mediaType: MediaType.Audio) else {
+        guard let mediaObject = Media.createMediaObjectWith(name: videoInfo["name"] as? String ?? "", id: videoInfo["id"] as? String ?? "", length: videoInfo["length"] as? Double ?? 0, streamType: "vod", mediaType: MediaType.Audio) else {
             return
         }
+
         var videoMetadata: [String: String] = [:]
         // standardVideoMetadata
         videoMetadata["a.media.show"] = "Sample show"
@@ -122,7 +137,7 @@ class VideoAnalyticsProvider: NSObject {
 
         let chapterData = notification.userInfo
 
-        let chapterObject = Media.createChapterObjectWith(name: chapterData!["name"] as! String, position: chapterData!["position"] as! Int, length: chapterData!["length"] as! Double, startTime: chapterData!["time"] as! Double)
+        let chapterObject = Media.createChapterObjectWith(name: chapterData?["name"] as? String ?? "", position: chapterData?["position"] as? Int ?? 0, length: chapterData?["length"] as? Double ?? 0, startTime: chapterData?["time"] as? Double ?? 0)
 
         _tracker?.trackEvent(event: MediaEvent.ChapterStart, info: chapterObject, metadata: chapterDictionary)
     }
@@ -135,12 +150,12 @@ class VideoAnalyticsProvider: NSObject {
     @objc func onAdStart(notification: NSNotification) {
         NSLog("\(logTag) onAdStart()")
 
-        let adBreakData = notification.userInfo!["adbreak"] as! [String: Any]
-        let adData = notification.userInfo!["ad"] as! [String: Any]
+        let adBreakData = notification.userInfo?["adbreak"] as? [String: Any] ?? [:]
+        let adData = notification.userInfo?["ad"] as? [String: Any] ?? [:]
 
-        let adBreakObject = Media.createAdBreakObjectWith(name: adBreakData["name"] as! String, position: adBreakData["position"] as! Int, startTime: adBreakData["time"] as! Double)
+        let adBreakObject = Media.createAdBreakObjectWith(name: adBreakData["name"] as? String ?? "", position: adBreakData["position"] as? Int ?? 0, startTime: adBreakData["time"] as? Double ?? 0)
 
-        let adObject = Media.createAdObjectWith(name: adData["name"] as! String, adId: adData["id"] as! String, position: adData["position"] as! Int, length: adData["length"] as! Double)
+        let adObject = Media.createAdObjectWith(name: adData["name"] as? String ?? "", adId: adData["id"] as? String ?? "", position: adData["position"] as? Int ?? 0, length: adData["length"] as? Double ?? 00)
 
         var adMetadata: [String: String] = [:]
         // standardAdMetadata
@@ -168,9 +183,8 @@ class VideoAnalyticsProvider: NSObject {
     }
 
     @objc func onMuteUpdate(notification: NSNotification) {
-        NSLog("\(logTag) onMuteUpdate()")
-        let muted: Bool = (notification.userInfo!["muted"])! as! Bool
-        NSLog("\(logTag) Player muted: ", muted)
+        let muted: Bool = (notification.userInfo!["muted"])! as? Bool ?? false
+        NSLog("\(logTag) onMuteUpdate(): Player muted: ", muted)
         // TO DO: Use Public Constants for State Name
         let muteState = Media.createStateObjectWith(stateName: "mute")
         let event = muted ? MediaEvent.StateStart : MediaEvent.StateEnd
@@ -179,9 +193,8 @@ class VideoAnalyticsProvider: NSObject {
     }
 
     @objc func onCCUpdate(notification: NSNotification) {
-        NSLog("\(logTag) onCCUpdate()")
-        let ccActive: Bool = (notification.userInfo!["ccActive"])! as! Bool
-        NSLog("\(logTag) Closed caption active: ", ccActive)
+        let ccActive: Bool = (notification.userInfo!["ccActive"])! as? Bool ?? false
+        NSLog("\(logTag) onCCUpdate(): Closed caption active: ", ccActive)
         // TO DO: Use Public Constants for State Name
         let ccState = Media.createStateObjectWith(stateName: "closedCaptioning")
         let event = ccActive ? MediaEvent.StateStart : MediaEvent.StateEnd
@@ -191,35 +204,35 @@ class VideoAnalyticsProvider: NSObject {
 
     func setupPlayerNotifications() {
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onMainVideoLoaded), name: NSNotification.Name(rawValue: PLAYER_EVENT_VIDEO_LOAD), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onMainVideoLoaded), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_VIDEO_LOAD), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onMainVideoUnloaded), name: NSNotification.Name(rawValue: PLAYER_EVENT_VIDEO_UNLOAD), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onMainVideoUnloaded), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_VIDEO_UNLOAD), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onPlay), name: NSNotification.Name(rawValue: PLAYER_EVENT_PLAY), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onPlay), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_PLAY), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onStop), name: NSNotification.Name(rawValue: PLAYER_EVENT_PAUSE), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onStop), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_PAUSE), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onSeekStart), name: NSNotification.Name(rawValue: PLAYER_EVENT_SEEK_START), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onSeekStart), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_SEEK_START), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onSeekComplete), name: NSNotification.Name(rawValue: PLAYER_EVENT_SEEK_COMPLETE), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onSeekComplete), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_SEEK_COMPLETE), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onComplete), name: NSNotification.Name(rawValue: PLAYER_EVENT_COMPLETE), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onComplete), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_COMPLETE), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onChapterStart), name: NSNotification.Name(rawValue: PLAYER_EVENT_CHAPTER_START), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onChapterStart), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CHAPTER_START), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onChapterComplete), name: NSNotification.Name(rawValue: PLAYER_EVENT_CHAPTER_COMPLETE), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onChapterComplete), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CHAPTER_COMPLETE), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdStart), name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_START), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdStart), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_AD_START), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdComplete), name: NSNotification.Name(rawValue: PLAYER_EVENT_AD_COMPLETE), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onAdComplete), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_AD_COMPLETE), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.updateQoE(notification:)), name: NSNotification.Name(rawValue: PLAYER_EVENT_QOE_UPDATE), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.updateQoE(notification:)), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_QOE_UPDATE), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.updateCurrentPlaybackTime), name: NSNotification.Name(rawValue: PLAYER_EVENT_PLAYHEAD_UPDATE), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.updateCurrentPlaybackTime), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_PLAYHEAD_UPDATE), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onCCUpdate), name: NSNotification.Name(rawValue: PLAYER_EVENT_CC_CHANGE), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onCCUpdate), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CC_CHANGE), object: nil)
 
-        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onMuteUpdate), name: NSNotification.Name(rawValue: PLAYER_EVENT_MUTE_CHANGE), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(VideoAnalyticsProvider.onMuteUpdate), name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_MUTE_CHANGE), object: nil)
 
     }
 

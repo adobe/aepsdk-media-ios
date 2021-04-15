@@ -38,8 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         })
 
-        print("Initialized Media Extension:", Media.extensionVersion + " core:", MobileCore.extensionVersion + " analyticsExt:", Analytics.extensionVersion + " IdentityExt:", Identity.extensionVersion + " LifecycleExt:", Lifecycle.extensionVersion + " AssuranceExt:", AEPAssurance.extensionVersion)
-
         return true
     }
 
