@@ -160,9 +160,9 @@ internal extension MediaConstants {
     }
 
     enum PingInterval {
-        static let DEFAULT_OFFLINE = TimeInterval(50)
-        static let DEFAULT_ONLINE = TimeInterval(10)
-        static let GRANULAR_AD = TimeInterval(1)
+        static let OFFLINE_TRACKING: Int64 = 50 * 1000 // 50 sec
+        static let REALTIME_TRACKING: Int64 = 10 * 1000  // 10 sec
+        static let GRANULAR_AD_TRACKING: Int64 = 1 * 1000      // 1 sec
     }
 
     enum MediaCollection {
@@ -275,7 +275,7 @@ internal extension MediaConstants {
             static let PUBLISHER = "media.publisher"
             static let SDK_VERSION = "media.sdkVersion"
         }
-        
+
         enum State {
             static let NAME = "media.state.name"
         }

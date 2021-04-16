@@ -29,7 +29,7 @@ struct MediaHit: Codable {
     private (set) var playhead: Double = 0
 
     /// The current timestamps
-    private (set) var timestamp: TimeInterval = 0
+    private (set) var timestamp: Int64 = 0
 
     enum CodingKeys: String, CodingKey {
         case eventType = "eventType"
@@ -39,7 +39,7 @@ struct MediaHit: Codable {
         case playerTime = "playerTime"
     }
 
-    init(eventType: String, playhead: Double, ts: TimeInterval, params: [String: Any]? = nil, customMetadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
+    init(eventType: String, playhead: Double, ts: Int64, params: [String: Any]? = nil, customMetadata: [String: String]? = nil, qoeData: [String: Any]? = nil) {
         self.eventType = eventType
         self.params = params
         self.metadata = customMetadata
@@ -61,9 +61,10 @@ struct MediaHit: Codable {
         if let anyCodableQoeData = try? values.decode([String: AnyCodable].self, forKey: .qoeData) {
             self.qoeData = anyCodableQoeData.asDictionary()
         }
-        if let playerTime = try? values.decode([String: Double].self, forKey: .playerTime) {
-            timestamp = playerTime[MediaConstants.MediaCollection.PlayerTime.TS] ?? 0
-            playhead = playerTime[MediaConstants.MediaCollection.PlayerTime.PLAYHEAD] ?? 0
+
+        if let playerTime = try? values.decode([String: AnyCodable].self, forKey: .playerTime) {
+            self.timestamp = Int64(readNumber(playerTime[MediaConstants.MediaCollection.PlayerTime.TS]))
+            self.playhead = Double(readNumber(playerTime[MediaConstants.MediaCollection.PlayerTime.PLAYHEAD]))
         }
     }
 
@@ -80,10 +81,26 @@ struct MediaHit: Codable {
         if let qoeData = qoeData {
             try container.encode(AnyCodable.from(dictionary: qoeData), forKey: .qoeData)
         }
-        let playerTime: [String: Double] = [
+        let playerTime: [String: Any] = [
             MediaConstants.MediaCollection.PlayerTime.TS: timestamp,
             MediaConstants.MediaCollection.PlayerTime.PLAYHEAD: playhead
         ]
-        try container.encode(playerTime, forKey: .playerTime)
+        try container.encode(AnyCodable.from(dictionary: playerTime), forKey: .playerTime)
+    }
+
+    private func readNumber(_ val: AnyCodable?) -> Double {
+        guard let val = val else {
+            return 0
+        }
+
+        if let val = val.doubleValue {
+            return Double(val)
+        } else if let val = val.longValue {
+            return Double(val)
+        } else if let val = val.intValue {
+            return Double(val)
+        } else {
+            return 0
+        }
     }
 }

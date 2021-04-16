@@ -38,7 +38,7 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
         }
 
         // test
-        let sessionStartTs = TimeInterval(0)
+        let sessionStartTs = Int64(0)
         tracker.setTimeStamp(value: sessionStartTs)
         tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
         tracker.updateQoEObject(qoe: qoeInfo)
@@ -65,11 +65,11 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
         let payloadAsJson: [[String: Any]]? = try? JSONSerialization.jsonObject(with: sessionHitData, options: []) as? [[String: Any]]
         verifyEvent(eventName: "sessionStart", payload: payloadAsJson?[0] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: sessionStartTs, isDownloadedSession: true)
         verifyEvent(eventName: "play", payload: payloadAsJson?[1] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo, playhead: 0, ts: sessionStartTs, isDownloadedSession: true)
-        verifyEvent(eventName: "play", payload: payloadAsJson?[2] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 3, ts: sessionStartTs + 3.0, isDownloadedSession: true)
-        verifyEvent(eventName: "pauseStart", payload: payloadAsJson?[3] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo2, playhead: 5, ts: sessionStartTs + 4.0, isDownloadedSession: true)
-        verifyEvent(eventName: "ping", payload: payloadAsJson?[4] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: sessionStartTs + 54.0, isDownloadedSession: true)
-        verifyEvent(eventName: "play", payload: payloadAsJson?[5] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: sessionStartTs + 55.0, isDownloadedSession: true)
-        verifyEvent(eventName: "sessionComplete", payload: payloadAsJson?[6] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: sessionStartTs + 55.0, isDownloadedSession: true)
+        verifyEvent(eventName: "play", payload: payloadAsJson?[2] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 3, ts: sessionStartTs + 3, isDownloadedSession: true)
+        verifyEvent(eventName: "pauseStart", payload: payloadAsJson?[3] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo2, playhead: 5, ts: sessionStartTs + 4, isDownloadedSession: true)
+        verifyEvent(eventName: "ping", payload: payloadAsJson?[4] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: sessionStartTs + 54, isDownloadedSession: true)
+        verifyEvent(eventName: "play", payload: payloadAsJson?[5] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: sessionStartTs + 55, isDownloadedSession: true)
+        verifyEvent(eventName: "sessionComplete", payload: payloadAsJson?[6] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: sessionStartTs + 55, isDownloadedSession: true)
     }
 
     func testDownloadedContentSessionWhenPrivacyOptedOut() {
@@ -82,7 +82,7 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
         let metadata = ["SampleContextData": "SampleValue", "a.media.show": "show"]
 
         // test
-        let sessionStartTs = TimeInterval(0)
+        let sessionStartTs = Int64(0)
         tracker.setTimeStamp(value: sessionStartTs)
         tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
         tracker.trackComplete()
@@ -125,7 +125,7 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
         mockNetworkService?.shouldReturnConnectionError = true
 
         // test
-        let sessionStartTs = TimeInterval(0)
+        let sessionStartTs = Int64(0)
         tracker.setTimeStamp(value: sessionStartTs)
         tracker.trackSessionStart(info: mediaInfo, metadata: metadata)
         tracker.updateQoEObject(qoe: qoeInfo)
@@ -155,11 +155,11 @@ class MediaOfflineTrackingTests: MediaFunctionalTestBase {
         let payloadAsJson: [[String: Any]]? = try? JSONSerialization.jsonObject(with: sessionHitData, options: []) as? [[String: Any]]
         verifyEvent(eventName: "sessionStart", payload: payloadAsJson?[0] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 0, ts: sessionStartTs, isDownloadedSession: true)
         verifyEvent(eventName: "play", payload: payloadAsJson?[1] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo, playhead: 0, ts: sessionStartTs, isDownloadedSession: true)
-        verifyEvent(eventName: "play", payload: payloadAsJson?[2] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 3, ts: sessionStartTs + 3.0, isDownloadedSession: true)
-        verifyEvent(eventName: "pauseStart", payload: payloadAsJson?[3] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo2, playhead: 5, ts: sessionStartTs + 4.0, isDownloadedSession: true)
-        verifyEvent(eventName: "ping", payload: payloadAsJson?[4] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: sessionStartTs + 54.0, isDownloadedSession: true)
-        verifyEvent(eventName: "play", payload: payloadAsJson?[5] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: sessionStartTs + 55.0, isDownloadedSession: true)
-        verifyEvent(eventName: "sessionComplete", payload: payloadAsJson?[6] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: sessionStartTs + 55.0, isDownloadedSession: true)
+        verifyEvent(eventName: "play", payload: payloadAsJson?[2] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 3, ts: sessionStartTs + 3, isDownloadedSession: true)
+        verifyEvent(eventName: "pauseStart", payload: payloadAsJson?[3] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, expectedQoe: qoeInfo2, playhead: 5, ts: sessionStartTs + 4, isDownloadedSession: true)
+        verifyEvent(eventName: "ping", payload: payloadAsJson?[4] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: sessionStartTs + 54, isDownloadedSession: true)
+        verifyEvent(eventName: "play", payload: payloadAsJson?[5] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 5, ts: sessionStartTs + 55, isDownloadedSession: true)
+        verifyEvent(eventName: "sessionComplete", payload: payloadAsJson?[6] ?? [:], expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: sessionStartTs + 55, isDownloadedSession: true)
     }
 
 }

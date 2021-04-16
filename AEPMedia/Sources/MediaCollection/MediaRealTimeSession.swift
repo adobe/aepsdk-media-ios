@@ -18,7 +18,7 @@ class MediaRealTimeSession: MediaSession {
     private let LOG_TAG = "MediaRealTimeSession"
 
     private static let DURATION_BETWEEN_HITS_ON_FAILURE = 60 // Retry duration in case of failure
-    private static let MAX_ALLOWED_DURATION_BETWEEN_HITS: TimeInterval = 60
+    private static let MAX_ALLOWED_DURATION_BETWEEN_HITS_MS: Int64 = 60  * 1000 // 60 sec
     private static let MAX_ALLOWED_FAILURE = 3 //The maximum number of times SDK retries to send hit on failure, after that drop the hit.
 
     #if DEBUG
@@ -29,7 +29,7 @@ class MediaRealTimeSession: MediaSession {
 
     private var mcSessionId: String?
     private var isSendingHit: Bool = false
-    private var lastHitTS: TimeInterval = 0
+    private var lastHitTS: Int64 = 0
     private var sessionStartRetryCount = 0
 
     override func handleQueueMediaHit(hit: MediaHit) {
@@ -186,7 +186,7 @@ class MediaRealTimeSession: MediaSession {
 
         let currHitTS = hit.timestamp
         let diff = currHitTS - lastHitTS
-        if diff >= MediaRealTimeSession.MAX_ALLOWED_DURATION_BETWEEN_HITS {
+        if diff >= MediaRealTimeSession.MAX_ALLOWED_DURATION_BETWEEN_HITS_MS {
             Log.warning(label: LOG_TAG, "trySendHit - (\(hit.eventType)) TS difference from previous hit is \(diff) greater than 60 seconds.")
         }
         lastHitTS = currHitTS

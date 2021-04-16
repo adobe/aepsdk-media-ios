@@ -22,7 +22,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     private var mediaContext: MediaContext!
     private let expectedSessionId = "0"
     private let expectedPlayhead: Double = 0
-    private let expectedTimestamp = TimeInterval(0)
+    private let expectedTimestamp = Int64(0)
     private typealias EventType = MediaConstants.MediaCollection.EventType
     private typealias Media = MediaConstants.MediaCollection.Media
     private typealias QoE = MediaConstants.MediaCollection.QoE
@@ -584,7 +584,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitGenerator.processPlayback()
         XCTAssertEqual(0, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
         // set timestamp greater than session interval to allow a new play hit to be sent
-        hitGenerator.setRefTS(ts: 100)
+        hitGenerator.setRefTS(ts: 100000)
         hitGenerator.processPlayback()
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
     }
@@ -594,14 +594,14 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitGenerator.processPlayback()
         XCTAssertEqual(0, hitProcessor.getHitCountFromActiveSession())
         // no hit due to timestamp being lower than default offline ping interval
-        hitGenerator.setRefTS(ts: 10)
+        hitGenerator.setRefTS(ts: 10000)
         hitGenerator.processPlayback()
         XCTAssertEqual(0, hitProcessor.getHitCountFromActiveSession())
         // expect 1 hit due to timestamp >= the default offline ping interval
-        hitGenerator.setRefTS(ts: 50)
+        hitGenerator.setRefTS(ts: 50000)
         hitGenerator.processPlayback()
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedPingHit = MediaHit.init(eventType: "ping", playhead: expectedPlayhead, ts: 50, params: emptyParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
+        let expectedPingHit = MediaHit.init(eventType: "ping", playhead: expectedPlayhead, ts: 50000, params: emptyParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
         let pingHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPingHit, pingHit)
     }
@@ -614,17 +614,17 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitGenerator.processPlayback()
         XCTAssertEqual(0, hitProcessor.getHitCountFromActiveSession())
         // expect 1 hit due to timestamp >= default online ping interval
-        hitGenerator.setRefTS(ts: 10)
+        hitGenerator.setRefTS(ts: 10000)
         hitGenerator.processPlayback()
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        var expectedPingHit = MediaHit.init(eventType: "ping", playhead: expectedPlayhead, ts: 10, params: emptyParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
+        var expectedPingHit = MediaHit.init(eventType: "ping", playhead: expectedPlayhead, ts: 10000, params: emptyParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
         var pingHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPingHit, pingHit)
         // expect another hit due to timestamp >= the default online ping interval
-        hitGenerator.setRefTS(ts: 50)
+        hitGenerator.setRefTS(ts: 50000)
         hitGenerator.processPlayback()
         XCTAssertEqual(2, hitProcessor.getHitCountFromActiveSession())
-        expectedPingHit = MediaHit.init(eventType: "ping", playhead: expectedPlayhead, ts: 50, params: emptyParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
+        expectedPingHit = MediaHit.init(eventType: "ping", playhead: expectedPlayhead, ts: 50000, params: emptyParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
         pingHit = hitProcessor.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedPingHit, pingHit)
     }
@@ -639,10 +639,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         XCTAssertEqual(expectedPlayHit, playHit)
         hitProcessor.clearHitsFromActiveSession()
         // expect ping hit due to timestamp >= default online ping interval but current state == previous state
-        hitGenerator.setRefTS(ts: 51)
+        hitGenerator.setRefTS(ts: 51000)
         hitGenerator.processPlayback()
         XCTAssertEqual(1, hitProcessor.getHitCountFromActiveSession())
-        let expectedPingHit = MediaHit.init(eventType: "ping", playhead: expectedPlayhead, ts: 51, params: emptyParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
+        let expectedPingHit = MediaHit.init(eventType: "ping", playhead: expectedPlayhead, ts: 51000, params: emptyParams, customMetadata: emptyMetadata, qoeData: emptyQoeData)
         let pingHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedPingHit, pingHit)
     }

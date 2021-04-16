@@ -27,7 +27,7 @@ class MediaTrackerAPITests: MediaFunctionalTestBase {
         fakeMediaService = FakeMediaHitProcessor()
     }
 
-    func getExpectedSessionStartHit(info: MediaInfo, metadata: [String: String] = [:], qoeData: [String: Any] = [:], downloaded: Bool = false, ts: Double = 0, playhead: Double = 0) -> MediaHit {
+    func getExpectedSessionStartHit(info: MediaInfo, metadata: [String: String] = [:], qoeData: [String: Any] = [:], downloaded: Bool = false, ts: Int64 = 0, playhead: Double = 0) -> MediaHit {
         var expectedMediaInfo = MediaCollectionHelper.generateMediaParams(mediaInfo: info, metadata: metadata)
         expectedMediaInfo[Media.DOWNLOADED] = downloaded
 

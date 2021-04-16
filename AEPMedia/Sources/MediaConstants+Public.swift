@@ -12,7 +12,7 @@
 import Foundation
 
 public class MediaConstants {
-    
+
     @objc(AEPMediaStreamType)
     @objcMembers
     public class StreamType: NSObject {
@@ -23,10 +23,10 @@ public class MediaConstants {
         public static let AUDIOBOOK = "audiobook"
         public static let AOD = "aod"
     }
-    
+
     @objc(AEPVideoMetadataKeys)
     @objcMembers
-    public class VideoMetadataKeys : NSObject {
+    public class VideoMetadataKeys: NSObject {
         public static let SHOW = "a.media.show"
         public static let SEASON = "a.media.season"
         public static let EPISODE = "a.media.episode"
@@ -45,10 +45,10 @@ public class MediaConstants {
         public static let FEED = "a.media.feed"
         public static let STREAM_FORMAT = "a.media.format"
     }
-    
+
     @objc(AEPAudioMetadataKeys)
     @objcMembers
-    public class AudioMetadataKeys : NSObject {
+    public class AudioMetadataKeys: NSObject {
         public static let ARTIST = "a.media.artist"
         public static let ALBUM = "a.media.album"
         public static let LABEL = "a.media.label"
@@ -56,10 +56,10 @@ public class MediaConstants {
         public static let STATION = "a.media.station"
         public static let PUBLISHER = "a.media.publisher"
     }
-    
+
     @objc(AEPAdMetadataKeys)
     @objcMembers
-    public class AdMetadataKeys : NSObject {
+    public class AdMetadataKeys: NSObject {
         public static let ADVERTISER = "a.media.ad.advertiser"
         public static let CAMPAIGN_ID = "a.media.ad.campaign"
         public static let CREATIVE_ID = "a.media.ad.creative"
@@ -67,20 +67,20 @@ public class MediaConstants {
         public static let SITE_ID = "a.media.ad.site"
         public static let CREATIVE_URL = "a.media.ad.creativeURL"
     }
-    
+
     @objc(AEPMediaPlayerState)
     @objcMembers
-    public class PlayerState : NSObject {
-        public static let FULLSCREEN = "fullscreen";
-        public static let PICTURE_IN_PICTURE = "pictureInPicture";
-        public static let CLOSED_CAPTION = "closedCaptioning";
-        public static let IN_FOCUS = "inFocus";
-        public static let MUTE = "mute";
-     }
-    
+    public class PlayerState: NSObject {
+        public static let FULLSCREEN = "fullscreen"
+        public static let PICTURE_IN_PICTURE = "pictureInPicture"
+        public static let CLOSED_CAPTION = "closedCaptioning"
+        public static let IN_FOCUS = "inFocus"
+        public static let MUTE = "mute"
+    }
+
     @objc(AEPMediaObjectKey)
     @objcMembers
-    public class MediaObjectKey : NSObject {
-        public static let RESUMED = "media.resumed";
+    public class MediaObjectKey: NSObject {
+        public static let RESUMED = "media.resumed"
     }
 }

@@ -40,7 +40,7 @@ extension MediaHit: Equatable {
             areDictionariesEqual(lhs: lhs.metadata, rhs: rhs.metadata) &&
             areDictionariesEqual(lhs: lhs.qoeData, rhs: rhs.qoeData) &&
             lhs.playhead.isAlmostEqual(rhs.playhead) &&
-            lhs.timestamp.isAlmostEqual(rhs.timestamp)
+            lhs.timestamp == rhs.timestamp
     }
 
     private static func areDictionariesEqual(lhs: [String: Any]?, rhs: [String: Any]?) -> Bool {
