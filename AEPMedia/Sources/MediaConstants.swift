@@ -25,11 +25,6 @@ internal extension MediaConstants {
         static let INVALID_RESPONSE = -1
     }
 
-    enum TrackerConfig {
-        static let CHANNEL = "config.channel"
-        static let DOWNLOADED_CONTENT = "config.downloadedcontent"
-    }
-
     enum Configuration {
         static let SHARED_STATE_NAME = "com.adobe.module.configuration"
         static let GLOBAL_CONFIG_PRIVACY = "global.privacy"

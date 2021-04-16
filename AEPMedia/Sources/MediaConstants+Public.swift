@@ -82,5 +82,14 @@ public class MediaConstants {
     @objcMembers
     public class MediaObjectKey: NSObject {
         public static let RESUMED = "media.resumed"
+        public static let PREROLL_TRACKING_WAITING_TIME  = "media.prerollwaitingtime"
+        public static let GRANULAR_AD_TRACKING  = "media.granularadtracking"
+    }
+
+    @objc(AEPMediaTrackerConfig)
+    @objcMembers
+    public class TrackerConfig: NSObject {
+        static let CHANNEL = "config.channel"
+        static let DOWNLOADED_CONTENT = "config.downloadedcontent"
     }
 }
