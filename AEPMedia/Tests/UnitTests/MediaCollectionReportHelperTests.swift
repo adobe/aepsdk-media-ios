@@ -304,8 +304,12 @@ class MediaCollectionReportHelperTests: XCTestCase {
             return false
         }
         for (i, jsonObj) in jsonArray.enumerated() {
-            let playertime = jsonObj["playerTime"] as! [String: Double]
-            let actualMediaHit = MediaHit(eventType: jsonObj["eventType"] as! String, playhead: playertime["playhead"]!, ts: playertime["ts"]!, params: jsonObj["params"] as? [String: Any], customMetadata: jsonObj["customMetadata"] as? [String: String], qoeData: jsonObj["qoeData"] as? [String: Any])
+            let playertime = jsonObj["playerTime"] as? [String: Double] ?? [:]
+
+            let eventType = jsonObj["eventType"] as? String ?? ""
+            let playhead =  playertime["playhead"] ?? 0.0
+            let ts = playertime["ts"] ?? 0.0
+            let actualMediaHit = MediaHit(eventType: eventType, playhead: playhead, ts: Int64(ts), params: jsonObj["params"] as? [String: Any], customMetadata: jsonObj["customMetadata"] as? [String: String], qoeData: jsonObj["qoeData"] as? [String: Any])
 
             let expectedMediaHit = try? JSONDecoder().decode(MediaHit.self, from: expected[i].data(using: .utf8)!)
             result = result && compareMediaHits(actual: actualMediaHit, expected: MediaCollectionReportHelper.updateMediaHit(state: state, mediaHit: expectedMediaHit!))

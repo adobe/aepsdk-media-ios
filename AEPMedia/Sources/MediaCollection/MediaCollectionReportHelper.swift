@@ -218,7 +218,7 @@ class MediaCollectionReportHelper {
         var hasSessionStarted = false
         var hasSessionEnded = false
         var lastPlayhead: Double = 0
-        var lastTimestamp: TimeInterval = 0
+        var lastTimestamp: Int64 = 0
         var updatedMediaHits: [MediaHit] = []
 
         for hit in hits {

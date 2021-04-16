@@ -84,7 +84,7 @@ class MediaPublicTrackerTests: XCTestCase {
         return true
     }
 
-    func assertTrackEvent(event: Event?, expectedEventName: String, expectedParam: [String: Any] = [:], expectedMetadata: [String: Any] = [:], expectedTimestamp: TimeInterval = 0.0, expectedEventInternal: Bool = false) {
+    func assertTrackEvent(event: Event?, expectedEventName: String, expectedParam: [String: Any] = [:], expectedMetadata: [String: Any] = [:], expectedTimestamp: Int64 = 0, expectedEventInternal: Bool = false) {
 
         guard let event = event else {
             XCTFail()
@@ -103,8 +103,8 @@ class MediaPublicTrackerTests: XCTestCase {
         let actualMetadata = event.data?[MediaConstants.Tracker.EVENT_METADATA] as? [String: Any] ?? [:]
         XCTAssertTrue(isEqual(map1: actualMetadata, map2: expectedMetadata))
 
-        let actualTimestamp = event.data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? TimeInterval ?? 0.0
-        XCTAssertTrue(actualTimestamp.isAlmostEqual(expectedTimestamp))
+        let actualTimestamp = event.data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? Int64 ?? 0
+        XCTAssertEqual(actualTimestamp, expectedTimestamp)
 
         let actualEventInternal = event.data?[MediaConstants.Tracker.EVENT_INTERNAL] as? Bool ?? false
         XCTAssertEqual(actualEventInternal, expectedEventInternal)
@@ -168,18 +168,18 @@ class MediaPublicTrackerTests: XCTestCase {
 
     func test_trackComplete() {
         let tracker = MediaEventGenerator()
-        tracker.setTimeStamp(value: 100.0)
+        tracker.setTimeStamp(value: 100)
         tracker.trackComplete()
 
-        assertTrackEvent(event: tracker.dispatchedEvent, expectedEventName: MediaConstants.EventName.COMPLETE, expectedTimestamp: 100.0)
+        assertTrackEvent(event: tracker.dispatchedEvent, expectedEventName: MediaConstants.EventName.COMPLETE, expectedTimestamp: 100)
     }
 
     func test_trackSessionEnd() {
         let tracker = MediaEventGenerator()
-        tracker.setTimeStamp(value: 100.0)
+        tracker.setTimeStamp(value: 100)
         tracker.trackSessionEnd()
 
-        assertTrackEvent(event: tracker.dispatchedEvent, expectedEventName: MediaConstants.EventName.SESSION_END, expectedTimestamp: 100.0)
+        assertTrackEvent(event: tracker.dispatchedEvent, expectedEventName: MediaConstants.EventName.SESSION_END, expectedTimestamp: 100)
     }
 
     func test_trackPlay() {

@@ -20,16 +20,16 @@ class MediaPublicTracker: MediaTracker {
     typealias dispatchFn = (Event) -> Void
 
     let TICK_INTERVAL = TimeInterval(0.75)
-    let EVENT_TIMEOUT = TimeInterval(0.5)
+    let EVENT_TIMEOUT_MS: Int64 = 500
     private let dispatchQueue: DispatchQueue = DispatchQueue(label: LOG_TAG)
 
     var dispatch: dispatchFn?
     let config: [String: Any]?
-    let trackerId: String?
-    var sessionId: String?
+    let trackerId: String
+    var sessionId: String
     var resetSessionId = false
     var inSession = false
-    var lastEventTs = TimeInterval()
+    var lastEventTs: Int64 = 0
     var lastPlayheadParams: [String: Any]?
     var timer: Timer?
 
@@ -40,7 +40,10 @@ class MediaPublicTracker: MediaTracker {
         self.trackerId = UUID().uuidString
         self.sessionId = UUID().uuidString
 
-        let eventData: [String: Any] = [MediaConstants.Tracker.ID: self.trackerId, MediaConstants.Tracker.EVENT_PARAM: self.config ?? [:]]
+        let eventData: [String: Any] = [
+            MediaConstants.Tracker.ID: self.trackerId,
+            MediaConstants.Tracker.EVENT_PARAM: self.config ?? [:]
+        ]
         let event = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
 
         dispatch?(event)
@@ -165,7 +168,7 @@ class MediaPublicTracker: MediaTracker {
             }
 
             let currentTs = self.getCurrentTimeStamp()
-            if (currentTs - self.lastEventTs) > self.EVENT_TIMEOUT {
+            if (currentTs - self.lastEventTs) > self.EVENT_TIMEOUT_MS {
                 // We have not got any public api call for 500 ms.
                 // We manually send an event to keep our internal processsing alive (idle tracking / ping processing).
                 self.trackInternal(eventName: MediaConstants.EventName.PLAYHEAD_UPDATE, params: self.lastPlayheadParams, internalEvent: true)
@@ -187,7 +190,13 @@ class MediaPublicTracker: MediaTracker {
         timer = nil
     }
 
-    func getCurrentTimeStamp() -> TimeInterval {
-        return Date().timeIntervalSince1970
+    func getCurrentTimeStamp() -> Int64 {
+        return Date().millisecondsSince1970
+    }
+}
+
+extension Date {
+    var millisecondsSince1970: Int64 {
+        return Int64((timeIntervalSince1970 * 1000.0).rounded())
     }
 }

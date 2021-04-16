@@ -84,7 +84,7 @@ class MediaFunctionalTestBase: XCTestCase {
     // MARK: event verification and helpers for offline and realtime tracker events
     func verifyEvent(eventName: String, payload: [String: Any] = [:], expectedInfo: [String: Any] = [:],
                      expectedMetadata: [String: String] = [:], expectedQoe: [String: Any] = [:],
-                     playhead: Double, ts: TimeInterval, isDownloadedSession: Bool = false) {
+                     playhead: Double, ts: Int64, isDownloadedSession: Bool = false) {
         let playerTime = payload["playerTime"] as? [String: Any] ?? [:]
         let eventType = payload["eventType"] as? String ?? ""
         let actualParams = payload["params"] as? [String: Any] ?? [:]
@@ -106,7 +106,7 @@ class MediaFunctionalTestBase: XCTestCase {
         XCTAssertTrue(isEqual(map1: actualQoe, map2: expectedQoe))
     }
 
-    private func verifyPlayerTime(eventName: String, actualPlayerTime: [String: Any], expectedPlayhead: Double, expectedTs: TimeInterval) {
+    private func verifyPlayerTime(eventName: String, actualPlayerTime: [String: Any], expectedPlayhead: Double, expectedTs: Int64) {
         let delta = TimeInterval(2)
         // verify playhead
         guard let actualPlayhead = actualPlayerTime[MediaConstants.MediaCollection.PlayerTime.PLAYHEAD] as? Double else {
@@ -119,12 +119,12 @@ class MediaFunctionalTestBase: XCTestCase {
         }
         wait(for: [expectation], timeout: 0.1)
         // verify timestamp
-        guard let actualTs = actualPlayerTime[MediaConstants.MediaCollection.PlayerTime.TS] as? TimeInterval else {
+        guard let actualTs = actualPlayerTime[MediaConstants.MediaCollection.PlayerTime.TS] as? Int64 else {
             XCTFail("Unable to get actual timestamp for event: \(eventName)")
             return
         }
         let expectation2 = XCTestExpectation(description: "for event \(eventName), the actual timestamp \(actualTs) should almost be equal to the expected timestamp \(expectedTs)")
-        if actualTs.isAlmostEqualWithinDelta(expectedTs, delta: delta) {
+        if actualTs == expectedTs {
             expectation2.fulfill()
         }
         wait(for: [expectation2], timeout: 0.1)
@@ -169,18 +169,18 @@ class MediaFunctionalTestBase: XCTestCase {
         return retDict
     }
 
-    private func verifySerializedCustomerIds(idsToVerify: [String:[String: Any]]?) {
+    private func verifySerializedCustomerIds(idsToVerify: [String: [String: Any]]?) {
         guard let idsToVerify = idsToVerify else {
             XCTFail("the ids to verify were nil")
             return
         }
-        for (idKey,idValue) in idsToVerify {
+        for (idKey, idValue) in idsToVerify {
             XCTAssertTrue(isEqual(map1: idValue, map2: TestConstants.expectedSerializedCustomerIds[idKey]))
         }
     }
 
     func waitFor(_ secondsToWait: Int, updatePlayhead: Bool, tracker: MediaEventGenerator, semaphore: DispatchSemaphore) {
-        let timestampIncrement = TimeInterval(1)
+        let timestampIncrement = Int64(1)
         var elapsedTime = 0
         let queue = DispatchQueue(label: "trackerTimer")
         timer = DispatchSource.makeTimerSource(queue: queue)

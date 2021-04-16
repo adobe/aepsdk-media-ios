@@ -13,50 +13,31 @@ import Foundation
 @testable import AEPMedia
 
 class TestConstants {
-    static let standardMediaMetadataMapping = [ MediaConstants.StandardMediaMetadata.SHOW:
-        MediaConstants.MediaCollection.StandardMediaMetadata.SHOW, MediaConstants.StandardMediaMetadata.SEASON: MediaConstants.MediaCollection.StandardMediaMetadata.SEASON,
-        MediaConstants.MediaCollection.StandardMediaMetadata.EPISODE:
-            MediaConstants.MediaCollection.StandardMediaMetadata.EPISODE,
-        MediaConstants.MediaCollection.StandardMediaMetadata.ASSET_ID:
-            MediaConstants.MediaCollection.StandardMediaMetadata.ASSET_ID,
-        MediaConstants.MediaCollection.StandardMediaMetadata.GENRE:
-            MediaConstants.MediaCollection.StandardMediaMetadata.GENRE,
-        MediaConstants.MediaCollection.StandardMediaMetadata.FIRST_AIR_DATE:
-            MediaConstants.MediaCollection.StandardMediaMetadata.FIRST_AIR_DATE,
-        MediaConstants.MediaCollection.StandardMediaMetadata.FIRST_DIGITAL_DATE:
-            MediaConstants.MediaCollection.StandardMediaMetadata.FIRST_DIGITAL_DATE,
-        MediaConstants.MediaCollection.StandardMediaMetadata.RATING:
-            MediaConstants.MediaCollection.StandardMediaMetadata.RATING,
-        MediaConstants.MediaCollection.StandardMediaMetadata.ORIGINATOR:
-            MediaConstants.MediaCollection.StandardMediaMetadata.ORIGINATOR,
-        MediaConstants.MediaCollection.StandardMediaMetadata.NETWORK:
-            MediaConstants.MediaCollection.StandardMediaMetadata.NETWORK,
-        MediaConstants.MediaCollection.StandardMediaMetadata.SHOW_TYPE:
-            MediaConstants.MediaCollection.StandardMediaMetadata.SHOW_TYPE,
-        MediaConstants.MediaCollection.StandardMediaMetadata.AD_LOAD:
-            MediaConstants.MediaCollection.StandardMediaMetadata.AD_LOAD,
-        MediaConstants.MediaCollection.StandardMediaMetadata.MVPD:
-            MediaConstants.MediaCollection.StandardMediaMetadata.MVPD,
-        MediaConstants.MediaCollection.StandardMediaMetadata.AUTH:
-            MediaConstants.MediaCollection.StandardMediaMetadata.AUTH,
-        MediaConstants.MediaCollection.StandardMediaMetadata.DAY_PART:
-            MediaConstants.MediaCollection.StandardMediaMetadata.DAY_PART,
-        MediaConstants.MediaCollection.StandardMediaMetadata.FEED:
-            MediaConstants.MediaCollection.StandardMediaMetadata.FEED,
-        MediaConstants.MediaCollection.StandardMediaMetadata.STREAM_FORMAT:
-            MediaConstants.MediaCollection.StandardMediaMetadata.STREAM_FORMAT,
-        MediaConstants.MediaCollection.StandardMediaMetadata.ARTIST:
-            MediaConstants.MediaCollection.StandardMediaMetadata.ARTIST,
-        MediaConstants.MediaCollection.StandardMediaMetadata.ALBUM:
-            MediaConstants.MediaCollection.StandardMediaMetadata.ALBUM,
-        MediaConstants.MediaCollection.StandardMediaMetadata.LABEL:
-            MediaConstants.MediaCollection.StandardMediaMetadata.LABEL,
-        MediaConstants.MediaCollection.StandardMediaMetadata.AUTHOR:
-            MediaConstants.MediaCollection.StandardMediaMetadata.AUTHOR,
-        MediaConstants.MediaCollection.StandardMediaMetadata.STATION:
-            MediaConstants.MediaCollection.StandardMediaMetadata.STATION,
-        MediaConstants.MediaCollection.StandardMediaMetadata.PUBLISHER:
-            MediaConstants.MediaCollection.StandardMediaMetadata.PUBLISHER
+
+    static let standardMediaMetadataMapping = [
+        MediaConstants.VideoMetadataKeys.SHOW: MediaConstants.MediaCollection.StandardMediaMetadata.SHOW,
+        MediaConstants.VideoMetadataKeys.SEASON: MediaConstants.MediaCollection.StandardMediaMetadata.SEASON,
+        MediaConstants.VideoMetadataKeys.EPISODE: MediaConstants.MediaCollection.StandardMediaMetadata.EPISODE,
+        MediaConstants.VideoMetadataKeys.ASSET_ID: MediaConstants.MediaCollection.StandardMediaMetadata.ASSET_ID,
+        MediaConstants.VideoMetadataKeys.GENRE: MediaConstants.MediaCollection.StandardMediaMetadata.GENRE,
+        MediaConstants.VideoMetadataKeys.FIRST_AIR_DATE: MediaConstants.MediaCollection.StandardMediaMetadata.FIRST_AIR_DATE,
+        MediaConstants.VideoMetadataKeys.FIRST_DIGITAL_DATE: MediaConstants.MediaCollection.StandardMediaMetadata.FIRST_DIGITAL_DATE,
+        MediaConstants.VideoMetadataKeys.RATING: MediaConstants.MediaCollection.StandardMediaMetadata.RATING,
+        MediaConstants.VideoMetadataKeys.ORIGINATOR: MediaConstants.MediaCollection.StandardMediaMetadata.ORIGINATOR,
+        MediaConstants.VideoMetadataKeys.NETWORK: MediaConstants.MediaCollection.StandardMediaMetadata.NETWORK,
+        MediaConstants.VideoMetadataKeys.SHOW_TYPE: MediaConstants.MediaCollection.StandardMediaMetadata.SHOW_TYPE,
+        MediaConstants.VideoMetadataKeys.AD_LOAD: MediaConstants.MediaCollection.StandardMediaMetadata.AD_LOAD,
+        MediaConstants.VideoMetadataKeys.MVPD: MediaConstants.MediaCollection.StandardMediaMetadata.MVPD,
+        MediaConstants.VideoMetadataKeys.AUTHORIZED: MediaConstants.MediaCollection.StandardMediaMetadata.AUTH,
+        MediaConstants.VideoMetadataKeys.DAY_PART: MediaConstants.MediaCollection.StandardMediaMetadata.DAY_PART,
+        MediaConstants.VideoMetadataKeys.FEED: MediaConstants.MediaCollection.StandardMediaMetadata.FEED,
+        MediaConstants.VideoMetadataKeys.STREAM_FORMAT: MediaConstants.MediaCollection.StandardMediaMetadata.STREAM_FORMAT,
+        MediaConstants.AudioMetadataKeys.ARTIST: MediaConstants.MediaCollection.StandardMediaMetadata.ARTIST,
+        MediaConstants.AudioMetadataKeys.ALBUM: MediaConstants.MediaCollection.StandardMediaMetadata.ALBUM,
+        MediaConstants.AudioMetadataKeys.LABEL: MediaConstants.MediaCollection.StandardMediaMetadata.LABEL,
+        MediaConstants.AudioMetadataKeys.AUTHOR: MediaConstants.MediaCollection.StandardMediaMetadata.AUTHOR,
+        MediaConstants.AudioMetadataKeys.STATION: MediaConstants.MediaCollection.StandardMediaMetadata.STATION,
+        MediaConstants.AudioMetadataKeys.PUBLISHER: MediaConstants.MediaCollection.StandardMediaMetadata.PUBLISHER
     ]
 
     static let analyticsSharedState: [String: Any] = [
@@ -68,10 +49,10 @@ class TestConstants {
         MediaConstants.Identity.MARKETING_VISITOR_ID: "ecid",
         MediaConstants.Identity.BLOB: "blob",
         MediaConstants.Identity.LOC_HINT: "lochint",
-        MediaConstants.Identity.VISITOR_IDS_LIST: [["id_origin": "orig1", "id_type": "type1", "id": "u111111111", "authentication_state": 0],["id_origin": "orig1", "id_type": "type2", "id": "1234567890", "authentication_state": 1],["id_origin": "orig1", "id_type": "type3", "id": "testPushId", "authentication_state": 2]]
+        MediaConstants.Identity.VISITOR_IDS_LIST: [["id_origin": "orig1", "id_type": "type1", "id": "u111111111", "authentication_state": 0], ["id_origin": "orig1", "id_type": "type2", "id": "1234567890", "authentication_state": 1], ["id_origin": "orig1", "id_type": "type3", "id": "testPushId", "authentication_state": 2]]
     ]
 
-    static let expectedSerializedCustomerIds = ["type1":["id":"u111111111","authState":0],"type2":["id":"1234567890","authState":1],"type3":["id":"testPushId","authState":2]]
+    static let expectedSerializedCustomerIds = ["type1": ["id": "u111111111", "authState": 0], "type2": ["id": "1234567890", "authState": 1], "type3": ["id": "testPushId", "authState": 2]]
 
     static let configSharedState: [String: Any] = [
         MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER: "analytics-test.com",

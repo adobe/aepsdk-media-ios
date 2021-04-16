@@ -58,7 +58,7 @@ class MediaHitsDatabaseTests: XCTestCase {
         let sessionId = UUID().uuidString
         var addedHits: [MediaHit] = []
         for i in 1 ... 3 {
-            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Int64(i), params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
             _ = hitsDatabase.add(sessionId: sessionId, data: data)
             addedHits.append(mediaHit)
@@ -82,7 +82,7 @@ class MediaHitsDatabaseTests: XCTestCase {
         let sessionId = UUID().uuidString
         var addedHits: [MediaHit] = []
         for i in 1 ... 3 {
-            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.123456789, ts: Date().timeIntervalSince1970, params: params, customMetadata: metadata, qoeData: qoeData)
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.123456789, ts: Date().millisecondsSince1970, params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
             _ = hitsDatabase.add(sessionId: sessionId, data: data)
             addedHits.append(mediaHit)
@@ -105,7 +105,7 @@ class MediaHitsDatabaseTests: XCTestCase {
         // setup and test
         let sessionId = UUID().uuidString
         for i in 1 ... 10 {
-            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Int64(i), params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
             _ = hitsDatabase.add(sessionId: sessionId, data: data)
         }
@@ -120,7 +120,7 @@ class MediaHitsDatabaseTests: XCTestCase {
         let sessionId = UUID().uuidString
         var addedHits: [MediaHit] = []
         for i in 1 ... 10 {
-            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Int64(i), params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
             _ = hitsDatabase.add(sessionId: sessionId, data: data)
             addedHits.append(mediaHit)
@@ -128,7 +128,7 @@ class MediaHitsDatabaseTests: XCTestCase {
         XCTAssertEqual(10, hitsDatabase.count())
         let anotherSessionId = UUID().uuidString
         for i in 11 ... 20 {
-            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Int64(i), params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
             _ = hitsDatabase.add(sessionId: anotherSessionId, data: data)
         }
@@ -154,7 +154,7 @@ class MediaHitsDatabaseTests: XCTestCase {
         var secondSetOfAddedSessions: Set<String> = []
         for i in 1 ... 10 {
             let sessionId = UUID().uuidString
-            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Int64(i), params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
             _ = hitsDatabase.add(sessionId: sessionId, data: data)
             addedSessions.insert(sessionId)
@@ -162,7 +162,7 @@ class MediaHitsDatabaseTests: XCTestCase {
         XCTAssertEqual(10, hitsDatabase.count())
         for i in 11 ... 20 {
             let anotherSessionId = UUID().uuidString
-            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Double(i) * 100.0, params: params, customMetadata: metadata, qoeData: qoeData)
+            let mediaHit = MediaHit(eventType: MediaConstants.Media.EVENT_TYPE, playhead: Double(i) * 50.0, ts: Int64(i), params: params, customMetadata: metadata, qoeData: qoeData)
             let data = try JSONEncoder().encode(mediaHit)
             _ = hitsDatabase.add(sessionId: anotherSessionId, data: data)
             secondSetOfAddedSessions.insert(anotherSessionId)

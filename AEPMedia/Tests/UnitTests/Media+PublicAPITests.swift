@@ -41,8 +41,6 @@ class MediaPublicAPITests: XCTestCase {
         let expectation = XCTestExpectation(description: "createTracker should dispatch createTracker request an event")
         expectation.assertForOverFulfill = true
 
-        let mediaTracker = Media.createTracker()
-
         EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST) { (event) in
             let eventData = event.data
             let trackerId = eventData?[MediaConstants.Tracker.ID] as? String
@@ -53,17 +51,17 @@ class MediaPublicAPITests: XCTestCase {
             XCTAssertEqual(0, trackerConfig?.count)
             expectation.fulfill()
         }
+        
+        let mediaTracker = Media.createTracker()
 
         // verify
-        wait(for: [expectation], timeout: 2.0)
+        wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(mediaTracker)
     }
 
     func testCreateTrackerWithConfig() {
         let expectation = XCTestExpectation(description: "createTracker should dispatch createTracker request an event")
         expectation.assertForOverFulfill = true
-
-        let mediaTracker = Media.createTrackerWith(config: ["downloaded": true])
 
         EventHub.shared.getExtensionContainer(MockExtension.self)?.registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST) { (event) in
             let eventData = event.data
@@ -76,7 +74,9 @@ class MediaPublicAPITests: XCTestCase {
             XCTAssertNotNil(trackerConfig)
             expectation.fulfill()
         }
-
+        
+        let mediaTracker = Media.createTrackerWith(config: ["downloaded": true])
+        
         // verify
         wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(mediaTracker)
