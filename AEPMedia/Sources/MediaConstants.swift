@@ -11,7 +11,7 @@
 
 import Foundation
 
-enum MediaConstants {
+internal extension MediaConstants {
     static let EXTENSION_NAME                           = "com.adobe.module.media"
     static let FRIENDLY_NAME                            = "Media Analytics"
     static let EXTENSION_VERSION                        = "0.0.1"
@@ -145,41 +145,6 @@ enum MediaConstants {
     enum StateInfo {
         static let STATE_NAME_KEY = "state.name"
         static let STATE_LIMIT = 10
-    }
-
-    enum StandardMediaMetadata {
-        static let SHOW = "a.media.show"
-        static let SEASON = "a.media.season"
-        static let EPISODE = "a.media.episode"
-        static let ASSET_ID = "a.media.asset"
-        static let GENRE = "a.media.genre"
-        static let FIRST_AIR_DATE = "a.media.airDate"
-        static let FIRST_DIGITAL_DATE = "a.media.digitalDate"
-        static let RATING = "a.media.rating"
-        static let ORIGINATOR = "a.media.originator"
-        static let NETWORK = "a.media.network"
-        static let SHOW_TYPE = "a.media.type"
-        static let AD_LOAD = "a.media.adLoad"
-        static let MVPD = "a.media.pass.mvpd"
-        static let AUTH = "a.media.pass.auth"
-        static let DAY_PART = "a.media.dayPart"
-        static let FEED = "a.media.feed"
-        static let STREAM_FORMAT = "a.media.format"
-        static let ARTIST    = "a.media.artist"
-        static let ALBUM     = "a.media.album"
-        static let LABEL     = "a.media.label"
-        static let AUTHOR    = "a.media.author"
-        static let STATION   = "a.media.station"
-        static let PUBLISHER = "a.media.publisher"
-    }
-
-    enum StandardAdMetadata {
-        static let ADVERTISER = "a.media.ad.advertiser"
-        static let CAMPAIGN_ID = "a.media.ad.campaign"
-        static let CREATIVE_ID = "a.media.ad.creative"
-        static let PLACEMENT_ID = "a.media.ad.placement"
-        static let SITE_ID = "a.media.ad.site"
-        static let CREATIVE_URL = "a.media.ad.creativeURL"
     }
 
     enum Tracker {
