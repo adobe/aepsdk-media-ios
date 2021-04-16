@@ -275,6 +275,10 @@ internal extension MediaConstants {
             static let PUBLISHER = "media.publisher"
             static let SDK_VERSION = "media.sdkVersion"
         }
+        
+        enum State {
+            static let NAME = "media.state.name"
+        }
 
         enum PlayerTime {
             static let TS = "ts"

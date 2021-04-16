@@ -150,12 +150,25 @@ class MediaCollectionHelper {
 
         return retDict
     }
+    
+    static func generateQoEParam(qoeInfo: QoEInfo?, errorId: String? = nil) -> [String: Any] {
+        var retDict = [String: Any]()
 
-    static func generateErrorParam(qoeInfo: QoEInfo?, errorId: String) -> [String: Any] {
-        var errorParam = qoeInfo?.toMap() ?? [:]
-        errorParam[MediaConstants.MediaCollection.QoE.ERROR_ID] = errorId
-        errorParam[MediaConstants.MediaCollection.QoE.ERROR_SOURCE] = MediaConstants.MediaCollection.QoE.ERROR_SOURCE_PLAYER
-
-        return errorParam
-    }
+        guard let qoeInfo = qoeInfo else {
+            Log.trace(label: LOG_TAG, "\(#function) - found empty qoe info.")
+            return retDict
+        }
+            
+        retDict[MediaConstants.MediaCollection.QoE.BITRATE] = Int64(qoeInfo.bitrate)
+        retDict[MediaConstants.MediaCollection.QoE.DROPPED_FRAMES] = Int64(qoeInfo.droppedFrames)
+        retDict[MediaConstants.MediaCollection.QoE.FPS] = Int64(qoeInfo.fps)
+        retDict[MediaConstants.MediaCollection.QoE.STARTUP_TIME] = Int64(qoeInfo.startupTime)
+            
+        if let errorId = errorId {
+            retDict[MediaConstants.MediaCollection.QoE.ERROR_ID] = errorId
+            retDict[MediaConstants.MediaCollection.QoE.ERROR_SOURCE] = MediaConstants.MediaCollection.QoE.ERROR_SOURCE_PLAYER
+        }
+            
+        return retDict
+    }    
 }

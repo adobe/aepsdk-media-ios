@@ -172,12 +172,12 @@ class MediaCollectionHitGenerator {
     }
 
     func processBitrateChange() {
-        let qoeData = mediaContext.qoeInfo?.toMap()
+        let qoeData = MediaCollectionHelper.generateQoEParam(qoeInfo: mediaContext.qoeInfo)
         generateHit(eventType: EventType.BITRATE_CHANGE, qoeData: qoeData)
     }
 
     func processError(errorId: String) {
-        let qoeDataWithError = MediaCollectionHelper.generateErrorParam(qoeInfo: mediaContext.qoeInfo, errorId: errorId)
+        let qoeDataWithError = MediaCollectionHelper.generateQoEParam(qoeInfo: mediaContext.qoeInfo, errorId: errorId)
         generateHit(eventType: EventType.ERROR, qoeData: qoeDataWithError)
     }
 
@@ -210,7 +210,9 @@ class MediaCollectionHitGenerator {
             return
         }
 
-        let  params: [String: Any] = [MediaConstants.StateInfo.STATE_NAME_KEY: stateInfo.stateName]
+        let  params: [String: Any] = [
+            MediaConstants.MediaCollection.State.NAME: stateInfo.stateName
+        ]
         generateHit(eventType: EventType.STATE_START, params: params)
     }
 
@@ -220,7 +222,9 @@ class MediaCollectionHitGenerator {
             return
         }
 
-        let  params: [String: Any] = [MediaConstants.StateInfo.STATE_NAME_KEY: stateInfo.stateName]
+        let  params: [String: Any] = [
+            MediaConstants.MediaCollection.State.NAME: stateInfo.stateName
+        ]
         generateHit(eventType: EventType.STATE_END, params: params)
     }
 
@@ -258,17 +262,17 @@ class MediaCollectionHitGenerator {
         mediaHitProcessor.processHit(sessionId: sessionId, hit: hit)
     }
 
-    private func getQoEForCurrentHit(qoeData: [String: Any]?) -> [String: Any] {
+    private func getQoEForCurrentHit(qoeData: [String: Any]?) -> [String: Any]? {
         if let qoeData = qoeData, !qoeData.isEmpty {
             lastReportedQoeData = qoeData
             return qoeData
         }
-        let mediaContextQoeData = mediaContext.qoeInfo?.toMap() ?? [String: Any]()
+        let mediaContextQoeData = MediaCollectionHelper.generateQoEParam(qoeInfo: mediaContext.qoeInfo)
         if !(lastReportedQoeData as NSDictionary).isEqual(to: mediaContextQoeData) {
             lastReportedQoeData = mediaContextQoeData
             return mediaContextQoeData
         } else {
-            return [:]
+            return nil
         }
     }
 
