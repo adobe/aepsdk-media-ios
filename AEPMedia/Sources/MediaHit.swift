@@ -72,13 +72,13 @@ struct MediaHit: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(eventType, forKey: .eventType)
 
-        if let params = params {
+        if let params = params, params.isEmpty {
             try container.encode(AnyCodable.from(dictionary: params), forKey: .params)
         }
-        if let metadata = metadata {
+        if let metadata = metadata, metadata.isEmpty {
             try container.encode(metadata, forKey: .metadata)
         }
-        if let qoeData = qoeData {
+        if let qoeData = qoeData, qoeData.isEmpty {
             try container.encode(AnyCodable.from(dictionary: qoeData), forKey: .qoeData)
         }
         let playerTime: [String: Any] = [
