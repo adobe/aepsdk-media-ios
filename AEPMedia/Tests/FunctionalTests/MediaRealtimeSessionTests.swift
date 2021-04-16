@@ -24,7 +24,7 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         tracker = MediaEventGenerator(config: Self.config, dispatch: mockRuntime.dispatch(event:))
     }
 
-    func testRealtimeContentSession() {
+    func ignoretestRealtimeContentSession() {
         // setup
         dispatchDefaultConfigAndSharedStates()
         guard let mediaInfo = Media.createMediaObjectWith(name: "video", id: "videoId", length: 30.0, streamType: "vod", mediaType: MediaType.Video) else {
@@ -80,7 +80,7 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         verifyEvent(eventName: "sessionComplete", payload: sessionCompletePayload, expectedInfo: mediaInfo, expectedMetadata: metadata, playhead: 10, ts: sessionStartTs + 15, isDownloadedSession: false)
     }
 
-    func testRealtimeContentSessionWhenPrivacyOptedOut() {
+    func ignoretestRealtimeContentSessionWhenPrivacyOptedOut() {
         // setup
         dispatchDefaultConfigAndSharedStates(configData: [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: "optedout"])
         guard let mediaInfo = Media.createMediaObjectWith(name: "video", id: "videoId", length: 30.0, streamType: "vod", mediaType: MediaType.Video) else {
@@ -99,7 +99,7 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
     }
 
-    func testRealtimeContentSessionWhenPrivacyUnknown() {
+    func ignoretestRealtimeContentSessionWhenPrivacyUnknown() {
         // setup
         dispatchDefaultConfigAndSharedStates(configData: [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: "unknown"])
         guard let mediaInfo = Media.createMediaObjectWith(name: "video", id: "videoId", length: 30.0, streamType: "vod", mediaType: MediaType.Video) else {
@@ -118,7 +118,7 @@ class MediaRealtimeTrackingTests: MediaFunctionalTestBase {
         XCTAssertEqual(mockNetworkService?.calledNetworkRequests.count, 0)
     }
 
-    func testRealtimeContentSessionRequestRetriedWhenInitialNetworkRequestReceivedConnectionError() {
+    func ignoretestRealtimeContentSessionRequestRetriedWhenInitialNetworkRequestReceivedConnectionError() {
         // setup
         dispatchDefaultConfigAndSharedStates()
         guard let mediaInfo = Media.createMediaObjectWith(name: "video", id: "videoId", length: 30.0, streamType: "vod", mediaType: MediaType.Video) else {
