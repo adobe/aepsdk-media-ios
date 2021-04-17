@@ -19,17 +19,15 @@ class VideoAnalyticsProvider: NSObject {
     let logTag = "#VideoAnalyticsProvider"
     var _player: VideoPlayer?
     var _tracker: MediaTracker?
-    var _pendingSessionStart: Bool?
-    var _pendingPlay: Bool?
 
     @objc func initWithPlayer(player: VideoPlayer) {
 
         _player = player
 
         var config: [String: Any] = [:]
-        // TO DO: Use Public Constants
-        config["config.channel"] = "custom-swift-channel" // Override channel
-        //config["config.downloadedcontent"] = true    // Creates downloaded content tracker configured from launch
+
+        config[MediaConstants.TrackerConfig.CHANNEL] = "custom-swift-channel" // Override channel
+        //config[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] = true    // Creates downloaded content tracker configured from launch
 
         _tracker = Media.createTrackerWith(config: config)
         setupPlayerNotifications()
@@ -69,8 +67,7 @@ class VideoAnalyticsProvider: NSObject {
 
         let videoData = notification.userInfo
 
-        // TO DO: Use Public Constants
-        guard let mediaObject = Media.createMediaObjectWith(name: videoData?["name"] as? String ?? "", id: videoData?["id"] as? String ?? "", length: videoData?["length"] as? Double ?? 0, streamType: "vod", mediaType: MediaType.Video) else {
+        guard let mediaObject = Media.createMediaObjectWith(name: videoData?["name"] as? String ?? "", id: videoData?["id"] as? String ?? "", length: videoData?["length"] as? Double ?? 0, streamType: MediaConstants.StreamType.VOD, mediaType: MediaType.Video) else {
             return
         }
 
@@ -145,9 +142,8 @@ class VideoAnalyticsProvider: NSObject {
 
         var adMetadata: [String: String] = [:]
         // standardAdMetadata
-        // TO DO: Use Public Constants
-        adMetadata["a.media.ad.advertiser"] = "Sample Advertiser"
-        adMetadata["a.media.ad.campaign"] = "Sample Campaign"
+        adMetadata[MediaConstants.AdMetadataKeys.ADVERTISER] = "Sample Advertiser"
+        adMetadata[MediaConstants.AdMetadataKeys.CAMPAIGN_ID] = "Sample Campaign"
 
         // customAdMetadata
         adMetadata["affiliate"] = "Sample affiliate"
@@ -171,8 +167,8 @@ class VideoAnalyticsProvider: NSObject {
     @objc func onMuteUpdate(notification: NSNotification) {
         let muted: Bool = (notification.userInfo!["muted"])! as? Bool ?? false
         NSLog("\(logTag) onMuteUpdate(): Player muted: ", muted)
-        // TO DO: Use Public Constants for State Name
-        let muteState = Media.createStateObjectWith(stateName: "mute")
+
+        let muteState = Media.createStateObjectWith(stateName: MediaConstants.PlayerState.MUTE)
         let event = muted ? MediaEvent.StateStart : MediaEvent.StateEnd
 
         _tracker?.trackEvent(event: event, info: muteState, metadata: nil)
@@ -181,8 +177,8 @@ class VideoAnalyticsProvider: NSObject {
     @objc func onCCUpdate(notification: NSNotification) {
         let ccActive: Bool = (notification.userInfo!["ccActive"])! as? Bool ?? false
         NSLog("\(logTag) onCCUpdate(): Closed caption active: ", ccActive)
-        // TO DO: Use Public Constants for State Name
-        let ccState = Media.createStateObjectWith(stateName: "closedCaptioning")
+
+        let ccState = Media.createStateObjectWith(stateName: MediaConstants.PlayerState.CLOSED_CAPTION)
         let event = ccActive ? MediaEvent.StateStart : MediaEvent.StateEnd
 
         _tracker?.trackEvent(event: event, info: ccState, metadata: nil)

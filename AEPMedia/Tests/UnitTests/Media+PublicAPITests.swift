@@ -51,7 +51,7 @@ class MediaPublicAPITests: XCTestCase {
             XCTAssertEqual(0, trackerConfig?.count)
             expectation.fulfill()
         }
-        
+
         let mediaTracker = Media.createTracker()
 
         // verify
@@ -74,9 +74,9 @@ class MediaPublicAPITests: XCTestCase {
             XCTAssertNotNil(trackerConfig)
             expectation.fulfill()
         }
-        
+
         let mediaTracker = Media.createTrackerWith(config: ["downloaded": true])
-        
+
         // verify
         wait(for: [expectation], timeout: 1)
         XCTAssertNotNil(mediaTracker)

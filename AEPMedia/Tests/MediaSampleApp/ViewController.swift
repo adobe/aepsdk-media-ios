@@ -14,9 +14,9 @@ import UIKit
 import AEPAssurance
 
 class ViewController: UIViewController {
-    var adLabel: UILabel!
+    var adLabel: UILabel?
     var videoAnalyticsProvider: VideoAnalyticsProvider?
-    var videoPlayer: VideoPlayer!
+    var videoPlayer: VideoPlayer?
 
     override func viewWillAppear(_ animated: Bool) {
 
@@ -26,7 +26,7 @@ class ViewController: UIViewController {
 
         if videoPlayer == nil {
             videoPlayer = VideoPlayer()
-            videoPlayer.loadContentURL(url: videoUrl)
+            videoPlayer?.loadContentURL(url: videoUrl)
             createAdLabel()
             renderVideoPlayer()
         }
@@ -43,19 +43,23 @@ class ViewController: UIViewController {
             size: CGSize.init(width: 200.0, height: 200.0)
         )
         adLabel = UILabel.init(frame: rect)
-        adLabel.text = "AD"
-        adLabel.isHidden = true
-        adLabel.textColor = UIColor.white
+        adLabel?.text = "AD"
+        adLabel?.isHidden = true
+        adLabel?.textColor = UIColor.white
     }
 
     func renderVideoPlayer() {
         if videoPlayer != nil {
-            let playerViewController = videoPlayer.getPlayerViewController()
+            guard let playerViewController = videoPlayer?.getPlayerViewController() else {
+                return }
             // Modally present the player and call the player's play() method when complete.
             self.present(playerViewController, animated: true) {
-                self.videoPlayer.play()
-                playerViewController.view.addSubview(self.adLabel)
-                playerViewController.view.bringSubviewToFront(self.adLabel)
+                self.videoPlayer?.play()
+                guard let adLabel = self.adLabel else {
+                    return
+                }
+                playerViewController.view.addSubview(adLabel)
+                playerViewController.view.bringSubviewToFront(adLabel)
             }
             addNotificationHandlers()
         }
@@ -68,11 +72,11 @@ class ViewController: UIViewController {
     }
 
     @objc func onAdStart(notification: NSNotification) {
-        adLabel.isHidden = false
+        adLabel?.isHidden = false
     }
 
     @objc func onAdComplete(notification: NSNotification) {
-        adLabel.isHidden = true
+        adLabel?.isHidden = true
     }
 
     @IBAction func OpenVideoView(_ sender: Any) {

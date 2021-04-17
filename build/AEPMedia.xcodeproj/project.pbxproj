@@ -298,7 +298,6 @@
 				AC36EC6425C9F2CD00A37345 /* LICENSE */,
 				AC36EC6525C9F2CD00A37345 /* Makefile */,
 				AC36EC2C25C9F11E00A37345 /* AEPMedia */,
-				95DD6367261FF687003068C7 /* MediaSampleApp */,
 				2EFF1B5225BF57FC00375965 /* Products */,
 				9598EB9A2980A6BD84A67D20 /* Pods */,
 				D665897A25ED567300D8593E /* Recovered References */,
@@ -400,6 +399,7 @@
 		AC36EC2F25C9F11E00A37345 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				95DD6367261FF687003068C7 /* MediaSampleApp */,
 				D66F0B92261692FF0018E779 /* FunctionalTests */,
 				D66F0B91261692FF0018E779 /* UnitTests */,
 				AC36EC3125C9F11E00A37345 /* TestHelpers */,
@@ -1198,8 +1198,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FKGEE875K4;
-				INFOPLIST_FILE = MediaSampleApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/MediaSampleApp/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1219,8 +1219,8 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FKGEE875K4;
-				INFOPLIST_FILE = MediaSampleApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/MediaSampleApp/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
