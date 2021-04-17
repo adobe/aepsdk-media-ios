@@ -30,7 +30,7 @@ class MediaDBServiceTests: XCTestCase {
         let sessionId = UUID().uuidString
         // test
         for i in 1 ... 3 {
-            let hit = MediaHit(eventType: "sessionStart", playhead: Double(100 * i), ts: Date().timeIntervalSince1970)
+            let hit = MediaHit(eventType: "sessionStart", playhead: Double(100 * i), ts: Date().millisecondsSince1970)
             mediaDbService.persistHit(hit: hit, sessionId: sessionId)
             addedHits.append(hit)
         }
@@ -49,7 +49,7 @@ class MediaDBServiceTests: XCTestCase {
         var sessionId = UUID().uuidString
         sessionIds.append(sessionId)
         for i in 1 ... 5 {
-            let hit = MediaHit(eventType: "sessionStart", playhead: Double(100 * i), ts: Date().timeIntervalSince1970)
+            let hit = MediaHit(eventType: "sessionStart", playhead: Double(100 * i), ts: Date().millisecondsSince1970)
             mediaDbService.persistHit(hit: hit, sessionId: sessionId)
             addedHits.append(hit)
 
@@ -57,14 +57,14 @@ class MediaDBServiceTests: XCTestCase {
         sessionId = UUID().uuidString
         sessionIds.append(sessionId)
         for i in 1 ... 5 {
-            let hit = MediaHit(eventType: "chapterStart", playhead: Double(100 * i), ts: Date().timeIntervalSince1970)
+            let hit = MediaHit(eventType: "chapterStart", playhead: Double(100 * i), ts: Date().millisecondsSince1970)
             mediaDbService.persistHit(hit: hit, sessionId: sessionId)
             addedHits.append(hit)
         }
         sessionId = UUID().uuidString
         sessionIds.append(sessionId)
         for i in 1 ... 5 {
-            let hit = MediaHit(eventType: "sessionComplete", playhead: Double(100 * i), ts: Date().timeIntervalSince1970)
+            let hit = MediaHit(eventType: "sessionComplete", playhead: Double(100 * i), ts: Date().millisecondsSince1970)
             mediaDbService.persistHit(hit: hit, sessionId: sessionId)
             addedHits.append(hit)
         }
@@ -88,7 +88,7 @@ class MediaDBServiceTests: XCTestCase {
         for i in 1 ... 10 {
             let sessionId = UUID().uuidString
             sessionIds.insert(sessionId)
-            let hit = MediaHit(eventType: "sessionStart", playhead: Double(100 * i), ts: Date().timeIntervalSince1970)
+            let hit = MediaHit(eventType: "sessionStart", playhead: Double(100 * i), ts: Date().millisecondsSince1970)
             mediaDbService.persistHit(hit: hit, sessionId: sessionId)
         }
         // verify

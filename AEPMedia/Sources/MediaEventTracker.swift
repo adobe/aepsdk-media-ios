@@ -101,10 +101,10 @@ class MediaEventTracker: MediaEventTracking {
     private static let KEY_METADATA = "key_metadata"
     private static let KEY_EVENT_TS = "key_eventts"
 
-    private static let LOG_TAG = "MediaCoreTracker"
-    private static let IDLE_TIMEOUT = TimeInterval(1800) //30 min
-    private static let MEDIA_SESSION_TIMEOUT = TimeInterval(86400) //24 hours
-    private static let CONTENT_START_DURATION = TimeInterval(1) //1 sec
+    private static let LOG_TAG = "MediaEventTracker"
+    private static let IDLE_TIMEOUT_MS: Int64 = 1800 * 1000 //30 min
+    private static let MEDIA_SESSION_TIMEOUT_MS: Int64 = 86400 * 1000 //24 hours
+    private static let CONTENT_START_DURATION_MS: Int64 = 1 * 1000 //1 sec
 
     #if DEBUG
         var inPrerollInterval = false
@@ -122,10 +122,10 @@ class MediaEventTracker: MediaEventTracking {
     private var mediaIdle = false
     private var prerollQueuedRules: [(name: RuleName, context: [String: Any])] = []
     private var contentStarted = false
-    private var prerollRefTS = TimeInterval()
-    private var contentStartRefTS = TimeInterval()
-    private var mediaSessionStartTS = TimeInterval()
-    private var mediaIdleStartTS = TimeInterval()
+    private var prerollRefTS: Int64 = 0
+    private var contentStartRefTS: Int64 = 0
+    private var mediaSessionStartTS: Int64 = 0
+    private var mediaIdleStartTS: Int64 = 0
     private let ruleEngine: MediaRuleEngine
 
     init(hitProcessor: MediaProcessor, config: [String: Any]) {
@@ -145,9 +145,10 @@ class MediaEventTracker: MediaEventTracking {
         inPrerollInterval = false
         prerollQueuedRules.removeAll()
         contentStarted = false
-        contentStartRefTS = TimeInterval()
-        mediaSessionStartTS = TimeInterval()
-        mediaIdleStartTS = TimeInterval()
+        prerollRefTS = 0
+        contentStartRefTS = 0
+        mediaSessionStartTS = 0
+        mediaIdleStartTS = 0
     }
 
     /// Handles all the track API calls.
@@ -746,17 +747,17 @@ class MediaEventTracker: MediaEventTracking {
     private func cmdSessionTimeoutDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         let refTS = getRefTS(context: context)
 
-        if mediaSessionStartTS == TimeInterval() {
+        if mediaSessionStartTS == 0 {
             mediaSessionStartTS = refTS
         }
 
-        if !trackerIdle && ((refTS - mediaSessionStartTS) >= Self.MEDIA_SESSION_TIMEOUT) {
+        if !trackerIdle && ((refTS - mediaSessionStartTS) >= Self.MEDIA_SESSION_TIMEOUT_MS) {
             hitGenerator?.processSessionAbort()
             hitGenerator?.processSessionRestart()
 
             mediaSessionStartTS = refTS
             contentStarted = false
-            contentStartRefTS = TimeInterval()
+            contentStartRefTS = 0
         }
 
         return true
@@ -776,7 +777,7 @@ class MediaEventTracker: MediaEventTracking {
             let refTS = getRefTS(context: context)
             if mediaIdle {
                 // Media was already idle during previous call.
-                if !trackerIdle && (refTS - mediaIdleStartTS) >= Self.IDLE_TIMEOUT {
+                if !trackerIdle && (refTS - mediaIdleStartTS) >= Self.IDLE_TIMEOUT_MS {
                     // We stop trakcing if media has been idle for 30 mins.
                     hitGenerator?.processSessionAbort()
                     trackerIdle = true
@@ -793,8 +794,8 @@ class MediaEventTracker: MediaEventTracking {
                 trackerIdle = false
                 // If media is idle, reset content started flag
                 contentStarted = false
-                contentStartRefTS = TimeInterval()
-                mediaSessionStartTS = TimeInterval()
+                contentStartRefTS = 0
+                mediaSessionStartTS = 0
             }
 
             mediaIdle = false
@@ -819,16 +820,16 @@ class MediaEventTracker: MediaEventTracking {
 
         if mediaContext.adBreakInfo != nil {
             // Reset the timer if in AdBreak and contentStart ping is not sent
-            contentStartRefTS = TimeInterval()
+            contentStartRefTS = 0
             return true
         }
 
         let refTS = getRefTS(context: context)
-        if contentStartRefTS == TimeInterval() {
+        if contentStartRefTS == 0 {
             contentStartRefTS = refTS
         }
 
-        if (refTS - contentStartRefTS) >= Self.CONTENT_START_DURATION {
+        if (refTS - contentStartRefTS) >= Self.CONTENT_START_DURATION_MS {
             hitGenerator?.processPlayback(doFlush: true)
             contentStarted = true
         }
@@ -871,7 +872,7 @@ class MediaEventTracker: MediaEventTracking {
         guard  let mediaContext = mediaContext, inPrerollInterval else {
             return false
         }
-        let prerollWaitingtime = mediaContext.mediaInfo.prerollWaitingTime
+        let prerollWaitingtime = Int64(mediaContext.mediaInfo.prerollWaitingTime)
         // We are going to queue the events and stop further downstream
         // processing for preroll_waiting_time ms.
         prerollQueuedRules.append((name: rule, context: context))
@@ -950,9 +951,9 @@ class MediaEventTracker: MediaEventTracking {
         return playhead
     }
 
-    func getRefTS(context: [String: Any]) -> TimeInterval {
-        guard let ts = context[Self.KEY_EVENT_TS] as? Double else {
-            return TimeInterval()
+    func getRefTS(context: [String: Any]) -> Int64 {
+        guard let ts = context[Self.KEY_EVENT_TS] as? Int64 else {
+            return 0
         }
 
         return ts

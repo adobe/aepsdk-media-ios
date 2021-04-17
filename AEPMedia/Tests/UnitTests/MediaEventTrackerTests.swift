@@ -1213,15 +1213,15 @@ class MediaEventTrackerTests: XCTestCase {
     func testHelperGetRefTS() {
         var context: [String: Any] = [:]
 
-        XCTAssertEqual(0.0, mediaTracker.getRefTS(context: context))
+        XCTAssertEqual(0, mediaTracker.getRefTS(context: context))
 
         context[Self.KEY_EVENT_TS] = nil
-        XCTAssertEqual(0.0, mediaTracker.getRefTS(context: context))
+        XCTAssertEqual(0, mediaTracker.getRefTS(context: context))
 
         context[Self.KEY_EVENT_TS] = ""
-        XCTAssertEqual(0.0, mediaTracker.getRefTS(context: context))
+        XCTAssertEqual(0, mediaTracker.getRefTS(context: context))
 
-        context[Self.KEY_EVENT_TS] = 100.0
+        context[Self.KEY_EVENT_TS] = Int64(100)
         XCTAssertEqual(100, mediaTracker.getRefTS(context: context))
     }
 

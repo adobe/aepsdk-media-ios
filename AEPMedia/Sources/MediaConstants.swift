@@ -11,7 +11,7 @@
 
 import Foundation
 
-enum MediaConstants {
+internal extension MediaConstants {
     static let EXTENSION_NAME                           = "com.adobe.module.media"
     static let FRIENDLY_NAME                            = "Media Analytics"
     static let EXTENSION_VERSION                        = "0.0.1"
@@ -23,11 +23,6 @@ enum MediaConstants {
         static let HTTP_SUCCESS_RANGE = 200..<300
         static let REQUEST_HEADERS = ["Content-type": "application/json"]
         static let INVALID_RESPONSE = -1
-    }
-
-    enum TrackerConfig {
-        static let CHANNEL = "config.channel"
-        static let DOWNLOADED_CONTENT = "config.downloadedcontent"
     }
 
     enum Configuration {
@@ -147,41 +142,6 @@ enum MediaConstants {
         static let STATE_LIMIT = 10
     }
 
-    enum StandardMediaMetadata {
-        static let SHOW = "a.media.show"
-        static let SEASON = "a.media.season"
-        static let EPISODE = "a.media.episode"
-        static let ASSET_ID = "a.media.asset"
-        static let GENRE = "a.media.genre"
-        static let FIRST_AIR_DATE = "a.media.airDate"
-        static let FIRST_DIGITAL_DATE = "a.media.digitalDate"
-        static let RATING = "a.media.rating"
-        static let ORIGINATOR = "a.media.originator"
-        static let NETWORK = "a.media.network"
-        static let SHOW_TYPE = "a.media.type"
-        static let AD_LOAD = "a.media.adLoad"
-        static let MVPD = "a.media.pass.mvpd"
-        static let AUTH = "a.media.pass.auth"
-        static let DAY_PART = "a.media.dayPart"
-        static let FEED = "a.media.feed"
-        static let STREAM_FORMAT = "a.media.format"
-        static let ARTIST    = "a.media.artist"
-        static let ALBUM     = "a.media.album"
-        static let LABEL     = "a.media.label"
-        static let AUTHOR    = "a.media.author"
-        static let STATION   = "a.media.station"
-        static let PUBLISHER = "a.media.publisher"
-    }
-
-    enum StandardAdMetadata {
-        static let ADVERTISER = "a.media.ad.advertiser"
-        static let CAMPAIGN_ID = "a.media.ad.campaign"
-        static let CREATIVE_ID = "a.media.ad.creative"
-        static let PLACEMENT_ID = "a.media.ad.placement"
-        static let SITE_ID = "a.media.ad.site"
-        static let CREATIVE_URL = "a.media.ad.creativeURL"
-    }
-
     enum Tracker {
         static let ID = "trackerid"
         static let SESSION_ID = "sessionid"
@@ -195,9 +155,9 @@ enum MediaConstants {
     }
 
     enum PingInterval {
-        static let DEFAULT_OFFLINE = TimeInterval(50)
-        static let DEFAULT_ONLINE = TimeInterval(10)
-        static let GRANULAR_AD = TimeInterval(1)
+        static let OFFLINE_TRACKING: Int64 = 50 * 1000 // 50 sec
+        static let REALTIME_TRACKING: Int64 = 10 * 1000  // 10 sec
+        static let GRANULAR_AD_TRACKING: Int64 = 1 * 1000      // 1 sec
     }
 
     enum MediaCollection {
@@ -309,6 +269,10 @@ enum MediaConstants {
             static let CHANNEL = "media.channel"
             static let PUBLISHER = "media.publisher"
             static let SDK_VERSION = "media.sdkVersion"
+        }
+
+        enum State {
+            static let NAME = "media.state.name"
         }
 
         enum PlayerTime {

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "AEPMedia"
-  s.version          = "0.0.1"
+  s.version          = "3.0.0"
   s.summary          = "Media library for Adobe Experience Platform SDK. Written and maintained by Adobe."
   s.description      = <<-DESC
 The Media library provides APIs that allow use of the Media Analytics product in the Adobe Experience Platform SDK.

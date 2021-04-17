@@ -20,11 +20,10 @@ class MediaCollectionHitGenerator {
     private let downloadedContent: Bool
     private var lastReportedQoeData: [String: Any] = [:]
     private var isTracking: Bool = false
-    private var reportingInterval: TimeInterval
-    private var currentRefTS: TimeInterval
+    private var reportingInterval: Int64
+    private var currentRefTS: Int64
     private var currentPlaybackState: MediaContext.MediaPlaybackState?
-    private var currentPlaybackStateStartRefTs: TimeInterval
-    private var qoeInfoUpdated = false
+    private var currentPlaybackStateStartRefTs: Int64
     private typealias EventType = MediaConstants.MediaCollection.EventType
     private typealias Media = MediaConstants.MediaCollection.Media
 
@@ -37,7 +36,7 @@ class MediaCollectionHitGenerator {
     #endif
 
     /// Initializes the Media Collection Hit Generator
-    public required init?(context: MediaContext?, hitProcessor: MediaProcessor, config: [String: Any], refTS: TimeInterval) {
+    public required init?(context: MediaContext?, hitProcessor: MediaProcessor, config: [String: Any], refTS: Int64) {
         guard let context = context else {
             Log.debug(label: Self.LOG_TAG, "\(#function) - Unable to create a MediaCollectionHitGenerator, media context is nil.")
             return nil
@@ -50,7 +49,9 @@ class MediaCollectionHitGenerator {
         self.currentPlaybackStateStartRefTs = currentRefTS
 
         self.downloadedContent = mediaConfig[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
-        self.reportingInterval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
+        self.reportingInterval = downloadedContent ?
+            MediaConstants.PingInterval.OFFLINE_TRACKING :
+            MediaConstants.PingInterval.REALTIME_TRACKING
         startTrackingSession()
     }
 
@@ -100,11 +101,11 @@ class MediaCollectionHitGenerator {
         let granularAdTrackingEnabled = mediaInfo.granularAdTracking
 
         if downloadedContent {
-            reportingInterval = MediaConstants.PingInterval.DEFAULT_OFFLINE
+            reportingInterval = MediaConstants.PingInterval.OFFLINE_TRACKING
         } else if granularAdTrackingEnabled {
-            reportingInterval = MediaConstants.PingInterval.GRANULAR_AD
+            reportingInterval = MediaConstants.PingInterval.GRANULAR_AD_TRACKING
         } else {
-            reportingInterval = MediaConstants.PingInterval.DEFAULT_ONLINE
+            reportingInterval = MediaConstants.PingInterval.REALTIME_TRACKING
         }
 
         let params = MediaCollectionHelper.generateAdParams(adInfo: mediaContext.adInfo, adMetadata: mediaContext.adMetadata)
@@ -114,12 +115,16 @@ class MediaCollectionHitGenerator {
     }
 
     func processAdComplete() {
-        reportingInterval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
+        reportingInterval = downloadedContent ?
+            MediaConstants.PingInterval.OFFLINE_TRACKING :
+            MediaConstants.PingInterval.REALTIME_TRACKING
         generateHit(eventType: EventType.AD_COMPLETE)
     }
 
     func processAdSkip() {
-        reportingInterval = downloadedContent ? MediaConstants.PingInterval.DEFAULT_OFFLINE : MediaConstants.PingInterval.DEFAULT_ONLINE
+        reportingInterval = downloadedContent ?
+            MediaConstants.PingInterval.OFFLINE_TRACKING :
+            MediaConstants.PingInterval.REALTIME_TRACKING
         generateHit(eventType: EventType.AD_SKIP)
     }
 
@@ -172,16 +177,16 @@ class MediaCollectionHitGenerator {
     }
 
     func processBitrateChange() {
-        let qoeData = mediaContext.qoeInfo?.toMap()
+        let qoeData = MediaCollectionHelper.generateQoEParam(qoeInfo: mediaContext.qoeInfo)
         generateHit(eventType: EventType.BITRATE_CHANGE, qoeData: qoeData)
     }
 
     func processError(errorId: String) {
-        let qoeDataWithError = MediaCollectionHelper.generateErrorParam(qoeInfo: mediaContext.qoeInfo, errorId: errorId)
+        let qoeDataWithError = MediaCollectionHelper.generateQoEParam(qoeInfo: mediaContext.qoeInfo, errorId: errorId)
         generateHit(eventType: EventType.ERROR, qoeData: qoeDataWithError)
     }
 
-    func setRefTS(ts: Double) {
+    func setRefTS(ts: Int64) {
         self.currentRefTS = ts
     }
 
@@ -210,7 +215,9 @@ class MediaCollectionHitGenerator {
             return
         }
 
-        let  params: [String: Any] = [MediaConstants.StateInfo.STATE_NAME_KEY: stateInfo.stateName]
+        let  params: [String: Any] = [
+            MediaConstants.MediaCollection.State.NAME: stateInfo.stateName
+        ]
         generateHit(eventType: EventType.STATE_START, params: params)
     }
 
@@ -220,7 +227,9 @@ class MediaCollectionHitGenerator {
             return
         }
 
-        let  params: [String: Any] = [MediaConstants.StateInfo.STATE_NAME_KEY: stateInfo.stateName]
+        let  params: [String: Any] = [
+            MediaConstants.MediaCollection.State.NAME: stateInfo.stateName
+        ]
         generateHit(eventType: EventType.STATE_END, params: params)
     }
 
@@ -258,17 +267,17 @@ class MediaCollectionHitGenerator {
         mediaHitProcessor.processHit(sessionId: sessionId, hit: hit)
     }
 
-    private func getQoEForCurrentHit(qoeData: [String: Any]?) -> [String: Any] {
+    private func getQoEForCurrentHit(qoeData: [String: Any]?) -> [String: Any]? {
         if let qoeData = qoeData, !qoeData.isEmpty {
             lastReportedQoeData = qoeData
             return qoeData
         }
-        let mediaContextQoeData = mediaContext.qoeInfo?.toMap() ?? [String: Any]()
+        let mediaContextQoeData = MediaCollectionHelper.generateQoEParam(qoeInfo: mediaContext.qoeInfo)
         if !(lastReportedQoeData as NSDictionary).isEqual(to: mediaContextQoeData) {
             lastReportedQoeData = mediaContextQoeData
             return mediaContextQoeData
         } else {
-            return [:]
+            return nil
         }
     }
 
