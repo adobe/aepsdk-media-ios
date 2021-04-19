@@ -8,12 +8,15 @@
  OF ANY KIND, either express or implied. See the License for the specific language
  governing permissions and limitations under the License.
  */
+
 import XCTest
 import AEPCore
 @testable import AEPMedia
+
 class SimplePlayback: MediaFunctionalTestBase {
     private typealias EventType = MediaConstants.MediaCollection.EventType
     private typealias Media = MediaConstants.MediaCollection.Media
+
     var fakeMediaService: FakeMediaHitProcessor!
     var mediaEventTracker: MediaEventTracking!
     var mediaTracker: MediaEventGenerator!
@@ -21,7 +24,6 @@ class SimplePlayback: MediaFunctionalTestBase {
     var mediaMetadata = ["media.show": "sampleshow", "key1": "value1"]
     let semaphore = DispatchSemaphore(value: 0)
 
-    typealias CollectionEventType = MediaConstants.MediaCollection.EventType
     override func setUp() {
         super.setupBase()
         fakeMediaService = FakeMediaHitProcessor()
@@ -37,8 +39,6 @@ class SimplePlayback: MediaFunctionalTestBase {
     }
 
     func waitFor(time: Int, updatePlayhead: Bool) {
-        var startTs: Int64 = mediaTracker.getTimeStamp()
-        var playhead: Double = mediaTracker.getCurrentPlayhead()
         for _ in 1...time/1000 {
             mediaTracker.incrementTimeStamp(value: 1000)
             mediaTracker.incrementCurrentPlayhead(time: updatePlayhead ? 1 : 0)
@@ -66,28 +66,27 @@ class SimplePlayback: MediaFunctionalTestBase {
         waitFor(time: 15000, updatePlayhead: true)
         mediaTracker.trackComplete()
 
-        let sessionStartParams: [String: Any]  = [
-            MediaConstants.MediaCollection.Media.ID: "mediaID",
-            MediaConstants.MediaCollection.Media.NAME: "mediaName",
-            MediaConstants.MediaCollection.Media.LENGTH: 30.0,
-            MediaConstants.MediaCollection.Media.CONTENT_TYPE: "aod",
-            MediaConstants.MediaCollection.Media.STREAM_TYPE: "audio",
-            MediaConstants.MediaCollection.Media.RESUME: false,
-
-            "media.downloaded": false,
+        let expectedSessionStartParams: [String: Any]  = [
+            Media.ID: "mediaID",
+            Media.NAME: "mediaName",
+            Media.LENGTH: 30.0,
+            Media.CONTENT_TYPE: "aod",
+            Media.STREAM_TYPE: "audio",
+            Media.RESUME: false,
+            Media.DOWNLOADED: false,
         ]
 
         let expectedHits: [MediaHit] = [
-            MediaHit(eventType: CollectionEventType.SESSION_START, playhead: 0, ts: 0, params: sessionStartParams, customMetadata: mediaMetadata),
-            MediaHit(eventType: CollectionEventType.PLAY, playhead: 0, ts: 0),
-            MediaHit(eventType: CollectionEventType.PLAY, playhead: 1, ts: 1000),
-            MediaHit(eventType: CollectionEventType.PAUSE_START, playhead: 5, ts: 5000),
-            MediaHit(eventType: CollectionEventType.PING, playhead: 5, ts: 15000),
-            MediaHit(eventType: CollectionEventType.PLAY, playhead: 5, ts: 20000),
-            MediaHit(eventType: CollectionEventType.PING, playhead: 15, ts: 30000),
-            MediaHit(eventType: CollectionEventType.SESSION_COMPLETE, playhead: 20, ts: 35000)
-
+            MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: expectedSessionStartParams, customMetadata: mediaMetadata),
+            MediaHit(eventType: EventType.PLAY, playhead: 0, ts: 0),
+            MediaHit(eventType: EventType.PLAY, playhead: 1, ts: 1000),
+            MediaHit(eventType: EventType.PAUSE_START, playhead: 5, ts: 5000),
+            MediaHit(eventType: EventType.PING, playhead: 5, ts: 15000),
+            MediaHit(eventType: EventType.PLAY, playhead: 5, ts: 20000),
+            MediaHit(eventType: EventType.PING, playhead: 15, ts: 30000),
+            MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 20, ts: 35000)
         ]
+
         //verify
         checkHits(expectedHits: expectedHits)
     }
