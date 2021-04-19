@@ -122,10 +122,11 @@ class MediaEventTracker: MediaEventTracking {
     private var mediaIdle = false
     private var prerollQueuedRules: [(name: RuleName, context: [String: Any])] = []
     private var contentStarted = false
-    private var prerollRefTS: Int64 = 0
-    private var contentStartRefTS: Int64 = 0
-    private var mediaSessionStartTS: Int64 = 0
-    private var mediaIdleStartTS: Int64 = 0
+    private static let INVALID_TS: Int64 = -1
+    private var prerollRefTS: Int64 = INVALID_TS
+    private var contentStartRefTS: Int64 = INVALID_TS
+    private var mediaSessionStartTS: Int64 = INVALID_TS
+    private var mediaIdleStartTS: Int64 = INVALID_TS
     private let ruleEngine: MediaRuleEngine
 
     init(hitProcessor: MediaProcessor, config: [String: Any]) {
@@ -145,10 +146,10 @@ class MediaEventTracker: MediaEventTracking {
         inPrerollInterval = false
         prerollQueuedRules.removeAll()
         contentStarted = false
-        prerollRefTS = 0
-        contentStartRefTS = 0
-        mediaSessionStartTS = 0
-        mediaIdleStartTS = 0
+        prerollRefTS = Self.INVALID_TS
+        contentStartRefTS = Self.INVALID_TS
+        mediaSessionStartTS = Self.INVALID_TS
+        mediaIdleStartTS = Self.INVALID_TS
     }
 
     /// Handles all the track API calls.
@@ -747,7 +748,7 @@ class MediaEventTracker: MediaEventTracking {
     private func cmdSessionTimeoutDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         let refTS = getRefTS(context: context)
 
-        if mediaSessionStartTS == 0 {
+        if mediaSessionStartTS == Self.INVALID_TS {
             mediaSessionStartTS = refTS
         }
 
@@ -757,7 +758,7 @@ class MediaEventTracker: MediaEventTracking {
 
             mediaSessionStartTS = refTS
             contentStarted = false
-            contentStartRefTS = 0
+            contentStartRefTS = Self.INVALID_TS
         }
 
         return true
@@ -794,8 +795,8 @@ class MediaEventTracker: MediaEventTracking {
                 trackerIdle = false
                 // If media is idle, reset content started flag
                 contentStarted = false
-                contentStartRefTS = 0
-                mediaSessionStartTS = 0
+                contentStartRefTS = Self.INVALID_TS
+                mediaSessionStartTS = Self.INVALID_TS
             }
 
             mediaIdle = false
@@ -820,12 +821,12 @@ class MediaEventTracker: MediaEventTracking {
 
         if mediaContext.adBreakInfo != nil {
             // Reset the timer if in AdBreak and contentStart ping is not sent
-            contentStartRefTS = 0
+            contentStartRefTS = Self.INVALID_TS
             return true
         }
 
         let refTS = getRefTS(context: context)
-        if contentStartRefTS == 0 {
+        if contentStartRefTS == Self.INVALID_TS {
             contentStartRefTS = refTS
         }
 

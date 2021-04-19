@@ -14,8 +14,10 @@ import XCTest
 @testable import AEPMedia
 
 class MediaEventGenerator: MediaTracker {
+
     class MediaPublicTrackerMock: MediaPublicTracker {
         var mockTimeStamp: Int64 = 0
+        var mockCurrentPlayhead: Double = 0
 
         override init(dispatch: dispatchFn?, config: [String: Any]?) {
             super.init(dispatch: dispatch, config: config)
@@ -25,12 +27,9 @@ class MediaEventGenerator: MediaTracker {
             return mockTimeStamp
         }
 
-        func setTimeStamp(value: Int64) {
-            mockTimeStamp = value
-        }
-
-        func incrementTimeStamp(value: Int64) {
-            mockTimeStamp += value
+        override func updateCurrentPlayhead(time: Double) {
+            mockCurrentPlayhead = time
+            super.updateCurrentPlayhead(time: time)
         }
     }
 
@@ -39,6 +38,7 @@ class MediaEventGenerator: MediaTracker {
     var dispatchedEvent: Event?
     var usingProvidedDispatchFn = false
     var previousPlayhead: Double = 0
+    var coreEventTracker: MediaEventTracking?
 
     init(config: [String: Any]? = nil, dispatch: ((Event) -> Void)? = nil) {
         // if the passed in dispatch function is nil then create one
@@ -75,7 +75,6 @@ class MediaEventGenerator: MediaTracker {
         tracker.trackComplete()
         waitForTrackerRequest()
     }
-
     func trackSessionEnd() {
         tracker.trackSessionEnd()
         waitForTrackerRequest()
@@ -102,26 +101,36 @@ class MediaEventGenerator: MediaTracker {
         waitForTrackerRequest()
     }
 
+    // Methods for testing
+    func connectCoreTracker(tracker: MediaEventTracking?) {
+        coreEventTracker = tracker
+    }
+
+    func getTimeStamp() -> Int64 {
+        return tracker.mockTimeStamp
+    }
+
     func setTimeStamp(value: Int64) {
-        tracker.setTimeStamp(value: value)
+        tracker.mockTimeStamp = value
     }
 
     func incrementTimeStamp(value: Int64) {
-        tracker.incrementTimeStamp(value: value)
+        tracker.mockTimeStamp += value
+    }
+
+    func getCurrentPlayhead() -> Double {
+        return tracker.mockCurrentPlayhead
+    }
+
+    func incrementCurrentPlayhead(time: Double) {
+        tracker.mockCurrentPlayhead += time
+        updateCurrentPlayhead(time: tracker.mockCurrentPlayhead)
     }
 
     private func waitForTrackerRequest() {
         if !usingProvidedDispatchFn {
             semaphore.wait()
-            return
+            coreEventTracker?.track(eventData: dispatchedEvent?.data)
         }
-    }
-
-    func getCurrentTimeStamp() -> Int64 {
-        return tracker.mockTimeStamp
-    }
-
-    func getLastEventTimeStamp() -> Int64 {
-        return tracker.lastEventTs
     }
 }
