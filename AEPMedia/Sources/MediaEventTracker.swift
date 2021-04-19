@@ -123,10 +123,10 @@ class MediaEventTracker: MediaEventTracking {
     private var prerollQueuedRules: [(name: RuleName, context: [String: Any])] = []
     private var contentStarted = false
     private static let INVALID_TS: Int64 = -1
-    private var prerollRefTS: Int64 = 0
+    private var prerollRefTS: Int64 = INVALID_TS
     private var contentStartRefTS: Int64 = INVALID_TS
-    private var mediaSessionStartTS: Int64 = 0
-    private var mediaIdleStartTS: Int64 = 0
+    private var mediaSessionStartTS: Int64 = INVALID_TS
+    private var mediaIdleStartTS: Int64 = INVALID_TS
     private let ruleEngine: MediaRuleEngine
 
     init(hitProcessor: MediaProcessor, config: [String: Any]) {
@@ -146,10 +146,10 @@ class MediaEventTracker: MediaEventTracking {
         inPrerollInterval = false
         prerollQueuedRules.removeAll()
         contentStarted = false
-        prerollRefTS = 0
+        prerollRefTS = Self.INVALID_TS
         contentStartRefTS = Self.INVALID_TS
-        mediaSessionStartTS = 0
-        mediaIdleStartTS = 0
+        mediaSessionStartTS = Self.INVALID_TS
+        mediaIdleStartTS = Self.INVALID_TS
     }
 
     /// Handles all the track API calls.
@@ -748,7 +748,7 @@ class MediaEventTracker: MediaEventTracking {
     private func cmdSessionTimeoutDetection(rule: MediaRule, context: [String: Any]) -> Bool {
         let refTS = getRefTS(context: context)
 
-        if mediaSessionStartTS == 0 {
+        if mediaSessionStartTS == Self.INVALID_TS {
             mediaSessionStartTS = refTS
         }
 
@@ -796,7 +796,7 @@ class MediaEventTracker: MediaEventTracking {
                 // If media is idle, reset content started flag
                 contentStarted = false
                 contentStartRefTS = Self.INVALID_TS
-                mediaSessionStartTS = 0
+                mediaSessionStartTS = Self.INVALID_TS
             }
 
             mediaIdle = false
