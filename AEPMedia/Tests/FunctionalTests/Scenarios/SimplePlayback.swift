@@ -63,45 +63,38 @@ class SimplePlayback: MediaFunctionalTestBase {
         for _ in 1...time/1000 {
             startTs = startTs + 1000
             if updatePlayhead {
-                playhead = playhead + 1
-                updatePlayerTime(ts: startTs, playhead: playhead)
+                playhead += 1
             }
-            updatePlayerTime(ts: startTs)
+            updatePlayerTime(ts: startTs, playhead: playhead)
         }
     }
 
     // tests
-
     func testTrackSimplePlayBack_RealTimeTracker() {
         createTracker()
 
         mediaEventGenerator.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         let startEvent = mediaEventGenerator.dispatchedEvent!
         mediaTracker.track(eventData: startEvent.data)
-        waitForProcessing()
 
         mediaEventGenerator.trackPlay()
         let playEvent1 = mediaEventGenerator.dispatchedEvent!
         mediaTracker.track(eventData: playEvent1.data)
-        waitForProcessing()
         waitFor(time: 5000, updatePlayhead: true)
 
         mediaEventGenerator.trackPause()
         let pauseEvent = mediaEventGenerator.dispatchedEvent!
         mediaTracker.track(eventData: pauseEvent.data)
-        waitForProcessing()
         waitFor(time: 15000, updatePlayhead: false)
 
         mediaEventGenerator.trackPlay()
         let playEvent2 = mediaEventGenerator.dispatchedEvent!
         mediaTracker.track(eventData: playEvent2.data)
-        waitForProcessing()
         waitFor(time: 15000, updatePlayhead: true)
 
         mediaEventGenerator.trackComplete()
         let completeEvent = mediaEventGenerator.dispatchedEvent!
         mediaTracker.track(eventData: completeEvent.data)
-        waitForProcessing()
 
         let expectedHit1 = getExpectedSessionStartHit(info: mediaInfo, metadata: mediaMetadata)
         let actualHit1 = fakeMediaService.getHitFromActiveSession(index: 0)
@@ -109,7 +102,7 @@ class SimplePlayback: MediaFunctionalTestBase {
         let expectedHit2 = getExpectedPlaybackHit(eventType: EventType.PLAY)
         let actualHit2 = fakeMediaService.getHitFromActiveSession(index: 1)
         XCTAssertEqual(expectedHit2, actualHit2)
-        let expectedHit3 = getExpectedPlaybackHit(eventType: EventType.PLAY, ts: 2000, playhead: 2)
+        let expectedHit3 = getExpectedPlaybackHit(eventType: EventType.PLAY, ts: 1000, playhead: 1)
         let actualHit3 = fakeMediaService.getHitFromActiveSession(index: 2)
         XCTAssertEqual(expectedHit3, actualHit3)
         let expectedHit4 = getExpectedPlaybackHit(eventType: EventType.PAUSE_START, ts: 5000, playhead: 5)
