@@ -179,32 +179,32 @@ class MediaFunctionalTestBase: XCTestCase {
         }
     }
 
-    func waitFor(_ secondsToWait: Int, updatePlayhead: Bool, tracker: MediaEventGenerator, semaphore: DispatchSemaphore) {
-        let timestampIncrement = Int64(1)
-        var elapsedTime = 0
-        let queue = DispatchQueue(label: "trackerTimer")
-        timer = DispatchSource.makeTimerSource(queue: queue)
-        timer.schedule(deadline: .now(), repeating: .seconds(1))
-        timer.setEventHandler { [weak self] in
-            if elapsedTime == secondsToWait {
-                self?.timer = nil
-                semaphore.signal()
-            }
-            /// only update the playhead if the timestamp has changed
-            if tracker.getCurrentTimeStamp() != tracker.getLastEventTimeStamp() {
-                if updatePlayhead {
-                    tracker.updateCurrentPlayhead(time: tracker.previousPlayhead + Double(elapsedTime))
-                } else {
-                    /// for paused, seek, or buffer events we want to call updateCurrentPlayhead without incrementing it
-                    /// (similar to the behavior of the MediaPublicTracker dispatching an internal track event)
-                    tracker.updateCurrentPlayhead(time: tracker.previousPlayhead)
-                }
-            }
-            elapsedTime += 1
-            tracker.incrementTimeStamp(value: timestampIncrement)
-        }
-        timer.resume()
-    }
+//    func waitFor(_ secondsToWait: Int, updatePlayhead: Bool, tracker: MediaEventGenerator, semaphore: DispatchSemaphore) {
+//        let timestampIncrement = Int64(1)
+//        var elapsedTime = 0
+//        let queue = DispatchQueue(label: "trackerTimer")
+//        timer = DispatchSource.makeTimerSource(queue: queue)
+//        timer.schedule(deadline: .now(), repeating: .seconds(1))
+//        timer.setEventHandler { [weak self] in
+//            if elapsedTime == secondsToWait {
+//                self?.timer = nil
+//                semaphore.signal()
+//            }
+//            /// only update the playhead if the timestamp has changed
+//            if tracker.getCurrentTimeStamp() != tracker.getLastEventTimeStamp() {
+//                if updatePlayhead {
+//                    tracker.updateCurrentPlayhead(time: tracker.previousPlayhead + Double(elapsedTime))
+//                } else {
+//                    /// for paused, seek, or buffer events we want to call updateCurrentPlayhead without incrementing it
+//                    /// (similar to the behavior of the MediaPublicTracker dispatching an internal track event)
+//                    tracker.updateCurrentPlayhead(time: tracker.previousPlayhead)
+//                }
+//            }
+//            elapsedTime += 1
+//            tracker.incrementTimeStamp(value: timestampIncrement)
+//        }
+//        timer.resume()
+//    }
 
     /// Returns true if the two passed in dictionaries are equal, false otherwise
     func isEqual(map1: [String: Any]?, map2: [String: Any]?) -> Bool {
