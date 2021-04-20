@@ -12,6 +12,8 @@
 		2E20D4A725CA154C00B5CCB8 /* MediaRuleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */; };
 		2EC10320262A5305004DF384 /* SimplePlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC1031F262A5305004DF384 /* SimplePlayback.swift */; };
 		2EE13B0D262E72B100078273 /* AdPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B0C262E72B100078273 /* AdPlayback.swift */; };
+		2EE13B18262E855700078273 /* ChapterPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B17262E855700078273 /* ChapterPlayback.swift */; };
+		2EE13B20262E89EE00078273 /* CustomeStatePlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B1F262E89EE00078273 /* CustomeStatePlayback.swift */; };
 		2EE3CBD025E5C2F300F94EA6 /* MediaPublicTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE3CBCF25E5C2F300F94EA6 /* MediaPublicTracker.swift */; };
 		2EEAC4EA25D61ACF00759D3E /* MockExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EEAC4E925D61ACF00759D3E /* MockExtension.swift */; };
 		2EF1DF2B25E865DE0008925D /* MediaEventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1DF2A25E865DE0008925D /* MediaEventTracker.swift */; };
@@ -115,6 +117,8 @@
 		2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaRuleEngine.swift; sourceTree = "<group>"; };
 		2EC1031F262A5305004DF384 /* SimplePlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplePlayback.swift; sourceTree = "<group>"; };
 		2EE13B0C262E72B100078273 /* AdPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdPlayback.swift; sourceTree = "<group>"; };
+		2EE13B17262E855700078273 /* ChapterPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterPlayback.swift; sourceTree = "<group>"; };
+		2EE13B1F262E89EE00078273 /* CustomeStatePlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomeStatePlayback.swift; sourceTree = "<group>"; };
 		2EE3CBCF25E5C2F300F94EA6 /* MediaPublicTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPublicTracker.swift; sourceTree = "<group>"; };
 		2EEAC4E925D61ACF00759D3E /* MockExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockExtension.swift; sourceTree = "<group>"; };
 		2EF1DF2A25E865DE0008925D /* MediaEventTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaEventTracker.swift; sourceTree = "<group>"; };
@@ -252,6 +256,8 @@
 			children = (
 				2EC1031F262A5305004DF384 /* SimplePlayback.swift */,
 				2EE13B0C262E72B100078273 /* AdPlayback.swift */,
+				2EE13B17262E855700078273 /* ChapterPlayback.swift */,
+				2EE13B1F262E89EE00078273 /* CustomeStatePlayback.swift */,
 			);
 			path = Scenarios;
 			sourceTree = "<group>";
@@ -767,6 +773,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2EE13B20262E89EE00078273 /* CustomeStatePlayback.swift in Sources */,
 				D66F0B6A2616929C0018E779 /* MediaFunctionalTestBase.swift in Sources */,
 				D6E8226A2620AD1D0092C7DE /* MediaRealtimeSessionTests.swift in Sources */,
 				2EE13B0D262E72B100078273 /* AdPlayback.swift in Sources */,
@@ -777,6 +784,7 @@
 				D66F0B712616929C0018E779 /* MockExtension.swift in Sources */,
 				D66F0B722616929C0018E779 /* MockMediaSession.swift in Sources */,
 				D66F0B762616929C0018E779 /* TestableExtensionRuntime.swift in Sources */,
+				2EE13B18262E855700078273 /* ChapterPlayback.swift in Sources */,
 				D6E82262261FB0280092C7DE /* TestConstants.swift in Sources */,
 				D66F0B772616929C0018E779 /* MockNetworking.swift in Sources */,
 				D66F0B782616929C0018E779 /* TestHelpers.swift in Sources */,
