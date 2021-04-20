@@ -48,6 +48,7 @@ public class Media: NSObject, Extension {
         registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, listener: handleMediaTrackerRequest)
         registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA, listener: handleMediaTrack)
         registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleSharedStateUpdate)
+        registerListener(type: EventType.genericIdentity, source: EventSource.requestReset, listener: handleResetIdentitiesEvent)
     }
 
     /// Invoked when the Media extension has been unregistered by the `EventHub`, currently a no-op.
@@ -75,10 +76,19 @@ public class Media: NSObject, Extension {
         if let privacyStatusStr = event.data?[MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY] as? String {
             let privacyStatus = PrivacyStatus(rawValue: privacyStatusStr) ?? PrivacyStatus.unknown
             if privacyStatus == .optedOut {
-                Log.debug(label: LOG_TAG, "\(#function) - Privacy status is opted-out. Clearing persisted media sessions.")
+                Log.debug(label: LOG_TAG, "\(#function) - Privacy status is opted-out. Clearing all tracking sessions")
                 trackers.removeAll()
             }
         }
+    }
+    
+    /// Processes Reset identites event
+    /// - Parameter:
+    ///   - event: The Reset identities event
+    private func handleResetIdentitiesEvent(_ event: Event) {
+        Log.debug(label: LOG_TAG, "\(#function) - Clearing all tracking sessions")
+        mediaService.abortAllSessions()
+        trackers.removeAll()
     }
 
     /// Handler for media tracker creation events

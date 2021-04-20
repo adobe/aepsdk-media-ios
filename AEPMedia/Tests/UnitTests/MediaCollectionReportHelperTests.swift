@@ -16,7 +16,7 @@ import AEPCore
 
 class MediaCollectionReportHelperTests: XCTestCase {
 
-    let mediaOfflineHitsMock = MockMediaOfflineHits()
+    let mockMediaData = MockMediaData()
 
     func testGetTrackingUrl() {
         //Setup
@@ -105,16 +105,16 @@ class MediaCollectionReportHelperTests: XCTestCase {
     func testGenerateHitReport() {
 
         //Setup
-        let hit = mediaOfflineHitsMock.sessionStart!
-        let state = mediaOfflineHitsMock.mediaState
+        let hit = mockMediaData.sessionStart!
+        let state = mockMediaData.mediaState
         let jsonDecoder = JSONDecoder()
 
         //Action
         let response = MediaCollectionReportHelper.generateHitReport(state: state!, hit: hit)
 
         let mediaHitActual = try? jsonDecoder.decode(MediaHit.self, from: response!.data(using: .utf8)!)
-        let mediaHitExpected = try? jsonDecoder.decode(MediaHit.self, from: mediaOfflineHitsMock.sessionStartJson!.data(using: .utf8)!)
-        let mediaHitUpdated = MediaCollectionReportHelper.updateMediaHit(state: mediaOfflineHitsMock.mediaState, mediaHit: mediaHitExpected!)
+        let mediaHitExpected = try? jsonDecoder.decode(MediaHit.self, from: mockMediaData.sessionStartJson!.data(using: .utf8)!)
+        let mediaHitUpdated = MediaCollectionReportHelper.updateMediaHit(state: mockMediaData.mediaState, mediaHit: mediaHitExpected!)
 
         //Assert
         XCTAssertNotNil(response)
@@ -126,7 +126,7 @@ class MediaCollectionReportHelperTests: XCTestCase {
         let hits = [MediaHit]()
 
         //Action
-        let report = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaState, hits: hits)
+        let report = MediaCollectionReportHelper.generateDownloadReport(state: mockMediaData.mediaState, hits: hits)
 
         //Assert
         XCTAssertNil(report)
@@ -134,88 +134,88 @@ class MediaCollectionReportHelperTests: XCTestCase {
 
     func testGenerateReportEmptyMediaState() {
         var hits = [MediaHit]()
-        hits.append(mediaOfflineHitsMock.sessionStart)
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.adBreakStart)
-        hits.append(mediaOfflineHitsMock.adStart)
-        hits.append(mediaOfflineHitsMock.adComplete)
-        hits.append(mediaOfflineHitsMock.adBreakComplete)
-        hits.append(mediaOfflineHitsMock.ping)
-        hits.append(mediaOfflineHitsMock.complete)
+        hits.append(mockMediaData.sessionStart)
+        hits.append(mockMediaData.play)
+        hits.append(mockMediaData.adBreakStart)
+        hits.append(mockMediaData.adStart)
+        hits.append(mockMediaData.adComplete)
+        hits.append(mockMediaData.adBreakComplete)
+        hits.append(mockMediaData.ping)
+        hits.append(mockMediaData.complete)
 
         var expectedResponse = [String]()
-        expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.playJson)
-        expectedResponse.append(mediaOfflineHitsMock.adBreakStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.adStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.adCompleteJson)
-        expectedResponse.append(mediaOfflineHitsMock.adBreakCompleteJson)
-        expectedResponse.append(mediaOfflineHitsMock.pingJson)
-        expectedResponse.append(mediaOfflineHitsMock.completeJson)
+        expectedResponse.append(mockMediaData.sessionStartJson)
+        expectedResponse.append(mockMediaData.playJson)
+        expectedResponse.append(mockMediaData.adBreakStartJson)
+        expectedResponse.append(mockMediaData.adStartJson)
+        expectedResponse.append(mockMediaData.adCompleteJson)
+        expectedResponse.append(mockMediaData.adBreakCompleteJson)
+        expectedResponse.append(mockMediaData.pingJson)
+        expectedResponse.append(mockMediaData.completeJson)
 
-        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
+        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mockMediaData.mediaStateEmpty, hits: hits)
 
-        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateEmpty))
+        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mockMediaData.mediaStateEmpty))
     }
 
     func testGenerateReportProperMediaState() {
         var hits = [MediaHit]()
-        hits.append(mediaOfflineHitsMock.sessionStart)
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.adBreakStart)
-        hits.append(mediaOfflineHitsMock.adStart)
-        hits.append(mediaOfflineHitsMock.adComplete)
-        hits.append(mediaOfflineHitsMock.adBreakComplete)
-        hits.append(mediaOfflineHitsMock.ping)
-        hits.append(mediaOfflineHitsMock.complete)
+        hits.append(mockMediaData.sessionStart)
+        hits.append(mockMediaData.play)
+        hits.append(mockMediaData.adBreakStart)
+        hits.append(mockMediaData.adStart)
+        hits.append(mockMediaData.adComplete)
+        hits.append(mockMediaData.adBreakComplete)
+        hits.append(mockMediaData.ping)
+        hits.append(mockMediaData.complete)
 
         var expectedResponse = [String]()
-        expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.playJson)
-        expectedResponse.append(mediaOfflineHitsMock.adBreakStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.adStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.adCompleteJson)
-        expectedResponse.append(mediaOfflineHitsMock.adBreakCompleteJson)
-        expectedResponse.append(mediaOfflineHitsMock.pingJson)
-        expectedResponse.append(mediaOfflineHitsMock.completeJson)
+        expectedResponse.append(mockMediaData.sessionStartJson)
+        expectedResponse.append(mockMediaData.playJson)
+        expectedResponse.append(mockMediaData.adBreakStartJson)
+        expectedResponse.append(mockMediaData.adStartJson)
+        expectedResponse.append(mockMediaData.adCompleteJson)
+        expectedResponse.append(mockMediaData.adBreakCompleteJson)
+        expectedResponse.append(mockMediaData.pingJson)
+        expectedResponse.append(mockMediaData.completeJson)
 
-        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaState, hits: hits)
+        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mockMediaData.mediaState, hits: hits)
 
-        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaState))
+        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mockMediaData.mediaState))
     }
 
     func testGenerateReportSessionStartChannelPresent() {
         var hits = [MediaHit]()
-        hits.append(mediaOfflineHitsMock.sessionStartChannel)
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.ping)
-        hits.append(mediaOfflineHitsMock.complete)
+        hits.append(mockMediaData.sessionStartChannel)
+        hits.append(mockMediaData.play)
+        hits.append(mockMediaData.ping)
+        hits.append(mockMediaData.complete)
 
         var expectedResponse = [String]()
-        expectedResponse.append(mediaOfflineHitsMock.sessionStartChannelJson)
-        expectedResponse.append(mediaOfflineHitsMock.playJson)
-        expectedResponse.append(mediaOfflineHitsMock.pingJson)
-        expectedResponse.append(mediaOfflineHitsMock.completeJson)
+        expectedResponse.append(mockMediaData.sessionStartChannelJson)
+        expectedResponse.append(mockMediaData.playJson)
+        expectedResponse.append(mockMediaData.pingJson)
+        expectedResponse.append(mockMediaData.completeJson)
 
-        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
+        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mockMediaData.mediaStateEmpty, hits: hits)
 
-        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateEmpty))
+        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mockMediaData.mediaStateEmpty))
     }
 
     func test_generateReport_missingSessionStart() {
 
         var hits = [MediaHit]()
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.ping)
-        hits.append(mediaOfflineHitsMock.complete)
+        hits.append(mockMediaData.play)
+        hits.append(mockMediaData.ping)
+        hits.append(mockMediaData.complete)
 
         var expectedResponse = [String]()
-        expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.playJson)
-        expectedResponse.append(mediaOfflineHitsMock.pingJson)
-        expectedResponse.append(mediaOfflineHitsMock.completeJson)
+        expectedResponse.append(mockMediaData.sessionStartJson)
+        expectedResponse.append(mockMediaData.playJson)
+        expectedResponse.append(mockMediaData.pingJson)
+        expectedResponse.append(mockMediaData.completeJson)
 
-        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
+        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mockMediaData.mediaStateEmpty, hits: hits)
 
         XCTAssertNil(payload)
     }
@@ -223,79 +223,79 @@ class MediaCollectionReportHelperTests: XCTestCase {
     func testGenerateReportMissingSessionEndOrComplete() {
 
         var hits = [MediaHit]()
-        hits.append(mediaOfflineHitsMock.sessionStart)
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.ping)
+        hits.append(mockMediaData.sessionStart)
+        hits.append(mockMediaData.play)
+        hits.append(mockMediaData.ping)
 
         var expectedResponse = [String]()
-        expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.playJson)
-        expectedResponse.append(mediaOfflineHitsMock.pingJson)
-        expectedResponse.append(mediaOfflineHitsMock.forceSessionEndJson)
+        expectedResponse.append(mockMediaData.sessionStartJson)
+        expectedResponse.append(mockMediaData.playJson)
+        expectedResponse.append(mockMediaData.pingJson)
+        expectedResponse.append(mockMediaData.forceSessionEndJson)
 
-        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
+        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mockMediaData.mediaStateEmpty, hits: hits)
 
-        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateEmpty))
+        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mockMediaData.mediaStateEmpty))
     }
 
     func testGenerateReportDropHitsTillSessionStart() {
         var hits = [MediaHit]()
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.ping)
-        hits.append(mediaOfflineHitsMock.sessionStart)
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.ping)
-        hits.append(mediaOfflineHitsMock.complete)
+        hits.append(mockMediaData.play)
+        hits.append(mockMediaData.ping)
+        hits.append(mockMediaData.sessionStart)
+        hits.append(mockMediaData.play)
+        hits.append(mockMediaData.ping)
+        hits.append(mockMediaData.complete)
 
         var expectedResponse = [String]()
-        expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.playJson)
-        expectedResponse.append(mediaOfflineHitsMock.pingJson)
-        expectedResponse.append(mediaOfflineHitsMock.completeJson)
+        expectedResponse.append(mockMediaData.sessionStartJson)
+        expectedResponse.append(mockMediaData.playJson)
+        expectedResponse.append(mockMediaData.pingJson)
+        expectedResponse.append(mockMediaData.completeJson)
 
-        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
+        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mockMediaData.mediaStateEmpty, hits: hits)
 
-        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateEmpty))
+        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mockMediaData.mediaStateEmpty))
     }
 
     func testGenerateReportLocHintException() {
 
         var hits = [MediaHit]()
-        hits.append(mediaOfflineHitsMock.sessionStart)
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.ping)
-        hits.append(mediaOfflineHitsMock.complete)
+        hits.append(mockMediaData.sessionStart)
+        hits.append(mockMediaData.play)
+        hits.append(mockMediaData.ping)
+        hits.append(mockMediaData.complete)
 
         var expectedResponse = [String]()
-        expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.playJson)
-        expectedResponse.append(mediaOfflineHitsMock.pingJson)
-        expectedResponse.append(mediaOfflineHitsMock.completeJson)
+        expectedResponse.append(mockMediaData.sessionStartJson)
+        expectedResponse.append(mockMediaData.playJson)
+        expectedResponse.append(mockMediaData.pingJson)
+        expectedResponse.append(mockMediaData.completeJson)
 
-        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateLocHintException, hits: hits)
+        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mockMediaData.mediaStateLocHintException, hits: hits)
 
-        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateLocHintException))
+        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mockMediaData.mediaStateLocHintException))
     }
 
     func testGenerateReportDropHitsAfterSessionEnd() {
 
         var hits = [MediaHit]()
-        hits.append(mediaOfflineHitsMock.sessionStart)
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.ping)
-        hits.append(mediaOfflineHitsMock.complete)
-        hits.append(mediaOfflineHitsMock.play)
-        hits.append(mediaOfflineHitsMock.ping)
+        hits.append(mockMediaData.sessionStart)
+        hits.append(mockMediaData.play)
+        hits.append(mockMediaData.ping)
+        hits.append(mockMediaData.complete)
+        hits.append(mockMediaData.play)
+        hits.append(mockMediaData.ping)
 
         var expectedResponse = [String]()
-        expectedResponse.append(mediaOfflineHitsMock.sessionStartJson)
-        expectedResponse.append(mediaOfflineHitsMock.playJson)
-        expectedResponse.append(mediaOfflineHitsMock.pingJson)
-        expectedResponse.append(mediaOfflineHitsMock.completeJson)
+        expectedResponse.append(mockMediaData.sessionStartJson)
+        expectedResponse.append(mockMediaData.playJson)
+        expectedResponse.append(mockMediaData.pingJson)
+        expectedResponse.append(mockMediaData.completeJson)
 
-        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mediaOfflineHitsMock.mediaStateEmpty, hits: hits)
+        let payload = MediaCollectionReportHelper.generateDownloadReport(state: mockMediaData.mediaStateEmpty, hits: hits)
 
-        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mediaOfflineHitsMock.mediaStateEmpty))
+        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: payload!, state: mockMediaData.mediaStateEmpty))
     }
 
     func compareJsonArray(expected: [String], payload: String, state: MediaState) -> Bool {

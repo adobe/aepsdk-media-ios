@@ -146,11 +146,17 @@ class MediaService: MediaProcessor {
         dispatchQueue.async {
             self.mediaState.update(dataMap: sharedStates)
             if self.mediaState.privacyStatus == .optedOut {
-                self.mediaSessions.forEach { sessionId, _ in self.abort(sessionId: sessionId) }
-                return
+                self.abortAllSessions()
+            } else {
+                self.mediaSessions.forEach { sessionId, _ in self.notifyMediaStateUpdate(sessionId: sessionId) }
             }
-
-            self.mediaSessions.forEach { sessionId, _ in self.notifyMediaStateUpdate(sessionId: sessionId) }
+        }
+    }
+    
+    func abortAllSessions() {
+        dispatchQueue.async {
+            self.mediaSessions.forEach { sessionId, _ in self.abort(sessionId: sessionId) }
         }
     }
 }
+

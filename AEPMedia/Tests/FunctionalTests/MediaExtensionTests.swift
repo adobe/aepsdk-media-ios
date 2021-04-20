@@ -168,6 +168,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
         waitForProcessing()
         // verify trackers are cleared and media service sessions aborted
         XCTAssertEqual(media.trackers.count, 0)
+        XCTAssertTrue(fakeMediaService.abortAllSessionsCalled)
     }
 
     // MARK: handleMediaTrack tests
@@ -251,5 +252,27 @@ class MediaExtensionTests: MediaFunctionalTestBase {
         waitForProcessing()
         // verify
         XCTAssertTrue(fakeMediaService.updateMediaStateCalled)
+    }
+    
+    // MARK: handleResetIdentities tests
+    func testHandleResetIdentites() {
+        // setup
+        let eventData: [String: Any] = [
+            MediaConstants.Tracker.ID: "testTracker",
+            MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
+        ]
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
+        // test
+        mockRuntime.simulateComingEvent(event: createTrackerEvent)
+        waitForProcessing()
+        XCTAssertEqual(media.trackers.count, 1)
+        
+        let resetIdentitesEvent = Event(name: "reset identities", type: EventType.genericIdentity, source: EventSource.requestReset, data: nil)
+        // test
+        mockRuntime.simulateComingEvent(event: resetIdentitesEvent)
+        waitForProcessing()
+        // verify
+        XCTAssertTrue(fakeMediaService.abortAllSessionsCalled)
+        XCTAssertEqual(media.trackers.count, 0)
     }
 }
