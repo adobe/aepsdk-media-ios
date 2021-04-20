@@ -60,6 +60,9 @@ class VideoPlayer: AVPlayer {
     let QOEINFO_FPS: Double = 24
     let QOEINFO_DROPPEDFRAMES: Double = 10
     let VIDEO_LENGTH: Double = 1800
+    let VIDEO_NAME: String = "Bip bop video"
+    let VIDEO_ID: String = "bipbop"
+
 
     let MONITOR_TIMER_INTERVAL = 0.5 // 500 milliseconds
 
@@ -106,18 +109,26 @@ class VideoPlayer: AVPlayer {
     }
 
     func getCurrentPlaybackTime() -> TimeInterval {
-        let time = CMTimeGetSeconds((playerViewController.player!.currentTime()))
+        guard let player = playerViewController.player else {
+            return 0
+        }
+
+        let time = player.currentTime().seconds
 
         return time
     }
 
     func duration() -> Double {
-        return CMTimeGetSeconds((playerViewController.player?.currentItem?.duration)!)
+        guard let currentItem = playerViewController.player?.currentItem else {
+            return 0
+        }
+
+        return currentItem.duration.seconds
     }
 
     deinit {
-        if timer != nil {
-            timer?.invalidate()
+        if let timer = timer {
+            timer.invalidate()
         }
         NotificationCenter.default.removeObserver(self)
     }
@@ -134,12 +145,15 @@ class VideoPlayer: AVPlayer {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
 
+        guard let avplayer = self.playerViewController.player else
+        { return }
+
         if keyPath == kStatusKey {
-            if self.playerViewController.player?.status == AVPlayer.Status.failed {
+            if avplayer.status == AVPlayer.Status.failed {
                 pausePlayback()
             }
         } else if keyPath == kRateKey {
-            if self.playerViewController.player!.rate == 0.0 {
+            if avplayer.rate == 0.0 {
                 pausePlayback()
             } else {
                 if _seeking {
@@ -166,22 +180,20 @@ class VideoPlayer: AVPlayer {
         }
 
     }
-
+        
     func detectCCChange() {
-        let currentItem = self.playerViewController.player?.currentItem
-        let asset = currentItem!.asset
-
-        let group = (asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible))!
-        let option = currentItem?.currentMediaSelection.selectedMediaOption(in: group)
-
-        let ccStatus = (option != nil)
-        if _isCCActive != ccStatus {
-            _isCCActive = ccStatus
-            var info: [String: Any] = [:]
-            info["ccActive"] = _isCCActive
+        guard let currentItem = self.playerViewController.player?.currentItem else { return }
+        let asset = currentItem.asset
+        guard let group = asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible) else { return }
+        let option = currentItem.currentMediaSelection.selectedMediaOption(in: group)
+        let ccActive = (option != nil)
+        if(_isCCActive != ccActive) {
+          _isCCActive = ccActive
+          var info: [String:Any] = [:]
+          info["ccActive"] = _isCCActive;
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CC_CHANGE), object: self, userInfo: info)
         }
-    }
+      }
 
     // player helper methods
     func openVideoIfNecessary() {
@@ -213,9 +225,9 @@ class VideoPlayer: AVPlayer {
 
     func startVideo() {
         // Prepare the video info.
-        let videoInfo = ["id": "bipbop",
+        let videoInfo = ["id": VIDEO_ID,
                          "length": VIDEO_LENGTH,
-                         "name": "Bip bop video"] as [String: Any]
+                         "name": VIDEO_NAME] as [String: Any]
 
         _videoLoaded = true
         NSLog("Video started")

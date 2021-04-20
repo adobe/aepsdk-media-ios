@@ -24,12 +24,15 @@ class VideoAnalyticsProvider: NSObject {
 
         _player = player
 
-        var config: [String: Any] = [:]
+        // Pass optional configuration when creating tracker
 
-        config[MediaConstants.TrackerConfig.CHANNEL] = "custom-swift-channel" // Override channel
+        //var config: [String: Any] = [:]
+        //config[MediaConstants.TrackerConfig.CHANNEL] = "custom-swift-channel" // Override channel
         //config[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] = true    // Creates downloaded content tracker configured from launch
+        // _tracker = Media.createTrackerWith(config: config)
 
-        _tracker = Media.createTrackerWith(config: config)
+        _tracker = Media.createTracker()
+
         setupPlayerNotifications()
     }
 
@@ -67,16 +70,20 @@ class VideoAnalyticsProvider: NSObject {
 
         let videoData = notification.userInfo
 
-        guard let mediaObject = Media.createMediaObjectWith(name: videoData?["name"] as? String ?? "", id: videoData?["id"] as? String ?? "", length: videoData?["length"] as? Double ?? 0, streamType: MediaConstants.StreamType.VOD, mediaType: MediaType.Video) else {
+        let videoName = videoData?["name"] as? String ?? ""
+        let videoId = videoData?["id"] as? String ?? ""
+        let vidLength = videoData?["length"] as? Double ?? 0
+
+        guard let mediaObject = Media.createMediaObjectWith(name: videoName, id: videoId, length: vidLength, streamType: MediaConstants.StreamType.VOD, mediaType: MediaType.Video) else {
             return
         }
 
         var videoMetadata: [String: String] = [:]
-        // standardVideoMetadata
+        // Standard Video Metadata
         videoMetadata["a.media.show"] = "Sample show"
         videoMetadata["a.media.season"] = "Sample season"
 
-        // customMetadata
+        // Custom Metadata
         videoMetadata["isUserLoggedIn"] = "false"
         videoMetadata["tvStation"] = "Sample TV station"
 
@@ -120,7 +127,12 @@ class VideoAnalyticsProvider: NSObject {
 
         let chapterData = notification.userInfo
 
-        let chapterObject = Media.createChapterObjectWith(name: chapterData?["name"] as? String ?? "", position: chapterData?["position"] as? Int ?? 0, length: chapterData?["length"] as? Double ?? 0, startTime: chapterData?["time"] as? Double ?? 0)
+        let chapterName = chapterData?["name"] as? String ?? ""
+        let chapterPosition = chapterData?["position"] as? Int ?? 0
+        let chapterLength = chapterData?["length"] as? Double ?? 0
+        let chapterTime = chapterData?["time"] as? Double ?? 0
+
+        let chapterObject = Media.createChapterObjectWith(name: chapterName, position: chapterPosition, length: chapterLength, startTime: chapterTime)
 
         _tracker?.trackEvent(event: MediaEvent.ChapterStart, info: chapterObject, metadata: chapterDictionary)
     }
@@ -136,36 +148,45 @@ class VideoAnalyticsProvider: NSObject {
         let adBreakData = notification.userInfo?["adbreak"] as? [String: Any] ?? [:]
         let adData = notification.userInfo?["ad"] as? [String: Any] ?? [:]
 
-        let adBreakObject = Media.createAdBreakObjectWith(name: adBreakData["name"] as? String ?? "", position: adBreakData["position"] as? Int ?? 0, startTime: adBreakData["time"] as? Double ?? 0)
+        let adBreakName = adBreakData["name"] as? String ?? ""
+        let adBreakPosition = adBreakData["position"] as? Int ?? 0
+        let adBreakStartTime = adBreakData["time"] as? Double ?? 0
 
-        let adObject = Media.createAdObjectWith(name: adData["name"] as? String ?? "", adId: adData["id"] as? String ?? "", position: adData["position"] as? Int ?? 0, length: adData["length"] as? Double ?? 00)
+        let adBreakObject = Media.createAdBreakObjectWith(name: adBreakName, position: adBreakPosition , startTime: adBreakStartTime)
+
+        let adName =  adData["name"] as? String ?? ""
+        let adId = adData["id"] as? String ?? ""
+        let adPosition = adData["position"] as? Int ?? 0
+        let adLength = adData["length"] as? Double ?? 0
+
+        let adObject = Media.createAdObjectWith(name: adName, adId: adId, position: adPosition, length: adLength)
 
         var adMetadata: [String: String] = [:]
-        // standardAdMetadata
+        // Standard Ad Metadata
         adMetadata[MediaConstants.AdMetadataKeys.ADVERTISER] = "Sample Advertiser"
         adMetadata[MediaConstants.AdMetadataKeys.CAMPAIGN_ID] = "Sample Campaign"
 
-        // customAdMetadata
+        // Custom Ad Metadata
         adMetadata["affiliate"] = "Sample affiliate"
 
-        // AdBreakStart
+        // AdBreak Start
         _tracker?.trackEvent(event: MediaEvent.AdBreakStart, info: adBreakObject, metadata: nil)
 
-        // AdStart
+        // Ad Start
         _tracker?.trackEvent(event: MediaEvent.AdStart, info: adObject, metadata: adMetadata)
     }
 
     @objc func onAdComplete(notification: NSNotification) {
         NSLog("\(logTag) onAdComplete()")
-        // AdComplete
+        // Ad Complete
         _tracker?.trackEvent(event: MediaEvent.AdComplete, info: nil, metadata: nil)
 
-        // AdBreakComplete
+        // AdBreak Complete
         _tracker?.trackEvent(event: MediaEvent.AdBreakComplete, info: nil, metadata: nil)
     }
 
     @objc func onMuteUpdate(notification: NSNotification) {
-        let muted: Bool = (notification.userInfo!["muted"])! as? Bool ?? false
+        let muted: Bool = (notification.userInfo!["muted"]) as? Bool ?? false
         NSLog("\(logTag) onMuteUpdate(): Player muted: ", muted)
 
         let muteState = Media.createStateObjectWith(stateName: MediaConstants.PlayerState.MUTE)
@@ -175,7 +196,7 @@ class VideoAnalyticsProvider: NSObject {
     }
 
     @objc func onCCUpdate(notification: NSNotification) {
-        let ccActive: Bool = (notification.userInfo!["ccActive"])! as? Bool ?? false
+        let ccActive: Bool = (notification.userInfo!["ccActive"]) as? Bool ?? false
         NSLog("\(logTag) onCCUpdate(): Closed caption active: ", ccActive)
 
         let ccState = Media.createStateObjectWith(stateName: MediaConstants.PlayerState.CLOSED_CAPTION)
