@@ -13,7 +13,7 @@ import Foundation
 @testable import AEPMedia
 import AEPCore
 
-class MockMediaOfflineHits {
+class MockMediaData {
 
     var analyticsSharedState: [String: Any]!
     var identitySharedState: [String: Any]!
@@ -65,13 +65,13 @@ class MockMediaOfflineHits {
     init() {
         mediaStateEmpty = MediaState()
 
-        configSharedStateOptOut = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedOut]
-        configSharedStateOptIn = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn]
-        configSharedStateUnknown = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.unknown]
+        configSharedStateOptOut = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedOut.rawValue]
+        configSharedStateOptIn = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn.rawValue]
+        configSharedStateUnknown = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.unknown.rawValue]
 
         //Config shared state
         configSharedState = [
-            MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn,
+            MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn.rawValue,
             MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID: "org_id",
             MediaConstants.Configuration.ANALYTICS_RSID: "rsid",
             MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER: "analytics_server",
