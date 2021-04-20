@@ -25,10 +25,9 @@ class VideoAnalyticsProvider: NSObject {
         _player = player
 
         // Pass optional configuration when creating tracker
-
         //var config: [String: Any] = [:]
-        //config[MediaConstants.TrackerConfig.CHANNEL] = "custom-swift-channel" // Override channel
-        //config[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] = true    // Creates downloaded content tracker configured from launch
+        //config[MediaConstants.TrackerConfig.CHANNEL] = "custom-swift-channel" // Overrides channel configured from launch
+        //config[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] = true    // Creates downloaded content tracker
         // _tracker = Media.createTrackerWith(config: config)
 
         _tracker = Media.createTracker()
@@ -191,7 +190,7 @@ class VideoAnalyticsProvider: NSObject {
     }
 
     @objc func onMuteUpdate(notification: NSNotification) {
-        let muted: Bool = (notification.userInfo!["muted"]) as? Bool ?? false
+        let muted: Bool = (notification.userInfo?["muted"]) as? Bool ?? false
         NSLog("\(logTag) onMuteUpdate(): Player muted: ", muted)
 
         let muteState = Media.createStateObjectWith(stateName: MediaConstants.PlayerState.MUTE)
@@ -201,7 +200,7 @@ class VideoAnalyticsProvider: NSObject {
     }
 
     @objc func onCCUpdate(notification: NSNotification) {
-        let ccActive: Bool = (notification.userInfo!["ccActive"]) as? Bool ?? false
+        let ccActive: Bool = (notification.userInfo?["ccActive"]) as? Bool ?? false
         NSLog("\(logTag) onCCUpdate(): Closed caption active: ", ccActive)
 
         let ccState = Media.createStateObjectWith(stateName: MediaConstants.PlayerState.CLOSED_CAPTION)

@@ -368,7 +368,8 @@
 				95DD6373261FF688003068C7 /* LaunchScreen.storyboard */,
 				95DD6376261FF688003068C7 /* Info.plist */,
 			);
-			path = MediaSampleApp;
+			name = MediaSampleApp;
+			path = ../../Samples/MediaSampleApp;
 			sourceTree = "<group>";
 		};
 		95DD637E261FF6EE003068C7 /* Player */ = {
@@ -1210,7 +1211,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FKGEE875K4;
-				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/MediaSampleApp/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/../Samples/MediaSampleApp/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1231,7 +1232,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FKGEE875K4;
-				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/MediaSampleApp/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/../Samples/MediaSampleApp/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
