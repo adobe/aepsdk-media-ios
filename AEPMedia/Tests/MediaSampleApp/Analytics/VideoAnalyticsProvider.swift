@@ -45,7 +45,12 @@ class VideoAnalyticsProvider: NSObject {
 
         let qoeData = notification.userInfo
 
-        guard let qoeObject = Media.createQoEObjectWith(bitrate: qoeData?["bitrate"] as? Double ?? 0, startupTime: qoeData?["startupTime"] as? Double ?? 0, fps: qoeData?["fps"] as? Double ?? 0, droppedFrames: qoeData?["droppedFrames"] as? Double ?? 0) else { return }
+        let qoeBitrate = qoeData?["bitrate"] as? Double ?? 0
+        let qoeStartup = qoeData?["startupTime"] as? Double ?? 0
+        let qoeFPS = qoeData?["fps"] as? Double ?? 0
+        let qoeDroppedFrame = qoeData?["droppedFrames"] as? Double ?? 0
+
+        guard let qoeObject = Media.createQoEObjectWith(bitrate: qoeBitrate, startupTime: qoeStartup, fps: qoeFPS, droppedFrames: qoeDroppedFrame) else { return }
 
         _tracker?.updateQoEObject(qoe: qoeObject)
     }
@@ -80,8 +85,8 @@ class VideoAnalyticsProvider: NSObject {
 
         var videoMetadata: [String: String] = [:]
         // Standard Video Metadata
-        videoMetadata["a.media.show"] = "Sample show"
-        videoMetadata["a.media.season"] = "Sample season"
+        videoMetadata[MediaConstants.VideoMetadataKeys.SHOW] = "Sample show"
+        videoMetadata[MediaConstants.VideoMetadataKeys.SEASON] = "Sample season"
 
         // Custom Metadata
         videoMetadata["isUserLoggedIn"] = "false"
