@@ -89,7 +89,7 @@ public class MediaConstants {
     @objc(AEPMediaTrackerConfig)
     @objcMembers
     public class TrackerConfig: NSObject {
-        static let CHANNEL = "config.channel"
-        static let DOWNLOADED_CONTENT = "config.downloadedcontent"
+        public static let CHANNEL = "config.channel"
+        public static let DOWNLOADED_CONTENT = "config.downloadedcontent"
     }
 }

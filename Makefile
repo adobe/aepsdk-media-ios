@@ -21,6 +21,9 @@ pod-install:
 pod-update: pod-repo-update
 	(cd build && pod update)
 
+bundle-exec-pod-install:	
+	(cd build && bundle exec pod install)
+
 open:
 	open build/$(PROJECT_NAME).xcworkspace
 
@@ -52,3 +55,16 @@ checkFormat:
 
 format:
 	swiftformat . --swiftversion 5.2
+
+# release checks
+check-version:
+	(sh ./Script/version.sh $(VERSION))
+
+test-SPM-integration:
+	(sh ./Script/test-SPM.sh)
+
+test-podspec:
+	(sh ./Script/test-podspec.sh)
+
+pod-lint:
+	(pod lib lint --allow-warnings --verbose --swift-version=5.1)
