@@ -101,7 +101,7 @@ class ChapterPlayback: XCTestCase {
         checkHits(expectedHits: expectedHits)
     }
 
-    func testPrerollAd_DownloadedTracker() {
+    func testChapter_DownloadedTracker() {
         //setup
         createTracker(downloaded: true)
 
