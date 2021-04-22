@@ -10,13 +10,13 @@ workflows:
     jobs:
       - build-and-test
 orbs:
-  slack: circleci/slack@4.0.2
+  slack: circleci/slack@4.2.0
 
 jobs:
 
   build-and-test:
     macos:
-      xcode: 11.1.0 # Specify the Xcode version to use
+      xcode: 11.2.1 # Specify the Xcode version to use
 
     steps:
       - checkout
@@ -27,11 +27,15 @@ jobs:
             - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
             - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}
             - cocoapods-cache-v4
+            - 1-gems-{{ checksum "Gemfile.lock" }}
+
+      # install Gemfile
+      - run: bundle check || bundle install --path vendor/bundle --clean
 
       # install CocoaPods - using default CocoaPods version, not the bundle
       - run:
           name: Repo Update & Install CocoaPods
-          command: make pod-install
+          command: make bundle-exec-pod-install
 
       # save pods related files
       - save_cache:
@@ -40,7 +44,7 @@ jobs:
           paths:
             - ./Pods
             - ~/.cocoapods
-
+            - vendor/bundle
       - run:
           name: Install SwiftLint
           command: make install-swiftlint
@@ -61,7 +65,18 @@ jobs:
       # code coverage
       - run:
           name: Upload Code Coverage Report
-          command: bash <(curl -s https://codecov.io/bash) -v -X s3 -c -D "./build/out" -J "AEPMedia" -t ${CODECOV_TOKEN}
+          command: |
+            curl -s https://codecov.io/bash > codecov;
+            VERSION=$(grep 'VERSION=\".*\"' codecov | cut -d'"' -f2);
+            SHAVERSION=$(shasum -v);
+            echo "Using CodeCov version '$VERSION'"
+            echo "Using shasum '$SHAVERSION'"
+            for i in 1 256 512
+            do
+              shasum -a $i -c --ignore-missing <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM") ||
+              shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | head -n 1)
+            done
+            bash ./codecov -v -X s3 -c -D "./build/out" -J "AEPMedia"
 
       # verify XCFramework archive builds
       - run:

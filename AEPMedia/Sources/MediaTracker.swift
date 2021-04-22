@@ -12,6 +12,32 @@
 import Foundation
 
 @objc(AEPMediaTracker)
-public class MediaTracker: NSObject {
+public protocol MediaTracker {
 
+    @objc(trackSessionStart:metadata:)
+    func trackSessionStart(info: [String: Any], metadata: [String: String]?)
+
+    @objc(trackPlay)
+    func trackPlay()
+
+    @objc(trackPause)
+    func trackPause()
+
+    @objc(trackComplete)
+    func trackComplete()
+
+    @objc(trackSessionEnd)
+    func trackSessionEnd()
+
+    @objc(trackError:)
+    func trackError(errorId: String)
+
+    @objc(trackEvent:info:metadata:)
+    func trackEvent(event: MediaEvent, info: [String: Any]?, metadata: [String: String]?)
+
+    @objc(updateCurrentPlayhead:)
+    func updateCurrentPlayhead(time: Double)
+
+    @objc(updateQoEObject:)
+    func updateQoEObject(qoe: [String: Any])
 }

@@ -10,3 +10,19 @@
  */
 
 import Foundation
+import AEPCore
+
+extension Event {
+    /// Returns tracker id associated with Event
+    var trackerId: String? {
+        return data?[MediaConstants.Tracker.ID] as? String
+    }
+
+    /// Returns tracker config associated with EVENT_SOURCE_TRACKER_REQUEST Event
+    var trackerConfig: [String: Any]? {
+        guard source == MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST else {
+            return nil
+        }
+        return data?[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any]
+    }
+}
