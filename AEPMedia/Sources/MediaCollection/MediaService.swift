@@ -152,7 +152,7 @@ class MediaService: MediaProcessor {
             }
         }
     }
-    
+
     func abortAllSessions() {
         dispatchQueue.async {
             self.mediaSessions.forEach { sessionId, _ in self.abort(sessionId: sessionId) }

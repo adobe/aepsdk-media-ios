@@ -253,7 +253,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
         // verify
         XCTAssertTrue(fakeMediaService.updateMediaStateCalled)
     }
-    
+
     // MARK: handleResetIdentities tests
     func testHandleResetIdentites() {
         // setup
@@ -266,7 +266,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
         XCTAssertEqual(media.trackers.count, 1)
-        
+
         let resetIdentitesEvent = Event(name: "reset identities", type: EventType.genericIdentity, source: EventSource.requestReset, data: nil)
         // test
         mockRuntime.simulateComingEvent(event: resetIdentitesEvent)

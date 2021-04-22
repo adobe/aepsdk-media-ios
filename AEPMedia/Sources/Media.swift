@@ -81,7 +81,7 @@ public class Media: NSObject, Extension {
             }
         }
     }
-    
+
     /// Processes Reset identites event
     /// - Parameter:
     ///   - event: The Reset identities event

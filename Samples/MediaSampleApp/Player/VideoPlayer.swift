@@ -55,8 +55,8 @@ class VideoPlayer: AVPlayer {
     let CHAPTER2_START_POS: Double = 30
     let CHAPTER2_LENGTH: Double = 30
 
-    let QOEINFO_BITRATRE: Double = 50000
-    let QOEINFO_STARTUPTIME: Double = 1800
+    let QOEINFO_BITRATRE: Double = 500000
+    let QOEINFO_STARTUPTIME: Double = 2
     let QOEINFO_FPS: Double = 24
     let QOEINFO_DROPPEDFRAMES: Double = 10
     let VIDEO_LENGTH: Double = 1800
@@ -180,7 +180,7 @@ class VideoPlayer: AVPlayer {
         }
 
     }
-        
+
     func detectCCChange() {
         guard let currentItem = self.playerViewController.player?.currentItem else { return }
         let asset = currentItem.asset
@@ -188,12 +188,12 @@ class VideoPlayer: AVPlayer {
         let option = currentItem.currentMediaSelection.selectedMediaOption(in: group)
         let ccActive = (option != nil)
         if(_isCCActive != ccActive) {
-          _isCCActive = ccActive
-          var info: [String:Any] = [:]
-          info["ccActive"] = _isCCActive;
+            _isCCActive = ccActive
+            var info: [String:Any] = [:]
+            info["ccActive"] = _isCCActive;
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CC_CHANGE), object: self, userInfo: info)
         }
-      }
+    }
 
     // player helper methods
     func openVideoIfNecessary() {
