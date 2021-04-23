@@ -17,6 +17,7 @@
 		2EE13B20262E89EE00078273 /* CustomStatePlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B1F262E89EE00078273 /* CustomStatePlayback.swift */; };
 		2EE13B35263096D700078273 /* AdChapterPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B34263096D700078273 /* AdChapterPlayback.swift */; };
 		2EE13B402630D76C00078273 /* MediaVersionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B3F2630D76C00078273 /* MediaVersionProvider.swift */; };
+		2EE13B4826321EB200078273 /* SpecialAdPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B4726321EB200078273 /* SpecialAdPlayback.swift */; };
 		2EE3CBD025E5C2F300F94EA6 /* MediaPublicTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE3CBCF25E5C2F300F94EA6 /* MediaPublicTracker.swift */; };
 		2EEAC4EA25D61ACF00759D3E /* MockExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EEAC4E925D61ACF00759D3E /* MockExtension.swift */; };
 		2EF1DF2B25E865DE0008925D /* MediaEventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1DF2A25E865DE0008925D /* MediaEventTracker.swift */; };
@@ -144,6 +145,7 @@
 		2EE13B1F262E89EE00078273 /* CustomStatePlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStatePlayback.swift; sourceTree = "<group>"; };
 		2EE13B34263096D700078273 /* AdChapterPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdChapterPlayback.swift; sourceTree = "<group>"; };
 		2EE13B3F2630D76C00078273 /* MediaVersionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaVersionProvider.swift; sourceTree = "<group>"; };
+		2EE13B4726321EB200078273 /* SpecialAdPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialAdPlayback.swift; sourceTree = "<group>"; };
 		2EE3CBCF25E5C2F300F94EA6 /* MediaPublicTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPublicTracker.swift; sourceTree = "<group>"; };
 		2EEAC4E925D61ACF00759D3E /* MockExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockExtension.swift; sourceTree = "<group>"; };
 		2EF1DF2A25E865DE0008925D /* MediaEventTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaEventTracker.swift; sourceTree = "<group>"; };
@@ -304,6 +306,7 @@
 				2EE13B17262E855700078273 /* ChapterPlayback.swift */,
 				2EE13B1F262E89EE00078273 /* CustomStatePlayback.swift */,
 				2EE13B34263096D700078273 /* AdChapterPlayback.swift */,
+				2EE13B4726321EB200078273 /* SpecialAdPlayback.swift */,
 			);
 			path = Scenarios;
 			sourceTree = "<group>";
@@ -945,6 +948,7 @@
 				D66F0B6A2616929C0018E779 /* MediaFunctionalTestBase.swift in Sources */,
 				2EE13B0D262E72B100078273 /* AdPlayback.swift in Sources */,
 				2EC10320262A5305004DF384 /* SimplePlayback.swift in Sources */,
+				2EE13B4826321EB200078273 /* SpecialAdPlayback.swift in Sources */,
 				D62E1EA9261D298900635977 /* MediaExtensionTests.swift in Sources */,
 				D66F0B6B2616929C0018E779 /* FakeMediaService.swift in Sources */,
 				D66F0B712616929C0018E779 /* MockExtension.swift in Sources */,
