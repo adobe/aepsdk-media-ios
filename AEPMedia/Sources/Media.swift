@@ -23,9 +23,6 @@ public class Media: NSObject, Extension {
     public static var extensionVersion = MediaConstants.EXTENSION_VERSION
     public var metadata: [String: String]?
 
-    private static let VERSION_PREFIX_IOS = "ios-media-"
-    private static let VERSION_PREFIX_TVOS = "tvos-media-"
-
     #if DEBUG
         var trackers: [String: MediaEventTracking]
         var mediaService: MediaService
@@ -42,15 +39,6 @@ public class Media: NSObject, Extension {
         let mediaHitsDatabase = MediaHitsDatabase(databaseName: MediaConstants.DATABASE_NAME)
         let mediaDBService = MediaDBService(mediaHitsDatabase: mediaHitsDatabase)
         self.mediaService = MediaService(mediaDBService: mediaDBService)
-
-        var mediaVersion = ""
-        #if os(iOS)
-            mediaVersion = Self.VERSION_PREFIX_IOS + Self.extensionVersion
-        #elseif os(tvOS)
-            mediaVersion = Self.VERSION_PREFIX_TVOS + Self.extensionVersion
-        #endif
-        MediaVersionProvider.setVersion(version: mediaVersion)
-
         self.trackers = [:]
     }
 
