@@ -759,7 +759,7 @@ class MediaEventTracker: MediaEventTracking {
 
             mediaSessionStartTS = refTS
             contentStarted = false
-            contentStartRefTS = Self.INVALID_TS
+            contentStartRefTS = refTS
         }
 
         return true

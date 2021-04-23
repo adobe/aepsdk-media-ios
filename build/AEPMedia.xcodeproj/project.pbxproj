@@ -39,6 +39,7 @@
 		95DD6381261FF711003068C7 /* VideoAnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DD6380261FF711003068C7 /* VideoAnalyticsProvider.swift */; };
 		95DD6387261FF72D003068C7 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95DD6386261FF72D003068C7 /* VideoPlayer.swift */; };
 		95DD63A2261FF9D9003068C7 /* AEPMedia.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2EFF1B5125BF57FC00375965 /* AEPMedia.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		95FD4BA42631DD32004BE357 /* Timeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95FD4BA32631DD32004BE357 /* Timeout.swift */; };
 		AC36EC3F25C9F11E00A37345 /* MediaTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3525C9F11E00A37345 /* MediaTracker.swift */; };
 		AC36EC4025C9F11E00A37345 /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC36EC3625C9F11E00A37345 /* Media.swift */; };
 		AC36EC4125C9F11E00A37345 /* AEPMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = AC36EC3725C9F11E00A37345 /* AEPMedia.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -174,6 +175,7 @@
 		95DD6376261FF688003068C7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95DD6380261FF711003068C7 /* VideoAnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoAnalyticsProvider.swift; sourceTree = "<group>"; };
 		95DD6386261FF72D003068C7 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
+		95FD4BA32631DD32004BE357 /* Timeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timeout.swift; sourceTree = "<group>"; };
 		990B14427BE4C5FC0A857FB8 /* Pods-MediaSampleApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MediaSampleApp.release.xcconfig"; path = "Target Support Files/Pods-MediaSampleApp/Pods-MediaSampleApp.release.xcconfig"; sourceTree = "<group>"; };
 		AC36EC2E25C9F11E00A37345 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC36EC3225C9F11E00A37345 /* TestableExtensionRuntime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestableExtensionRuntime.swift; sourceTree = "<group>"; };
@@ -305,6 +307,7 @@
 				2EE13B1F262E89EE00078273 /* CustomeStatePlayback.swift */,
 				95B02DC42631438900A548D5 /* CustomError.swift */,
 				95B02DC9263143C200A548D5 /* Stall.swift */,
+				95FD4BA32631DD32004BE357 /* Timeout.swift */,
 			);
 			path = Scenarios;
 			sourceTree = "<group>";
@@ -947,6 +950,7 @@
 				2EC10320262A5305004DF384 /* SimplePlayback.swift in Sources */,
 				D62E1EA9261D298900635977 /* MediaExtensionTests.swift in Sources */,
 				95B02DC52631438900A548D5 /* CustomError.swift in Sources */,
+				95FD4BA42631DD32004BE357 /* Timeout.swift in Sources */,
 				D66F0B6B2616929C0018E779 /* FakeMediaService.swift in Sources */,
 				D66F0B712616929C0018E779 /* MockExtension.swift in Sources */,
 				D66F0B722616929C0018E779 /* MockMediaSession.swift in Sources */,

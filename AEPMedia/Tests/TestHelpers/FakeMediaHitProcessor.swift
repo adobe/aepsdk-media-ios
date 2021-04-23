@@ -17,6 +17,7 @@ class FakeMediaHitProcessor: MediaProcessor {
     private var sessionEnded = false
     private var processedHits: [String: [MediaHit]] = [:]
     private var currentSessionId: String = "-1"
+    private var allSessionId: String = "-1"
     private var isSessionStartCalled = false
 
     func createSession(config: [String: Any]) -> String? {
@@ -41,10 +42,10 @@ class FakeMediaHitProcessor: MediaProcessor {
     }
 
     func getHitFromActiveSession(index: Int) -> MediaHit? {
-        return getHit(sessionId: currentSessionId, index: index)
+        return getHit(sessionId: "0", index: index)
     }
 
-    private func getHit(sessionId: String, index: Int) -> MediaHit? {
+    func getHit(sessionId: String, index: Int) -> MediaHit? {
         guard let hits = processedHits[sessionId], hits.count != 0 else {
             return nil
         }
@@ -58,6 +59,10 @@ class FakeMediaHitProcessor: MediaProcessor {
 
     func getHitCountFromActiveSession() -> Int {
         return getHitCount(sessionId: currentSessionId)
+    }
+
+    func getHitCountFromAllSession() -> Int {
+        return getHitCount(sessionId: "0")
     }
 
     func getHitCount(sessionId: String) -> Int {
