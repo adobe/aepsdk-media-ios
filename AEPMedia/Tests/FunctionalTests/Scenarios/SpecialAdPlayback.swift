@@ -20,9 +20,6 @@ class SpecialAdPlayback: XCTestCase {
     private typealias Ad = MediaConstants.MediaCollection.Ad
     private typealias Chapter = MediaConstants.MediaCollection.Chapter
 
-    var fakeMediaService: FakeMediaHitProcessor!
-    var mediaEventTracker: MediaEventTracking!
-    var mediaTracker: MediaEventGenerator!
     var testUtil: TestUtil!
 
     static let mediaInfo = MediaInfo(id: "mediaID", name: "mediaName", streamType: "aod", mediaType: MediaType.Audio, length: 30.0, prerollWaitingTime: 0)!
@@ -109,45 +106,30 @@ class SpecialAdPlayback: XCTestCase {
     ]
 
     override func setUp() {
-        fakeMediaService = FakeMediaHitProcessor()
-        createTracker()
-        testUtil = TestUtil(mediaTracker: mediaTracker, fakeMediaHitProcessor: fakeMediaService)
-    }
-
-    func createTracker(downloaded: Bool = false) {
-        let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: downloaded]
-        mediaEventTracker = MediaEventTracker(hitProcessor: fakeMediaService, config: config)
-        mediaTracker = MediaEventGenerator(config: config)
-        mediaTracker.connectCoreTracker(tracker: mediaEventTracker)
-        mediaTracker.setTimeStamp(value: 0)
-
-        // Update the testUtil when we create tracker after setup step
-        if testUtil != nil {
-            testUtil.mediaTracker = mediaTracker
-        }
+        testUtil = TestUtil()
     }
 
     // tests
     func testDelayedAds_RealTimeTracker() {
         //test
-        mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
+        testUtil.mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
         testUtil.waitFor(time: 15000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
         testUtil.waitFor(time: 15000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.AdComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
         // should switch to play state
-        mediaTracker.trackEvent(event: MediaEvent.ChapterStart, info: Self.chapterInfo.toMap())
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.ChapterStart, info: Self.chapterInfo.toMap())
         testUtil.waitFor(time: 15000, updatePlayhead: true)
-        mediaTracker.trackEvent(event: MediaEvent.ChapterComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo2.toMap())
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.ChapterComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo2.toMap())
         testUtil.waitFor(time: 25000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo2.toMap(), metadata: Self.adMetadata2)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo2.toMap(), metadata: Self.adMetadata2)
         testUtil.waitFor(time: 15000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.AdComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
-        mediaTracker.trackComplete()
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
+        testUtil.mediaTracker.trackComplete()
 
         let expectedHits: [MediaHit] = [
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: Self.expectedSessionStartParamsRealTime, customMetadata: Self.mediaMetadata),
@@ -186,27 +168,27 @@ class SpecialAdPlayback: XCTestCase {
 
     func testDelayedAds_DownloadedTracker() {
         //setup
-        createTracker(downloaded: true)
+        testUtil.createTracker(downloaded: true)
 
         //test
-        mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
+        testUtil.mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
         testUtil.waitFor(time: 55000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
         testUtil.waitFor(time: 55000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.AdComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
         // should switch to play state
-        mediaTracker.trackEvent(event: MediaEvent.ChapterStart, info: Self.chapterInfo.toMap())
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.ChapterStart, info: Self.chapterInfo.toMap())
         testUtil.waitFor(time: 15000, updatePlayhead: true)
-        mediaTracker.trackEvent(event: MediaEvent.ChapterComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo2.toMap())
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.ChapterComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo2.toMap())
         testUtil.waitFor(time: 55000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo2.toMap(), metadata: Self.adMetadata2)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo2.toMap(), metadata: Self.adMetadata2)
         testUtil.waitFor(time: 15000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.AdComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
-        mediaTracker.trackComplete()
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
+        testUtil.mediaTracker.trackComplete()
 
         let expectedHits: [MediaHit] = [
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: Self.expectedSessionStartParamsDownloaded, customMetadata: Self.mediaMetadata),
@@ -239,30 +221,30 @@ class SpecialAdPlayback: XCTestCase {
 
     func testAdWithSeek_RealTimeTracker() {
         //test
-        mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
-        mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
+        testUtil.mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
         testUtil.waitFor(time: 5000, updatePlayhead: false)
         // seek out of ad into main content chapter
-        mediaTracker.trackEvent(event: MediaEvent.SeekStart)
-        mediaTracker.incrementTimeStamp(value: 1000)
-        mediaTracker.incrementCurrentPlayhead(time: 5)
-        mediaTracker.trackEvent(event: MediaEvent.SeekComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdSkip)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.SeekStart)
+        testUtil.mediaTracker.incrementTimeStamp(value: 1000)
+        testUtil.mediaTracker.incrementCurrentPlayhead(time: 5)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.SeekComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdSkip)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
         // should switch to play state
-        mediaTracker.trackEvent(event: MediaEvent.ChapterStart, info: Self.chapterInfo.toMap())
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.ChapterStart, info: Self.chapterInfo.toMap())
         testUtil.waitFor(time: 15000, updatePlayhead: true)
         // seek out of chapter into Ad
-        mediaTracker.trackEvent(event: MediaEvent.SeekStart)
-        mediaTracker.incrementTimeStamp(value: 1000)
-        mediaTracker.incrementCurrentPlayhead(time: 5)
-        mediaTracker.trackEvent(event: MediaEvent.ChapterSkip)
-        mediaTracker.trackEvent(event: MediaEvent.SeekComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo2.toMap())
-        mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo2.toMap(), metadata: Self.adMetadata2)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.SeekStart)
+        testUtil.mediaTracker.incrementTimeStamp(value: 1000)
+        testUtil.mediaTracker.incrementCurrentPlayhead(time: 5)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.ChapterSkip)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.SeekComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo2.toMap())
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo2.toMap(), metadata: Self.adMetadata2)
         testUtil.waitFor(time: 15000, updatePlayhead: false)
-        mediaTracker.trackSessionEnd()
+        testUtil.mediaTracker.trackSessionEnd()
 
         let expectedHits: [MediaHit] = [
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: Self.expectedSessionStartParamsRealTime, customMetadata: Self.mediaMetadata),
@@ -299,25 +281,25 @@ class SpecialAdPlayback: XCTestCase {
 
     func testAdWithBuffer_RealtimeTracker() {
         //test
-        mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
-        mediaTracker.trackEvent(event: MediaEvent.BufferStart)
+        testUtil.mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferStart)
         testUtil.waitFor(time: 5000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
-        mediaTracker.trackEvent(event: MediaEvent.BufferStart)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferStart)
         testUtil.waitFor(time: 5000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
         testUtil.waitFor(time: 15000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.BufferStart)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferStart)
         testUtil.waitFor(time: 5000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
         testUtil.waitFor(time: 5000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.AdComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
-        mediaTracker.trackPlay()
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
+        testUtil.mediaTracker.trackPlay()
         testUtil.waitFor(time: 5000, updatePlayhead: true)
-        mediaTracker.trackComplete()
+        testUtil.mediaTracker.trackComplete()
 
         let expectedHits: [MediaHit] = [
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: Self.expectedSessionStartParamsRealTime, customMetadata: Self.mediaMetadata),
@@ -343,28 +325,28 @@ class SpecialAdPlayback: XCTestCase {
 
     func testAdWithBuffer_DownloadedTracker() {
         //setup
-        createTracker(downloaded: true)
+        testUtil.createTracker(downloaded: true)
 
         //test
-        mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
-        mediaTracker.trackEvent(event: MediaEvent.BufferStart)
+        testUtil.mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferStart)
         testUtil.waitFor(time: 5000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
-        mediaTracker.trackEvent(event: MediaEvent.BufferStart)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferStart)
         testUtil.waitFor(time: 5000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
         testUtil.waitFor(time: 15000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.BufferStart)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferStart)
         testUtil.waitFor(time: 5000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.BufferComplete)
         testUtil.waitFor(time: 5000, updatePlayhead: false)
-        mediaTracker.trackEvent(event: MediaEvent.AdComplete)
-        mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
-        mediaTracker.trackPlay()
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdComplete)
+        testUtil.mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
+        testUtil.mediaTracker.trackPlay()
         testUtil.waitFor(time: 5000, updatePlayhead: true)
-        mediaTracker.trackComplete()
+        testUtil.mediaTracker.trackComplete()
 
         let expectedHits: [MediaHit] = [
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: Self.expectedSessionStartParamsDownloaded, customMetadata: Self.mediaMetadata),

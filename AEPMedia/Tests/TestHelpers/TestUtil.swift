@@ -15,10 +15,19 @@ import XCTest
 class TestUtil {
     var mediaTracker: MediaEventGenerator!
     var fakeMediaService: FakeMediaHitProcessor!
+    var mediaEventTracker: MediaEventTracking!
 
-    init(mediaTracker: MediaEventGenerator, fakeMediaHitProcessor: FakeMediaHitProcessor) {
-        self.mediaTracker = mediaTracker
-        self.fakeMediaService = fakeMediaHitProcessor
+    init() {
+        self.fakeMediaService = FakeMediaHitProcessor()
+        createTracker()
+    }
+
+    func createTracker(downloaded: Bool = false) {
+        let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: downloaded]
+        mediaEventTracker = MediaEventTracker(hitProcessor: fakeMediaService, config: config)
+        mediaTracker = MediaEventGenerator(config: config)
+        mediaTracker.connectCoreTracker(tracker: mediaEventTracker)
+        mediaTracker.setTimeStamp(value: 0)
     }
 
     func waitFor(time: Int, updatePlayhead: Bool) {
