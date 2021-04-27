@@ -18,6 +18,9 @@ internal extension MediaConstants {
     static let DATASTORE_NAME                           = EXTENSION_NAME
     static let DATABASE_NAME                            = "com.adobe.module.media"
 
+    static let VERSION_PREFIX_IOS = "ios-media-"
+    static let VERSION_PREFIX_TVOS = "tvos-media-"
+
     enum Networking {
         static let HTTP_TIMEOUT_SECONDS: TimeInterval = 5
         static let HTTP_SUCCESS_RANGE = 200..<300
@@ -161,6 +164,13 @@ internal extension MediaConstants {
     }
 
     enum MediaCollection {
+
+        #if os(iOS)
+            static let MEDIA_VERSION = VERSION_PREFIX_IOS + EXTENSION_VERSION
+        #elseif os(tvOS)
+            static let MEDIA_VERSION = VERSION_PREFIX_TVOS + EXTENSION_VERSION
+        #endif
+
         enum EventType {
             static let SESSION_START = "sessionStart"
             static let SESSION_COMPLETE = "sessionComplete"

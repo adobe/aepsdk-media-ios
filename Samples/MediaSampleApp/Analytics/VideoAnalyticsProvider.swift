@@ -156,7 +156,7 @@ class VideoAnalyticsProvider: NSObject {
         let adBreakPosition = adBreakData["position"] as? Int ?? 0
         let adBreakStartTime = adBreakData["time"] as? Double ?? 0
 
-        let adBreakObject = Media.createAdBreakObjectWith(name: adBreakName, position: adBreakPosition , startTime: adBreakStartTime)
+        let adBreakObject = Media.createAdBreakObjectWith(name: adBreakName, position: adBreakPosition, startTime: adBreakStartTime)
 
         let adName =  adData["name"] as? String ?? ""
         let adId = adData["id"] as? String ?? ""

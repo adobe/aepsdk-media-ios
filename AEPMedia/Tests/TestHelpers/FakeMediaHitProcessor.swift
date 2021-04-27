@@ -44,7 +44,7 @@ class FakeMediaHitProcessor: MediaProcessor {
         return getHit(sessionId: currentSessionId, index: index)
     }
 
-    private func getHit(sessionId: String, index: Int) -> MediaHit? {
+    func getHit(sessionId: String, index: Int) -> MediaHit? {
         guard let hits = processedHits[sessionId], hits.count != 0 else {
             return nil
         }
