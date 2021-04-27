@@ -22,8 +22,8 @@ class MediaCollectionHitGenerator {
     private var isTracking: Bool = false
     private var reportingInterval: Int64
     private var refTS: Int64
-    private var previousPlaybackState: MediaContext.MediaPlaybackState?
-    private var previousPlaybackStateStartRefTS: Int64
+    private var currentPlaybackState: MediaContext.MediaPlaybackState?
+    private var currentPlaybackStateStartRefTS: Int64
     private typealias EventType = MediaConstants.MediaCollection.EventType
     private typealias Media = MediaConstants.MediaCollection.Media
 
@@ -45,8 +45,8 @@ class MediaCollectionHitGenerator {
         self.mediaHitProcessor = hitProcessor
         self.mediaConfig = config
         self.refTS = refTS
-        self.previousPlaybackState = .Init
-        self.previousPlaybackStateStartRefTS = refTS
+        self.currentPlaybackState = .Init
+        self.currentPlaybackStateStartRefTS = refTS
         self.downloadedContent = mediaConfig[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
         self.reportingInterval = downloadedContent ?
             MediaConstants.PingInterval.OFFLINE_TRACKING :
@@ -149,8 +149,8 @@ class MediaCollectionHitGenerator {
 
     /// Restart session again after 24 hr timeout or idle timeout recovered.
     func processSessionRestart() {
-        previousPlaybackState = .Init
-        previousPlaybackStateStartRefTS = refTS
+        currentPlaybackState = .Init
+        currentPlaybackStateStartRefTS = refTS
 
         lastReportedQoeData.removeAll()
         startTrackingSession()
@@ -194,17 +194,17 @@ class MediaCollectionHitGenerator {
             return
         }
 
-        let currentPlaybackState = getPlaybackState()
+        let newPlaybackState = getPlaybackState()
 
-        if self.previousPlaybackState != currentPlaybackState || doFlush {
-            let eventType = getMediaCollectionEvent(state: currentPlaybackState)
+        if self.currentPlaybackState != newPlaybackState || doFlush {
+            let eventType = getMediaCollectionEvent(state: newPlaybackState)
             generateHit(eventType: eventType)
-            previousPlaybackState = currentPlaybackState
-            previousPlaybackStateStartRefTS = refTS
-        } else if (currentPlaybackState == previousPlaybackState) && (refTS - previousPlaybackStateStartRefTS >= reportingInterval) {
+            currentPlaybackState = newPlaybackState
+            currentPlaybackStateStartRefTS = refTS
+        } else if (newPlaybackState == currentPlaybackState) && (refTS - currentPlaybackStateStartRefTS >= reportingInterval) {
             // if the ts difference is more than interval we need to send it as multiple pings
             generateHit(eventType: EventType.PING)
-            previousPlaybackStateStartRefTS = refTS
+            currentPlaybackStateStartRefTS = refTS
         }
     }
 
