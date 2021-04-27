@@ -33,8 +33,6 @@ class AdPlayback: BaseScenarioTest {
     let adInfo2 = AdInfo(id: "adID2", name: "adName2", position: 2, length: 20.0)!
     let adMetadata2 = ["media.ad.advertiser": "sampleAdvertiser2", "key2": "value2", "key3": "мểŧẳđαţả"]
 
-    let semaphore = DispatchSemaphore(value: 0)
-
     override func setUp() {
         super.setup()
     }

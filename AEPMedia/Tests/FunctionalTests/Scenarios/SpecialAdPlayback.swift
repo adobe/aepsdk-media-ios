@@ -40,8 +40,6 @@ class SpecialAdPlayback: BaseScenarioTest {
     static let chapterInfo2 = ChapterInfo(name: "chapterName2", position: 2, startTime: 2.2, length: 40)!
     static let chapterMetadata2 = ["media.artist": "sampleArtist2", "key2": "value2", "key3": "мểŧẳđαţả"]
 
-    let semaphore = DispatchSemaphore(value: 0)
-
     // Expected Values
     static let expectedSessionStartParamsRealTime: [String: Any]  = [
         Media.ID: "mediaID",

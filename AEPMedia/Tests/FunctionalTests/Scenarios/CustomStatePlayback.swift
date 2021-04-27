@@ -25,8 +25,6 @@ class CustomStatePlayback: BaseScenarioTest {
     let standardStateMute = StateInfo(stateName: MediaConstants.PlayerState.MUTE)!
     let standardStateFullScreen = StateInfo(stateName: MediaConstants.PlayerState.FULLSCREEN)!
 
-    let semaphore = DispatchSemaphore(value: 0)
-
     override func setUp() {
         super.setup()
     }

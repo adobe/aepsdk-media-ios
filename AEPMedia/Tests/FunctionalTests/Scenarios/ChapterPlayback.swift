@@ -28,8 +28,6 @@ class ChapterPlayback: BaseScenarioTest {
     let chapterInfo2 = ChapterInfo(name: "chapterName2", position: 2, startTime: 2.2, length: 40)!
     let chapterMetadata2 = ["media.artist": "sampleArtist2", "key2": "value2", "key3": "мểŧẳđαţả"]
 
-    let semaphore = DispatchSemaphore(value: 0)
-
     override func setUp() {
         super.setup()
     }

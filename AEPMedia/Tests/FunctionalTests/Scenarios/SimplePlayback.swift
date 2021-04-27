@@ -19,7 +19,6 @@ class SimplePlayback: BaseScenarioTest {
 
     var mediaInfo = MediaInfo(id: "mediaID", name: "mediaName", streamType: "aod", mediaType: MediaType.Audio, length: 30.0, prerollWaitingTime: 0)!
     var mediaMetadata = ["media.show": "sampleshow", "key1": "value1"]
-    let semaphore = DispatchSemaphore(value: 0)
 
     override func setUp() {
         super.setup()
