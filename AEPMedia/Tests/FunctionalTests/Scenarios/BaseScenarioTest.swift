@@ -12,12 +12,12 @@
 import XCTest
 @testable import AEPMedia
 
-class TestUtil {
+class BaseScenarioTest: XCTestCase {
     var mediaTracker: MediaEventGenerator!
     var fakeMediaService: FakeMediaHitProcessor!
     var mediaEventTracker: MediaEventTracking!
 
-    init() {
+    func setup() {
         self.fakeMediaService = FakeMediaHitProcessor()
         createTracker()
     }

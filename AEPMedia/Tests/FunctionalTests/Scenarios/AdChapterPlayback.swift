@@ -13,16 +13,12 @@ import XCTest
 import AEPCore
 @testable import AEPMedia
 
-class AdChapterPlayback: XCTestCase {
+class AdChapterPlayback: BaseScenarioTest {
     private typealias EventType = MediaConstants.MediaCollection.EventType
     private typealias Media = MediaConstants.MediaCollection.Media
     private typealias AdBreak = MediaConstants.MediaCollection.AdBreak
     private typealias Ad = MediaConstants.MediaCollection.Ad
     private typealias Chapter = MediaConstants.MediaCollection.Chapter
-
-    var fakeMediaService: FakeMediaHitProcessor!
-    var mediaEventTracker: MediaEventTracking!
-    var mediaTracker: MediaEventGenerator!
 
     static let mediaInfo = MediaInfo(id: "mediaID", name: "mediaName", streamType: "aod", mediaType: MediaType.Audio, length: 30.0, prerollWaitingTime: 0)!
     static let mediaInfoWithDefaultPreroll = MediaInfo(id: "mediaID", name: "mediaName", streamType: "aod", mediaType: MediaType.Audio, length: 30.0)!
@@ -108,32 +104,7 @@ class AdChapterPlayback: XCTestCase {
     ]
 
     override func setUp() {
-        fakeMediaService = FakeMediaHitProcessor()
-        createTracker()
-    }
-
-    func createTracker(downloaded: Bool = false) {
-        let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: downloaded]
-        mediaEventTracker = MediaEventTracker(hitProcessor: fakeMediaService, config: config)
-        mediaTracker = MediaEventGenerator(config: config)
-        mediaTracker.connectCoreTracker(tracker: mediaEventTracker)
-        mediaTracker.setTimeStamp(value: 0)
-    }
-
-    func waitFor(time: Int, updatePlayhead: Bool) {
-        for _ in 1...time/1000 {
-            mediaTracker.incrementTimeStamp(value: 1000)
-            mediaTracker.incrementCurrentPlayhead(time: updatePlayhead ? 1 : 0)
-        }
-    }
-
-    func checkHits(expectedHits: [MediaHit]) {
-        let actualHitsCount = fakeMediaService.getHitCountFromActiveSession()
-        XCTAssertEqual(expectedHits.count, actualHitsCount, "No of expected hits (\(expectedHits.count)) not equal to actual hits (\(actualHitsCount))")
-
-        for i in 0...expectedHits.count-1 {
-            XCTAssertEqual(expectedHits[i], fakeMediaService.getHitFromActiveSession(index: i))
-        }
+        super.setup()
     }
 
     // tests
