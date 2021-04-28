@@ -17,12 +17,7 @@ let package = Package(
     name: "AEPMedia",
     platforms: [.iOS(.v10)],
     products: [
-        // default
         .library(name: "AEPMedia", targets: ["AEPMedia"]),
-        // dynamic
-        .library(name: "AEPMediaDynamic", type: .dynamic, targets: ["AEPMedia"]),
-        // static
-        .library(name: "AEPMediaStatic", type: .static, targets: ["AEPMedia"]),
     ],
     dependencies: [
         .package(name: "AEPCore", url: "https://github.com/adobe/aepsdk-core-ios.git", .branch("main")),
