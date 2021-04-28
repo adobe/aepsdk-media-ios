@@ -115,7 +115,7 @@ class MediaCollectionReportHelper {
         }
 
         if (state.ecid ?? "").isEmpty {
-            Log.debug(label: LOG_TAG, "\(#function) - Ecid(Identity shared state) is not available")
+            Log.debug(label: LOG_TAG, "\(#function) - \(MediaConstants.Identity.MARKETING_VISITOR_ID) is not available")
             return false
         }
 
