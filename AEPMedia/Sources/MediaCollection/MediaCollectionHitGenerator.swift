@@ -21,9 +21,9 @@ class MediaCollectionHitGenerator {
     private var lastReportedQoeData: [String: Any] = [:]
     private var isTracking: Bool = false
     private var reportingInterval: Int64
-    private var currentRefTS: Int64
+    private var refTS: Int64
     private var currentPlaybackState: MediaContext.MediaPlaybackState?
-    private var currentPlaybackStateStartRefTs: Int64
+    private var currentPlaybackStateStartRefTS: Int64
     private typealias EventType = MediaConstants.MediaCollection.EventType
     private typealias Media = MediaConstants.MediaCollection.Media
 
@@ -44,10 +44,9 @@ class MediaCollectionHitGenerator {
         self.mediaContext = context
         self.mediaHitProcessor = hitProcessor
         self.mediaConfig = config
-        self.currentRefTS = refTS
+        self.refTS = refTS
         self.currentPlaybackState = .Init
-        self.currentPlaybackStateStartRefTs = currentRefTS
-
+        self.currentPlaybackStateStartRefTS = refTS
         self.downloadedContent = mediaConfig[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] as? Bool ?? false
         self.reportingInterval = downloadedContent ?
             MediaConstants.PingInterval.OFFLINE_TRACKING :
@@ -151,7 +150,7 @@ class MediaCollectionHitGenerator {
     /// Restart session again after 24 hr timeout or idle timeout recovered.
     func processSessionRestart() {
         currentPlaybackState = .Init
-        currentPlaybackStateStartRefTs = currentRefTS
+        currentPlaybackStateStartRefTS = refTS
 
         lastReportedQoeData.removeAll()
         startTrackingSession()
@@ -187,7 +186,7 @@ class MediaCollectionHitGenerator {
     }
 
     func setRefTS(ts: Int64) {
-        self.currentRefTS = ts
+        refTS = ts
     }
 
     func processPlayback(doFlush: Bool = false) {
@@ -195,17 +194,17 @@ class MediaCollectionHitGenerator {
             return
         }
 
-        let currentPlaybackState = getPlaybackState()
+        let newPlaybackState = getPlaybackState()
 
-        if self.currentPlaybackState != currentPlaybackState || doFlush {
-            let eventType = getMediaCollectionEvent(state: currentPlaybackState)
+        if self.currentPlaybackState != newPlaybackState || doFlush {
+            let eventType = getMediaCollectionEvent(state: newPlaybackState)
             generateHit(eventType: eventType)
-            self.currentPlaybackState = currentPlaybackState
-            currentPlaybackStateStartRefTs = currentRefTS
-        } else if (self.currentPlaybackState == currentPlaybackState) && (currentRefTS - currentPlaybackStateStartRefTs >= reportingInterval) {
+            currentPlaybackState = newPlaybackState
+            currentPlaybackStateStartRefTS = refTS
+        } else if (newPlaybackState == currentPlaybackState) && (refTS - currentPlaybackStateStartRefTS >= reportingInterval) {
             // if the ts difference is more than interval we need to send it as multiple pings
             generateHit(eventType: EventType.PING)
-            currentPlaybackStateStartRefTs = currentRefTS
+            currentPlaybackStateStartRefTS = refTS
         }
     }
 
@@ -262,8 +261,8 @@ class MediaCollectionHitGenerator {
         // for bitrate change events and error events we want to use the qoe data in the current hit being generated.
         let qoeForCurrentHit = getQoEForCurrentHit(qoeData: passedInQoeData)
         let playhead = mediaContext.playhead
-        let refTs = currentRefTS
-        let hit = MediaHit(eventType: eventType, playhead: playhead, ts: refTs, params: params, customMetadata: metadata, qoeData: qoeForCurrentHit)
+        let ts = refTS
+        let hit = MediaHit(eventType: eventType, playhead: playhead, ts: ts, params: params, customMetadata: metadata, qoeData: qoeForCurrentHit)
         mediaHitProcessor.processHit(sessionId: sessionId, hit: hit)
     }
 

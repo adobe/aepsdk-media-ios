@@ -63,7 +63,6 @@ class VideoPlayer: AVPlayer {
     let VIDEO_NAME: String = "Bip bop video"
     let VIDEO_ID: String = "bipbop"
 
-
     let MONITOR_TIMER_INTERVAL = 0.5 // 500 milliseconds
 
     let kStatusKey                = "status"
@@ -145,8 +144,7 @@ class VideoPlayer: AVPlayer {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
 
-        guard let avplayer = self.playerViewController.player else
-        { return }
+        guard let avplayer = self.playerViewController.player else { return }
 
         if keyPath == kStatusKey {
             if avplayer.status == AVPlayer.Status.failed {
@@ -187,10 +185,10 @@ class VideoPlayer: AVPlayer {
         guard let group = asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible) else { return }
         let option = currentItem.currentMediaSelection.selectedMediaOption(in: group)
         let ccActive = (option != nil)
-        if(_isCCActive != ccActive) {
+        if _isCCActive != ccActive {
             _isCCActive = ccActive
-            var info: [String:Any] = [:]
-            info["ccActive"] = _isCCActive;
+            var info: [String: Any] = [:]
+            info["ccActive"] = _isCCActive
             NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CC_CHANGE), object: self, userInfo: info)
         }
     }
@@ -221,7 +219,6 @@ class VideoPlayer: AVPlayer {
         NSLog("Video paused")
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_PAUSE), object: self)
     }
-
 
     func startVideo() {
         // Prepare the video info.

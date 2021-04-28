@@ -175,7 +175,7 @@ class MediaCollectionReportHelper {
                 params[MediaConstants.MediaCollection.Session.SDK_VERSION] = appVersion
             }
 
-            params[MediaConstants.MediaCollection.Session.MEDIA_VERSION] = MediaConstants.EXTENSION_VERSION
+            params[MediaConstants.MediaCollection.Session.MEDIA_VERSION] = MediaConstants.MediaCollection.MEDIA_VERSION
 
             return MediaHit(eventType: mediaHit.eventType, playhead: mediaHit.playhead, ts: mediaHit.timestamp, params: params, customMetadata: mediaHit.metadata, qoeData: mediaHit.qoeData)
 

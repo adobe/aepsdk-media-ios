@@ -11,10 +11,13 @@
 		2E1691A625E468D30010D14A /* MediaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E1691A525E468D30010D14A /* MediaType.swift */; };
 		2E20D4A625CA154C00B5CCB8 /* MediaRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E20D4A425CA154C00B5CCB8 /* MediaRule.swift */; };
 		2E20D4A725CA154C00B5CCB8 /* MediaRuleEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */; };
+		2E2E3CC92638A39D0017DAE4 /* BaseScenarioTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E2E3CC72638A39D0017DAE4 /* BaseScenarioTest.swift */; };
 		2EC10320262A5305004DF384 /* SimplePlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EC1031F262A5305004DF384 /* SimplePlayback.swift */; };
 		2EE13B0D262E72B100078273 /* AdPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B0C262E72B100078273 /* AdPlayback.swift */; };
 		2EE13B18262E855700078273 /* ChapterPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B17262E855700078273 /* ChapterPlayback.swift */; };
-		2EE13B20262E89EE00078273 /* CustomeStatePlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B1F262E89EE00078273 /* CustomeStatePlayback.swift */; };
+		2EE13B20262E89EE00078273 /* CustomStatePlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B1F262E89EE00078273 /* CustomStatePlayback.swift */; };
+		2EE13B35263096D700078273 /* AdChapterPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B34263096D700078273 /* AdChapterPlayback.swift */; };
+		2EE13B4826321EB200078273 /* SpecialAdPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE13B4726321EB200078273 /* SpecialAdPlayback.swift */; };
 		2EE3CBD025E5C2F300F94EA6 /* MediaPublicTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE3CBCF25E5C2F300F94EA6 /* MediaPublicTracker.swift */; };
 		2EEAC4EA25D61ACF00759D3E /* MockExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EEAC4E925D61ACF00759D3E /* MockExtension.swift */; };
 		2EF1DF2B25E865DE0008925D /* MediaEventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1DF2A25E865DE0008925D /* MediaEventTracker.swift */; };
@@ -138,10 +141,13 @@
 		2E1691A525E468D30010D14A /* MediaType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaType.swift; sourceTree = "<group>"; };
 		2E20D4A425CA154C00B5CCB8 /* MediaRule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaRule.swift; sourceTree = "<group>"; };
 		2E20D4A525CA154C00B5CCB8 /* MediaRuleEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaRuleEngine.swift; sourceTree = "<group>"; };
+		2E2E3CC72638A39D0017DAE4 /* BaseScenarioTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseScenarioTest.swift; sourceTree = "<group>"; };
 		2EC1031F262A5305004DF384 /* SimplePlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplePlayback.swift; sourceTree = "<group>"; };
 		2EE13B0C262E72B100078273 /* AdPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdPlayback.swift; sourceTree = "<group>"; };
 		2EE13B17262E855700078273 /* ChapterPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterPlayback.swift; sourceTree = "<group>"; };
-		2EE13B1F262E89EE00078273 /* CustomeStatePlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomeStatePlayback.swift; sourceTree = "<group>"; };
+		2EE13B1F262E89EE00078273 /* CustomStatePlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStatePlayback.swift; sourceTree = "<group>"; };
+		2EE13B34263096D700078273 /* AdChapterPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdChapterPlayback.swift; sourceTree = "<group>"; };
+		2EE13B4726321EB200078273 /* SpecialAdPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialAdPlayback.swift; sourceTree = "<group>"; };
 		2EE3CBCF25E5C2F300F94EA6 /* MediaPublicTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPublicTracker.swift; sourceTree = "<group>"; };
 		2EEAC4E925D61ACF00759D3E /* MockExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockExtension.swift; sourceTree = "<group>"; };
 		2EF1DF2A25E865DE0008925D /* MediaEventTracker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaEventTracker.swift; sourceTree = "<group>"; };
@@ -299,12 +305,15 @@
 		2EC1031E262A52F5004DF384 /* Scenarios */ = {
 			isa = PBXGroup;
 			children = (
+				2E2E3CC72638A39D0017DAE4 /* BaseScenarioTest.swift */,
 				2EC1031F262A5305004DF384 /* SimplePlayback.swift */,
 				2EE13B0C262E72B100078273 /* AdPlayback.swift */,
 				2EE13B17262E855700078273 /* ChapterPlayback.swift */,
-				2EE13B1F262E89EE00078273 /* CustomeStatePlayback.swift */,
 				95B02DC42631438900A548D5 /* CustomError.swift */,
 				95FD4BA32631DD32004BE357 /* Timeout.swift */,
+				2EE13B1F262E89EE00078273 /* CustomStatePlayback.swift */,
+				2EE13B34263096D700078273 /* AdChapterPlayback.swift */,
+				2EE13B4726321EB200078273 /* SpecialAdPlayback.swift */,
 			);
 			path = Scenarios;
 			sourceTree = "<group>";
@@ -940,10 +949,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2EE13B20262E89EE00078273 /* CustomeStatePlayback.swift in Sources */,
+				2EE13B20262E89EE00078273 /* CustomStatePlayback.swift in Sources */,
 				D66F0B6A2616929C0018E779 /* MediaFunctionalTestBase.swift in Sources */,
 				2EE13B0D262E72B100078273 /* AdPlayback.swift in Sources */,
 				2EC10320262A5305004DF384 /* SimplePlayback.swift in Sources */,
+				2EE13B4826321EB200078273 /* SpecialAdPlayback.swift in Sources */,
+				2E2E3CC92638A39D0017DAE4 /* BaseScenarioTest.swift in Sources */,
 				D62E1EA9261D298900635977 /* MediaExtensionTests.swift in Sources */,
 				95B02DC52631438900A548D5 /* CustomError.swift in Sources */,
 				95FD4BA42631DD32004BE357 /* Timeout.swift in Sources */,
@@ -952,6 +963,7 @@
 				D66F0B722616929C0018E779 /* MockMediaSession.swift in Sources */,
 				D66F0B762616929C0018E779 /* TestableExtensionRuntime.swift in Sources */,
 				2EE13B18262E855700078273 /* ChapterPlayback.swift in Sources */,
+				2EE13B35263096D700078273 /* AdChapterPlayback.swift in Sources */,
 				D6E82262261FB0280092C7DE /* TestConstants.swift in Sources */,
 				D66F0B772616929C0018E779 /* MockNetworking.swift in Sources */,
 				D66F0B782616929C0018E779 /* TestHelpers.swift in Sources */,

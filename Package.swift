@@ -30,6 +30,6 @@ let package = Package(
     targets: [
         .target(name: "AEPMedia",
                 dependencies: ["AEPCore", .product(name: "AEPServices", package: "AEPCore")],
-                path: "AEPMedia/Sources")        
+                path: "AEPMedia/Sources")
     ]
 )
