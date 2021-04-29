@@ -145,7 +145,7 @@ class MediaPublicAPITests: XCTestCase {
     // createAdObjects
     // ==========================================================================
     func testCreateAdInfo() {
-        let infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 3, length: 20)
+        let infoMap = Media.createAdObjectWith(name: "adName", id: "AdId", position: 3, length: 20)
         XCTAssertFalse(infoMap?.isEmpty ?? true)
         XCTAssertEqual("adName", infoMap?[MediaConstants.AdInfo.NAME] as? String ?? "")
         XCTAssertEqual("AdId", infoMap?[MediaConstants.AdInfo.ID] as? String ?? "")
@@ -155,19 +155,19 @@ class MediaPublicAPITests: XCTestCase {
 
     func testCreateAdInfo_Invalid() {
         // empty name
-        var infoMap = Media.createAdObjectWith(name: "", adId: "AdId", position: 2, length: 20)
+        var infoMap = Media.createAdObjectWith(name: "", id: "AdId", position: 2, length: 20)
         XCTAssertNil(infoMap)
 
         // empty id name
-        infoMap = Media.createAdObjectWith(name: "adName", adId: "", position: 2, length: 20)
+        infoMap = Media.createAdObjectWith(name: "adName", id: "", position: 2, length: 20)
         XCTAssertNil(infoMap)
 
         // < 1 position
-        infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 0, length: 20)
+        infoMap = Media.createAdObjectWith(name: "adName", id: "AdId", position: 0, length: 20)
         XCTAssertNil(infoMap)
 
         // < 0 length
-        infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 2, length: -1)
+        infoMap = Media.createAdObjectWith(name: "adName", id: "AdId", position: 2, length: -1)
         XCTAssertNil(infoMap)
     }
 
