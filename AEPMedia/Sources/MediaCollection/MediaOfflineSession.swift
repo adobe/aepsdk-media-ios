@@ -18,7 +18,7 @@ class MediaOfflineSession: MediaSession {
     private static let LOG_TAG = MediaConstants.LOG_TAG
     private static let CLASS_NAME = "MediaOfflineSession"
     private static let MAX_ALLOWED_FAILURE = 3 //The maximun number of times SDK retries to send hit on failure, after that drop the hit.
-    private static let DURATION_BETWEEN_HITS_ON_FAILURE = 10//60 // Retry duration in case of failure
+    private static let DURATION_BETWEEN_HITS_ON_FAILURE = 60 // Retry duration in case of failure
     private let mediaDBService: MediaDBService
     private var isReportingSession = false
     private var failureCount = 0
