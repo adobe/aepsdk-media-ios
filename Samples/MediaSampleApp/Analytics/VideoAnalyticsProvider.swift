@@ -25,10 +25,10 @@ class VideoAnalyticsProvider: NSObject {
         _player = player
 
         // Pass optional configuration when creating tracker
-        //var config: [String: Any] = [:]
-        //config[MediaConstants.TrackerConfig.CHANNEL] = "custom-swift-channel" // Overrides channel configured from launch
-        //config[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] = true    // Creates downloaded content tracker
-        // _tracker = Media.createTrackerWith(config: config)
+        /*var config: [String: Any] = [:]
+         config[MediaConstants.TrackerConfig.CHANNEL] = "custom-swift-channel" // Overrides channel configured from launch
+         config[MediaConstants.TrackerConfig.DOWNLOADED_CONTENT] = true    // Creates downloaded content tracker
+         _tracker = Media.createTrackerWith(config: config)*/
 
         _tracker = Media.createTracker()
 

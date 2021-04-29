@@ -10,7 +10,6 @@
  */
 
 import XCTest
-import AEPCore
 @testable import AEPMedia
 
 class AdPlayback: BaseScenarioTest {
@@ -35,15 +34,6 @@ class AdPlayback: BaseScenarioTest {
 
     override func setUp() {
         super.setup()
-    }
-
-    func checkHits(expectedHits: [MediaHit]) {
-        let actualHitsCount = fakeMediaService.getHitCountFromActiveSession()
-        XCTAssertEqual(expectedHits.count, actualHitsCount, "No of expected hits (\(expectedHits.count)) not equal to actual hits (\(actualHitsCount))")
-
-        for i in 0...expectedHits.count-1 {
-            XCTAssertEqual(expectedHits[i], fakeMediaService.getHitFromActiveSession(index: i))
-        }
     }
 
     // tests
@@ -160,7 +150,7 @@ class AdPlayback: BaseScenarioTest {
 
     func testPrerollAd_withGranularTrackingEnabled_RealTimeTracker() {
         //test
-        mediaTracker.trackSessionStart(info: mediaInfoWithDefaultPreroll.toMap(), metadata: mediaMetadata)
+        mediaTracker.trackSessionStart(info: mediaInfoWithDefaultPrerollAndGranularTracking.toMap(), metadata: mediaMetadata)
         mediaTracker.trackPlay()
         mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: adBreakInfo.toMap())
         mediaTracker.trackEvent(event: MediaEvent.AdStart, info: adInfo.toMap(), metadata: adMetadata)
@@ -199,7 +189,21 @@ class AdPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.ADBREAK_START, playhead: 0, ts: 0, params: expectedAdBreakStartParams),
             MediaHit(eventType: EventType.AD_START, playhead: 0, ts: 0, params: expectedAdParams, customMetadata: adMetadata),
             MediaHit(eventType: EventType.PLAY, playhead: 0, ts: 0),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 1000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 2000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 3000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 4000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 5000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 6000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 7000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 8000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 9000),
             MediaHit(eventType: EventType.PING, playhead: 0, ts: 10000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 11000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 12000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 13000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 14000),
+            MediaHit(eventType: EventType.PING, playhead: 0, ts: 15000),
             MediaHit(eventType: EventType.AD_COMPLETE, playhead: 0, ts: 15000),
             MediaHit(eventType: EventType.ADBREAK_COMPLETE, playhead: 0, ts: 15000),
             MediaHit(eventType: EventType.PLAY, playhead: 0, ts: 15000),
