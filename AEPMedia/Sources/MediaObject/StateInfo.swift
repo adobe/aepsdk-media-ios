@@ -13,7 +13,8 @@ import Foundation
 import AEPServices
 
 class StateInfo: Equatable {
-    private static let LOG_TAG = "StateInfo"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "StateInfo"
     let stateName: String
 
     static func == (lhs: StateInfo, rhs: StateInfo) -> Bool {
@@ -22,7 +23,7 @@ class StateInfo: Equatable {
 
     init?(stateName: String) {
         guard !stateName.isEmpty else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating StateInfo, state name cannot be empty")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating StateInfo, state name cannot be empty")
             return nil
         }
         let pattern = "^[a-zA-Z0-9_\\.]{1,64}$"
@@ -30,11 +31,11 @@ class StateInfo: Equatable {
             let regex = try NSRegularExpression(pattern: pattern, options: [])
             let matches = regex.matches(in: stateName, options: [], range: NSRange(location: 0, length: stateName.count))
             if matches.isEmpty {
-                Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating StateInfo, state name: \(stateName) with length: \(stateName.count)  cannot contain special characters and can only be 64 character long. Only alphabets, digits, '_' and '.' are allowed.")
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating StateInfo, state name: \(stateName) with length: \(stateName.count)  cannot contain special characters and can only be 64 character long. Only alphabets, digits, '_' and '.' are allowed.")
                 return nil
             }
         } catch {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Invalid regex pattern")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Invalid regex pattern")
         }
 
         self.stateName = stateName
@@ -46,7 +47,7 @@ class StateInfo: Equatable {
         }
 
         guard let stateName = info?[MediaConstants.StateInfo.STATE_NAME_KEY] as? String else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing StateInfo, no state name")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing StateInfo, no state name")
             return nil
         }
 

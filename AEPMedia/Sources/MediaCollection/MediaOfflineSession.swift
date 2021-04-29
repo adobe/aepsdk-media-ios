@@ -40,7 +40,7 @@ class MediaOfflineSession: MediaSession {
     }
 
     override func handleSessionEnd() {
-        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>]- [Session (\(id))] End")
+        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(id))] End")
         tryReportSession()
     }
 

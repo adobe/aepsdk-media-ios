@@ -13,7 +13,8 @@ import Foundation
 import AEPServices
 
 class MediaCollectionHelper {
-    static let LOG_TAG = "MediaCollectionHelper"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "MediaCollectionHelper"
 
     private static let standardMediaMetadataMapping = [
         MediaConstants.VideoMetadataKeys.SHOW: MediaConstants.MediaCollection.StandardMediaMetadata.SHOW,
@@ -87,7 +88,7 @@ class MediaCollectionHelper {
         var retDict = [String: Any]()
 
         guard let adBreakInfo = adBreakInfo else {
-            Log.trace(label: LOG_TAG, "\(#function) - found empty ad break info.")
+            Log.trace(label: LOG_TAG, "[\(CLASS_NAME)<\(#function)>] - found empty ad break info.")
             return retDict
         }
 
@@ -102,7 +103,7 @@ class MediaCollectionHelper {
         var retDict = [String: Any]()
 
         guard let adInfo = adInfo else {
-            Log.trace(label: LOG_TAG, "\(#function) - found empty ad info.")
+            Log.trace(label: LOG_TAG, "[\(CLASS_NAME)<\(#function)>] - found empty ad info.")
             return retDict
         }
 
@@ -139,7 +140,7 @@ class MediaCollectionHelper {
         var retDict = [String: Any]()
 
         guard let chapterInfo = chapterInfo else {
-            Log.trace(label: LOG_TAG, "\(#function) - found empty chapter info.")
+            Log.trace(label: LOG_TAG, "[\(CLASS_NAME)<\(#function)>] - found empty chapter info.")
             return retDict
         }
 

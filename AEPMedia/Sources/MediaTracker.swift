@@ -46,9 +46,10 @@ public protocol MediaTracker {
 
     /// API to track media event.
     /// - Parameter:
-    ///   - event: `MediaEvent` describing the event to track `ChapterStart`, `ChapterComplete`, `AdBreakStart`, `AdBreakComplete`, `AdStart`, `AdComplete`, `SeekStart`, `SeekComplete`, `BufferStart`,
-    ///   `BufferComplete`, `BitrateChange`.
-    ///   - info: `Dictionary` created using `createChapterObject`, `createAdBreakObject`, `createAdObject`, `createStateObject` API  with for `AdBreakStart`, `AdStart`, `ChapterStart`, `StateStart` and `StateEnd` events respectively. Pass nil for other events.
+    ///   - event: `MediaEvent` describing the event to track `ChapterStart`, `ChapterComplete`, `AdBreakStart`, `AdBreakComplete`, `AdStart`,
+    ///   `AdComplete`, `SeekStart`, `SeekComplete`, `BufferStart`, `BufferComplete`, `BitrateChange`, `StateStart` and `StateEnd`
+    ///   - info: `Dictionary` created using `createChapterObject`, `createAdBreakObject`, `createAdObject`, `createStateObject` API
+    ///   for `ChapterStart`, `AdBreakStart`, `AdStart`, `StateStart` and `StateEnd` events respectively. Pass nil for other events.
     ///   - metadata: `Dictionary` containing context data for `AdStart` and `ChapterStart` events. Pass nil for other events.
     @objc(trackEvent:info:metadata:)
     func trackEvent(event: MediaEvent, info: [String: Any]?, metadata: [String: String]?)

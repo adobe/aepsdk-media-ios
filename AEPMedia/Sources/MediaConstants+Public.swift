@@ -13,17 +13,25 @@ import Foundation
 
 public class MediaConstants {
 
+    /// These constant strings define the stream type of the main content that is currently tracked.
     @objc(AEPMediaStreamType)
     @objcMembers
     public class StreamType: NSObject {
+        /// Constant defining stream type for VOD streams.
         public static let VOD = "vod"
+        /// Constant defining stream type for Live streams.
         public static let LIVE = "live"
+        /// Constant defining stream type for Linear streams.
         public static let LINEAR = "linear"
+        /// Constant defining stream type for Podcast streams.
         public static let PODCAST = "podcast"
+        /// Constant defining stream type for Audiobook streams.
         public static let AUDIOBOOK = "audiobook"
+        /// Constant defining stream type for AOD streams.
         public static let AOD = "aod"
     }
 
+    /// These constant strings define standard metadata keys for video content.
     @objc(AEPVideoMetadataKeys)
     @objcMembers
     public class VideoMetadataKeys: NSObject {
@@ -46,6 +54,7 @@ public class MediaConstants {
         public static let STREAM_FORMAT = "a.media.format"
     }
 
+    /// These constant strings define standard metadata keys for audio content.
     @objc(AEPAudioMetadataKeys)
     @objcMembers
     public class AudioMetadataKeys: NSObject {
@@ -57,6 +66,7 @@ public class MediaConstants {
         public static let PUBLISHER = "a.media.publisher"
     }
 
+    /// These constant strings define standard metadata keys for ads.
     @objc(AEPAdMetadataKeys)
     @objcMembers
     public class AdMetadataKeys: NSObject {
@@ -68,6 +78,7 @@ public class MediaConstants {
         public static let CREATIVE_URL = "a.media.ad.creativeURL"
     }
 
+    /// These constant strings define standard player states.
     @objc(AEPMediaPlayerState)
     @objcMembers
     public class PlayerState: NSObject {
@@ -78,6 +89,7 @@ public class MediaConstants {
         public static let MUTE = "mute"
     }
 
+    /// These constant strings define additional event keys that can be attached to media object.
     @objc(AEPMediaObjectKey)
     @objcMembers
     public class MediaObjectKey: NSObject {
@@ -86,6 +98,7 @@ public class MediaConstants {
         public static let GRANULAR_AD_TRACKING  = "media.granularadtracking"
     }
 
+    /// These constant strings define keys that can be attached to config object.
     @objc(AEPMediaTrackerConfig)
     @objcMembers
     public class TrackerConfig: NSObject {

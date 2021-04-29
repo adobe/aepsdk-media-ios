@@ -13,7 +13,8 @@ import Foundation
 import AEPServices
 
 class ChapterInfo: Equatable {
-    private static let LOG_TAG = "ChapterInfo"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "ChapterInfo"
     let name: String
     let position: Int
     let startTime: Double
@@ -29,22 +30,22 @@ class ChapterInfo: Equatable {
     init?(name: String, position: Int, startTime: Double, length: Double) {
 
         guard !name.isEmpty else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating ChapterInfo, name must not be empty")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating ChapterInfo, name must not be empty")
             return nil
         }
 
         guard position >= 1 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating AdBreakInfo, position must be greater than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating AdBreakInfo, position must be greater than zero")
             return nil
         }
 
         guard startTime >= 0 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating ChapterInfo, start time must not be less than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating ChapterInfo, start time must not be less than zero")
             return nil
         }
 
         guard length >= 0 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating ChapterInfo, length must not be less than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating ChapterInfo, length must not be less than zero")
             return nil
         }
 
@@ -60,22 +61,22 @@ class ChapterInfo: Equatable {
         }
 
         guard let name = info?[MediaConstants.ChapterInfo.NAME] as? String else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing ChapterInfo, invalid name")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing ChapterInfo, invalid name")
             return nil
         }
 
         guard let position = info?[MediaConstants.ChapterInfo.POSITION] as? Int else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing ChapterInfo, invalid position")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing ChapterInfo, invalid position")
             return nil
         }
 
         guard let startTime = info?[MediaConstants.ChapterInfo.START_TIME] as? Double else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing ChapterInfo, invalid start time")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing ChapterInfo, invalid start time")
             return nil
         }
 
         guard let length = info?[MediaConstants.ChapterInfo.LENGTH] as? Double else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing ChapterInfo, invalid length")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing ChapterInfo, invalid length")
             return nil
         }
 

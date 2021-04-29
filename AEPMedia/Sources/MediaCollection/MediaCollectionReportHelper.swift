@@ -15,7 +15,8 @@ import AEPCore
 
 class MediaCollectionReportHelper {
 
-    private static let LOG_TAG = "MediaCollectionReportHelper"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "MediaCollectionReportHelper"
 
     private init() {}
 
@@ -24,7 +25,7 @@ class MediaCollectionReportHelper {
     ///- Returns: Session start request URL
     static func getTrackingURL(host: String) -> URL? {
         guard !host.isEmpty else {
-            Log.warning(label: LOG_TAG, "\(#function) Unable to create tracking url. Arguement url is empty.")
+            Log.warning(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Unable to create tracking url. Host (MediaCollectionServer) url is empty.")
             return nil
         }
 
@@ -42,7 +43,7 @@ class MediaCollectionReportHelper {
     /// - Returns: URL for sending media hits
     static func getTrackingURLForEvents(host: String, sessionId: String?) -> URL? {
         guard !host.isEmpty, let sessionId = sessionId, !sessionId.isEmpty else {
-            Log.warning(label: LOG_TAG, "\(#function) Unable to create tracking url for events. Arguement url or sessionId is empty.")
+            Log.warning(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Unable to create tracking url for events. Host (MediaCollectionServer) url or collection server sessionId is empty.")
             return nil
         }
 
@@ -95,27 +96,27 @@ class MediaCollectionReportHelper {
     /// - Returns: `true` if all the required tracking parameters are present else returns `false`
     static func hasAllTrackingParams(state: MediaState) -> Bool {
         if (state.mediaCollectionServer ?? "").isEmpty {
-            Log.debug(label: LOG_TAG, "\(#function) - \(MediaConstants.Configuration.MEDIA_COLLECTION_SERVER) is not available")
+            Log.debug(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - \(MediaConstants.Configuration.MEDIA_COLLECTION_SERVER) is not available")
             return false
         }
 
         if (state.analyticsTrackingServer ?? "").isEmpty {
-            Log.debug(label: LOG_TAG, "\(#function) - \(MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER) is not available")
+            Log.debug(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - \(MediaConstants.Configuration.ANALYTICS_TRACKING_SERVER) is not available")
             return false
         }
 
         if (state.analyticsRsid ?? "").isEmpty {
-            Log.debug(label: LOG_TAG, "\(#function) - \(MediaConstants.Configuration.ANALYTICS_RSID) is not available")
+            Log.debug(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - \(MediaConstants.Configuration.ANALYTICS_RSID) is not available")
             return false
         }
 
         if (state.mcOrgId ?? "").isEmpty {
-            Log.debug(label: LOG_TAG, "\(#function) - \(MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID) is not available")
+            Log.debug(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - \(MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID) is not available")
             return false
         }
 
         if (state.ecid ?? "").isEmpty {
-            Log.debug(label: LOG_TAG, "\(#function) - \(MediaConstants.Identity.MARKETING_VISITOR_ID) is not available")
+            Log.debug(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - \(MediaConstants.Identity.MARKETING_VISITOR_ID)/ecid is not available")
             return false
         }
 
@@ -211,7 +212,7 @@ class MediaCollectionReportHelper {
     ///- Returns: Payload for offline tracking request
     static func generateDownloadReport(state: MediaState, hits: [MediaHit]) -> String? {
         guard hits.count > 0 else {
-            Log.debug(label: LOG_TAG, "\(#function) - Media Hits array passed is empty. Returning nil.")
+            Log.debug(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Media Hits list is empty, will not generate report.")
             return nil
         }
 
