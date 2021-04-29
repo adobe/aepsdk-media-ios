@@ -121,6 +121,8 @@ import AEPServices
     }
 }
 
+/// These enumeration values define the type of a tracking event.
+/// These enumeration are to be used in *trackEvent(event:info:metadata:)*
 @objc(AEPMediaEvent)
 public enum MediaEvent: Int, RawRepresentable {
     case AdBreakStart

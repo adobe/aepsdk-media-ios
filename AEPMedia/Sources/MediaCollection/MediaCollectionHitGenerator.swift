@@ -13,8 +13,8 @@ import Foundation
 import AEPServices
 
 class MediaCollectionHitGenerator {
-    private static let LOG_TAG = "MediaCollectionHitGenerator"
-
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "MediaCollectionHitGenerator"
     private let mediaHitProcessor: MediaProcessor
     private let mediaConfig: [String: Any]
     private let downloadedContent: Bool
@@ -38,7 +38,7 @@ class MediaCollectionHitGenerator {
     /// Initializes the Media Collection Hit Generator
     public required init?(context: MediaContext?, hitProcessor: MediaProcessor, config: [String: Any], refTS: Int64) {
         guard let context = context else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Unable to create a MediaCollectionHitGenerator, media context is nil.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Unable to create a MediaCollectionHitGenerator, media context is nil.")
             return nil
         }
         self.mediaContext = context
@@ -208,24 +208,14 @@ class MediaCollectionHitGenerator {
         }
     }
 
-    func processStateStart(stateInfo: StateInfo?) {
-        guard let stateInfo = stateInfo else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Received nil stateInfo, will not generate a start state hit.")
-            return
-        }
-
+    func processStateStart(stateInfo: StateInfo) {
         let  params: [String: Any] = [
             MediaConstants.MediaCollection.State.NAME: stateInfo.stateName
         ]
         generateHit(eventType: EventType.STATE_START, params: params)
     }
 
-    func processStateEnd(stateInfo: StateInfo?) {
-        guard let stateInfo = stateInfo else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Received nil stateInfo, will not generate an end state hit.")
-            return
-        }
-
+    func processStateEnd(stateInfo: StateInfo) {
         let  params: [String: Any] = [
             MediaConstants.MediaCollection.State.NAME: stateInfo.stateName
         ]
@@ -234,18 +224,18 @@ class MediaCollectionHitGenerator {
 
     private func startTrackingSession() {
         guard let sessionId = mediaHitProcessor.createSession(config: mediaConfig) else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Unable to create a tracking session.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Unable to create a tracking session.")
             isTracking = false
             return
         }
-        Log.debug(label: Self.LOG_TAG, "\(#function) - Started a new session with id \(sessionId).")
         self.sessionId = sessionId
+        Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Started a new session with id (\(self.sessionId)).")
         isTracking = true
     }
 
     private func endTrackingSession() {
         if isTracking {
-            Log.trace(label: Self.LOG_TAG, "\(#function) - Ending session with id \(sessionId).")
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Ending the session with id (\(sessionId)).")
             mediaHitProcessor.endSession(sessionId: sessionId)
             isTracking = false
         }
@@ -255,7 +245,7 @@ class MediaCollectionHitGenerator {
         let passedInQoeData = qoeData ?? [String: Any]()
 
         if !isTracking {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Dropping hit as we have internally stopped tracking")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Dropping hit as we have stopped tracking the session")
             return
         }
         // for bitrate change events and error events we want to use the qoe data in the current hit being generated.
