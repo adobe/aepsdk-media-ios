@@ -99,8 +99,8 @@ class Timeout: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 86420, ts: 86420000)
         ]
 
-        let actualHitListSession0: [Int] = [0,1,2,3,8640,8641,8642]
-        let actualHitListSession1: [Int] = [0,1,2,3,4]
+        let actualHitListSession0: [Int] = [0, 1, 2, 3, 8640, 8641, 8642]
+        let actualHitListSession1: [Int] = [0, 1, 2, 3, 4]
 
         //verify
         checkHits(expectedHits: expectedHitsEventSession0, sessionId: "0", actualHitIndexList: actualHitListSession0)
@@ -140,8 +140,8 @@ class Timeout: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 86460, ts: 86460000)
         ]
 
-        let actualHitListSession0: [Int] = [0,1,2,3,1729,1730]
-        let actualHitListSession1: [Int] = [0,1,2,3,4]
+        let actualHitListSession0: [Int] = [0, 1, 2, 3, 1729, 1730]
+        let actualHitListSession1: [Int] = [0, 1, 2, 3, 4]
 
         //verify
         checkHits(expectedHits: expectedHitsEventSession0, sessionId: "0", actualHitIndexList: actualHitListSession0)
@@ -157,7 +157,6 @@ class Timeout: BaseScenarioTest {
         //wait for 30 mins
         waitFor(time: 1800000, updatePlayhead: false)
 
-
         //Hits to verify
         let expectedHitsEvent: [MediaHit] = [
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: expectedSessionStartParams, customMetadata: mediaMetadata),
@@ -168,7 +167,7 @@ class Timeout: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_END, playhead: 3, ts: 1803000),
         ]
 
-        let actualHitList: [Int] = [0,1,2,3,182,183]
+        let actualHitList: [Int] = [0, 1, 2, 3, 182, 183]
 
         //verify
         checkHits(expectedHits: expectedHitsEvent, sessionId: "0", actualHitIndexList: actualHitList)
@@ -196,7 +195,7 @@ class Timeout: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_END, playhead: 3, ts: 1803000),
         ]
 
-        let actualHitList: [Int] = [0,1,2,3,38,39]
+        let actualHitList: [Int] = [0, 1, 2, 3, 38, 39]
 
         //verify
         checkHits(expectedHits: expectedHitsEvent, sessionId: "0", actualHitIndexList: actualHitList)
@@ -224,8 +223,8 @@ class Timeout: BaseScenarioTest {
             MediaHit(eventType: EventType.PLAY, playhead: 0, ts: 0),
             MediaHit(eventType: EventType.PLAY, playhead: 1, ts: 1000),
             MediaHit(eventType: EventType.PAUSE_START, playhead: 3, ts: 3000),
-            MediaHit(eventType: EventType.STATE_START, playhead: 3, ts: 603000, params:expectedCloseCaptionParam),
-            MediaHit(eventType: EventType.STATE_END, playhead: 3, ts: 1203000, params:expectedCloseCaptionParam),
+            MediaHit(eventType: EventType.STATE_START, playhead: 3, ts: 603000, params: expectedCloseCaptionParam),
+            MediaHit(eventType: EventType.STATE_END, playhead: 3, ts: 1203000, params: expectedCloseCaptionParam),
             MediaHit(eventType: EventType.PING, playhead: 3, ts: 1793000),
             MediaHit(eventType: EventType.SESSION_END, playhead: 3, ts: 1803000),
         ]
@@ -234,12 +233,11 @@ class Timeout: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_START, playhead: 3, ts: 1803000, params: expectedSessionStartParams2, customMetadata: mediaMetadata),
             MediaHit(eventType: EventType.PLAY, playhead: 3, ts: 1803000),
             MediaHit(eventType: EventType.PLAY, playhead: 3, ts: 1804000),
-            MediaHit(eventType: EventType.SESSION_COMPLETE, playhead:3 , ts: 1806000),
+            MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 3, ts: 1806000),
         ]
 
-
-        let actualHitListSession0: [Int] = [0,1,2,3,64,125,184,185]
-        let actualHitListSession1: [Int] = [0,1,2,3]
+        let actualHitListSession0: [Int] = [0, 1, 2, 3, 64, 125, 184, 185]
+        let actualHitListSession1: [Int] = [0, 1, 2, 3]
 
         //verify
         checkHits(expectedHits: expectedHitsEventSession0, sessionId: "0", actualHitIndexList: actualHitListSession0)
@@ -272,8 +270,8 @@ class Timeout: BaseScenarioTest {
             MediaHit(eventType: EventType.PLAY, playhead: 0, ts: 0),
             MediaHit(eventType: EventType.PLAY, playhead: 1, ts: 1000),
             MediaHit(eventType: EventType.PAUSE_START, playhead: 3, ts: 3000),
-            MediaHit(eventType: EventType.STATE_START, playhead: 3, ts: 603000, params:expectedCloseCaptionParam),
-            MediaHit(eventType: EventType.STATE_END, playhead: 3, ts: 1203000, params:expectedCloseCaptionParam),
+            MediaHit(eventType: EventType.STATE_START, playhead: 3, ts: 603000, params: expectedCloseCaptionParam),
+            MediaHit(eventType: EventType.STATE_END, playhead: 3, ts: 1203000, params: expectedCloseCaptionParam),
             MediaHit(eventType: EventType.PING, playhead: 3, ts: 1753000),
             MediaHit(eventType: EventType.SESSION_END, playhead: 3, ts: 1803000),
         ]
@@ -282,15 +280,14 @@ class Timeout: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_START, playhead: 3, ts: 1803000, params: expectedDownloadSessionStartParams2, customMetadata: mediaMetadata),
             MediaHit(eventType: EventType.PLAY, playhead: 3, ts: 1803000),
             MediaHit(eventType: EventType.PLAY, playhead: 3, ts: 1804000),
-            MediaHit(eventType: EventType.SESSION_COMPLETE, playhead:3 , ts: 1806000),
+            MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 3, ts: 1806000),
         ]
 
-        let actualHitListSession0: [Int] = [0,1,2,3,16,29,40,41]
-        let actualHitListSession1: [Int] = [0,1,2,3]
+        let actualHitListSession0: [Int] = [0, 1, 2, 3, 16, 29, 40, 41]
+        let actualHitListSession1: [Int] = [0, 1, 2, 3]
 
         //verify
         checkHits(expectedHits: expectedHitsEventSession0, sessionId: "0", actualHitIndexList: actualHitListSession0)
         checkHits(expectedHits: expectedHitsEventSession1, sessionId: "1", actualHitIndexList: actualHitListSession1)
     }
 }
-
