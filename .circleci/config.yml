@@ -59,8 +59,12 @@ jobs:
           command: xcrun instruments -w "iPhone 8 (13.1) [" || true
 
       - run:
-          name: Run Tests
-          command: make test
+          name: Run Unit Tests
+          command: make unit-test
+
+      - run:
+          name: Run Functional Tests
+          command: make functional-test
 
       # code coverage
       - run:

@@ -2,6 +2,7 @@ export EXTENSION_NAME = AEPMedia
 PROJECT_NAME = $(EXTENSION_NAME)
 TARGET_NAME_XCFRAMEWORK = $(EXTENSION_NAME).xcframework
 SCHEME_NAME_XCFRAMEWORK = AEPMedia
+FUNCTIONAL_TEST_TARGET_NAME = AEPMediaFunctionalTests
 
 SIMULATOR_ARCHIVE_PATH = ./build/ios_simulator.xcarchive/Products/Library/Frameworks/
 IOS_ARCHIVE_PATH = ./build/ios.xcarchive/Products/Library/Frameworks/
@@ -21,17 +22,23 @@ pod-install:
 pod-update: pod-repo-update
 	(cd build && pod update)
 
-bundle-exec-pod-install:	
+bundle-exec-pod-install:
 	(cd build && bundle exec pod install)
 
 open:
 	open build/$(PROJECT_NAME).xcworkspace
 
-test:
+unit-test:
 	@echo "######################################################################"
 	@echo "### Unit Testing iOS"
 	@echo "######################################################################"
 	xcodebuild test -workspace build/$(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=iOS Simulator,name=iPhone 8' -derivedDataPath build/out -enableCodeCoverage YES
+
+functional-test:
+	@echo "######################################################################"
+	@echo "### Functional Testing iOS"
+	@echo "######################################################################"
+	xcodebuild test -workspace build/$(PROJECT_NAME).xcworkspace -scheme $(FUNCTIONAL_TEST_TARGET_NAME) -destination 'platform=iOS Simulator,name=iPhone 8' -derivedDataPath build/out -enableCodeCoverage YES
 
 install-swiftlint:
 	HOMEBREW_NO_AUTO_UPDATE=1 brew install swiftlint && brew cleanup swiftlint
