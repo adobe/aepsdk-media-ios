@@ -24,14 +24,17 @@ class MediaRealTimeSession: MediaSession {
 
     #if DEBUG
         var hits: [MediaHit] = []
+        var retryDuration = 1
     #else
         private var hits: [MediaHit] = []
+        private var retryDuration = DURATION_BETWEEN_HITS_ON_FAILURE
     #endif
 
     private var mcSessionId: String?
     private var isSendingHit: Bool = false
     private var lastHitTS: Int64 = 0
-    private var sessionStartRetryCount = 0
+    // this will be used when we have failed to send the request so starting at 1
+    private var sessionStartRetryCount = 1
 
     override func handleQueueMediaHit(hit: MediaHit) {
         Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(id))] Queuing hit with event type (\(hit.eventType))")
@@ -162,7 +165,7 @@ class MediaRealTimeSession: MediaSession {
 
         if sessionStartRetryCount < MediaRealTimeSession.MAX_ALLOWED_FAILURE {
             sessionStartRetryCount += 1
-            dispatchQueue.asyncAfter(deadline: .now() + .seconds(Self.DURATION_BETWEEN_HITS_ON_FAILURE)) { [weak self] in
+            dispatchQueue.asyncAfter(deadline: .now() + .seconds(retryDuration)) { [weak self] in
                 self?.trySendHit()
             }
         }
