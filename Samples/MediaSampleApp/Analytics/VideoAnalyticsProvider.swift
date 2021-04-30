@@ -163,7 +163,7 @@ class VideoAnalyticsProvider: NSObject {
         let adPosition = adData["position"] as? Int ?? 0
         let adLength = adData["length"] as? Double ?? 0
 
-        let adObject = Media.createAdObjectWith(name: adName, adId: adId, position: adPosition, length: adLength)
+        let adObject = Media.createAdObjectWith(name: adName, id: adId, position: adPosition, length: adLength)
 
         var adMetadata: [String: String] = [:]
         // Standard Ad Metadata
