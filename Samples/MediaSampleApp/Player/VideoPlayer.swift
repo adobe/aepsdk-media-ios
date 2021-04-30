@@ -55,8 +55,8 @@ class VideoPlayer: AVPlayer {
     let CHAPTER2_START_POS: Double = 30
     let CHAPTER2_LENGTH: Double = 30
 
-    let QOEINFO_BITRATRE: Double = 50000
-    let QOEINFO_STARTUPTIME: Double = 1800
+    let QOEINFO_BITRATRE: Double = 500000
+    let QOEINFO_STARTUPTIME: Double = 2
     let QOEINFO_FPS: Double = 24
     let QOEINFO_DROPPEDFRAMES: Double = 10
     let VIDEO_LENGTH: Double = 1800

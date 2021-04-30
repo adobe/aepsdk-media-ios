@@ -534,8 +534,8 @@ class MediaEventTracker: MediaEventTracking {
         }
 
         cmdIdleDetection(rule: rule, context: context)
-        cmdContentStartDetection(rule: rule, context: context)
         cmdSessionTimeoutDetection(rule: rule, context: context)
+        cmdContentStartDetection(rule: rule, context: context)
 
         // Flush the playback state after AdStart and AdBreakComplete
         let shouldFlush = (rule.name == RuleName.AdStart.rawValue) || (rule.name == RuleName.AdBreakComplete.rawValue)
