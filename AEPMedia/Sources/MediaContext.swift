@@ -20,7 +20,8 @@ class MediaContext {
         case Init
     }
 
-    private static let LOG_TAG = "MediaContext"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "MediaContext"
     private(set) var buffering = false
     private(set) var seeking = false
     private var trackedStates: [String: Bool] = [:]
@@ -92,7 +93,7 @@ class MediaContext {
     ///- Parameters:
     ///    - state: `MediaPlaybackState` value.
     func enterPlaybackState(state: MediaPlaybackState) {
-        Log.trace(label: Self.LOG_TAG, "\(#function) EnterState - \(state)")
+        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Enter playback state: (\(state))")
         switch state {
         case .Play, .Pause:
             playState = state
@@ -101,7 +102,7 @@ class MediaContext {
         case .Seek:
             seeking = true
         default:
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Invalid state passed to enterState: \(state)")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Cannot enter playback state: (\(state)), invalid playback state.")
         }
     }
 
@@ -109,14 +110,14 @@ class MediaContext {
     ///- Parameters:
     ///    - state: MediaPlaybackState value.
     func exitPlaybackState(state: MediaPlaybackState) {
-        Log.trace(label: Self.LOG_TAG, "\(#function) ExitState - \(state)")
+        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Exit playback state: (\(state))")
         switch state {
         case .Buffer:
             buffering = false
         case .Seek:
             seeking = false
         default:
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Invalid state passed to exitState: \(state)")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Cannot exit playback state: (\(state)), invalid playback state.")
         }
     }
 
@@ -150,12 +151,12 @@ class MediaContext {
     @discardableResult
     func startState(info: StateInfo) -> Bool {
         if !hasTrackedState(info: info) && didReachMaxStateLimit() {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - failed, already tracked max states \(MediaConstants.StateInfo.STATE_LIMIT) during the current session.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to start state, already tracked max states (\(MediaConstants.StateInfo.STATE_LIMIT)) for the current session.")
             return false
         }
 
         if isInState(info: info) {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - failed, state \(info.stateName) is already being tracked.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to start state, state (\(info.stateName)) is already being tracked.")
             return false
         }
 
@@ -169,7 +170,7 @@ class MediaContext {
     @discardableResult
     func endState(info: StateInfo) -> Bool {
         if !isInState(info: info) {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - failed, state \(info.stateName) is not being tracked.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to end state, state (\(info.stateName)) is not being tracked in the current session.")
             return false
         }
 

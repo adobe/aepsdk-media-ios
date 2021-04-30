@@ -488,16 +488,12 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         hitProcessor.clearHitsFromActiveSession()
     }
 
-    func testProcessStateStartWithNilState() {
-        // test
-        hitGenerator.processStateStart(stateInfo: nil)
-        // verify no state start hit
-        XCTAssertEqual(0, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
-    }
-
     func testProcessStateStartFullscreen() {
         // setup
-        let stateInfo = StateInfo(stateName: "fullscreen")
+        guard let stateInfo = StateInfo(stateName: "fullscreen") else {
+            XCTFail("state creation failed")
+            return
+        }
         // test
         hitGenerator.processStateStart(stateInfo: stateInfo)
         // verify state start hit
@@ -512,7 +508,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // setup
         let qoeInfo = QoEInfo(info: Self.validQoEInfo)
         mediaContext.qoeInfo = qoeInfo
-        let stateInfo = StateInfo(stateName: "fullscreen")
+        guard let stateInfo = StateInfo(stateName: "fullscreen") else {
+            XCTFail("state creation failed")
+            return
+        }
         // test
         hitGenerator.processStateStart(stateInfo: stateInfo)
         // verify state start hit + qoe info
@@ -557,13 +556,6 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let expectedStateEndHit = MediaHit.init(eventType: "stateEnd", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: emptyMetadata, qoeData: qoeData)
         let stateEndHit = hitProcessor.getHitFromActiveSession(index: 0)
         XCTAssertEqual(expectedStateEndHit, stateEndHit)
-    }
-
-    func testProcessStateEndWithNilState() {
-        // test
-        hitGenerator.processStateEnd(stateInfo: nil)
-        // verify no state end hit
-        XCTAssertEqual(0, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
     }
 
     func testProcessPlaybackStateSameStateOnline() {

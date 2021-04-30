@@ -13,7 +13,8 @@ import Foundation
 import AEPServices
 
 class QoEInfo: Equatable {
-    private static let LOG_TAG = "QoEInfo"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "QoEInfo"
     let bitrate: Double
     let droppedFrames: Double
     let fps: Double
@@ -28,22 +29,22 @@ class QoEInfo: Equatable {
 
     init?(bitrate: Double, droppedFrames: Double, fps: Double, startupTime: Double) {
         guard bitrate >= 0 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating QoEInfo, bitrate must not be less than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating QoEInfo, bitrate must not be less than zero")
             return nil
         }
 
         guard droppedFrames >= 0 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating QoEInfo, dropped frames must not be less than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating QoEInfo, dropped frames must not be less than zero")
             return nil
         }
 
         guard fps >= 0 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating QoEInfo, fps must not be less than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating QoEInfo, fps must not be less than zero")
             return nil
         }
 
         guard startupTime >= 0 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating QoEInfo, startup time must not be less than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating QoEInfo, startup time must not be less than zero")
             return nil
         }
 
@@ -59,22 +60,22 @@ class QoEInfo: Equatable {
         }
 
         guard let bitrate = info?[MediaConstants.QoEInfo.BITRATE] as? Double else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing QoEInfo, invalid bitrate")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing QoEInfo, invalid bitrate")
             return nil
         }
 
         guard let droppedFrames = info?[MediaConstants.QoEInfo.DROPPED_FRAMES] as? Double else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing QoEInfo, invalid dropped frames")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing QoEInfo, invalid dropped frames")
             return nil
         }
 
         guard let fps = info?[MediaConstants.QoEInfo.FPS] as? Double else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing QoEInfo, invalid fps")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing QoEInfo, invalid fps")
             return nil
         }
 
         guard let startupTime = info?[MediaConstants.QoEInfo.STARTUP_TIME] as? Double else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing QoEInfo, invalid start time")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing QoEInfo, invalid start time")
             return nil
         }
 

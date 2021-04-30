@@ -15,7 +15,8 @@ import AEPServices
 
 @objc(AEPMobileMedia)
 public class Media: NSObject, Extension {
-    private let LOG_TAG = "Media"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "Media"
 
     public var runtime: ExtensionRuntime
     public var name = MediaConstants.EXTENSION_NAME
@@ -76,7 +77,7 @@ public class Media: NSObject, Extension {
         if let privacyStatusStr = event.data?[MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY] as? String {
             let privacyStatus = PrivacyStatus(rawValue: privacyStatusStr) ?? PrivacyStatus.unknown
             if privacyStatus == .optedOut {
-                Log.debug(label: LOG_TAG, "\(#function) - Privacy status is opted-out. Clearing all tracking sessions")
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Privacy status is opted-out. Clearing all tracking sessions")
                 trackers.removeAll()
             }
         }
@@ -86,7 +87,7 @@ public class Media: NSObject, Extension {
     /// - Parameter:
     ///   - event: The Reset identities event
     private func handleResetIdentitiesEvent(_ event: Event) {
-        Log.debug(label: LOG_TAG, "\(#function) - Clearing all tracking sessions")
+        Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Clearing all tracking sessions")
         mediaService.abortAllSessions()
         trackers.removeAll()
     }
@@ -95,13 +96,13 @@ public class Media: NSObject, Extension {
     /// - Parameter event: an event containing  data for creating tracker
     private func handleMediaTrackerRequest(event: Event) {
         guard let trackerId = event.trackerId, !trackerId.isEmpty else {
-            Log.debug(label: LOG_TAG, "\(#function) - Tracker ID is invalid, unable to create internal tracker.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Public tracker ID is invalid, unable to create internal tracker.")
             return
         }
 
         let trackerConfig = event.trackerConfig ?? [:]
 
-        Log.debug(label: LOG_TAG, "\(#function) - Creating tracker with tracker id: \(trackerId).")
+        Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Creating an internal tracker with tracker id: \(trackerId).")
         trackers[trackerId] = MediaEventTracker(hitProcessor: mediaService, config: trackerConfig)
     }
 
@@ -109,12 +110,12 @@ public class Media: NSObject, Extension {
     /// - Parameter event: an event containing  media event data for processing
     private func handleMediaTrack(event: Event) {
         guard let trackerId = event.trackerId, !trackerId.isEmpty else {
-            Log.debug(label: LOG_TAG, "\(#function) - Tracker ID is invalid, unable to create internal tracker.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Public tracker ID is invalid, unable to get internal tracker.")
             return
         }
 
         guard let tracker = trackers[trackerId] else {
-            Log.error(label: LOG_TAG, "\(#function) - Unable to find tracker for the given tracker id: \(trackerId).")
+            Log.error(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Unable to find internal tracker for the given tracker ID: (\(trackerId)).")
             return
         }
 

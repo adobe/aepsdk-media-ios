@@ -13,7 +13,8 @@ import Foundation
 import AEPServices
 
 class MediaSession {
-    private let LOG_TAG = "MediaSession"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "MediaSession"
 
     let id: String
     let state: MediaState
@@ -38,7 +39,7 @@ class MediaSession {
     /// - Parameter hit: `MediaHit` to be queued.
     func queue(hit: MediaHit) {
         guard isSessionActive else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to queue hit. Media Session is inactive.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to queue hit. Media Session (\(id)) is inactive.")
             return
         }
 
@@ -49,7 +50,7 @@ class MediaSession {
     ///- Parameter onsessionEnd: An optional closure that will be executed after successfully ending the session.
     func end(onSessionEnd sessionEndHandler: (() -> Void)? = nil) {
         guard isSessionActive else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to end session. Session (\(id)) is inactive")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to end session. Media Session (\(id)) is inactive")
             return
         }
 
@@ -62,7 +63,7 @@ class MediaSession {
     ///- Parameter onSessionEnd: An optional closure that will be executed after successfully aborting the session.
     func abort(onSessionEnd sessionEndHandler: (() -> Void)? = nil) {
         guard isSessionActive else {
-            Log.debug(label: LOG_TAG, "\(#function) - Unable to abort session. Session (\(id)) is inactive")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to abort session. Media Session (\(id)) is inactive")
             return
         }
 
@@ -73,22 +74,22 @@ class MediaSession {
 
     /// Notifies MediaState updates
     func handleMediaStateUpdate() {
-        Log.warning(label: LOG_TAG, "\(#function) - This function should be handle by the child class.")
+        Log.warning(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - This function should be handled by the implementing class.")
     }
 
     ///Includes the business logic for ending session. Implemented by more concrete classes of MediaSession: `MedialRealTimeSession` and `MediaOfflineSession`.
     func handleSessionEnd() {
-        Log.warning(label: LOG_TAG, "\(#function) - This function should be handle by the child class.")
+        Log.warning(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - This function should be handled by the implementing class.")
     }
 
     ///Includes the business logic for aborting session. Implemented by more concrete classes of MediaSession: `MedialRealTimeSession` and `MediaOfflineSession`.
     func handleSessionAbort() {
-        Log.warning(label: LOG_TAG, "\(#function) - This function should be handle by the child class.")
+        Log.warning(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - This function should be handled by the implementing class.")
     }
 
     ///Includes the business logic for queuing `MediaHit`. Implemented by more concrete classes of MediaSession: `MedialRealTimeSession` and `MediaOfflineSession`.
     /// - Parameter hit: `MediaHit` to be queued.
     func handleQueueMediaHit(hit: MediaHit) {
-        Log.warning(label: LOG_TAG, "\(#function) - This function should be handle by the child class.")
+        Log.warning(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - This function should be handled by the implementing class.")
     }
 }

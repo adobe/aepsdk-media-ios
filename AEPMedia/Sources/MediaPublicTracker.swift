@@ -15,7 +15,8 @@ import AEPServices
 
 class MediaPublicTracker: MediaTracker {
 
-    static let LOG_TAG = "MediaTracker"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "MediaPublicTracker"
 
     typealias dispatchFn = (Event) -> Void
 
@@ -47,7 +48,7 @@ class MediaPublicTracker: MediaTracker {
         let event = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
 
         dispatch?(event)
-        Log.debug(label: Self.LOG_TAG, "\(#function): Tracker request event was sent to event hub.")
+        Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>]: Tracker request event was sent to event hub.")
     }
 
     deinit {

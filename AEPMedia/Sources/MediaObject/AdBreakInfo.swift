@@ -13,7 +13,8 @@ import Foundation
 import AEPServices
 
 class AdBreakInfo: Equatable {
-    private static let LOG_TAG = "AdBreakInfo"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "AdBreakInfo"
     let name: String
     let position: Int
     let startTime: Double
@@ -27,17 +28,17 @@ class AdBreakInfo: Equatable {
     init?(name: String, position: Int, startTime: Double) {
 
         guard !name.isEmpty else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating AdBreakInfo, name must not be Empty")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating AdBreakInfo, name must not be Empty")
             return nil
         }
 
         guard position >= 1 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating AdBreakInfo, position must be greater than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating AdBreakInfo, position must be greater than zero")
             return nil
         }
 
         guard startTime >= 0 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating AdBreakInfo, start time must not be less than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating AdBreakInfo, start time must not be less than zero")
             return nil
         }
 
@@ -52,17 +53,17 @@ class AdBreakInfo: Equatable {
         }
 
         guard let name = info?[MediaConstants.AdBreakInfo.NAME] as? String else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing AdBreakInfo, invalid name")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing AdBreakInfo, invalid name")
             return nil
         }
 
         guard let position = info?[MediaConstants.AdBreakInfo.POSITION] as? Int else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing AdBreakInfo, invalid position")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing AdBreakInfo, invalid position")
             return nil
         }
 
         guard let startTime = info?[MediaConstants.AdBreakInfo.START_TIME] as? Double else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing AdBreakInfo, invalid start time")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing AdBreakInfo, invalid start time")
             return nil
         }
 
