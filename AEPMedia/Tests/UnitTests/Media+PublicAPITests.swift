@@ -287,5 +287,6 @@ class MediaPublicAPITests: XCTestCase {
         XCTAssertEqual(MediaEvent.BitrateChange, MediaEvent(rawValue: MediaConstants.EventName.BITRATE_CHANGE))
         XCTAssertEqual(MediaEvent.StateStart, MediaEvent(rawValue: MediaConstants.EventName.STATE_START))
         XCTAssertEqual(MediaEvent.StateEnd, MediaEvent(rawValue: MediaConstants.EventName.STATE_END))
+        XCTAssertNil(MediaEvent(rawValue: "invalid"))
     }
 }
