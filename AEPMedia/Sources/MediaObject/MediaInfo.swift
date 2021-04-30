@@ -15,14 +15,14 @@ import AEPServices
 class MediaInfo: Equatable {
     private static let LOG_TAG = MediaConstants.LOG_TAG
     private static let CLASS_NAME = "MediaInfo"
-    static let DEFAULT_PREROLL_WAITING_TIME_IN_MS: Double = 250.0 //250 milliseconds
+    static let DEFAULT_PREROLL_WAITING_TIME_IN_MS: Int = 250 //250 milliseconds
     let id: String
     let name: String
     let streamType: String
     let mediaType: MediaType
     let length: Double
     let resumed: Bool
-    let prerollWaitingTime: Double
+    let prerollWaitingTime: Int
     let granularAdTracking: Bool
 
     static func == (lhs: MediaInfo, rhs: MediaInfo) -> Bool {
@@ -32,11 +32,11 @@ class MediaInfo: Equatable {
             lhs.mediaType == rhs.mediaType &&
             lhs.length.isAlmostEqual(rhs.length) &&
             lhs.resumed == rhs.resumed &&
-            lhs.prerollWaitingTime.isAlmostEqual(rhs.prerollWaitingTime) &&
+            lhs.prerollWaitingTime == rhs.prerollWaitingTime &&
             lhs.granularAdTracking == rhs.granularAdTracking
     }
 
-    init?(id: String, name: String, streamType: String, mediaType: MediaType, length: Double, resumed: Bool = false, prerollWaitingTime: TimeInterval = DEFAULT_PREROLL_WAITING_TIME_IN_MS, granularAdTracking: Bool = false) {
+    init?(id: String, name: String, streamType: String, mediaType: MediaType, length: Double, resumed: Bool = false, prerollWaitingTime: Int = DEFAULT_PREROLL_WAITING_TIME_IN_MS, granularAdTracking: Bool = false) {
 
         guard !id.isEmpty else {
             Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating MediaInfo, id must not be Empty")
@@ -105,9 +105,7 @@ class MediaInfo: Equatable {
 
         let resumed = info?[MediaConstants.MediaInfo.RESUMED] as? Bool ?? false
 
-        let prerollWaitTimeVal: Double = info?[MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME] as? Double ?? Self.DEFAULT_PREROLL_WAITING_TIME_IN_MS
-
-        let prerollWaitingTime: TimeInterval = TimeInterval(prerollWaitTimeVal)
+        let prerollWaitingTime: Int = info?[MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME] as? Int ?? Self.DEFAULT_PREROLL_WAITING_TIME_IN_MS
 
         let granularAdTracking = info?[MediaConstants.MediaInfo.GRANULAR_AD_TRACKING] as? Bool ?? false
 
@@ -128,3 +126,4 @@ class MediaInfo: Equatable {
         return mediaInfoMap
     }
 }
+
