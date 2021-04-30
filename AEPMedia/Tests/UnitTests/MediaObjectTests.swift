@@ -21,7 +21,7 @@ class MediaObjectTests: XCTestCase {
         MediaConstants.MediaInfo.STREAM_TYPE: "aod",
         MediaConstants.MediaInfo.MEDIA_TYPE: "audio",
         MediaConstants.MediaInfo.RESUMED: true,
-        MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME: 2000.0, //2000 milliseconds
+        MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME: 2000, //2000 milliseconds
         MediaConstants.MediaInfo.GRANULAR_AD_TRACKING: true
     ]
 
@@ -281,7 +281,7 @@ class MediaObjectTests: XCTestCase {
     }
 
     func testMediaInfo_ConvenienceInit_InvalidPrerollTrackingWaitTime() {
-        for v in MediaObjectTests.valuesOtherThanDouble {
+        for v in MediaObjectTests.valuesOtherThanInt {
             var info = MediaObjectTests.validMediaInfo
             info[MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME] = v
             let mediaInfo = MediaInfo(info: info)
@@ -301,7 +301,7 @@ class MediaObjectTests: XCTestCase {
     func testCreateMediaObjectWithGranularAdTrackingValueCustom() {
         let mediaInfo = MediaInfo(id: "id", name: name, streamType: "vod", mediaType: MediaType.Audio, length: 60.0, prerollWaitingTime: 2000)
 
-        XCTAssertEqual(2000.0, mediaInfo?.prerollWaitingTime)
+        XCTAssertEqual(2000, mediaInfo?.prerollWaitingTime)
     }
 
     func testCreateMediaObjectWithGranularAdTrackingValueDisabled() {
@@ -347,7 +347,7 @@ class MediaObjectTests: XCTestCase {
         XCTAssertEqual(Self.validMediaInfo[MediaConstants.MediaInfo.STREAM_TYPE] as! String, mediaInfoMap?[MediaConstants.MediaInfo.STREAM_TYPE] as? String ?? "")
         XCTAssertEqual(Self.validMediaInfo[MediaConstants.MediaInfo.MEDIA_TYPE] as! String, mediaInfoMap?[MediaConstants.MediaInfo.MEDIA_TYPE] as? String ?? "")
         XCTAssertEqual(Self.validMediaInfo[MediaConstants.MediaInfo.RESUMED] as! Bool, mediaInfoMap?[MediaConstants.MediaInfo.RESUMED] as? Bool ?? false)
-        XCTAssertEqual(Self.validMediaInfo[MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME] as! Double, mediaInfoMap?[MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME] as? Double ?? 1000.0)
+        XCTAssertEqual(Self.validMediaInfo[MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME] as! Int, mediaInfoMap?[MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME] as? Int ?? 1000)
         XCTAssertEqual(Self.validMediaInfo[MediaConstants.MediaInfo.GRANULAR_AD_TRACKING] as! Bool, mediaInfoMap?[MediaConstants.MediaInfo.GRANULAR_AD_TRACKING] as? Bool ?? false)
     }
 
@@ -925,3 +925,5 @@ class MediaObjectTests: XCTestCase {
         XCTAssertEqual(Self.validStateInfo[MediaConstants.StateInfo.STATE_NAME_KEY] as! String, stateInfoMap?[MediaConstants.StateInfo.STATE_NAME_KEY] as? String ?? "")
     }
 }
+
+

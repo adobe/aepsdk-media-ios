@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "AEPCore",
+        "repositoryURL": "https://github.com/cacheung/aepsdk-core-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "3e6599f247fd64167e4a5e172fe87f4eccdcb1a5",
+          "version": "3.1.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
