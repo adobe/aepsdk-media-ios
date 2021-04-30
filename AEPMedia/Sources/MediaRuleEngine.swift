@@ -13,7 +13,8 @@ import Foundation
 import AEPServices
 
 class MediaRuleEngine {
-    let LOG_TAG = "MediaRuleEngine"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "MediaRuleEngine"
     let RULE_NOT_FOUND = "Matching rule not found"
     var rules: [Int: MediaRule] = [:]
     var enterFn: ((MediaRule, [String: Any]) -> Bool)?
@@ -44,23 +45,23 @@ class MediaRuleEngine {
         let predicateResult = rule.runPredicates(context: context)
 
         guard predicateResult.0 else {
-            Log.debug(label: "\(LOG_TAG):\(#function)", "Predicates failed for Rule \(rule.description)")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Predicates failed for Rule: (\(rule.description))")
             return predicateResult
         }
 
         // pass if no enterFn or if enterFn is a success
         if let enterFn=enterFn, !enterFn(rule, context) {
-            Log.debug(label: "\(LOG_TAG):\(#function)", "Enter action prevents further processing for Rule \(rule.description)")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Enter action prevents further processing for Rule: (\(rule.description))")
             return predicateResult
         }
 
         guard rule.runActions(context: context) else {
-            Log.debug(label: "\(LOG_TAG):\(#function)", "Rule action prevents further processing for Rule \(rule.description)")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Rule action prevents further processing for Rule: (\(rule.description))")
             return predicateResult
         }
 
         if let exitFn=exitFn, !exitFn(rule, context) {
-            Log.trace(label: "\(LOG_TAG):\(#function)", "Exit action not found or resulted in a failure for Rule \(rule.description)")
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Exit action not found or resulted in a failure for Rule: (\(rule.description))")
         }
 
         return predicateResult
