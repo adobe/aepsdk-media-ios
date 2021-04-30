@@ -13,7 +13,8 @@ import Foundation
 import AEPServices
 
 class AdInfo: Equatable {
-    private static let LOG_TAG = "AdInfo"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "AdInfo"
     let id: String
     let name: String
     let position: Int
@@ -29,22 +30,22 @@ class AdInfo: Equatable {
     init?(id: String, name: String, position: Int, length: Double) {
 
         guard !id.isEmpty else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating AdInfo, id must not be Empty")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating AdInfo, id must not be Empty")
             return nil
         }
 
         guard !name.isEmpty else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating AdInfo, name must not be Empty")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating AdInfo, name must not be Empty")
             return nil
         }
 
         guard position >= 1 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating AdBreakInfo, position must be greater than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating AdBreakInfo, position must be greater than zero")
             return nil
         }
 
         guard length >= 0 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating AdInfo, start time must not be less than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating AdInfo, start time must not be less than zero")
             return nil
         }
 
@@ -60,22 +61,22 @@ class AdInfo: Equatable {
         }
 
         guard let id = info?[MediaConstants.AdInfo.ID] as? String else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing AdInfo, invalid id")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing AdInfo, invalid id")
             return nil
         }
 
         guard let name = info?[MediaConstants.AdInfo.NAME] as? String else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing AdInfo, invalid name")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing AdInfo, invalid name")
             return nil
         }
 
         guard let position = info?[MediaConstants.AdInfo.POSITION] as? Int else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing AdInfo, invalid position")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing AdInfo, invalid position")
             return nil
         }
 
         guard let length = info?[MediaConstants.AdInfo.LENGTH] as? Double else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing AdInfo, invalid length")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing AdInfo, invalid length")
             return nil
         }
 

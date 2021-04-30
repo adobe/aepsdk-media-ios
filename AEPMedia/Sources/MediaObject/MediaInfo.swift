@@ -13,7 +13,8 @@ import Foundation
 import AEPServices
 
 class MediaInfo: Equatable {
-    private static let LOG_TAG = "MediaInfo"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "MediaInfo"
     static let DEFAULT_PREROLL_WAITING_TIME_IN_MS: Double = 250.0 //250 milliseconds
     let id: String
     let name: String
@@ -38,22 +39,22 @@ class MediaInfo: Equatable {
     init?(id: String, name: String, streamType: String, mediaType: MediaType, length: Double, resumed: Bool = false, prerollWaitingTime: TimeInterval = DEFAULT_PREROLL_WAITING_TIME_IN_MS, granularAdTracking: Bool = false) {
 
         guard !id.isEmpty else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating MediaInfo, id must not be Empty")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating MediaInfo, id must not be Empty")
             return nil
         }
 
         guard !name.isEmpty else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating MediaInfo, name must not be Empty")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating MediaInfo, name must not be Empty")
             return nil
         }
 
         guard !streamType.isEmpty else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating MediaInfo, stream type must not be Empty")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating MediaInfo, stream type must not be Empty")
             return nil
         }
 
         guard length >= 0 else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error creating MediaInfo, length must not be less than zero")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error creating MediaInfo, length must not be less than zero")
             return nil
         }
 
@@ -73,32 +74,32 @@ class MediaInfo: Equatable {
         }
 
         guard let id = info?[MediaConstants.MediaInfo.ID] as? String else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing MediaInfo, invalid id")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing MediaInfo, invalid id")
             return nil
         }
 
         guard let name = info?[MediaConstants.MediaInfo.NAME] as? String else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing MediaInfo, invalid name")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing MediaInfo, invalid name")
             return nil
         }
 
         guard let streamType = info?[MediaConstants.MediaInfo.STREAM_TYPE] as? String else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing MediaInfo, invalid stream type. Sample values -> {\"VOD\", \"LIVE\" ...}")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing MediaInfo, invalid stream type. Sample values -> {\"VOD\", \"LIVE\" ...}")
             return nil
         }
 
         guard let mediaTypeString = info?[MediaConstants.MediaInfo.MEDIA_TYPE] as? String else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing MediaInfo, invalid media type. Valid values -> {\"video\", \"audio\"}")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing MediaInfo, invalid media type. Valid values -> {\"video\", \"audio\"}")
             return nil
         }
 
         guard let mediaType: MediaType = MediaType(rawValue: mediaTypeString) else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing MediaInfo, invalid media type")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing MediaInfo, invalid media type")
             return nil
         }
 
         guard let length = info?[MediaConstants.MediaInfo.LENGTH] as? Double else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Error parsing MediaInfo, invalid length")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Error parsing MediaInfo, invalid length")
             return nil
         }
 

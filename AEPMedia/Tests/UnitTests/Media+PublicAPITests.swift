@@ -145,7 +145,7 @@ class MediaPublicAPITests: XCTestCase {
     // createAdObjects
     // ==========================================================================
     func testCreateAdInfo() {
-        let infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 3, length: 20)
+        let infoMap = Media.createAdObjectWith(name: "adName", id: "AdId", position: 3, length: 20)
         XCTAssertFalse(infoMap?.isEmpty ?? true)
         XCTAssertEqual("adName", infoMap?[MediaConstants.AdInfo.NAME] as? String ?? "")
         XCTAssertEqual("AdId", infoMap?[MediaConstants.AdInfo.ID] as? String ?? "")
@@ -155,19 +155,19 @@ class MediaPublicAPITests: XCTestCase {
 
     func testCreateAdInfo_Invalid() {
         // empty name
-        var infoMap = Media.createAdObjectWith(name: "", adId: "AdId", position: 2, length: 20)
+        var infoMap = Media.createAdObjectWith(name: "", id: "AdId", position: 2, length: 20)
         XCTAssertNil(infoMap)
 
         // empty id name
-        infoMap = Media.createAdObjectWith(name: "adName", adId: "", position: 2, length: 20)
+        infoMap = Media.createAdObjectWith(name: "adName", id: "", position: 2, length: 20)
         XCTAssertNil(infoMap)
 
         // < 1 position
-        infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 0, length: 20)
+        infoMap = Media.createAdObjectWith(name: "adName", id: "AdId", position: 0, length: 20)
         XCTAssertNil(infoMap)
 
         // < 0 length
-        infoMap = Media.createAdObjectWith(name: "adName", adId: "AdId", position: 2, length: -1)
+        infoMap = Media.createAdObjectWith(name: "adName", id: "AdId", position: 2, length: -1)
         XCTAssertNil(infoMap)
     }
 
@@ -251,5 +251,42 @@ class MediaPublicAPITests: XCTestCase {
         // Invalid state name
         infoMap = Media.createStateObjectWith(stateName: "mute$$")
         XCTAssertNil(infoMap)
+    }
+
+    func testMediaEventEnum_RawValue() {
+        XCTAssertEqual(MediaConstants.EventName.CHAPTER_START, MediaEvent.ChapterStart.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.CHAPTER_SKIP, MediaEvent.ChapterSkip.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.CHAPTER_COMPLETE, MediaEvent.ChapterComplete.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.ADBREAK_START, MediaEvent.AdBreakStart.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.ADBREAK_COMPLETE, MediaEvent.AdBreakComplete.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.AD_START, MediaEvent.AdStart.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.AD_COMPLETE, MediaEvent.AdComplete.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.AD_SKIP, MediaEvent.AdSkip.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.BUFFER_START, MediaEvent.BufferStart.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.BUFFER_COMPLETE, MediaEvent.BufferComplete.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.SEEK_START, MediaEvent.SeekStart.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.SEEK_COMPLETE, MediaEvent.SeekComplete.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.BITRATE_CHANGE, MediaEvent.BitrateChange.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.STATE_START, MediaEvent.StateStart.rawValue)
+        XCTAssertEqual(MediaConstants.EventName.STATE_END, MediaEvent.StateEnd.rawValue)
+    }
+
+    func testMediaEventEnum_init() {
+        XCTAssertEqual(MediaEvent.ChapterStart, MediaEvent(rawValue: MediaConstants.EventName.CHAPTER_START))
+        XCTAssertEqual(MediaEvent.ChapterSkip, MediaEvent(rawValue: MediaConstants.EventName.CHAPTER_SKIP))
+        XCTAssertEqual(MediaEvent.ChapterComplete, MediaEvent(rawValue: MediaConstants.EventName.CHAPTER_COMPLETE))
+        XCTAssertEqual(MediaEvent.AdBreakStart, MediaEvent(rawValue: MediaConstants.EventName.ADBREAK_START))
+        XCTAssertEqual(MediaEvent.AdBreakComplete, MediaEvent(rawValue: MediaConstants.EventName.ADBREAK_COMPLETE))
+        XCTAssertEqual(MediaEvent.AdStart, MediaEvent(rawValue: MediaConstants.EventName.AD_START))
+        XCTAssertEqual(MediaEvent.AdComplete, MediaEvent(rawValue: MediaConstants.EventName.AD_COMPLETE))
+        XCTAssertEqual(MediaEvent.AdSkip, MediaEvent(rawValue: MediaConstants.EventName.AD_SKIP))
+        XCTAssertEqual(MediaEvent.BufferStart, MediaEvent(rawValue: MediaConstants.EventName.BUFFER_START))
+        XCTAssertEqual(MediaEvent.BufferComplete, MediaEvent(rawValue: MediaConstants.EventName.BUFFER_COMPLETE))
+        XCTAssertEqual(MediaEvent.SeekStart, MediaEvent(rawValue: MediaConstants.EventName.SEEK_START))
+        XCTAssertEqual(MediaEvent.SeekComplete, MediaEvent(rawValue: MediaConstants.EventName.SEEK_COMPLETE))
+        XCTAssertEqual(MediaEvent.BitrateChange, MediaEvent(rawValue: MediaConstants.EventName.BITRATE_CHANGE))
+        XCTAssertEqual(MediaEvent.StateStart, MediaEvent(rawValue: MediaConstants.EventName.STATE_START))
+        XCTAssertEqual(MediaEvent.StateEnd, MediaEvent(rawValue: MediaConstants.EventName.STATE_END))
+        XCTAssertNil(MediaEvent(rawValue: "invalid"))
     }
 }

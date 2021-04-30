@@ -14,8 +14,8 @@ import AEPCore
 import AEPServices
 
 class MediaState {
-    private let LOG_TAG = "MediaState"
-
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "MediaState"
     private(set) var privacyStatus: PrivacyStatus = .unknown
 
     // Media Config
@@ -24,7 +24,6 @@ class MediaState {
     private(set) var mediaOvp: String?
     private(set) var mediaPlayerName: String?
     private(set) var mediaAppVersion: String?
-    private(set) var mediaDebugLogging: Bool?
 
     // Analytics Config
     private(set) var analyticsRsid: String?
@@ -67,7 +66,7 @@ class MediaState {
     /// - Parameter configurationData the data map from `Configuration` shared state.
     func extractConfigurationInfo(from configurationData: [String: Any]?) {
         guard let configurationData = configurationData else {
-            Log.trace(label: LOG_TAG, "\(#function) - Failed to extract configuration data (event data was nil).")
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to extract configuration data (event data was nil).")
             return
         }
         self.privacyStatus = PrivacyStatus.init(rawValue: configurationData[MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY] as? PrivacyStatus.RawValue ?? PrivacyStatus.unknown.rawValue) ?? .unknown
@@ -80,14 +79,13 @@ class MediaState {
         self.mediaOvp = configurationData[MediaConstants.Configuration.MEDIA_OVP] as? String
         self.mediaPlayerName = configurationData[MediaConstants.Configuration.MEDIA_PLAYER_NAME] as? String
         self.mediaAppVersion = configurationData[MediaConstants.Configuration.MEDIA_APP_VERSION] as? String
-        self.mediaDebugLogging = configurationData[MediaConstants.Configuration.MEDIA_DEBUG_LOGGING] as? Bool ?? false
     }
 
     /// Extracts the identity data from the provided shared state data.
     /// - Parameter identityData the data map from `Identity` shared state.
     func extractIdentityInfo(from identityData: [String: Any]?) {
         guard let identityData = identityData else {
-            Log.trace(label: LOG_TAG, "\(#function) - Failed to extract identity data (event data was nil).")
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to extract identity data (event data was nil).")
             return
         }
         self.ecid = identityData[MediaConstants.Identity.MARKETING_VISITOR_ID] as? String
@@ -100,7 +98,7 @@ class MediaState {
     /// - Parameter analyticsData the data map from `Analytics` shared state.
     func extractAnalyticsInfo(from analyticsData: [String: Any]?) {
         guard let analyticsData = analyticsData else {
-            Log.trace(label: LOG_TAG, "\(#function) - Failed to extract analytics data (event data was nil).")
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to extract analytics data (event data was nil).")
             return
         }
         self.aid = analyticsData[MediaConstants.Analytics.ANALYTICS_VISITOR_ID] as? String

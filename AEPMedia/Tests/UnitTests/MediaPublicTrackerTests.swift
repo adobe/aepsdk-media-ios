@@ -150,6 +150,36 @@ class MediaPublicTrackerTests: XCTestCase {
     }
 
     // ==========================================================================
+    // Event extension for Media
+    // ==========================================================================
+
+    func testEventExtension_TrackerIdAndConfig() {
+        var capturedEvent: Event?
+        _ = MediaPublicTracker(dispatch: {(event: Event) in
+            capturedEvent = event
+        }, config: Self.testConfig)
+
+        XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, capturedEvent?.source)
+        XCTAssertEqual(MediaConstants.Media.EVENT_TYPE, capturedEvent?.type)
+
+        let trackerId = capturedEvent?.trackerId
+        XCTAssertFalse((trackerId ?? "").isEmpty)
+
+        let trackerConfig = capturedEvent?.trackerConfig
+        XCTAssertTrue(isEqual(map1: trackerConfig, map2: Self.testConfig))
+    }
+
+    func testEventExtension_MissingTrackerIdAndConfig() {
+        let event = Event(name: "newEvent", type: EventType.custom, source: EventSource.none, data: nil)
+
+        let trackerId = event.trackerId
+        XCTAssertNil(trackerId)
+
+        let trackerConfig = event.trackerConfig
+        XCTAssertNil(trackerConfig)
+    }
+
+    // ==========================================================================
     // trackAPIs
     // ==========================================================================
     func test_trackSessionStart() {

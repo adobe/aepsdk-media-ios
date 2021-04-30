@@ -20,7 +20,7 @@ class ViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
 
-        guard let video = Bundle.main.path(forResource: "video", ofType:"mp4") else {
+        guard let video = Bundle.main.path(forResource: "video", ofType: "mp4") else {
             return
         }
 

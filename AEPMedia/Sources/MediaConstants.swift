@@ -16,7 +16,8 @@ internal extension MediaConstants {
     static let FRIENDLY_NAME                            = "Media Analytics"
     static let EXTENSION_VERSION                        = "3.0.0"
     static let DATASTORE_NAME                           = EXTENSION_NAME
-    static let DATABASE_NAME                            = "com.adobe.module.media"
+    static let DATABASE_NAME                            = EXTENSION_NAME
+    static let LOG_TAG                                  = EXTENSION_NAME
 
     static let VERSION_PREFIX_IOS = "ios-media-"
     static let VERSION_PREFIX_TVOS = "tvos-media-"

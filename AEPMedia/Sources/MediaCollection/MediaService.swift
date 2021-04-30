@@ -15,7 +15,8 @@ import AEPServices
 
 class MediaService: MediaProcessor {
 
-    private static let LOG_TAG = "MediaService"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "MediaService"
 
     private let dependencies = [
         MediaConstants.Configuration.SHARED_STATE_NAME,
@@ -55,7 +56,7 @@ class MediaService: MediaProcessor {
     func createSession(config: [String: Any]) -> String? {
         dispatchQueue.sync {
             guard mediaState.privacyStatus != .optedOut else {
-                Log.debug(label: Self.LOG_TAG, "\(#function) - Could not start new media session. Privacy is opted out.")
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Could not start new media session. Privacy is opted out.")
                 return nil
             }
 
@@ -69,7 +70,7 @@ class MediaService: MediaProcessor {
             }
 
             mediaSessions[sessionId] = session
-            Log.trace(label: Self.LOG_TAG, "\(#function) - Created a new session (\(sessionId))")
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Created a new session (\(sessionId))")
             return sessionId
         }
     }
@@ -81,13 +82,13 @@ class MediaService: MediaProcessor {
     func processHit(sessionId: String, hit: MediaHit) {
         dispatchQueue.async {
             guard self.mediaSessions.keys.contains(sessionId) else {
-                Log.debug(label: Self.LOG_TAG, "\(#function) - Can not process session (\(sessionId)). SessionId is invalid.")
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Can not process session (\(sessionId)). SessionId is invalid.")
                 return
             }
 
             let session = self.mediaSessions[sessionId]
             session?.queue(hit: hit)
-            Log.trace(label: Self.LOG_TAG, "\(#function) - Successfully queued hit (\(hit.eventType) for Session (\(sessionId)).")
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Successfully queued hit (\(hit.eventType) for Session (\(sessionId)).")
         }
     }
 
@@ -97,16 +98,16 @@ class MediaService: MediaProcessor {
     func endSession(sessionId: String) {
         dispatchQueue.async {
             guard self.mediaSessions.keys.contains(sessionId) else {
-                Log.debug(label: Self.LOG_TAG, "\(#function) - Can not end media session (\(sessionId)). Invalid session id.")
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Can not end media session (\(sessionId)). Invalid session id.")
                 return
             }
 
             self.mediaSessions[sessionId]?.end {
                 self.mediaSessions.removeValue(forKey: sessionId)
-                Log.trace(label: Self.LOG_TAG, "\(#function) - Successfully ended media session (\(sessionId))")
+                Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Successfully ended media session (\(sessionId))")
             }
 
-            Log.trace(label: Self.LOG_TAG, "\(#function) - Scheduled end for media session (\(sessionId))")
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Scheduled end for media session (\(sessionId))")
         }
     }
 
@@ -115,23 +116,23 @@ class MediaService: MediaProcessor {
     /// - Parameter sessionId: Unique sessionId of session to be aborted.
     private func abort(sessionId: String) {
         guard mediaSessions.keys.contains(sessionId) else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Can not abort media session (\(sessionId)). SessionId is invalid.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Can not abort media session (\(sessionId)). SessionId is invalid.")
             return
         }
 
         mediaSessions[sessionId]?.abort {
             self.mediaSessions.removeValue(forKey: sessionId)
-            Log.trace(label: Self.LOG_TAG, "\(#function) - Successfully aborted media session (\(sessionId)).")
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Successfully aborted media session (\(sessionId)).")
         }
 
-        Log.trace(label: Self.LOG_TAG, "\(#function) - Scheduled abort for media session (\(sessionId).")
+        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Scheduled abort for media session (\(sessionId).")
     }
 
     /// Notify MediaState updates
     /// - Parameter sessionId: Unique sessionId of session
     private func notifyMediaStateUpdate(sessionId: String) {
         guard mediaSessions.keys.contains(sessionId) else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Can not notify states changes for media session (\(sessionId)). SessionId is invalid.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Can not notify states changes for media session (\(sessionId)). SessionId is invalid.")
             return
         }
 

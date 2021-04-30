@@ -12,6 +12,8 @@
 import Foundation
 import AEPServices
 
+/// These enumeration values define the type of a media.
+/// These enumeration are to be used in *createMediaObjectWith(name:id:length:streamType:mediaType: )*
 @objc(AEPMediaType)
 public enum MediaType: Int, RawRepresentable {
     case Audio
