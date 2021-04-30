@@ -102,7 +102,8 @@ class MediaEventTracker: MediaEventTracking {
     private static let KEY_METADATA = "key_metadata"
     private static let KEY_EVENT_TS = "key_eventts"
 
-    private static let LOG_TAG = "MediaEventTracker"
+    private static let LOG_TAG = MediaConstants.LOG_TAG
+    private static let CLASS_NAME = "MediaEventTracker"
     private static let IDLE_TIMEOUT_MS: Int64 = 1800 * 1000 //30 min
     private static let MEDIA_SESSION_TIMEOUT_MS: Int64 = 86400 * 1000 //24 hours
     private static let CONTENT_START_DURATION_MS: Int64 = 1 * 1000 //1 sec
@@ -159,22 +160,22 @@ class MediaEventTracker: MediaEventTracking {
     @discardableResult
     func track(eventData: [String: Any]?) -> Bool {
         guard let eventData = eventData else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Failed to track event (event data was null).")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to track event (event data was null).")
             return false
         }
 
         guard let eventName = eventData[MediaConstants.Tracker.EVENT_NAME] as? String else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Event name is missing in track event data.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Event name is missing in track event data.")
             return false
         }
 
         guard let rule = Self.eventToRuleMap[eventName] else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Event name is invalid in track event data.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Event name is invalid in track event data.")
             return false
         }
 
         guard let eventTs = eventData[MediaConstants.Tracker.EVENT_TIMESTAMP] else {
-            Log.debug(label: Self.LOG_TAG, "\(#function) - Event timestamp is missing in track event data.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Event timestamp is missing in track event data.")
             return false
         }
         var ruleContext: [String: Any] = [:]
@@ -189,7 +190,7 @@ class MediaEventTracker: MediaEventTracking {
         }
 
         if rule != RuleName.PlayheadUpdate {
-            Log.trace(label: Self.LOG_TAG, "\(#function) - Processing event - \(eventName)")
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Processing event - \(eventName)")
         }
 
         if prerollDeferRule(rule: rule, context: ruleContext) {
@@ -208,7 +209,7 @@ class MediaEventTracker: MediaEventTracking {
         let result = ruleEngine.processRule(name: rule.rawValue, context: context)
 
         if !result.success {
-            Log.warning(label: Self.LOG_TAG, "\(#function) - ProcessRule - \(result.errorMsg)")
+            Log.warning(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - ProcessRule - \(result.errorMsg)")
         }
 
         return result.success
