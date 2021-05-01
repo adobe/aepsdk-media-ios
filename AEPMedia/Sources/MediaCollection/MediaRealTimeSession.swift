@@ -36,6 +36,10 @@ class MediaRealTimeSession: MediaSession {
     var retryDuration = DURATION_BETWEEN_HITS_ON_FAILURE
 
     override func handleQueueMediaHit(hit: MediaHit) {
+        if !isSessionActive {
+            return
+        }
+
         Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(id))] Queuing hit with event type (\(hit.eventType))")
         hits.append(hit)
         trySendHit()

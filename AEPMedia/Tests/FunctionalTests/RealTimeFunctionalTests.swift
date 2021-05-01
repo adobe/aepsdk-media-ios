@@ -180,7 +180,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
 
         // verify
         let requests = mockNetworkService.calledNetworkRequests
-        // dropeed the hits
+        // dropped the hits
         XCTAssertEqual(0, session.hits.count)
         // play ping not sent
         XCTAssertEqual(3, requests.count)
@@ -211,5 +211,174 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertTrue(playRequest?.url.absoluteString.contains("MediaCollectionServerSessionId") ?? false)
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.playJson, payload: playRequestURLString))
+    }
+
+    func testAbort_shouldDropRequestInQueueButNotBeingSent() {
+        // setup
+        mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Location": "/api/test/sessions/MediaCollectionServerSessionId"]), error: nil)
+
+        // test
+        dispatchQueue.async {
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.sessionStart)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.pause)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.complete)
+            self.session.abort()
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.pause)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+        }
+        waitForProcessing()
+
+        // verify
+        let requests = mockNetworkService.calledNetworkRequests
+        XCTAssertEqual(0, session.hits.count)
+        XCTAssertEqual(1, requests.count)
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+
+        let sessionStartRequest = requests[0]
+        let sessionStartRequestURLString = sessionStartRequest?.connectPayload ?? ""
+
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
+    }
+
+    func testEnd_ShouldSendAllTheQueuedNetworkRequests_ShouldDropRequestsAfterEnd() {
+        // setup
+        mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Location": "/api/test/sessions/MediaCollectionServerSessionId"]), error: nil)
+
+        // test
+        dispatchQueue.async {
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.sessionStart)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.pause)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.complete)
+            self.session.end()
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.pause)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+        }
+        waitForProcessing()
+
+        // verify
+        let requests = mockNetworkService.calledNetworkRequests
+        XCTAssertEqual(0, session.hits.count)
+        XCTAssertEqual(5, requests.count)
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+
+        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
+        let playRequestURLString1 = requests[1]?.connectPayload ?? ""
+        let pauseRequestURLString = requests[2]?.connectPayload ?? ""
+        let playRequestURLString2 = requests[1]?.connectPayload ?? ""
+        let completeRequestURLString = requests[4]?.connectPayload ?? ""
+
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.playJson, payload: playRequestURLString1))
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.pauseJson, payload: pauseRequestURLString))
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.playJson, payload: playRequestURLString2))
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.completeJson, payload: completeRequestURLString))
+    }
+
+    func testHandleAbortAfterEnd() {
+        // setup
+        mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Location": "/api/test/sessions/MediaCollectionServerSessionId"]), error: nil)
+
+        // test
+        dispatchQueue.async {
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.sessionStart)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.end()
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.abort()
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.pause)
+        }
+        waitForProcessing()
+
+        // verify
+        let requests = mockNetworkService.calledNetworkRequests
+        XCTAssertEqual(0, session.hits.count)
+        XCTAssertEqual(2, requests.count)
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+
+        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
+        let playRequestURLString1 = requests[1]?.connectPayload ?? ""
+
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.playJson, payload: playRequestURLString1))
+    }
+
+    func testHandleEndAfterAbort() {
+        // setup
+        mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Location": "/api/test/sessions/MediaCollectionServerSessionId"]), error: nil)
+
+        // test
+        dispatchQueue.async {
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.sessionStart)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.abort()
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.end()
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.pause)
+        }
+        waitForProcessing()
+
+        // verify
+        let requests = mockNetworkService.calledNetworkRequests
+        XCTAssertEqual(0, session.hits.count)
+        XCTAssertEqual(1, requests.count)
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+
+        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
+
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
+    }
+
+    func testAbortSessionEndHandler() {
+        // setup
+        mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Location": "/api/test/sessions/MediaCollectionServerSessionId"]), error: nil)
+
+        // test
+        let expectation = XCTestExpectation(description: "SessionEndHandler callback should be called by MediaSession")
+        dispatchQueue.async {
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.sessionStart)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.abort {
+                expectation.fulfill()
+            }
+        }
+        self.wait(for: [expectation], timeout: 0.5)
+        waitForProcessing()
+
+        // verify
+        let requests = mockNetworkService.calledNetworkRequests
+        XCTAssertEqual(0, session.hits.count)
+        XCTAssertEqual(1, requests.count)
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+
+        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
+
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
+    }
+
+    func testEndSessionEndHandler() {
+        // setup
+        mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Location": "/api/test/sessions/MediaCollectionServerSessionId"]), error: nil)
+
+        // test
+        let expectation = XCTestExpectation(description: "SessionEndHandler callback should be called by MediaSession")
+        dispatchQueue.async {
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.sessionStart)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.end {
+                expectation.fulfill()
+            }
+        }
+        self.wait(for: [expectation], timeout: 0.5)
+        waitForProcessing()
+
+        // verify
+        let requests = mockNetworkService.calledNetworkRequests
+        XCTAssertEqual(0, session.hits.count)
+        XCTAssertEqual(2, requests.count)
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
     }
 }
