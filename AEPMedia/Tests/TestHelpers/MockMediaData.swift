@@ -201,8 +201,6 @@ class MockMediaData {
         "media.qoe.timeToStart" : 20
         }
         }
-        }
-
         """
 
         sessionStartJsonWithState = """
