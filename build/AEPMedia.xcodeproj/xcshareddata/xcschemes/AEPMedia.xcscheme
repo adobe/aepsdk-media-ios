@@ -63,6 +63,16 @@
                ReferencedContainer = "container:AEPMedia.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D66F0B642616929C0018E779"
+               BuildableName = "AEPMediaFunctionalTests.xctest"
+               BlueprintName = "AEPMediaFunctionalTests"
+               ReferencedContainer = "container:AEPMedia.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
