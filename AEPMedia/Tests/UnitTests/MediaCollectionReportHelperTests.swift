@@ -103,7 +103,6 @@ class MediaCollectionReportHelperTests: XCTestCase {
     }
 
     func testGenerateHitReport() {
-
         //Setup
         let hit = mockMediaData.sessionStart!
         let state = mockMediaData.mediaState

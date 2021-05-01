@@ -60,6 +60,7 @@ class MockMediaData {
     var completeJson: String!
 
     var forceSessionEndJson: String!
+    var sessionEndJson: String!
     var forceSessionEndAfterRelaunchJson: String!
 
     init() {
@@ -503,6 +504,17 @@ class MockMediaData {
          "playerTime" : {
                          "playhead" : 45,
                           "ts" : 65000
+                          },
+                          "eventType" : "sessionEnd"
+                          }
+        """
+
+        // Session End for OfflineFunctionalTests
+        sessionEndJson = """
+        {
+         "playerTime" : {
+                         "playhead" : 0,
+                          "ts" : 100
                           },
                           "eventType" : "sessionEnd"
                           }
