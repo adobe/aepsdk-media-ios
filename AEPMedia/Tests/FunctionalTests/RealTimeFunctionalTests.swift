@@ -27,13 +27,43 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         mockMediaData = MockMediaData()
         dispatchQueue = DispatchQueue(label: "testRealTime")
 
-        mediaState = MediaState()
+        mediaState = mockMediaData.mediaState
         mediaState.extractConfigurationInfo(from: mockMediaData.configSharedState)
         mediaState.extractIdentityInfo(from: mockMediaData.identitySharedState)
         mediaState.extractAnalyticsInfo(from: mockMediaData.analyticsSharedState)
 
         session = MediaRealTimeSession(id: "sessionID", state: mediaState, dispatchQueue: dispatchQueue)
         session.retryDuration = 0
+    }
+
+    func compareJsonArray(expected: String, payload: String) -> Bool {
+        var result = true
+        guard let jsonObj = try? JSONSerialization.jsonObject(with: payload.data(using: .utf8)!, options: []) as? [String: Any] else {
+            return false
+        }
+
+        let playertime = jsonObj["playerTime"] as? [String: Double] ?? [:]
+
+        let eventType = jsonObj["eventType"] as? String ?? ""
+        let playhead =  playertime["playhead"] ?? 0.0
+        let ts = playertime["ts"] ?? 0.0
+        let actualMediaHit = MediaHit(eventType: eventType, playhead: playhead, ts: Int64(ts), params: jsonObj["params"] as? [String: Any], customMetadata: jsonObj["customMetadata"] as? [String: String], qoeData: jsonObj["qoeData"] as? [String: Any])
+
+        let expectedMediaHit = try? JSONDecoder().decode(MediaHit.self, from: expected.data(using: .utf8)!)
+        result = result && compareMediaHits(actual: actualMediaHit, expected: expectedMediaHit!)
+
+        return result
+    }
+
+    func compareMediaHits(actual: MediaHit, expected: MediaHit) -> Bool {
+        var result = true
+        result = result && actual.eventType == expected.eventType
+        result = result && actual.timestamp == expected.timestamp
+        result = result && actual.playhead == expected.playhead
+        result = result && actual.params?.count ?? 0 == expected.params?.count ?? 0
+        result = result && actual.metadata?.count ?? 0 == expected.metadata?.count ?? 0
+        result = result && actual.qoeData?.count ?? 0 == expected.qoeData?.count ?? 0
+        return result
     }
 
     func testTrySendHit_success() {
@@ -142,9 +172,11 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: nil, headerFields: [:]), error: nil)
 
         // test
-        session.handleQueueMediaHit(hit: mockMediaData.sessionStart)
-        session.handleQueueMediaHit(hit: mockMediaData.play)
-        waitForProcessing(interval: 1)
+        dispatchQueue.async {
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.sessionStart)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+        }
+        waitForProcessing()
 
         // verify
         let requests = mockNetworkService.calledNetworkRequests
@@ -160,12 +192,11 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Location": "/api/test/sessions/MediaCollectionServerSessionId"]), error: nil)
 
         // test
-        session.handleQueueMediaHit(hit: mockMediaData.sessionStart)
-        waitForProcessing(interval: 1)
-        session.handleQueueMediaHit(hit: mockMediaData.play)
-
-        // Play ping
-        waitForProcessing(interval: 1)
+        dispatchQueue.async {
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.sessionStart)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+        }
+        waitForProcessing()
 
         // verify
         let requests = mockNetworkService.calledNetworkRequests
@@ -177,8 +208,8 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         let playRequest = requests[1]
         let playRequestURLString = playRequest?.connectPayload ?? ""
 
-        XCTAssertTrue(sessionStartRequestURLString.contains("\"eventType\":\"sessionStart\""))
         XCTAssertTrue(playRequest?.url.absoluteString.contains("MediaCollectionServerSessionId") ?? false)
-        XCTAssertTrue(playRequestURLString.contains("\"eventType\":\"play\""))
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
+        XCTAssertTrue(compareJsonArray(expected: mockMediaData.playJson, payload: playRequestURLString))
     }
 }

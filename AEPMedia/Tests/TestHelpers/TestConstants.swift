@@ -59,7 +59,6 @@ class TestConstants {
         MediaConstants.Configuration.ANALYTICS_RSID: "rsid",
         MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: "optedin",
         MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID: "orgid",
-        MediaConstants.Configuration.MEDIA_OVP: "ovp",
         MediaConstants.Configuration.MEDIA_CHANNEL: "channel",
         MediaConstants.Configuration.MEDIA_PLAYER_NAME: "player",
         MediaConstants.Configuration.MEDIA_APP_VERSION: Media.extensionVersion,

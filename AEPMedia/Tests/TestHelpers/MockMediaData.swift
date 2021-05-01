@@ -78,25 +78,22 @@ class MockMediaData {
             MediaConstants.Configuration.MEDIA_TRACKING_SERVER: "media_server",
             MediaConstants.Configuration.MEDIA_COLLECTION_SERVER: "media_collection_server",
             MediaConstants.Configuration.MEDIA_CHANNEL: "channel",
-            MediaConstants.Configuration.MEDIA_OVP: "ovp",
             MediaConstants.Configuration.MEDIA_PLAYER_NAME: "player_name",
             MediaConstants.Configuration.MEDIA_APP_VERSION: "app_version",
-            MediaConstants.Configuration.MEDIA_DEBUG_LOGGING: false
         ]
 
         //Identity shared state
-        identitySharedState = [
-            MediaConstants.Identity.LOC_HINT: "9",
-            MediaConstants.Identity.BLOB: "blob",
-            MediaConstants.Identity.MARKETING_VISITOR_ID: "mid",
-        ]
-
         var visitorIdList = [[String: Any]]()
         visitorIdList.append(["id": "id_type1", "value": "u111111111", "authstate": 0])
         visitorIdList.append(["id": "id_type2", "value": "1234567890", "authstate": 1])
         visitorIdList.append(["id": "id_type2", "value": "testPushId", "authstate": 2])
 
-        identitySharedState[MediaConstants.Identity.VISITOR_IDS_LIST] = visitorIdList
+        identitySharedState = [
+            MediaConstants.Identity.LOC_HINT: "9",
+            MediaConstants.Identity.BLOB: "blob",
+            MediaConstants.Identity.MARKETING_VISITOR_ID: "mid",
+            MediaConstants.Identity.VISITOR_IDS_LIST: visitorIdList
+        ]
 
         //analytics shared state
         analyticsSharedState = [
@@ -204,6 +201,62 @@ class MockMediaData {
         "media.qoe.timeToStart" : 20
         }
         }
+        }
+
+        """
+
+        sessionStartJsonWithState = """
+        {
+         "playerTime" : {
+         "playhead" : 0,
+         "ts" : 0
+         },
+         "customMetadata" : {
+         "key1" : "value1"
+         },
+         "eventType" : "sessionStart",
+         "params" : {
+         "media.name" : "media_name",
+         "media.id" : "media_id",
+         "media.streamType" : "video",
+         "media.contentType" : "vod",
+         "media.length" : 1800,
+         "media.downloaded" : true,
+         "media.resume" : false,
+         "media.channel" : "channel",
+         "media.playerName" : "player_name",
+         "analytics.enableSSL" : true,
+         "analytics.trackingServer" : "analytics_server",
+         "analytics.reportSuite" : "rsid",
+         "analytics.visitorId" : "vid",
+         "analytics.aid" : "aid",
+         "visitor.marketingCloudOrgId" : "org_id",
+         "visitor.marketingCloudUserId" : "mid",
+         "visitor.aamLocationHint" : 9,
+         "media.sdkVersion" : "app_version",
+         "media.libraryVersion":"media-java-1.x.x",
+         "visitor.customerIDs": {
+         "id_type1": {
+         "id": "u111111111",
+         "authState": 0
+         },
+         "id_type2": {
+         "id": "1234567890",
+         "authState": 1,
+        },
+        "id_type3": {
+        "id": "testPushId",
+        "authState": 2
+        }
+        }
+        },
+        "qoeData" : {
+        "media.qoe.bitrate" : 100000,
+        "media.qoe.droppedFrames" : 2,
+        "media.qoe.framesPerSecond" : 23.5,
+        "media.qoe.timeToStart" : 20
+        }
+        }
 
         """
 
@@ -302,13 +355,13 @@ class MockMediaData {
         "id": "testPushId",
         "authState": 2
         }
+        }
         },
         "qoeData" : {
         "media.qoe.bitrate" : 100000.0,
         "media.qoe.droppedFrames" : 2.0,
         "media.qoe.framesPerSecond" : 23.5,
         "media.qoe.timeToStart" : 20.0
-        }
         }
         }
         """
@@ -481,5 +534,4 @@ class MockMediaData {
                           }
         """
     }
-
 }
