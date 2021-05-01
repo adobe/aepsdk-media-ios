@@ -173,7 +173,9 @@ class MediaRealTimeSession: MediaSession {
 
     ///Initiates sending the next hit after a hit is successfully send OR error occurred in sending the hit, greater than or equals to MAX_ALLOWED_FAILURE times. It also handles the condition if there is not pending hit and session has been ended.
     private func sendNextHit() {
-        hits.removeFirst()
+        if !hits.isEmpty {
+            hits.removeFirst()
+        }
 
         if hits.isEmpty && !isSessionActive {
             sessionEndHandler?()
