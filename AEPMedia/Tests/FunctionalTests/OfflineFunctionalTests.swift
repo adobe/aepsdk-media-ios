@@ -121,7 +121,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         waitForProcessing()
 
         let failedNetworkRequestsCount = mockNetworkService.calledNetworkRequests.count
-        
+
         // Network connected
         mockNetworkService.shouldReturnConnectionError = false
         mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [:]), error: nil)
