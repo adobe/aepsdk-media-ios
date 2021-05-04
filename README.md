@@ -45,19 +45,13 @@ To add the AEPMedia Package to your application, from the Xcode menu select:
 
 Enter the URL for the AEPMedia package repository: `https://github.com/adobe/aepsdk-media-ios.git`.
 
-When prompted, make sure you change the branch to `main`. (Once the repo is public, we will reference specific tags/versions instead of a branch)
-
-There are three options for selecting your dependencies as identified by the *suffix* of the library name:
-
-- "Dynamic" - the library will be linked dynamically
-- "Static" - the library will be linked statically
-- *(none)* - (default) SPM will determine whether the library will be linked dynamically or statically
+When prompted, input a specific version or a range of versions for Version rule.
 
 Alternatively, if your project has a `Package.swift` file, you can add AEPMedia directly to your dependencies:
 
 ```
 dependencies: [
-    .package(url: "https://github.com/adobe/aepsdk-media-ios.git", .branch("main"))
+    .package(url: "https://github.com/adobe/aepsdk-media-ios.git", from: "3.0.0"),
 ]
 ```
 

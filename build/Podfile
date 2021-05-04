@@ -10,11 +10,28 @@ target 'AEPMedia' do
   pod 'AEPServices'
   pod 'AEPIdentity'
   pod 'AEPRulesEngine'
+end
 
-target 'AEPMediaTests' do
+target 'AEPMediaUnitTests' do
   pod 'AEPCore'
   pod 'AEPServices'
   pod 'AEPRulesEngine'
 end
 
+target 'AEPMediaFunctionalTests' do
+  pod 'AEPCore'
+  pod 'AEPServices'
+  pod 'AEPRulesEngine'
 end
+
+target 'MediaSampleApp' do
+  pod 'AEPCore'
+  pod 'AEPServices'
+  pod 'AEPRulesEngine'
+  pod 'AEPLifecycle'
+  pod 'AEPIdentity'
+  pod 'AEPAnalytics'
+  pod 'AEPAssurance'
+  pod 'ACPCore', :git => 'https://github.com/adobe/aepsdk-compatibility-ios.git', :branch => 'main'
+end
+

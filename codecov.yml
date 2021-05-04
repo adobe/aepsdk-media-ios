@@ -19,22 +19,10 @@ coverage:
     changes: no
 
   ignore:
-    - "./AEPCore/Mocks/.*"
-    - "./AEPCore/Mocks/**/*"
-    - "./AEPCore/Tests/**/*"
-    - "./AEPCore/Tests/.*"
-    - "./AEPIdentity/Tests/**/*"
-    - "./AEPIdentity/Tests/.*"
-    - "./AEPLifecycle/Tests/**/*"
-    - "./AEPLifecycle/Tests/.*"
-    - "./AEPServices/Tests/**/*"
-    - "./AEPServices/Tests/.*"
-    - "./AEPServices/Mocks/**/*"
-    - "./AEPServices/Mocks/.*"
-    - "./AEPSignal/Tests/**/*"
-    - "./AEPSignal/Tests/.*"
-    - "./TestApps"
-    - "./Documentation"
+    - "./AEPMedia/Mocks/.*"
+    - "./AEPMedia/Mocks/**/*"
+    - "./AEPMedia/Tests/**/*"
+    - "./AEPMedia/Tests/.*"
     - "./build"
 
 parsers:

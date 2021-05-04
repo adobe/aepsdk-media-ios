@@ -10,8 +10,9 @@
  governing permissions and limitations under the License.
  */
 
-@testable import AEPCore
 import Foundation
+
+@testable import AEPCore
 
 class TestableExtensionRuntime: ExtensionRuntime {
     var listeners: [String: EventListener] = [:]
@@ -21,13 +22,17 @@ class TestableExtensionRuntime: ExtensionRuntime {
     var otherSharedStates: [String: SharedStateResult] = [:]
     var otherXDMSharedStates: [String: SharedStateResult] = [:]
 
+    let dispatchQueue = DispatchQueue(label: "")
+
     func getListener(type: String, source: String) -> EventListener? {
         return listeners["\(type)-\(source)"]
     }
 
     func simulateComingEvent(event: Event) {
-        listeners["\(event.type)-\(event.source)"]?(event)
-        listeners["\(EventType.wildcard)-\(EventSource.wildcard)"]?(event)
+        dispatchQueue.async {
+            self.listeners["\(event.type)-\(event.source)"]?(event)
+            self.listeners["\(EventType.wildcard)-\(EventSource.wildcard)"]?(event)
+        }
     }
 
     func unregisterExtension() {
@@ -40,6 +45,10 @@ class TestableExtensionRuntime: ExtensionRuntime {
 
     func dispatch(event: Event) {
         dispatchedEvents += [event]
+        if event.source == "com.adobe.eventsource.media.requesttracker" || event.source == "com.adobe.eventsource.media.trackmedia" {
+            // if this is a create tracker or track media request the event needs to be dispatched to the Media Extension
+            simulateComingEvent(event: event)
+        }
     }
 
     func createSharedState(data: [String: Any], event _: Event?) {
@@ -53,10 +62,19 @@ class TestableExtensionRuntime: ExtensionRuntime {
     }
 
     func getSharedState(extensionName: String, event: Event?, barrier: Bool) -> SharedStateResult? {
-        return otherSharedStates["\(extensionName)-\(String(describing: event?.id))"] ?? nil
+        let state = self.otherSharedStates["\(extensionName)-\(String(describing: event?.id))"] ?? nil
+        if state == nil && event != nil {
+            return self.otherSharedStates["\(extensionName)-nil"] ?? nil
+        }
+        return state
     }
 
-    public func createXDMSharedState(data: [String : Any], event: Event?) {
+    func getXDMSharedState(extensionName: String, event: Event?, barrier: Bool) -> SharedStateResult? {
+        // no-op
+        return nil
+    }
+
+    public func createXDMSharedState(data: [String: Any], event: Event?) {
         createdXdmSharedStates += [data]
     }
 
@@ -71,7 +89,10 @@ class TestableExtensionRuntime: ExtensionRuntime {
     }
 
     func simulateSharedState(extensionName: String, event: Event?, data: (value: [String: Any]?, status: SharedStateStatus)) {
-        otherSharedStates["\(extensionName)-\(String(describing: event?.id))"] = SharedStateResult(status: data.status, value: data.value)
+        dispatchQueue.async {
+            self.otherSharedStates["\(extensionName)-\(String(describing: event?.id))"] = SharedStateResult(status: data.status, value: data.value)
+        }
+
     }
 
     public func simulateXDMSharedState(for extensionName: String, data: (value: [String: Any]?, status: SharedStateStatus)) {
