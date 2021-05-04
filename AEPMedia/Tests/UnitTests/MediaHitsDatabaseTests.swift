@@ -53,6 +53,13 @@ class MediaHitsDatabaseTests: XCTestCase {
         XCTAssertNil(hitsDatabase)
     }
 
+    func testCreateDatabaseWithInvalidFilePath() throws {
+        // setup
+        hitsDatabase = MediaHitsDatabase(databaseName: "database", databaseFilePath: FileManager.SearchPathDirectory.init(rawValue: 0)!)
+        // verify
+        XCTAssertNil(hitsDatabase)
+    }
+
     func testDatabaseAdd() throws {
         // setup and test
         let sessionId = UUID().uuidString

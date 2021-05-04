@@ -76,7 +76,6 @@ class MediaState {
         self.analyticsRsid = configurationData[MediaConstants.Configuration.ANALYTICS_RSID] as? String
         self.mediaCollectionServer = configurationData[MediaConstants.Configuration.MEDIA_COLLECTION_SERVER] as? String
         self.mediaChannel = configurationData[MediaConstants.Configuration.MEDIA_CHANNEL] as? String
-        self.mediaOvp = configurationData[MediaConstants.Configuration.MEDIA_OVP] as? String
         self.mediaPlayerName = configurationData[MediaConstants.Configuration.MEDIA_PLAYER_NAME] as? String
         self.mediaAppVersion = configurationData[MediaConstants.Configuration.MEDIA_APP_VERSION] as? String
     }
@@ -89,7 +88,9 @@ class MediaState {
             return
         }
         self.ecid = identityData[MediaConstants.Identity.MARKETING_VISITOR_ID] as? String
-        self.locHint = identityData[MediaConstants.Identity.LOC_HINT] as? Int
+        if let locHintString = identityData[MediaConstants.Identity.LOC_HINT] as? String {
+            self.locHint = Int(locHintString)
+        }
         self.blob = identityData[MediaConstants.Identity.BLOB] as? String
         self.visitorCustomerIDs = identityData[MediaConstants.Identity.VISITOR_IDS_LIST] as? [[String: Any]]
     }

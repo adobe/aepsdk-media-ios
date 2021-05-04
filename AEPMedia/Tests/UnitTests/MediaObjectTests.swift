@@ -925,5 +925,3 @@ class MediaObjectTests: XCTestCase {
         XCTAssertEqual(Self.validStateInfo[MediaConstants.StateInfo.STATE_NAME_KEY] as! String, stateInfoMap?[MediaConstants.StateInfo.STATE_NAME_KEY] as? String ?? "")
     }
 }
-
-

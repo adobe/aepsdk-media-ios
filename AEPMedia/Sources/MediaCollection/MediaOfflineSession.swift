@@ -22,6 +22,7 @@ class MediaOfflineSession: MediaSession {
     private let mediaDBService: MediaDBService
     private var isReportingSession = false
     private var failureCount = 0
+    var retryDuration = DURATION_BETWEEN_HITS_ON_FAILURE
 
     ///Initializer for `MediaOfflineSession`
     ///- Parameters:
@@ -35,6 +36,10 @@ class MediaOfflineSession: MediaSession {
     }
 
     override func handleQueueMediaHit(hit: MediaHit) {
+        if !isSessionActive {
+            return
+        }
+
         Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(id))] Persisting hit of event type (\(hit.eventType))")
         mediaDBService.persistHit(hit: hit, sessionId: id)
     }
@@ -141,8 +146,8 @@ class MediaOfflineSession: MediaSession {
             failureCount += 1
         }
 
-        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Will retry reporting media session after (\(Self.DURATION_BETWEEN_HITS_ON_FAILURE)) seconds.")
-        dispatchQueue.asyncAfter(deadline: .now() + .seconds(Self.DURATION_BETWEEN_HITS_ON_FAILURE)) { [weak self] in
+        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Will retry reporting media session after (\(self.retryDuration)) seconds.")
+        dispatchQueue.asyncAfter(deadline: .now() + .seconds(self.retryDuration)) { [weak self] in
             self?.tryReportSession()
         }
     }

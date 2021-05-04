@@ -2,6 +2,7 @@ export EXTENSION_NAME = AEPMedia
 PROJECT_NAME = $(EXTENSION_NAME)
 TARGET_NAME_XCFRAMEWORK = $(EXTENSION_NAME).xcframework
 SCHEME_NAME_XCFRAMEWORK = AEPMedia
+FUNCTIONAL_TEST_TARGET_NAME = AEPMediaFunctionalTests
 
 SIMULATOR_ARCHIVE_PATH = ./build/ios_simulator.xcarchive/Products/Library/Frameworks/
 IOS_ARCHIVE_PATH = ./build/ios.xcarchive/Products/Library/Frameworks/
@@ -21,7 +22,7 @@ pod-install:
 pod-update: pod-repo-update
 	(cd build && pod update)
 
-bundle-exec-pod-install:	
+bundle-exec-pod-install:
 	(cd build && bundle exec pod install)
 
 open:
@@ -29,7 +30,7 @@ open:
 
 test:
 	@echo "######################################################################"
-	@echo "### Unit Testing iOS"
+	@echo "### Unit & Functional Testing iOS"
 	@echo "######################################################################"
 	xcodebuild test -workspace build/$(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=iOS Simulator,name=iPhone 8' -derivedDataPath build/out -enableCodeCoverage YES
 

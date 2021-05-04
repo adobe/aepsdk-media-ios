@@ -38,7 +38,6 @@ internal extension MediaConstants {
         static let MEDIA_TRACKING_SERVER = "media.trackingServer"
         static let MEDIA_COLLECTION_SERVER = "media.collectionServer"
         static let MEDIA_CHANNEL = "media.channel"
-        static let MEDIA_OVP = "media.ovp"
         static let MEDIA_PLAYER_NAME = "media.playerName"
         static let MEDIA_APP_VERSION = "media.appVersion"
         static let MEDIA_DEBUG_LOGGING = "media.debugLogging"
