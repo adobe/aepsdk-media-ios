@@ -11,7 +11,7 @@
 
 import Foundation
 
-public class MediaConstants {
+public class MediaConstants: NSObject {
 
     /// These constant strings define the stream type of the main content that is currently tracked.
     @objc(AEPMediaStreamType)
