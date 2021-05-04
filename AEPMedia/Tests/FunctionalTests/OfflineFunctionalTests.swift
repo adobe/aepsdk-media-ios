@@ -106,8 +106,6 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
     }
 
     func testTryReportSession_ConnectionError_shouldRetryIndefinitelyUntilNetworkRequestIsSentSuccessfully() {
-        // setup
-        session.retryDuration = 1
         // Network disconnected
         mockNetworkService.shouldReturnConnectionError = true
         mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [:]), error: nil)
@@ -120,13 +118,15 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
             self.session.handleQueueMediaHit(hit: self.mockMediaData.complete)
             self.session.end()
         }
-        waitForProcessing(interval: 10)
+        waitForProcessing()
 
+        let failedNetworkRequestsCount = mockNetworkService.calledNetworkRequests.count
+        
         // Network connected
         mockNetworkService.shouldReturnConnectionError = false
         mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [:]), error: nil)
 
-        waitForProcessing(interval: 1)
+        waitForProcessing()
 
         // verify
         var expectedResponse = [String]()
@@ -136,11 +136,10 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         expectedResponse.append(mockMediaData.completeJson)
 
         let requests = mockNetworkService.calledNetworkRequests
-        // 10 retries and 1 successful attempt
-        XCTAssertEqual(11, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
         // Get payload of succeessful network request
-        let sessionRequestURLString = requests[10]?.connectPayload ?? ""
+        XCTAssertEqual(failedNetworkRequestsCount+1, requests.count)
+        let sessionRequestURLString = requests[requests.count-1]?.connectPayload ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: sessionRequestURLString))
     }
@@ -218,7 +217,6 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
 
     func testHandleAbortAfterEndButNetworkInRetry_shouldNotDropTheSessionHit() {
         // setup
-        session.retryDuration = 1
         mockNetworkService.shouldReturnConnectionError = true
 
         // test
@@ -229,7 +227,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
             self.session.handleQueueMediaHit(hit: self.mockMediaData.complete)
             self.session.end()
         }
-        waitForProcessing(interval: 3)
+        waitForProcessing()
 
         dispatchQueue.async {
             // abort will not go through since session is not active
@@ -240,7 +238,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         // verify
         let requests = mockNetworkService.calledNetworkRequests
         XCTAssertEqual(4, mediaDBService.getHits(sessionId: "sessionID").count)
-        XCTAssertEqual(4, requests.count)
+        XCTAssertTrue(requests.count > 3)
     }
 
     func testAbortSessionEndHandler() {
