@@ -28,8 +28,7 @@ class MediaPublicTracker: MediaTracker {
     let config: [String: Any]?
     let trackerId: String
     var sessionId: String
-    var resetSessionId = false
-    var inSession = false
+    var inSession = true
     var lastEventTs: Int64 = 0
     var lastPlayheadParams: [String: Any]?
     var timer: Timer?
@@ -45,7 +44,10 @@ class MediaPublicTracker: MediaTracker {
             MediaConstants.Tracker.ID: self.trackerId,
             MediaConstants.Tracker.EVENT_PARAM: self.config ?? [:]
         ]
-        let event = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
+        let event = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER,
+                          type: MediaConstants.Media.EVENT_TYPE,
+                          source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST,
+                          data: eventData)
 
         dispatch?(event)
         Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>]: Tracker request event was sent to event hub.")
@@ -115,24 +117,12 @@ class MediaPublicTracker: MediaTracker {
     private func trackInternal(eventName: String, params: [String: Any]? = nil, metadata: [String: String]? = nil, internalEvent: Bool = false) {
         if eventName == MediaConstants.EventName.SESSION_START {
             // Internal Tracker starts a new session only when we are not in an active session and we follow the same.
-            if params != nil {
-                let validMediaParams = MediaInfo(info: params) != nil
-                if validMediaParams {
-                    if resetSessionId {
-                        sessionId = UUID().uuidString
-                        resetSessionId = false
-                    }
-
-                    inSession = true
-                }
+            if !inSession, MediaInfo(info: params) != nil {
+                sessionId = UUID().uuidString
+                inSession = true
             }
         } else if eventName == MediaConstants.EventName.COMPLETE || eventName == MediaConstants.EventName.SESSION_END {
             inSession = false
-
-            // We still don't reset the session id till the next time we get session_start
-            // Any API call we receive after complete or session end is an error and is
-            // sent with same session_id.
-            resetSessionId = true
         }
 
         var eventData: [String: Any] = [:]

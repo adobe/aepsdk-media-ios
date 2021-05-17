@@ -21,14 +21,18 @@ class MockMediaData {
     var configSharedStateOptOut: [String: Any]!
     var configSharedStateUnknown: [String: Any]!
     var configSharedStateOptIn: [String: Any]!
+    var assuranceSharedState: [String: Any]!
+    var assuranceIntegrationId: String!
 
     var mediaState: MediaState!
     var mediaStateEmpty: MediaState!
     var mediaStateLocHintException: MediaState!
 
+    var sessionStartClientSessionId: String!
     var sessionStart: MediaHit!
     var sessionStartJson: String!
     var sessionStartJsonWithState: String!
+    var sessionStartWithSessionId: MediaHit!
     var session_start_json_with_configuration_identity_state: String!
 
     var sessionStartChannel: MediaHit!
@@ -102,6 +106,12 @@ class MockMediaData {
             MediaConstants.Analytics.ANALYTICS_VISITOR_ID: "aid"
         ]
 
+        // assurance shared state
+        assuranceIntegrationId = "assurance_token"
+        assuranceSharedState = [
+            MediaConstants.Assurance.INTEGRATION_ID: assuranceIntegrationId as Any
+        ]
+
         //setup Media State
         var sharedState = [String: [String: Any]]()
         sharedState[MediaConstants.Configuration.SHARED_STATE_NAME] = configSharedState
@@ -119,6 +129,8 @@ class MockMediaData {
 
         //Session Start
 
+        sessionStartClientSessionId = "clientSessionId"
+
         var params = [String: Any]()
         params["media.name"] = "media_name"
         params["media.id"] = "media_id"
@@ -127,6 +139,7 @@ class MockMediaData {
         params["media.length"] = 1800
         params["media.resume"] = false
         params["media.downloaded"] = true
+        params["sessionid"] = sessionStartClientSessionId
 
         var metadata = [String: String]()
         metadata["key1"] = "value1"

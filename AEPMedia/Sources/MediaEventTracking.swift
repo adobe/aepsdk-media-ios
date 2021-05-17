@@ -9,9 +9,10 @@
  governing permissions and limitations under the License.
  */
 import Foundation
+import AEPCore
 
 protocol MediaEventTracking {
 
     @discardableResult
-    func track(eventData: [String: Any]?) -> Bool
+    func track(event: Event) -> Bool
 }

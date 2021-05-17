@@ -21,7 +21,8 @@ class MediaService: MediaProcessor {
     private let dependencies = [
         MediaConstants.Configuration.SHARED_STATE_NAME,
         MediaConstants.Identity.SHARED_STATE_NAME,
-        MediaConstants.Analytics.SHARED_STATE_NAME
+        MediaConstants.Analytics.SHARED_STATE_NAME,
+        MediaConstants.Assurance.SHARED_STATE_NAME
     ]
     private let dispatchQueue = DispatchQueue(label: "MediaService.DispatchQueue")
     private let mediaState: MediaState
@@ -32,24 +33,29 @@ class MediaService: MediaProcessor {
         private var mediaSessions: [String: MediaSession] = [:]
     #endif
 
+    private var dispatchFn: (([String: Any]) -> Void)?
+
     init(mediaDBService: MediaDBService) {
         self.mediaState = MediaState()
         self.mediaDBService = mediaDBService
-
-        dispatchQueue.async {
-            self.initPersistedSessions()
-        }
     }
 
     ///Read persisted offline session from DB and create `MediaSession` objects for them and initiate the reporting of `MediaSessions.`
     private func initPersistedSessions() {
         let persistedSessionIds = mediaDBService.getPersistedSessionIds()
         persistedSessionIds.forEach { sessionId in
-            let mediaOfflineSession = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
+            let mediaOfflineSession = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService, dispathFn: self.dispatchFn)
             mediaSessions[sessionId] = mediaOfflineSession
             mediaOfflineSession.end {
                 self.mediaSessions.removeValue(forKey: sessionId)
             }
+        }
+    }
+
+    func readyToProcess(dispatchFn: @escaping ([String: Any]) -> Void) {
+        self.dispatchFn = dispatchFn
+        dispatchQueue.async {
+            self.initPersistedSessions()
         }
     }
 
@@ -64,9 +70,9 @@ class MediaService: MediaProcessor {
             let sessionId = UUID().uuidString
             var session: MediaSession
             if isDownloaded {
-                session = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
+                session = MediaOfflineSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService, dispathFn: dispatchFn)
             } else {
-                session = MediaRealTimeSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue)
+                session = MediaRealTimeSession(id: sessionId, state: mediaState, dispatchQueue: dispatchQueue, dispathFn: dispatchFn)
             }
 
             mediaSessions[sessionId] = session

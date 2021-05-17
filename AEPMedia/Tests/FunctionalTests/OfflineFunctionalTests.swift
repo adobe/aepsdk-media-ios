@@ -27,7 +27,6 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         super.setupBase()
         mockMediaData = MockMediaData()
         dispatchQueue = DispatchQueue(label: "testOfflineTime")
-
         mediaState = mockMediaData.mediaState
         mediaState.extractConfigurationInfo(from: mockMediaData.configSharedState)
         mediaState.extractIdentityInfo(from: mockMediaData.identitySharedState)
@@ -35,7 +34,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
 
         let mediaHitsDatabase = MediaHitsDatabase(databaseName: "test")
         mediaDBService = MediaDBService(mediaHitsDatabase: mediaHitsDatabase)
-        session = MediaOfflineSession(id: "sessionID", state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService)
+        session = MediaOfflineSession(id: "sessionID", state: mediaState, dispatchQueue: dispatchQueue, mediaDBService: mediaDBService, dispathFn: { (_: [String: Any]) in })
         session.retryDuration = 0
     }
 
