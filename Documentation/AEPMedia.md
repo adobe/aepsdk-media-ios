@@ -390,7 +390,7 @@ Also refer to [Media Resume](AEPMedia.md#media-resume) when resuming a previousl
 | Variable Name | Description                                                  | Required |
 | :------------ | :----------------------------------------------------------- | :------: |
 | `info`        | Media information created using the [createMediaObject](AEPMedia.md#createmediaobject) method. |   Yes    |
-| `metadata`    | Optional media metadata. For standard metadata keys, use [standard video constants](AEPMedia.md.md#standard-video-constants) or [standard audio constants](AEPMedia.md.md#standard-audio-constants). |    No    |
+| `metadata`    | Optional media metadata. For standard metadata keys, use [standard video constants](AEPMedia.md#standard-video-constants) or [standard audio constants](AEPMedia.md#standard-audio-constants). |    No    |
 
 **Syntax**
 
