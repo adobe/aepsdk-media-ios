@@ -607,10 +607,10 @@ func trackEvent(event: MediaEvent, info: [String: Any]?, metadata: [String: Stri
   NSDictionary *adObject = [AEPMobileMedia createAdObjectWith:@"ad-name" id:@"ad-id" position:0 length:30];
   NSMutableDictionary* adMetadata = [[NSMutableDictionary alloc] init];
 
-  // Standard metadata keys provided by adobe.
+// Standard metadata keys provided by adobe.
   [adMetadata setObject:@"Sample Advertiser" forKey:AEPAdMetadataKeys.ADVERTISER];
   [adMetadata setObject:@"Sample Campaign" forKey:AEPAdMetadataKeys.CAMPAIGN_ID];
-  // Custom metadata keys
+// Custom metadata keys
   [adMetadata setObject:@"Sample affiliate" forKey:@"affiliate"];
 
   [_tracker trackEvent:AEPMediaEventAdStart info:adObject metadata:adMetadata];
@@ -820,14 +820,10 @@ Defines the type of a media that is currently tracked.
 ```swift
 @objc(AEPMediaType)
 public enum MediaType: Int, RawRepresentable {
-/**
- * Constant defining media type for Video streams
- */
-  case Audio
- /**
-  * Constant defining media type for Audio streams
-  */
-  case Video
+ //Constant defining media type for Video streams
+ case Audio
+ //Constant defining media type for Audio streams
+ case Video
 }
 ```
 
@@ -857,17 +853,17 @@ Defines the stream type of the content that is currently tracked.
 public class MediaConstants: NSObject {
   @objc(AEPMediaStreamType)
   public class StreamType: NSObject {
-        /// Constant defining stream type for VOD streams.
+     // Constant defining stream type for VOD streams.
         public static let VOD = "vod"
-        /// Constant defining stream type for Live streams.
+     // Constant defining stream type for Live streams.
         public static let LIVE = "live"
-        /// Constant defining stream type for Linear streams.
+     // Constant defining stream type for Linear streams.
         public static let LINEAR = "linear"
-        /// Constant defining stream type for Podcast streams.
+     // Constant defining stream type for Podcast streams.
         public static let PODCAST = "podcast"
-        /// Constant defining stream type for Audiobook streams.
+     // Constant defining stream type for Audiobook streams.
         public static let AUDIOBOOK = "audiobook"
-        /// Constant defining stream type for AOD streams.
+     // Constant defining stream type for AOD streams.
         public static let AOD = "aod"
     }
 }
