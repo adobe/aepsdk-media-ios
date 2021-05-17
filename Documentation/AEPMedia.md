@@ -114,9 +114,7 @@ This section details all the APIs provided by Media Analytics, along with sample
 ## createTracker
 Creates a media tracker instance that tracks the playback session. The tracker created should be used to track the streaming content, and it sends periodic pings to the media analytics backend.
 
-{% hint style="info" %}
-If called MobileCore.resetIdentities() in the implementation, existing tracker will stop sending pings. A new tracker will need to be created for generating a new media session.
-{% endhint %}
+⚠️ If called MobileCore.resetIdentities() in the implementation, existing tracker will stop sending pings. A new tracker will need to be created for generating a new media session.
 
 **Syntax**
 
@@ -577,7 +575,7 @@ Tracks media events.
 | Variable Name | Description                                                  |
 | :------------ | :----------------------------------------------------------- |
 | `event`       | [Media event](AEPMedia.md#media-events)                      |
-| `info`        | For an `AdBreakStart` event, the Ad Break information is created by using the [createAdBreakObject](AEPMedia.md#createadbreakobject) method.   For an `AdStart` event, the Ad information is created by using the [createAdObject](AEPMedia.md#createadobject) method.   For `ChapterStart` event, the Chapter information is created by using the [createChapterObject](AEPMedia.md#createchapterobject) method.  For `StateStart` and `StateEnd` event, the State information is created by using the [createStateObject](AEPMedia.md#createstateobject) method. |
+| `info`        | For an `AdBreakStart` event, the Ad Break information is created by using the [createAdBreakObject](AEPMedia.md#createadbreakobject) method.   For an `AdStart` event, the Ad information is created by using the [createAdObject](AEPMedia.md#createadobject) method.   <br />For `ChapterStart` event, the Chapter information is created by using the [createChapterObject](AEPMedia.md#createchapterobject) method.  <br />For `StateStart` and `StateEnd` event, the State information is created by using the [createStateObject](AEPMedia.md#createstateobject) method. |
 | `metadata`    | Optional context data can be provided for `AdStart` and `ChapterStart` events. This is not required for other events. |
 
 **Syntax**
