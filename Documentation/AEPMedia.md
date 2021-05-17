@@ -76,7 +76,7 @@ This section details all the APIs provided by Media Analytics, along with sample
 Creates a media tracker instance that tracks the playback session. The tracker created should be used to track the streaming content, and it sends periodic pings to the media analytics backend.
 
 {% hint style="info" %}
-If used MobileCore.resetIdentities() in the implementation, existing tracker will stop sending pings. A new tracker will need to be created for generating media session.
+If called MobileCore.resetIdentities() in the implementation, existing tracker will stop sending pings. A new tracker will need to be created for generating a new media session.
 {% endhint %}
 
 **Syntax**
