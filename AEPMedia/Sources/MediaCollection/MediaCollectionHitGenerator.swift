@@ -66,7 +66,7 @@ class MediaCollectionHitGenerator {
 
         params[Media.DOWNLOADED] = downloadedContent
 
-        // Debug Params to link client generaed session id with backend generated id.
+        // Debug Params to link client generated session id with backend generated id.
         params[MediaConstants.Tracker.SESSION_ID] = refEvent.sessionId
 
         if let channel = mediaConfig[MediaConstants.TrackerConfig.CHANNEL] as? String, !channel.isEmpty {

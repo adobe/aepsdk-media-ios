@@ -499,7 +499,7 @@ class MediaEventTracker: MediaEventTracking {
     // MARK: Rule Actions
     private func cmdEnterAction(rule: MediaRule, context: [String: Any]) -> Bool {
         if hitGenerator != nil {
-            hitGenerator?.setRefTS(ts: getRefTS(context: context))//, event: context[Self.KEY_EVENT])
+            hitGenerator?.setRefTS(ts: getRefTS(context: context))
         }
         return true
     }

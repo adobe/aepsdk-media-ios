@@ -102,7 +102,7 @@ class MediaOfflineSession: MediaSession {
         isReportingSession = true
 
         let httpHeaders = MediaConstants.Networking.REQUEST_HEADERS
-        // Disable sending assuracne integration id till backend returns generated session id.
+        // Disable sending assurance integration id till backend returns generated session id.
         // if let assuranceIntegrationId = state.assuranceIntegrationId {
         //    httpHeaders[MediaConstants.Networking.HEADER_KEY_AEP_VALIDATION_TOKEN] = assuranceIntegrationId
         // }
