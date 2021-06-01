@@ -30,9 +30,10 @@ class MediaOfflineSession: MediaSession {
     ///    - state: `MediaState` object
     ///    - dispatchQueue: `DispatchQueue` used for handling response after processing `MediaHit`    
     ///    - mediaDBService: `MediaDBService` object used for persisting hits in the database
-    init(id: String, state: MediaState, dispatchQueue: DispatchQueue, mediaDBService: MediaDBService) {
+    ///    - dispathFn: a function which when invoked dispatches sessionCreated Event
+    init(id: String, state: MediaState, dispatchQueue: DispatchQueue, mediaDBService: MediaDBService, dispathFn: (([String: Any]) -> Void)?) {
         self.mediaDBService = mediaDBService
-        super.init(id: id, state: state, dispatchQueue: dispatchQueue)
+        super.init(id: id, state: state, dispatchQueue: dispatchQueue, dispathFn: dispathFn)
     }
 
     override func handleQueueMediaHit(hit: MediaHit) {
@@ -100,7 +101,18 @@ class MediaOfflineSession: MediaSession {
 
         isReportingSession = true
 
-        let networkRequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: MediaConstants.Networking.REQUEST_HEADERS, connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
+        let httpHeaders = MediaConstants.Networking.REQUEST_HEADERS
+        // Disable sending assurance integration id till backend returns generated session id.
+        // if let assuranceIntegrationId = state.assuranceIntegrationId {
+        //    httpHeaders[MediaConstants.Networking.HEADER_KEY_AEP_VALIDATION_TOKEN] = assuranceIntegrationId
+        // }
+
+        let networkRequest = NetworkRequest(url: url,
+                                            httpMethod: .post,
+                                            connectPayload: body,
+                                            httpHeaders: httpHeaders,
+                                            connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS,
+                                            readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
 
         ServiceProvider.shared.networkService.connectAsync(networkRequest: networkRequest) {[weak self] connection in
             self?.dispatchQueue.async {
@@ -119,6 +131,7 @@ class MediaOfflineSession: MediaSession {
                 Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Network Request completed with status code: (\(statusCode)).")
 
                 if MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
+                    // Todo :- Once backend returns session id, we should call the dispatch function
                     self.onSessionReportSuccess()
                 } else {
                     self.onSessionReportFailure()

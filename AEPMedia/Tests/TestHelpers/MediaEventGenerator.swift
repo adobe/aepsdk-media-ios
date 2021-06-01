@@ -130,7 +130,10 @@ class MediaEventGenerator: MediaTracker {
     private func waitForTrackerRequest() {
         if !usingProvidedDispatchFn {
             semaphore.wait()
-            coreEventTracker?.track(eventData: dispatchedEvent?.data)
+            if let dispatchedEvent = dispatchedEvent {
+                coreEventTracker?.track(event: dispatchedEvent)
+            }
+
         }
     }
 }

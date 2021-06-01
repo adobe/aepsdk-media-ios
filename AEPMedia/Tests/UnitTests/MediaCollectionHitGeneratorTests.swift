@@ -10,6 +10,7 @@
  */
 
 import XCTest
+import AEPCore
 @testable import AEPMedia
 
 class MediaCollectionHitGeneratorTests: XCTestCase {
@@ -26,6 +27,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     private typealias EventType = MediaConstants.MediaCollection.EventType
     private typealias Media = MediaConstants.MediaCollection.Media
     private typealias QoE = MediaConstants.MediaCollection.QoE
+    private typealias Tracker = MediaConstants.Tracker
 
     static let validAdbreakInfo: [String: Any] = [
         MediaConstants.AdBreakInfo.NAME: "Adbreakname",
@@ -47,12 +49,18 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         MediaConstants.ChapterInfo.LENGTH: 30.0
     ]
 
-    static var validQoEInfo: [String: Any] = [
+    static let validQoEInfo: [String: Any] = [
         MediaConstants.QoEInfo.BITRATE: 24.0,
         MediaConstants.QoEInfo.DROPPED_FRAMES: 2.0,
         MediaConstants.QoEInfo.FPS: 30.0,
         MediaConstants.QoEInfo.STARTUP_TIME: 0.0
     ]
+
+    static let sessionId = "clientSessionId"
+    static let refEvent = Event(name: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA,
+                                type: MediaConstants.Media.EVENT_TYPE,
+                                source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA,
+                                data: [MediaConstants.Tracker.SESSION_ID: sessionId])
 
     override func setUp() {
         let info = ["media.id": "testId", "media.name": "testName", "media.streamtype": "video", "media.contenttype": "vod", "media.type": "video", "media.length": 10.0, "media.resume": false] as [String: Any]
@@ -61,7 +69,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
         self.mediaContext = MediaContext(mediaInfo: mediaInfo, metadata: metadata)
         self.hitProcessor = FakeMediaHitProcessor()
-        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
     }
 
     override func tearDown() {
@@ -77,6 +85,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // verify
         var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
+        params[Tracker.SESSION_ID] = Self.sessionId
         let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let expectedHit = MediaHit.init(eventType: "sessionStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: metadata, qoeData: emptyQoeData)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
@@ -86,12 +95,13 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     func testMediaStartOnline() {
         // setup
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: false]
-        hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
         // test
         hitGenerator.processMediaStart()
         // verify
         var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = false
+        params[Tracker.SESSION_ID] = Self.sessionId
         let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let expectedHit = MediaHit.init(eventType: "sessionStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: metadata, qoeData: emptyQoeData)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
@@ -101,13 +111,14 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     func testMediaStartWithConfig() {
         // setup
         let config: [String: Any] = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true, MediaConstants.TrackerConfig.CHANNEL: "test-channel"]
-        hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
         // test
         hitGenerator.processMediaStart()
         // verify
         var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.CHANNEL] = "test-channel"
+        params[Tracker.SESSION_ID] = Self.sessionId
         let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let expectedHit = MediaHit.init(eventType: "sessionStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: metadata, qoeData: emptyQoeData)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
@@ -121,6 +132,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
+        params[Tracker.SESSION_ID] = Self.sessionId
         let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let expectedHit = MediaHit.init(eventType: "sessionStart", playhead: expectedPlayhead, ts: expectedTimestamp, params: params, customMetadata: metadata, qoeData: emptyQoeData)
         let generatedHit = hitProcessor.getHitFromActiveSession(index: 0)
@@ -251,6 +263,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
+        params[Tracker.SESSION_ID] = Self.sessionId
         let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
 
         mediaContext.enterPlaybackState(state: .Play)
@@ -301,10 +314,11 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = false
         params[Media.RESUME] = true
+        params[Tracker.SESSION_ID] = Self.sessionId
         let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         mediaContext.enterPlaybackState(state: .Play)
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: false]
-        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
         // test
         hitGenerator.processSessionRestart()
         // verify number hits
@@ -347,9 +361,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
+        params[Tracker.SESSION_ID] = Self.sessionId
         let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
-        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
         // test
         hitGenerator.processSessionRestart()
         // verify number hits
@@ -375,9 +390,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
+        params[Tracker.SESSION_ID] = Self.sessionId
         let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
-        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
         // test
         hitGenerator.processSessionRestart()
         // verify number hits
@@ -406,9 +422,10 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
+        params[Tracker.SESSION_ID] = Self.sessionId
         let metadata = MediaCollectionHelper.generateMediaMetadata(metadata: mediaContext.mediaMetadata)
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
-        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
         // test
         hitGenerator.processSessionRestart()
         // verify number hits
@@ -434,7 +451,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         params[Media.DOWNLOADED] = true
         params[Media.RESUME] = true
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
-        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
         // test
         hitGenerator.processPlayback()
         XCTAssertEqual(0, hitProcessor.getHitCount(sessionId: self.expectedSessionId))
@@ -562,7 +579,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
         // setup
         mediaContext.enterPlaybackState(state: .Play)
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: false]
-        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
         var params = MediaCollectionHelper.generateMediaParams(mediaInfo: mediaContext.mediaInfo, metadata: mediaContext.mediaMetadata)
         params[Media.DOWNLOADED] = false
         // verify play hit
@@ -601,7 +618,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     func testProcessPlaybackSameStateInitOnline() {
         // setup
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: false]
-        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        self.hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
         // no hit due to the current state == previous state and online ping interval not elapsed
         hitGenerator.processPlayback()
         XCTAssertEqual(0, hitProcessor.getHitCountFromActiveSession())
@@ -726,7 +743,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     func testCreateMediaHitGeneratorWithNilContext() {
         // test
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true]
-        hitGenerator = MediaCollectionHitGenerator.init(context: nil, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        hitGenerator = MediaCollectionHitGenerator.init(context: nil, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
         // verify
         XCTAssertNil(hitGenerator)
     }
@@ -734,7 +751,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     func testMediaProcessorFailedToCreateSession() {
         // test
         let config = [MediaConstants.TrackerConfig.DOWNLOADED_CONTENT: true, "testFail": true]
-        hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refTS: expectedTimestamp)
+        hitGenerator = MediaCollectionHitGenerator.init(context: mediaContext, hitProcessor: hitProcessor, config: config, refEvent: Self.refEvent, refTS: expectedTimestamp)
         // verify
         XCTAssertEqual("", hitGenerator.sessionId)
     }

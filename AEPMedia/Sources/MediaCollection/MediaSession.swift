@@ -19,7 +19,7 @@ class MediaSession {
     let id: String
     let state: MediaState
     let dispatchQueue: DispatchQueue
-
+    let dispathFn: (([String: Any]) -> Void)?
     var isSessionActive: Bool
     var sessionEndHandler: (() -> Void)?
 
@@ -28,10 +28,12 @@ class MediaSession {
     ///    - id: Unique `MediaSession id`
     ///    - mediaState: `MediaState` object
     ///    - dispatchQueue: `DispatchQueue` used for handling response after processing `MediaHit`
-    init(id: String, state: MediaState, dispatchQueue: DispatchQueue) {
+    ///    - dispathFn: a function which when invoked dispatches sessionCreated Event
+    init(id: String, state: MediaState, dispatchQueue: DispatchQueue, dispathFn: (([String: Any]) -> Void)?) {
         self.id = id
         self.state = state
         self.dispatchQueue = dispatchQueue
+        self.dispathFn = dispathFn
         isSessionActive = true
     }
 
