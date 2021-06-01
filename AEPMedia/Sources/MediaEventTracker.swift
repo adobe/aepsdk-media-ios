@@ -158,7 +158,7 @@ class MediaEventTracker: MediaEventTracking {
 
     /// Handles all the track API calls.
     ///- Parameters:
-    ///    - eventData: EventData for the track API consisting of eventName, playhead, timeStamp, params and metadata.
+    ///    - event: Event for the track API consisting of eventName, playhead, timeStamp, params and metadata.
     @discardableResult
     func track(event: Event) -> Bool {
 
