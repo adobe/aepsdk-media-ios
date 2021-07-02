@@ -227,9 +227,9 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
         let sessionStartRequest = requests[0]
-        let sessionStartRequestURLString = sessionStartRequest?.connectPayload ?? ""
+        let sessionStartRequestURLString = sessionStartRequest?.payloadAsString() ?? ""
         let playRequest = requests[1]
-        let playRequestURLString = playRequest?.connectPayload ?? ""
+        let playRequestURLString = playRequest?.payloadAsString() ?? ""
 
         XCTAssertTrue(playRequest?.url.absoluteString.contains("MediaCollectionServerSessionId") ?? false)
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
@@ -260,7 +260,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
         let sessionStartRequest = requests[0]
-        let sessionStartRequestURLString = sessionStartRequest?.connectPayload ?? ""
+        let sessionStartRequestURLString = sessionStartRequest?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
     }
@@ -288,11 +288,11 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertEqual(5, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
-        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
-        let playRequestURLString1 = requests[1]?.connectPayload ?? ""
-        let pauseRequestURLString = requests[2]?.connectPayload ?? ""
-        let playRequestURLString2 = requests[1]?.connectPayload ?? ""
-        let completeRequestURLString = requests[4]?.connectPayload ?? ""
+        let sessionStartRequestURLString = requests[0]?.payloadAsString() ?? ""
+        let playRequestURLString1 = requests[1]?.payloadAsString() ?? ""
+        let pauseRequestURLString = requests[2]?.payloadAsString() ?? ""
+        let playRequestURLString2 = requests[1]?.payloadAsString() ?? ""
+        let completeRequestURLString = requests[4]?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.playJson, payload: playRequestURLString1))
@@ -322,8 +322,8 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertEqual(2, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
-        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
-        let playRequestURLString1 = requests[1]?.connectPayload ?? ""
+        let sessionStartRequestURLString = requests[0]?.payloadAsString() ?? ""
+        let playRequestURLString1 = requests[1]?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.playJson, payload: playRequestURLString1))
@@ -350,7 +350,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertEqual(1, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
-        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
+        let sessionStartRequestURLString = requests[0]?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
     }
@@ -377,7 +377,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertEqual(1, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
-        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
+        let sessionStartRequestURLString = requests[0]?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
     }

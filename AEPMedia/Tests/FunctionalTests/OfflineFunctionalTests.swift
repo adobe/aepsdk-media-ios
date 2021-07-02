@@ -99,7 +99,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         let requests = mockNetworkService.calledNetworkRequests
         XCTAssertEqual(1, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
-        let sessionRequestURLString = requests[0]?.connectPayload ?? ""
+        let sessionRequestURLString = requests[0]?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: sessionRequestURLString))
     }
@@ -138,7 +138,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
         // Get payload of succeessful network request
         XCTAssertEqual(failedNetworkRequestsCount+1, requests.count)
-        let sessionRequestURLString = requests[requests.count-1]?.connectPayload ?? ""
+        let sessionRequestURLString = requests[requests.count-1]?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: sessionRequestURLString))
     }
@@ -210,7 +210,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         let requests = mockNetworkService.calledNetworkRequests
         XCTAssertEqual(1, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
-        let sessionRequestURLString = requests[0]?.connectPayload ?? ""
+        let sessionRequestURLString = requests[0]?.payloadAsString() ?? ""
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: sessionRequestURLString))
     }
 
@@ -288,7 +288,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         XCTAssertEqual(1, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
-        let sessionRequestURLString = requests[0]?.connectPayload ?? ""
+        let sessionRequestURLString = requests[0]?.payloadAsString() ?? ""
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: sessionRequestURLString))
     }
 }

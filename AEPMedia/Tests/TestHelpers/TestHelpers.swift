@@ -12,6 +12,7 @@
 import XCTest
 @testable import AEPCore
 @testable import AEPMedia
+import AEPServices
 
 extension EventHub {
     static func reset() {
@@ -78,4 +79,10 @@ func convertToDictionary(jsonString: String?) -> [String: Any] {
     }
 
     return dataAsDictionary
+}
+
+extension NetworkRequest {
+    func payloadAsString() -> String {
+        return String(data: connectPayload, encoding: .utf8) ?? ""
+    }
 }
