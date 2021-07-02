@@ -1,35 +1,23 @@
 PODS:
-  - ACPCore (2.9.9):
-    - AEPCore
-    - AEPIdentity
-    - AEPLifecycle
-    - AEPRulesEngine
-    - AEPServices
-    - AEPSignal
   - AEPAnalytics (3.0.1):
     - AEPCore
     - AEPServices
-  - AEPAssurance (1.1.1):
-    - ACPCore (>= 2.9.0)
-    - AEPAssurance/xcframeworks (= 1.1.1)
-  - AEPAssurance/xcframeworks (1.1.1):
-    - ACPCore (>= 2.9.0)
-  - AEPCore (3.1.1):
-    - AEPRulesEngine (= 1.0.0)
-    - AEPServices (= 3.1.1)
-  - AEPIdentity (3.1.1):
-    - AEPCore (= 3.1.1)
-  - AEPLifecycle (3.1.1):
-    - AEPCore (= 3.1.1)
-  - AEPRulesEngine (1.0.0)
-  - AEPServices (3.1.1)
-  - AEPSignal (3.1.1):
-    - AEPCore (= 3.1.1)
+  - AEPAssurance (3.0.0):
+    - AEPCore (>= 3.1.0)
+    - AEPServices (>= 3.1.0)
+  - AEPCore (3.2.2):
+    - AEPRulesEngine (= 1.0.1)
+    - AEPServices (= 3.2.2)
+  - AEPIdentity (3.2.2):
+    - AEPCore (= 3.2.2)
+  - AEPLifecycle (3.2.2):
+    - AEPCore (= 3.2.2)
+  - AEPRulesEngine (1.0.1)
+  - AEPServices (3.2.2)
 
 DEPENDENCIES:
-  - ACPCore (from `https://github.com/adobe/aepsdk-compatibility-ios.git`, branch `main`)
   - AEPAnalytics
-  - AEPAssurance
+  - AEPAssurance (~> 3.0.0)
   - AEPCore
   - AEPIdentity
   - AEPLifecycle
@@ -45,29 +33,16 @@ SPEC REPOS:
     - AEPLifecycle
     - AEPRulesEngine
     - AEPServices
-    - AEPSignal
-
-EXTERNAL SOURCES:
-  ACPCore:
-    :branch: main
-    :git: https://github.com/adobe/aepsdk-compatibility-ios.git
-
-CHECKOUT OPTIONS:
-  ACPCore:
-    :commit: c43675de0c97ee76fd51b005e8c9cdc7515e4a78
-    :git: https://github.com/adobe/aepsdk-compatibility-ios.git
 
 SPEC CHECKSUMS:
-  ACPCore: 67e4b855bf16cfb6a63024a4ddb73d15c0fd30e5
   AEPAnalytics: 13353b3ea333be0af7cfc4845830d87d360726e2
-  AEPAssurance: b62fc1be16efbc8d137b945b29da7e5ec7c7965a
-  AEPCore: 46ed4c5ed27ba49490990e397bb7454cf9906601
-  AEPIdentity: 017d2ee5e49dd7a7cd29761339c535924e89d968
-  AEPLifecycle: 580d11bb4262e7b154751540852a2ff9febbde0d
-  AEPRulesEngine: 8bbc694fce6900cd33b2496c7d4b33ee2eeffc46
-  AEPServices: bdd8a78f1d6cda0165f6a58e42cce0d7e9f43ae1
-  AEPSignal: 4259aed43857c9e0ae89590a682c6d12865b7ce3
+  AEPAssurance: 18068627111e366a851dc2166239f22b665101bd
+  AEPCore: 1f15da7f4c843b8aa61c54486b7c5b85378187af
+  AEPIdentity: bdc78eb093c20d259bb3b7d79d7e0b75f30cff2e
+  AEPLifecycle: 54602c05131fd479b292cad24a62ab9f92509908
+  AEPRulesEngine: 5075ed294026a12e37bd26fe260f74604d205354
+  AEPServices: 8072b031649fea7ffd971e4e185f271dee3707fc
 
-PODFILE CHECKSUM: da0318295238c7efa33722077bb5fa707c3b9aee
+PODFILE CHECKSUM: c17233643dae6e168ff2ba356eca8e199206854e
 
 COCOAPODS: 1.10.1
