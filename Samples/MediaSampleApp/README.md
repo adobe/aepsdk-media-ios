@@ -1,6 +1,6 @@
-Run instruction for Sample App
+### How to run Sample App
 
-In Terminal:
+Go to Terminal:
 1. cd aepsdk-media-ios/build
 2. pod install 
 3. pod update
