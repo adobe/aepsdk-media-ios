@@ -21,7 +21,7 @@ import AEPMedia
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    private let LAUNCH_ENVIRONMENT_FILE_ID = ""
+    private let LAUNCH_ENVIRONMENT_FILE_ID = "your launch app id"
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
