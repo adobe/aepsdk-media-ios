@@ -1,4 +1,4 @@
-### How to run Sample App
+# How to run Sample App
 
 Go to Terminal:
 1. cd aepsdk-media-ios/build
