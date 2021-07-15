@@ -1,11 +1,4 @@
 PODS:
-  - ACPCore (2.9.9):
-    - AEPCore
-    - AEPIdentity
-    - AEPLifecycle
-    - AEPRulesEngine
-    - AEPServices
-    - AEPSignal
   - AEPAnalytics (3.0.1):
     - AEPCore
     - AEPServices
@@ -25,7 +18,6 @@ PODS:
     - AEPCore (= 3.2.2)
 
 DEPENDENCIES:
-  - ACPCore (from `https://github.com/adobe/aepsdk-compatibility-ios.git`, branch `main`)
   - AEPAnalytics
   - AEPAssurance (~> 3.0)
   - AEPCore
@@ -56,7 +48,6 @@ CHECKOUT OPTIONS:
     :git: https://github.com/adobe/aepsdk-compatibility-ios.git
 
 SPEC CHECKSUMS:
-  ACPCore: 67e4b855bf16cfb6a63024a4ddb73d15c0fd30e5
   AEPAnalytics: 13353b3ea333be0af7cfc4845830d87d360726e2
   AEPAssurance: 18068627111e366a851dc2166239f22b665101bd
   AEPCore: 1f15da7f4c843b8aa61c54486b7c5b85378187af

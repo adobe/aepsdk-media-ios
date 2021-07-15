@@ -11,6 +11,7 @@
 
 import Foundation
 import AEPServices
+import AEPCore
 
 class MediaEventTracker: MediaEventTracking {
     // MARK: Rule Name
@@ -101,6 +102,7 @@ class MediaEventTracker: MediaEventTracking {
     private static let KEY_INFO = "key_info"
     private static let KEY_METADATA = "key_metadata"
     private static let KEY_EVENT_TS = "key_eventts"
+    private static let KEY_EVENT = "key_event"
 
     private static let LOG_TAG = MediaConstants.LOG_TAG
     private static let CLASS_NAME = "MediaEventTracker"
@@ -156,41 +158,34 @@ class MediaEventTracker: MediaEventTracking {
 
     /// Handles all the track API calls.
     ///- Parameters:
-    ///    - eventData: EventData for the track API consisting of eventName, playhead, timeStamp, params and metadata.
+    ///    - event: Event for the track API consisting of eventName, playhead, timeStamp, params and metadata.
     @discardableResult
-    func track(eventData: [String: Any]?) -> Bool {
-        guard let eventData = eventData else {
-            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to track event (event data was null).")
+    func track(event: Event) -> Bool {
+
+        guard let rule = Self.eventToRuleMap[event.name ?? ""] else {
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Event name is missing/invalid in track event data.")
             return false
         }
 
-        guard let eventName = eventData[MediaConstants.Tracker.EVENT_NAME] as? String else {
-            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Event name is missing in track event data.")
-            return false
-        }
-
-        guard let rule = Self.eventToRuleMap[eventName] else {
-            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Event name is invalid in track event data.")
-            return false
-        }
-
-        guard let eventTs = eventData[MediaConstants.Tracker.EVENT_TIMESTAMP] else {
+        guard let eventTs = event.eventTs else {
             Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Event timestamp is missing in track event data.")
             return false
         }
+
         var ruleContext: [String: Any] = [:]
+        ruleContext[Self.KEY_EVENT] = event
         ruleContext[Self.KEY_EVENT_TS] = eventTs
 
-        if let eventParam = eventData[MediaConstants.Tracker.EVENT_PARAM] {
-            ruleContext[Self.KEY_INFO] = eventParam
+        if let param = event.param {
+            ruleContext[Self.KEY_INFO] = param
         }
 
-        if let eventMetadata = eventData[MediaConstants.Tracker.EVENT_METADATA] as? [String: String] {
-            ruleContext[Self.KEY_METADATA] = cleanMetadata(data: eventMetadata)
+        if let metadata = event.metadata {
+            ruleContext[Self.KEY_METADATA] = cleanMetadata(data: metadata)
         }
 
         if rule != RuleName.PlayheadUpdate {
-            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Processing event - \(eventName)")
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Processing event - \(String(describing: event.name))")
         }
 
         if prerollDeferRule(rule: rule, context: ruleContext) {
@@ -549,12 +544,16 @@ class MediaEventTracker: MediaEventTracking {
             return false
         }
 
+        guard let refEvent = context[Self.KEY_EVENT] as? Event else {
+            return false
+        }
+
         let metadata = getMetadata(context: context)
 
         let refTS = getRefTS(context: context)
 
         mediaContext = MediaContext(mediaInfo: mediaInfo, metadata: metadata)
-        hitGenerator = MediaCollectionHitGenerator(context: mediaContext, hitProcessor: hitProcessor, config: config ?? [:], refTS: refTS)
+        hitGenerator = MediaCollectionHitGenerator(context: mediaContext, hitProcessor: hitProcessor, config: config ?? [:], refEvent: refEvent, refTS: refTS)
         hitGenerator?.processMediaStart()
 
         inPrerollInterval = mediaInfo.prerollWaitingTime != 0

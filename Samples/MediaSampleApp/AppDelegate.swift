@@ -14,7 +14,6 @@ import UIKit
 import AEPCore
 import AEPIdentity
 import AEPAnalytics
-import ACPCore
 import AEPAssurance
 import AEPLifecycle
 import AEPMedia
@@ -28,16 +27,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         MobileCore.setLogLevel(.trace)
         let appState = application.applicationState
 
-        MobileCore.registerExtensions([Identity.self, Analytics.self, Lifecycle.self, Media.self, AEPAssurance.self], {
+        MobileCore.registerExtensions([Identity.self, Analytics.self, Lifecycle.self, Media.self, Assurance.self], {
             // Use the App id assigned to this application via Adobe Launch
             MobileCore.configureWith(appId: self.LAUNCH_ENVIRONMENT_FILE_ID)
-
+            
             if appState != .background {
                 // only start lifecycle if the application is not in the background
                 MobileCore.lifecycleStart(additionalContextData: ["contextDataKey": "contextDataVal"])
             }
         })
-
+        
         return true
     }
 

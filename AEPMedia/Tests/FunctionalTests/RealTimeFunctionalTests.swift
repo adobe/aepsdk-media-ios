@@ -21,18 +21,22 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
     var fakeMediaService: FakeMediaService!
     var dispatchQueue: DispatchQueue!
     var mockMediaData: MockMediaData!
+    var dispatchedEventData = [String: Any]()
 
     override func setUp() {
         super.setupBase()
         mockMediaData = MockMediaData()
         dispatchQueue = DispatchQueue(label: "testRealTime")
+        dispatchedEventData = [String: Any]()
 
         mediaState = mockMediaData.mediaState
         mediaState.extractConfigurationInfo(from: mockMediaData.configSharedState)
         mediaState.extractIdentityInfo(from: mockMediaData.identitySharedState)
         mediaState.extractAnalyticsInfo(from: mockMediaData.analyticsSharedState)
 
-        session = MediaRealTimeSession(id: "sessionID", state: mediaState, dispatchQueue: dispatchQueue)
+        session = MediaRealTimeSession(id: "sessionID", state: mediaState, dispatchQueue: dispatchQueue, dispathFn: { (data: [String: Any]) in
+            self.dispatchedEventData = data
+        })
         session.retryDuration = 0
     }
 
@@ -77,6 +81,25 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         let requests = mockNetworkService.calledNetworkRequests
         XCTAssertEqual(1, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+
+        let expectedEventData: [String: Any] = [
+            MediaConstants.Tracker.SESSION_ID: mockMediaData.sessionStartClientSessionId as Any,
+            MediaConstants.Tracker.BACKEND_SESSION_ID: "MediaCollectionServerSessionId"
+        ]
+        XCTAssertTrue(NSDictionary(dictionary: dispatchedEventData).isEqual(to: expectedEventData))
+    }
+
+    func testTrySendHit_assuranceToken() {
+        // setup
+        mediaState.extractAssuranceInfo(from: mockMediaData.assuranceSharedState)
+        // test
+        session.handleQueueMediaHit(hit: mockMediaData.sessionStart)
+        waitForProcessing()
+
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+        let requests = mockNetworkService.calledNetworkRequests
+        XCTAssertEqual(1, requests.count)
+        XCTAssertEqual(requests[0]?.httpHeaders[MediaConstants.Networking.HEADER_KEY_AEP_VALIDATION_TOKEN], mockMediaData.assuranceIntegrationId)
     }
 
     func testTrySendHit_ConnectionError_fail_shouldRetry3times() {
@@ -204,9 +227,9 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
         let sessionStartRequest = requests[0]
-        let sessionStartRequestURLString = sessionStartRequest?.connectPayload ?? ""
+        let sessionStartRequestURLString = sessionStartRequest?.payloadAsString() ?? ""
         let playRequest = requests[1]
-        let playRequestURLString = playRequest?.connectPayload ?? ""
+        let playRequestURLString = playRequest?.payloadAsString() ?? ""
 
         XCTAssertTrue(playRequest?.url.absoluteString.contains("MediaCollectionServerSessionId") ?? false)
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
@@ -237,7 +260,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
         let sessionStartRequest = requests[0]
-        let sessionStartRequestURLString = sessionStartRequest?.connectPayload ?? ""
+        let sessionStartRequestURLString = sessionStartRequest?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
     }
@@ -265,11 +288,11 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertEqual(5, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
-        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
-        let playRequestURLString1 = requests[1]?.connectPayload ?? ""
-        let pauseRequestURLString = requests[2]?.connectPayload ?? ""
-        let playRequestURLString2 = requests[1]?.connectPayload ?? ""
-        let completeRequestURLString = requests[4]?.connectPayload ?? ""
+        let sessionStartRequestURLString = requests[0]?.payloadAsString() ?? ""
+        let playRequestURLString1 = requests[1]?.payloadAsString() ?? ""
+        let pauseRequestURLString = requests[2]?.payloadAsString() ?? ""
+        let playRequestURLString2 = requests[1]?.payloadAsString() ?? ""
+        let completeRequestURLString = requests[4]?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.playJson, payload: playRequestURLString1))
@@ -299,8 +322,8 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertEqual(2, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
-        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
-        let playRequestURLString1 = requests[1]?.connectPayload ?? ""
+        let sessionStartRequestURLString = requests[0]?.payloadAsString() ?? ""
+        let playRequestURLString1 = requests[1]?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.playJson, payload: playRequestURLString1))
@@ -327,7 +350,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertEqual(1, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
-        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
+        let sessionStartRequestURLString = requests[0]?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
     }
@@ -354,7 +377,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertEqual(1, requests.count)
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
 
-        let sessionStartRequestURLString = requests[0]?.connectPayload ?? ""
+        let sessionStartRequestURLString = requests[0]?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: mockMediaData.sessionStartJsonWithState, payload: sessionStartRequestURLString))
     }

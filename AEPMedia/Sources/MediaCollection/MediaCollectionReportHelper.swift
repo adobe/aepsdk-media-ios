@@ -178,6 +178,9 @@ class MediaCollectionReportHelper {
 
             params[MediaConstants.MediaCollection.Session.MEDIA_VERSION] = MediaConstants.MediaCollection.MEDIA_VERSION
 
+            // Remove debugParams from MediaHit
+            params.removeValue(forKey: MediaConstants.Tracker.SESSION_ID)
+
             return MediaHit(eventType: mediaHit.eventType, playhead: mediaHit.playhead, ts: mediaHit.timestamp, params: params, customMetadata: mediaHit.metadata, qoeData: mediaHit.qoeData)
 
         }
@@ -256,5 +259,22 @@ class MediaCollectionReportHelper {
             return String(data: data, encoding: .utf8)
         }
         return nil
+    }
+
+    static func extractDebugInfo(hit: MediaHit) -> [String: Any] {
+        var ret = [String: Any]()
+        if hit.eventType == MediaConstants.MediaCollection.EventType.SESSION_START {
+            ret[MediaConstants.Tracker.SESSION_ID] = hit.params?[MediaConstants.Tracker.SESSION_ID] as? String
+        }
+        return ret
+    }
+
+    static func extractDebugInfo(hits: [MediaHit]) -> [String: Any] {
+        let hit = hits.first { hit in return hit.eventType == MediaConstants.MediaCollection.EventType.SESSION_START }
+        if let hit = hit {
+            return extractDebugInfo(hit: hit)
+        } else {
+            return [String: Any]()
+        }
     }
 }

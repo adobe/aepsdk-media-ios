@@ -42,6 +42,9 @@ class MediaState {
     private(set) var blob: String?
     private(set) var visitorCustomerIDs: [[String: Any]]?
 
+    // Assurance State
+    private(set) var assuranceIntegrationId: String?
+
     /// Takes the shared states map and updates the data within the Media State.
     /// - Parameter dataMap: The map contains the shared state data required by the Analytics SDK.
     func update(dataMap: [String: [String: Any]?]) {
@@ -56,6 +59,8 @@ class MediaState {
                 extractIdentityInfo(from: sharedState)
             case MediaConstants.Analytics.SHARED_STATE_NAME:
                 extractAnalyticsInfo(from: sharedState)
+            case MediaConstants.Assurance.SHARED_STATE_NAME:
+                extractAssuranceInfo(from: sharedState)
             default:
                 break
             }
@@ -104,5 +109,15 @@ class MediaState {
         }
         self.aid = analyticsData[MediaConstants.Analytics.ANALYTICS_VISITOR_ID] as? String
         self.vid = analyticsData[MediaConstants.Analytics.VISITOR_ID] as? String
+    }
+
+    /// Extracts the assurance data from the provided shared state data.
+    /// - Parameter assuranceData the data map from `Analytics` shared state.
+    func extractAssuranceInfo(from assuranceData: [String: Any]?) {
+        guard let assuranceData = assuranceData else {
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Failed to extract assurance data (event data was nil).")
+            return
+        }
+        self.assuranceIntegrationId = assuranceData[MediaConstants.Assurance.INTEGRATION_ID] as? String
     }
 }

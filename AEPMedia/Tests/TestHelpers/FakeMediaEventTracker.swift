@@ -12,13 +12,14 @@
 
 import Foundation
 import AEPServices
+import AEPCore
 @testable import AEPMedia
 
 class FakeMediaEventTracker: MediaEventTracker {
 
     var trackCalled = false
 
-    override func track(eventData: [String: Any]?) -> Bool {
+    override func track(event: Event) -> Bool {
         trackCalled = true
         return trackCalled
     }

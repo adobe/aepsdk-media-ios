@@ -36,7 +36,6 @@ public class Media: NSObject, Extension {
     /// Initializes the Media extension and it's dependencies
     public required init(runtime: ExtensionRuntime) {
         self.runtime = runtime
-
         let mediaHitsDatabase = MediaHitsDatabase(databaseName: MediaConstants.DATABASE_NAME)
         let mediaDBService = MediaDBService(mediaHitsDatabase: mediaHitsDatabase)
         self.mediaService = MediaService(mediaDBService: mediaDBService)
@@ -45,6 +44,8 @@ public class Media: NSObject, Extension {
 
     /// Invoked when the Media extension has been registered by the `EventHub`
     public func onRegistered() {
+        mediaService.readyToProcess(dispatchFn: dispathSessionCreated(eventData:))
+
         registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleConfigurationResponseEvent)
         registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, listener: handleMediaTrackerRequest)
         registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA, listener: handleMediaTrack)
@@ -119,6 +120,14 @@ public class Media: NSObject, Extension {
             return
         }
 
-        tracker.track(eventData: event.data)
+        tracker.track(event: event)
+    }
+
+    private func dispathSessionCreated(eventData: [String: Any]) {
+        let event = Event(name: MediaConstants.Media.EVENT_NAME_SESSION_CREATED,
+                          type: MediaConstants.Media.EVENT_TYPE,
+                          source: MediaConstants.Media.EVENT_SOURCE_SESSION_CREATED,
+                          data: eventData)
+        dispatch(event: event)
     }
 }

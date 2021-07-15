@@ -67,7 +67,7 @@ class MediaEventTrackerTests: XCTestCase {
             return false
         }
 
-        return mediaTracker.track(eventData: event.data)
+        return mediaTracker.track(event: event)
     }
 
     func compareRuleNames(list1: [(name: RuleName, context: [String: Any])], list2:[(name: RuleName, context: [String: Any])]) -> Bool {
@@ -93,38 +93,42 @@ class MediaEventTrackerTests: XCTestCase {
     }
 
     // MARK: MediaEventTracker Unit Tests
-    func testTrackeventHandleAbsentEventData() {
-        XCTAssertFalse(mediaTracker.track(eventData: nil))
-    }
-
     func testTrackeventHandleAbsentEventName() {
         eventGenerator.trackSessionStart(info: Self.media!.toMap(), metadata: Self.metadata)
-
-        let event = eventGenerator.dispatchedEvent
-        var eventData = event?.data
+        var eventData = eventGenerator.dispatchedEvent?.data
         eventData?.removeValue(forKey: MediaConstants.Tracker.EVENT_NAME)
 
-        XCTAssertFalse(mediaTracker.track(eventData: eventData))
+        let event = Event(name: "",
+                          type: MediaConstants.Media.EVENT_TYPE,
+                          source: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA,
+                          data: eventData)
+        XCTAssertFalse(mediaTracker.track(event: event))
     }
 
     func testTrackeventHandleIncorrectEventName() {
         eventGenerator.trackSessionStart(info: Self.media!.toMap(), metadata: Self.metadata)
 
-        let event = eventGenerator.dispatchedEvent
-        var eventData = event?.data
+        var eventData = eventGenerator.dispatchedEvent?.data
         eventData?[MediaConstants.Tracker.EVENT_NAME] = "incorrect"
 
-        XCTAssertFalse(mediaTracker.track(eventData: eventData))
+        let event = Event(name: "",
+                          type: MediaConstants.Media.EVENT_TYPE,
+                          source: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA,
+                          data: eventData)
+        XCTAssertFalse(mediaTracker.track(event: event))
     }
 
     func testTrackeventHandleAbsentEventTimeStamp() {
         eventGenerator.trackSessionStart(info: Self.media!.toMap(), metadata: Self.metadata)
 
-        let event = eventGenerator.dispatchedEvent
-        var eventData = event?.data
+        var eventData = eventGenerator.dispatchedEvent?.data
         eventData?.removeValue(forKey: MediaConstants.Tracker.EVENT_TIMESTAMP)
 
-        XCTAssertFalse(mediaTracker.track(eventData: eventData))
+        let event = Event(name: "",
+                          type: MediaConstants.Media.EVENT_TYPE,
+                          source: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA,
+                          data: eventData)
+        XCTAssertFalse(mediaTracker.track(event: event))
     }
 
     func testTrackSessionStartFailOtherAPIsBeforeStart() {
