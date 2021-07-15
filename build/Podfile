@@ -31,7 +31,6 @@ target 'MediaSampleApp' do
   pod 'AEPLifecycle'
   pod 'AEPIdentity'
   pod 'AEPAnalytics'
-  pod 'AEPAssurance', '~> 3.0.0'
-
+  pod 'AEPAssurance', '~> 3.0'
 end
 
