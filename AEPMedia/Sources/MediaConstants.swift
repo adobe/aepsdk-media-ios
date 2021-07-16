@@ -85,7 +85,7 @@ internal extension MediaConstants {
         static let SESSION_END = "sessionend"
         static let PLAY = "play"
         static let PAUSE = "pause"
-        static let COMPLETE = "mediacomplete"
+        static let COMPLETE = "complete"
         static let BUFFER_START = "bufferstart"
         static let BUFFER_COMPLETE = "buffercomplete"
         static let SEEK_START = "seekstart"
