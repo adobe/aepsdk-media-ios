@@ -23,7 +23,8 @@ class MediaServiceTest: XCTestCase {
         mockDBService.persistedSessionIds = persistedSessionIds
 
         //Action
-        _ = MediaService(mediaDBService: mockDBService)
+        let mediaService = MediaService(mediaDBService: mockDBService)
+        mediaService.readyToProcess(dispatchFn: {_ in })
         Thread.sleep(forTimeInterval: 0.25)
 
         //Assert

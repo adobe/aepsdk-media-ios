@@ -18,11 +18,32 @@ extension Event {
         return data?[MediaConstants.Tracker.ID] as? String
     }
 
+    /// Returns client generated session id associated with Event
+    var sessionId: String? {
+        return data?[MediaConstants.Tracker.SESSION_ID] as? String
+    }
+
     /// Returns tracker config associated with EVENT_SOURCE_TRACKER_REQUEST Event
     var trackerConfig: [String: Any]? {
         guard source == MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST else {
             return nil
         }
         return data?[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any]
+    }
+
+    var param: [String: Any]? {
+        return data?[MediaConstants.Tracker.EVENT_PARAM] as? [String: Any]
+    }
+
+    var metadata: [String: String]? {
+        return data?[MediaConstants.Tracker.EVENT_METADATA] as? [String: String]
+    }
+
+    var name: String? {
+        return data?[MediaConstants.Tracker.EVENT_NAME] as? String
+    }
+
+    var eventTs: Int64? {
+        return data?[MediaConstants.Tracker.EVENT_TIMESTAMP] as? Int64
     }
 }

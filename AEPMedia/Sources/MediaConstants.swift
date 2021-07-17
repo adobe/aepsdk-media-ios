@@ -14,7 +14,7 @@ import Foundation
 internal extension MediaConstants {
     static let EXTENSION_NAME                           = "com.adobe.module.media"
     static let FRIENDLY_NAME                            = "Media Analytics"
-    static let EXTENSION_VERSION                        = "3.0.0"
+    static let EXTENSION_VERSION                        = "3.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
     static let DATABASE_NAME                            = EXTENSION_NAME
     static let LOG_TAG                                  = EXTENSION_NAME
@@ -26,6 +26,7 @@ internal extension MediaConstants {
         static let HTTP_TIMEOUT_SECONDS: TimeInterval = 5
         static let HTTP_SUCCESS_RANGE = 200..<300
         static let REQUEST_HEADERS = ["Content-type": "application/json"]
+        static let HEADER_KEY_AEP_VALIDATION_TOKEN = "X-Adobe-AEP-Validation-Token"
         static let INVALID_RESPONSE = -1
     }
 
@@ -58,13 +59,20 @@ internal extension MediaConstants {
         static let ANALYTICS_VISITOR_ID = "aid"
     }
 
+    enum Assurance {
+        static let SHARED_STATE_NAME = "com.adobe.assurance"
+        static let INTEGRATION_ID = "integrationid"
+    }
+
     enum Media {
         static let EVENT_TYPE = "com.adobe.eventtype.media"
         static let EVENT_SOURCE_TRACKER_REQUEST = "com.adobe.eventsource.media.requesttracker"
         static let EVENT_SOURCE_TRACKER_RESPONSE = "com.adobe.eventsource.media.responsetracker"
         static let EVENT_SOURCE_TRACK_MEDIA = "com.adobe.eventsource.media.trackmedia"
+        static let EVENT_SOURCE_SESSION_CREATED = "com.adobe.eventsource.media.sessioncreated"
         static let EVENT_NAME_CREATE_TRACKER = "Media::CreateTrackerRequest"
         static let EVENT_NAME_TRACK_MEDIA = "Media::TrackMedia"
+        static let EVENT_NAME_SESSION_CREATED = "Media::SessionCreated"
     }
 
     enum MediaConfig {
@@ -77,7 +85,7 @@ internal extension MediaConstants {
         static let SESSION_END = "sessionend"
         static let PLAY = "play"
         static let PAUSE = "pause"
-        static let COMPLETE = "mediacomplete"
+        static let COMPLETE = "complete"
         static let BUFFER_START = "bufferstart"
         static let BUFFER_COMPLETE = "buffercomplete"
         static let SEEK_START = "seekstart"
@@ -155,6 +163,7 @@ internal extension MediaConstants {
         static let EVENT_TIMESTAMP = "event.timestamp"
         static let EVENT_INTERNAL = "event.internal"
         static let PLAYHEAD = "time.playhead"
+        static let BACKEND_SESSION_ID = "mediaservice.sessionid"
     }
 
     enum PingInterval {

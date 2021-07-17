@@ -42,14 +42,24 @@ class BaseScenarioTest: XCTestCase {
             XCTAssertEqual(expectedHits.count, actualHitIndexList.count, "No of expected hits (\(expectedHits.count)) not equal to actual hits (\(actualHitIndexList.count))")
 
             for i in 0...expectedHits.count-1 {
-                XCTAssertEqual(expectedHits[i], fakeMediaService.getHit(sessionId: sessionId, index: actualHitIndexList[i]))
+                XCTAssertEqual(expectedHits[i], processHit(fakeMediaService.getHit(sessionId: sessionId, index: actualHitIndexList[i])))
             }
         } else {
             let actualHitsCount = fakeMediaService.getHitCount(sessionId: sessionId)
             XCTAssertEqual(expectedHits.count, actualHitsCount, "No of expected hits (\(expectedHits.count)) not equal to actual hits (\(actualHitsCount))")
             for i in 0...expectedHits.count-1 {
-                XCTAssertEqual(expectedHits[i], fakeMediaService.getHit(sessionId: sessionId, index: i))
+                XCTAssertEqual(expectedHits[i], processHit(fakeMediaService.getHit(sessionId: sessionId, index: i)))
             }
         }
+    }
+
+    func processHit(_ mediaHit: MediaHit?) -> MediaHit? {
+        // If sessionStart, check if present and remove client session id from the hit.
+        guard let hit = mediaHit, hit.eventType == MediaConstants.MediaCollection.EventType.SESSION_START else { return mediaHit }
+
+        XCTAssertTrue(hit.params?.keys.contains(MediaConstants.Tracker.SESSION_ID) ?? false)
+        var params = hit.params
+        params?.removeValue(forKey: MediaConstants.Tracker.SESSION_ID)
+        return MediaHit(eventType: hit.eventType, playhead: hit.playhead, ts: hit.timestamp, params: params, customMetadata: hit.metadata, qoeData: hit.qoeData)
     }
 }

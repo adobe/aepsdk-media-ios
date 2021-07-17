@@ -94,7 +94,7 @@ class ViewController: UIViewController {
 
     @IBAction func startAssuranceSession (_ sender: Any) {
         if let url = URL(string: assuranceUrl.text ?? "") {
-            AEPAssurance.startSession(url)
+            Assurance.startSession(url: url)
         }
     }
 

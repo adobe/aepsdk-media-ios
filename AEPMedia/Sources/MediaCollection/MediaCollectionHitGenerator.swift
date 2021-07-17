@@ -11,6 +11,7 @@
 
 import Foundation
 import AEPServices
+import AEPCore
 
 class MediaCollectionHitGenerator {
     private static let LOG_TAG = MediaConstants.LOG_TAG
@@ -18,6 +19,7 @@ class MediaCollectionHitGenerator {
     private let mediaHitProcessor: MediaProcessor
     private let mediaConfig: [String: Any]
     private let downloadedContent: Bool
+    private let refEvent: Event
     private var lastReportedQoeData: [String: Any] = [:]
     private var isTracking: Bool = false
     private var reportingInterval: Int64
@@ -36,7 +38,7 @@ class MediaCollectionHitGenerator {
     #endif
 
     /// Initializes the Media Collection Hit Generator
-    public required init?(context: MediaContext?, hitProcessor: MediaProcessor, config: [String: Any], refTS: Int64) {
+    public required init?(context: MediaContext?, hitProcessor: MediaProcessor, config: [String: Any], refEvent: Event, refTS: Int64) {
         guard let context = context else {
             Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Unable to create a MediaCollectionHitGenerator, media context is nil.")
             return nil
@@ -44,6 +46,7 @@ class MediaCollectionHitGenerator {
         self.mediaContext = context
         self.mediaHitProcessor = hitProcessor
         self.mediaConfig = config
+        self.refEvent = refEvent
         self.refTS = refTS
         self.currentPlaybackState = .Init
         self.currentPlaybackStateStartRefTS = refTS
@@ -62,6 +65,9 @@ class MediaCollectionHitGenerator {
         }
 
         params[Media.DOWNLOADED] = downloadedContent
+
+        // Debug Params to link client generated session id with backend generated id.
+        params[MediaConstants.Tracker.SESSION_ID] = refEvent.sessionId
 
         if let channel = mediaConfig[MediaConstants.TrackerConfig.CHANNEL] as? String, !channel.isEmpty {
             params[Media.CHANNEL] = channel

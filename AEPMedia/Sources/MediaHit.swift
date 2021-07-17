@@ -11,24 +11,25 @@
 
 import Foundation
 import AEPServices
+import AEPCore
 
 struct MediaHit: Codable {
-    /// Media Analytics Tracking Event Type
+    /// Media Hit type
     private (set) var eventType: String
 
-    /// Media Analytics parameters
+    /// Media Hit parameters
     private (set) var params: [String: Any]?
 
-    /// Media Analytics metadata
+    /// Media Hit metadata
     private (set) var metadata: [String: String]?
 
-    /// Media Analytics QoE data
+    /// Media Hit QoE data
     private (set) var qoeData: [String: Any]?
 
-    /// The current playhead
+    /// Media Hit playhead
     private (set) var playhead: Double = 0
 
-    /// The current timestamps
+    /// Media Hit timestamp
     private (set) var timestamp: Int64 = 0
 
     enum CodingKeys: String, CodingKey {

@@ -10,7 +10,6 @@
  */
 
 import Foundation
-import AEPCore
 import AEPServices
 
 class MediaRealTimeSession: MediaSession {
@@ -104,11 +103,24 @@ class MediaRealTimeSession: MediaSession {
             sendNextHit()
             return
         }
+        let debugInfo = MediaCollectionReportHelper.extractDebugInfo(hit: hit)
 
         isSendingHit = true
 
         Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] -  [Session (\(id)] Send hit (\(eventType)) with body \(body)")
-        let networkRequest = NetworkRequest(url: url, httpMethod: .post, connectPayload: body, httpHeaders: MediaConstants.Networking.REQUEST_HEADERS, connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS, readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
+
+        var httpHeaders = MediaConstants.Networking.REQUEST_HEADERS
+        if let assuranceIntegrationId = state.assuranceIntegrationId {
+            httpHeaders[MediaConstants.Networking.HEADER_KEY_AEP_VALIDATION_TOKEN] = assuranceIntegrationId
+        }
+
+        let networkRequest = NetworkRequest(url: url,
+                                            httpMethod: .post,
+                                            connectPayload: body,
+                                            httpHeaders: httpHeaders,
+                                            connectTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS,
+                                            readTimeout: MediaConstants.Networking.HTTP_TIMEOUT_SECONDS)
+
         ServiceProvider.shared.networkService.connectAsync(networkRequest: networkRequest) {[weak self] connection in
             self?.dispatchQueue.async {
                 guard let self = self else {return}
@@ -129,6 +141,10 @@ class MediaRealTimeSession: MediaSession {
                     }
                     Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id) Created Mediacollection session \(mcSessionId)")
                     self.mcSessionId = mcSessionId
+
+                    var eventData = debugInfo
+                    eventData[MediaConstants.Tracker.BACKEND_SESSION_ID] = mcSessionId
+                    self.dispathFn?(eventData)
                 }
 
                 self.handleProcessingSuccess()
