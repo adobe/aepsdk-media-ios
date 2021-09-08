@@ -1149,6 +1149,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BD051424EC476943396CB548 /* Pods-AEPMedia.debug.xcconfig */;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -1175,6 +1176,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5866ABA8B7653EA12531A394 /* Pods-AEPMedia.release.xcconfig */;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
