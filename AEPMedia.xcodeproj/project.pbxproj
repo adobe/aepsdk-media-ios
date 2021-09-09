@@ -195,12 +195,12 @@
 		AC36EC3825C9F11E00A37345 /* Media+PublicAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Media+PublicAPI.swift"; sourceTree = "<group>"; };
 		AC36EC3925C9F11E00A37345 /* MediaConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaConstants.swift; sourceTree = "<group>"; };
 		AC36EC3A25C9F11E00A37345 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AC36EC6325C9F2CD00A37345 /* AEPMedia.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AEPMedia.podspec; path = ../AEPMedia.podspec; sourceTree = "<group>"; };
-		AC36EC6425C9F2CD00A37345 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
-		AC36EC6525C9F2CD00A37345 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../Makefile; sourceTree = "<group>"; };
-		AC36EC6625C9F2CD00A37345 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		AC36EC6725C9F2CD00A37345 /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CODE_OF_CONDUCT.md; path = ../CODE_OF_CONDUCT.md; sourceTree = "<group>"; };
-		AC36EC6825C9F2CD00A37345 /* COPYRIGHT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYRIGHT; path = ../COPYRIGHT; sourceTree = "<group>"; };
+		AC36EC6325C9F2CD00A37345 /* AEPMedia.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AEPMedia.podspec; path = ./AEPMedia.podspec; sourceTree = "<group>"; };
+		AC36EC6425C9F2CD00A37345 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ./LICENSE; sourceTree = "<group>"; };
+		AC36EC6525C9F2CD00A37345 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ./Makefile; sourceTree = "<group>"; };
+		AC36EC6625C9F2CD00A37345 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ./README.md; sourceTree = "<group>"; };
+		AC36EC6725C9F2CD00A37345 /* CODE_OF_CONDUCT.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = CODE_OF_CONDUCT.md; path = ./CODE_OF_CONDUCT.md; sourceTree = "<group>"; };
+		AC36EC6825C9F2CD00A37345 /* COPYRIGHT */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYRIGHT; path = ./COPYRIGHT; sourceTree = "<group>"; };
 		AC44A31126151967003EC125 /* MediaEventGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaEventGenerator.swift; sourceTree = "<group>"; };
 		AC8C2B032628365300370794 /* MediaConstants+Public.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MediaConstants+Public.swift"; sourceTree = "<group>"; };
 		AC9E4674260D62530087FFF8 /* StateInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StateInfo.swift; sourceTree = "<group>"; };
@@ -397,7 +397,7 @@
 				9538A3B7263A462D00895D31 /* video.mp4 */,
 			);
 			name = MediaSampleApp;
-			path = ../Samples/MediaSampleApp;
+			path = ./Samples/MediaSampleApp;
 			sourceTree = "<group>";
 		};
 		95DD637E261FF6EE003068C7 /* Player */ = {
@@ -424,7 +424,7 @@
 				AC36EC3425C9F11E00A37345 /* Sources */,
 			);
 			name = AEPMedia;
-			path = ../AEPMedia;
+			path = ./AEPMedia;
 			sourceTree = "<group>";
 		};
 		AC36EC2D25C9F11E00A37345 /* Mocks */ = {
@@ -1149,13 +1149,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BD051424EC476943396CB548 /* Pods-AEPMedia.debug.xcconfig */;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Sources/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/AEPMedia/Sources/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1175,13 +1176,14 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5866ABA8B7653EA12531A394 /* Pods-AEPMedia.release.xcconfig */;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Sources/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/AEPMedia/Sources/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1204,7 +1206,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = NO;
-				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/AEPMedia/Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1226,7 +1228,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = NO;
-				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/AEPMedia/Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1247,7 +1249,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FKGEE875K4;
-				INFOPLIST_FILE = "$(SRCROOT)/../Samples/MediaSampleApp/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Samples/MediaSampleApp/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1268,7 +1270,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FKGEE875K4;
-				INFOPLIST_FILE = "$(SRCROOT)/../Samples/MediaSampleApp/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Samples/MediaSampleApp/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1289,7 +1291,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = NO;
-				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/AEPMedia/Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1311,7 +1313,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = NO;
-				INFOPLIST_FILE = "$(SRCROOT)/../AEPMedia/Tests/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/AEPMedia/Tests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
