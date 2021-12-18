@@ -4,6 +4,8 @@ use_frameworks!
 workspace 'AEPMedia'
 project 'AEPMedia.xcodeproj'
 
+pod 'SwiftLint', '0.44.0'
+
 target 'AEPMedia' do
   pod 'AEPCore'
   pod 'AEPServices'
@@ -32,4 +34,3 @@ target 'MediaSampleApp' do
   pod 'AEPAnalytics'
   pod 'AEPAssurance', '~> 3.0'
 end
-
