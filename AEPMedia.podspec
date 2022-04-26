@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "AEPMedia"
-  s.version          = "3.0.1"
+  s.version          = "3.0.1.1"
   s.summary          = "Media library for Adobe Experience Platform SDK. Written and maintained by Adobe."
   s.description      = <<-DESC
 The Media library provides APIs that allow use of the Media Analytics product in the Adobe Experience Platform SDK.
@@ -11,6 +11,7 @@ The Media library provides APIs that allow use of the Media Analytics product in
   s.source           = { :git => "https://github.com/adobe/aepsdk-media-ios", :tag => s.version.to_s }
 
   s.ios.deployment_target = '10.0'
+  s.tvos.deployment_target = '10.0'
 
   s.swift_version = '5.1'
 
