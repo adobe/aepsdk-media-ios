@@ -23,6 +23,9 @@ coverage:
     - "./AEPMedia/Mocks/**/*"
     - "./AEPMedia/Tests/**/*"
     - "./AEPMedia/Tests/.*"
+    - "./Documentation"
+    - "./Script"
+    - "./Samples"
     - "./build"
 
 parsers:
