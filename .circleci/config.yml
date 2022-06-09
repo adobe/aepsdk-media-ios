@@ -9,9 +9,6 @@ workflows:
   build-test-deploy:
     jobs:
       - build-and-test
-orbs:
-  slack: circleci/slack@4.10.1
-
 jobs:
 
   build-and-test:
