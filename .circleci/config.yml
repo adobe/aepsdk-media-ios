@@ -10,7 +10,7 @@ workflows:
     jobs:
       - build-and-test
 orbs:
-  slack: circleci/slack@4.2.0
+  slack: circleci/slack@4.10.1
 
 jobs:
 
