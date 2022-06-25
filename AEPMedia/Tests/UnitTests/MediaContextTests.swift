@@ -124,20 +124,20 @@ class MediaContextTests: XCTestCase {
     func testPlaybackStates() {
         XCTAssertTrue(mediaContext!.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Init))
 
-        mediaContext?.exitPlaybackState(state: MediaContext.MediaPlaybackState.Init) //Should not exit Init
+        mediaContext?.exitPlaybackState(state: MediaContext.MediaPlaybackState.Init) // Should not exit Init
 
         XCTAssertTrue(mediaContext!.isInMediaPlaybackState(state: MediaContext.MediaPlaybackState.Init))
 
         var state = MediaContext.MediaPlaybackState.Pause
         mediaContext?.enterPlaybackState(state: state)
         XCTAssertTrue(mediaContext!.isInMediaPlaybackState(state: state))
-        mediaContext?.exitPlaybackState(state: state) //Should not exit Pause
+        mediaContext?.exitPlaybackState(state: state) // Should not exit Pause
         XCTAssertTrue(mediaContext!.isInMediaPlaybackState(state: state))
 
         state = MediaContext.MediaPlaybackState.Play
         mediaContext?.enterPlaybackState(state: state)
         XCTAssertTrue(mediaContext!.isInMediaPlaybackState(state: state))
-        mediaContext?.exitPlaybackState(state: state) //Should not exit Play
+        mediaContext?.exitPlaybackState(state: state) // Should not exit Play
         XCTAssertTrue(mediaContext!.isInMediaPlaybackState(state: state))
 
         // Should not enter Init state again

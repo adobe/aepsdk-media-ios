@@ -105,7 +105,7 @@ class AdChapterPlayback: BaseScenarioTest {
 
     // tests
     func testMultipleAdChapter_RealTimeTracker() {
-        //test
+        // test
         mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
         mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
@@ -157,12 +157,12 @@ class AdChapterPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 30, ts: 60000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testMultipleAdChapter_GranularAdTracking_RealTimeTracker() {
-        //test
+        // test
         mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPrerollAndGranularTracking.toMap(), metadata: Self.mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
         mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
@@ -222,15 +222,15 @@ class AdChapterPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 30, ts: 40000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testMultipleAdChapter_DownloadedTracker() {
-        //setup
+        // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
         mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
@@ -251,7 +251,7 @@ class AdChapterPlayback: BaseScenarioTest {
         mediaTracker.trackEvent(event: MediaEvent.AdBreakComplete)
         mediaTracker.trackComplete()
 
-        //verify
+        // verify
         let expectedHits: [MediaHit] = [
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: Self.expectedSessionStartParamsDownloaded, customMetadata: Self.mediaMetadata),
 
@@ -283,7 +283,7 @@ class AdChapterPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 110, ts: 220000)
         ]
 
-        //assert
+        // assert
         checkHits(expectedHits: expectedHits)
     }
 

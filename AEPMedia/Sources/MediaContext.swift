@@ -48,7 +48,7 @@ class MediaContext {
     }
 
     /// Sets `AdBreakInfo` for the AdBreak being tracked
-    ///- Parameters:
+    /// - Parameters:
     ///    - info: `AdBreakInfo` object.
     func setAdBreak(info: AdBreakInfo) {
         adBreakInfo = info
@@ -60,7 +60,7 @@ class MediaContext {
     }
 
     /// Sets `AdInfo` and metadata for the Ad being tracked
-    ///- Parameters:
+    /// - Parameters:
     ///    - info: `AdInfo` object.
     ///    - metadata: Custom metadata associated with the Ad.
     func setAd(info: AdInfo, metadata: [String: String]) {
@@ -75,7 +75,7 @@ class MediaContext {
     }
 
     /// Sets `ChapterInfo` and metadata for the Chapter being tracked
-    ///- Parameters:
+    /// - Parameters:
     ///    - info: `ChapterInfo` object.
     ///    - metadata: Custom metadata associated with the Chapter.
     func setChapter(info: ChapterInfo, metadata: [String: String]) {
@@ -90,7 +90,7 @@ class MediaContext {
     }
 
     /// Enter `MediaPlaybackState` when a valid state play/pause/buffer/stall is passed.
-    ///- Parameters:
+    /// - Parameters:
     ///    - state: `MediaPlaybackState` value.
     func enterPlaybackState(state: MediaPlaybackState) {
         Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Enter playback state: (\(state))")
@@ -107,7 +107,7 @@ class MediaContext {
     }
 
     /// Exit `MediaPlaybackState` when a valid state play/pause/buffer/stall is passed.
-    ///- Parameters:
+    /// - Parameters:
     ///    - state: MediaPlaybackState value.
     func exitPlaybackState(state: MediaPlaybackState) {
         Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Exit playback state: (\(state))")
@@ -122,7 +122,7 @@ class MediaContext {
     }
 
     /// Returns `true` if the player is in a particular `MediaPlaybackState`.
-    ///- Parameters:
+    /// - Parameters:
     ///    - state: MediaPlaybackState value.
     func isInMediaPlaybackState(state: MediaPlaybackState) -> Bool {
         var retVal = false
@@ -146,7 +146,7 @@ class MediaContext {
     }
 
     /// Starts tracking customState.
-    ///- Parameters:
+    /// - Parameters:
     ///    - info: `StateInfo` object that contains custom state name.
     @discardableResult
     func startState(info: StateInfo) -> Bool {
@@ -165,7 +165,7 @@ class MediaContext {
     }
 
     /// Stops tracking customState if the state is actively being tracked.
-    ///- Parameters:
+    /// - Parameters:
     ///    - info: `StateInfo` object that contains custom state name.
     @discardableResult
     func endState(info: StateInfo) -> Bool {
@@ -179,21 +179,21 @@ class MediaContext {
     }
 
     /// Returns `true` if the state is actively being tracked or not.
-    ///- Parameters:
+    /// - Parameters:
     ///    - info: `StateInfo` object that contains custom state name.
     func isInState(info: StateInfo) -> Bool {
         return trackedStates[info.stateName] ?? false
     }
 
     /// Returns `true` if the state is actively being tracked or is inactive but had been already tracked.
-    ///- Parameters:
+    /// - Parameters:
     ///    - info: `StateInfo` object that contains custom state name
     func hasTrackedState(info: StateInfo) -> Bool {
         return trackedStates[info.stateName] != nil
     }
 
     /// Returns all the states that are actively being tracked.
-    ///- Parameters:
+    /// - Parameters:
     ///    - info: `StateInfo` object that contains custom state name.
     func getActiveTrackedStates() -> [StateInfo] {
         var activeStates: [StateInfo] = []

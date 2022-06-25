@@ -1153,7 +1153,7 @@ class MediaEventTrackerTests: XCTestCase {
         eventGenerator.trackPlay()
         XCTAssertTrue(handleTrackAPI())
 
-        eventGenerator.incrementTimeStamp(value: (24*60*60*1000)) //24 hours
+        eventGenerator.incrementTimeStamp(value: (24*60*60*1000)) // 24 hours
         eventGenerator.updateCurrentPlayhead(time: 1)
         XCTAssertTrue(handleTrackAPI())
 
@@ -1171,7 +1171,7 @@ class MediaEventTrackerTests: XCTestCase {
         eventGenerator.trackPause()
         XCTAssertTrue(handleTrackAPI())
 
-        eventGenerator.incrementTimeStamp(value: (24*60*60*1000)) //24 hours
+        eventGenerator.incrementTimeStamp(value: (24*60*60*1000)) // 24 hours
         eventGenerator.updateCurrentPlayhead(time: 1)
         XCTAssertTrue(handleTrackAPI())
 

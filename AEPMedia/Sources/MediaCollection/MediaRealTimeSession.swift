@@ -19,7 +19,7 @@ class MediaRealTimeSession: MediaSession {
 
     private static let DURATION_BETWEEN_HITS_ON_FAILURE = 60 // Retry duration in case of failure
     private static let MAX_ALLOWED_DURATION_BETWEEN_HITS_MS: Int64 = 60  * 1000 // 60 sec
-    private static let MAX_ALLOWED_FAILURE = 3 //The maximum number of times SDK retries to send hit on failure, after that drop the hit.
+    private static let MAX_ALLOWED_FAILURE = 3 // The maximum number of times SDK retries to send hit on failure, after that drop the hit.
 
     #if DEBUG
         var hits: [MediaHit] = []
@@ -60,7 +60,7 @@ class MediaRealTimeSession: MediaSession {
         trySendHit()
     }
 
-    ///Sends the first `MediaHit` from the collected hits to Media Collection Server
+    /// Sends the first `MediaHit` from the collected hits to Media Collection Server
     private func trySendHit() {
         guard state.privacyStatus == .optedIn else {
             Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(id)] Exiting as privacy is not opted-in")
@@ -170,12 +170,12 @@ class MediaRealTimeSession: MediaSession {
         return url
     }
 
-    ///Handles if hit is successfully send to the Media Collection Server
+    /// Handles if hit is successfully send to the Media Collection Server
     private func handleProcessingSuccess() {
         sendNextHit()
     }
 
-    ///Handles if there is an error in sending hit to the Media Collection Server
+    /// Handles if there is an error in sending hit to the Media Collection Server
     private func handleProcessingError(sessionStart: Bool) {
         if !sessionStart || sessionStartRetryCount >= MediaRealTimeSession.MAX_ALLOWED_FAILURE {
             sendNextHit()
@@ -190,7 +190,7 @@ class MediaRealTimeSession: MediaSession {
         }
     }
 
-    ///Initiates sending the next hit after a hit is successfully send OR error occurred in sending the hit, greater than or equals to MAX_ALLOWED_FAILURE times. It also handles the condition if there is not pending hit and session has been ended.
+    /// Initiates sending the next hit after a hit is successfully send OR error occurred in sending the hit, greater than or equals to MAX_ALLOWED_FAILURE times. It also handles the condition if there is not pending hit and session has been ended.
     private func sendNextHit() {
         if !hits.isEmpty {
             hits.removeFirst()

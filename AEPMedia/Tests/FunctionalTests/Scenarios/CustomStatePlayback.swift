@@ -29,7 +29,7 @@ class CustomStatePlayback: BaseScenarioTest {
 
     // tests
     func testCustomState_RealTimeTracker() {
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         mediaTracker.trackPlay()
         mediaTracker.trackEvent(event: MediaEvent.StateStart, info: customStateInfo.toMap())
@@ -77,15 +77,15 @@ class CustomStatePlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 15, ts: 15000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testCustomState_DownloadedTracker() {
-        //setup
+        // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         mediaTracker.trackPlay()
         mediaTracker.trackEvent(event: MediaEvent.StateStart, info: customStateInfo.toMap())
@@ -133,7 +133,7 @@ class CustomStatePlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 60, ts: 60000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 }

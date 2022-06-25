@@ -19,26 +19,26 @@ class MediaCollectionReportHelperTests: XCTestCase {
     let mockMediaData = MockMediaData()
 
     func testGetTrackingUrl() {
-        //Setup
+        // Setup
         let host = "abc.com"
-        //Action
+        // Action
         let url = MediaCollectionReportHelper.getTrackingURL(host: host)
-        //Assert
+        // Assert
         XCTAssertEqual(url, URL(string: "https://\(host)/api/v1/sessions"))
     }
 
     func testGetTrackingUrlForEvents() {
-        //Setup
+        // Setup
         let host = "abc.com"
         let sessionId = "sessionId"
-        //Action
+        // Action
         let url = MediaCollectionReportHelper.getTrackingURLForEvents(host: host, sessionId: sessionId)
-        //Assert
+        // Assert
         XCTAssertEqual(url, URL(string: "https://\(host)/api/v1/sessions/\(sessionId)/events"))
     }
 
     func testHasAllTrackingParameterReturnsTrue() {
-        //Setup
+        // Setup
         let sharedData = [
             MediaConstants.Configuration.SHARED_STATE_NAME: [
                 MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn.rawValue,
@@ -52,16 +52,16 @@ class MediaCollectionReportHelperTests: XCTestCase {
             ]
         ]
         let state = MediaState()
-        //Action
+        // Action
         state.update(dataMap: sharedData)
         let hasAllTrackingParams = MediaCollectionReportHelper.hasAllTrackingParams(state: state)
 
-        //Assert
+        // Assert
         XCTAssertTrue(hasAllTrackingParams)
     }
 
     func testHasAllTrackingParameterReturnsFalse() {
-        //Setup
+        // Setup
         let sharedData = [
             MediaConstants.Configuration.SHARED_STATE_NAME: [
                 MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn.rawValue,
@@ -74,60 +74,60 @@ class MediaCollectionReportHelperTests: XCTestCase {
             ]
         ]
         let state = MediaState()
-        //Action
+        // Action
         state.update(dataMap: sharedData)
         let hasAllTrackingParams = MediaCollectionReportHelper.hasAllTrackingParams(state: state)
 
-        //Assert
+        // Assert
         XCTAssertFalse(hasAllTrackingParams)
     }
 
     func testExtractSessionIdSuccess() {
-        //Setup
+        // Setup
         let sessionIdActual = "1337d8e42b67c1c9be55b5b3ebdd3ea145006c3adb5877949ed407fe2d50ec5d"
         let sessionResponseFragment = "/api/v1/sessions/\(sessionIdActual)"
-        //Action
+        // Action
         let sessionId = MediaCollectionReportHelper.extractSessionID(sessionResponseFragment: sessionResponseFragment)
-        //Assert
+        // Assert
         XCTAssertEqual(sessionId, sessionIdActual)
     }
 
     func testExtractSessionIdFailure() {
-        //Setup
+        // Setup
         let sessionIdActual = "1337d8e42b67c1c9be55b5b3ebdd3ea145006c3adb5877949ed407fe2d50ec5d"
         let sessionResponseFragment = "/api/v1/\(sessionIdActual)"
-        //Action
+        // Action
         let sessionId = MediaCollectionReportHelper.extractSessionID(sessionResponseFragment: sessionResponseFragment)
-        //Assert
+        // Assert
         XCTAssertNil(sessionId)
     }
 
     func testGenerateHitReport() {
-        //Setup
+        // Setup
         let hit = mockMediaData.sessionStart!
         let state = mockMediaData.mediaState
         let jsonDecoder = JSONDecoder()
 
-        //Action
+        // Action
         let response = MediaCollectionReportHelper.generateHitReport(state: state!, hit: hit)
 
         let mediaHitActual = try? jsonDecoder.decode(MediaHit.self, from: response!.data(using: .utf8)!)
         let mediaHitExpected = try? jsonDecoder.decode(MediaHit.self, from: mockMediaData.sessionStartJson!.data(using: .utf8)!)
         let mediaHitUpdated = MediaCollectionReportHelper.updateMediaHit(state: mockMediaData.mediaState, mediaHit: mediaHitExpected!)
 
-        //Assert
+        // Assert
         XCTAssertNotNil(response)
         XCTAssertTrue(compareMediaHits(actual: mediaHitActual!, expected: mediaHitUpdated))
     }
 
     func testGenerateDownloadReportWithEmptyList() {
-        //setup
+        // setup
         let hits = [MediaHit]()
 
-        //Action
+        // Action
         let report = MediaCollectionReportHelper.generateDownloadReport(state: mockMediaData.mediaState, hits: hits)
 
-        //Assert
+        // Assert
         XCTAssertNil(report)
     }
 
