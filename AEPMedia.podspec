@@ -11,6 +11,7 @@ The Media library provides APIs that allow use of the Media Analytics product in
   s.source           = { :git => "https://github.com/adobe/aepsdk-media-ios", :tag => s.version.to_s }
 
   s.ios.deployment_target = '10.0'
+  s.tvos.deployment_target = '10.0'
 
   s.swift_version = '5.1'
 
