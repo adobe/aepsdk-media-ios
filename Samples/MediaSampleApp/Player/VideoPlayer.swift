@@ -270,7 +270,7 @@ class VideoPlayer: AVPlayer {
 
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: PlayerEvent.PLAYER_EVENT_CHAPTER_START), object: self, userInfo: chapterInfo)
 
-        //qoe update
+        // qoe update
         qoeUpdate()
     }
 

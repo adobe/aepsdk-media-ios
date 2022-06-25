@@ -14,9 +14,13 @@ import UIKit
 import AEPCore
 import AEPIdentity
 import AEPAnalytics
-import AEPAssurance
 import AEPLifecycle
 import AEPMedia
+
+// MARK: TODO remove this once Assurance has tvOS support.
+#if os(iOS)
+    import AEPAssurance
+#endif
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,17 +30,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         MobileCore.setLogLevel(.trace)
         let appState = application.applicationState
+        var extensions = [Identity.self, AnalyticsAppExtension.self, Lifecycle.self]
 
-        MobileCore.registerExtensions([Identity.self, Analytics.self, Lifecycle.self, Media.self, Assurance.self], {
+        // MARK: TODO remove this once Assurance has tvOS support.
+        #if os(iOS)
+            extensions.append(Assurance.self)
+        #endif
+
+        MobileCore.registerExtensions(extensions, {
             // Use the App id assigned to this application via Adobe Launch
             MobileCore.configureWith(appId: self.LAUNCH_ENVIRONMENT_FILE_ID)
-            
+
             if appState != .background {
                 // only start lifecycle if the application is not in the background
                 MobileCore.lifecycleStart(additionalContextData: ["contextDataKey": "contextDataVal"])
             }
         })
-        
+
         return true
     }
 
