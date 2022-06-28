@@ -33,7 +33,7 @@ bundle-exec-pod-install:
 open:
 	open $(PROJECT_NAME).xcworkspace
 
-test:
+test-ios:
 	@echo "######################################################################"
 	@echo "### Unit & Functional Testing iOS"
 	@echo "######################################################################"
