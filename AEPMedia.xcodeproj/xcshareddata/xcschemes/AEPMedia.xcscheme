@@ -29,8 +29,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D66F0B642616929C0018E779"
-               BuildableName = "AEPMediaFunctionalTests.xctest"
-               BlueprintName = "AEPMediaFunctionalTests"
+               BuildableName = "FunctionalTests.xctest"
+               BlueprintName = "FunctionalTests"
                ReferencedContainer = "container:AEPMedia.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -58,8 +58,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2EFF1B5925BF57FC00375965"
-               BuildableName = "AEPMediaUnitTests.xctest"
-               BlueprintName = "AEPMediaUnitTests"
+               BuildableName = "UnitTests.xctest"
+               BlueprintName = "UnitTests"
                ReferencedContainer = "container:AEPMedia.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -68,8 +68,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "D66F0B642616929C0018E779"
-               BuildableName = "AEPMediaFunctionalTests.xctest"
-               BlueprintName = "AEPMediaFunctionalTests"
+               BuildableName = "FunctionalTests.xctest"
+               BlueprintName = "FunctionalTests"
                ReferencedContainer = "container:AEPMedia.xcodeproj">
             </BuildableReference>
          </TestableReference>
