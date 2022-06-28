@@ -23,20 +23,20 @@ target 'AEPMedia' do
   core_pods
 end
 
-target 'AEPMediaUnitTests' do
+target 'UnitTests' do
   core_pods
 end
 
-target 'AEPMediaFunctionalTests' do
+target 'FunctionalTests' do
   core_pods
 end
 
-target 'MediaSampleApp' do
+target 'TestAppiOS' do
   test_pods
   pod 'AEPAssurance', '~> 3.0'
 end
 
-target 'MediaSampleApp (tvOS)' do
+target 'TestApptvOS' do
   test_pods
 end
 
