@@ -24,13 +24,13 @@ import AEPMedia
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    private let LAUNCH_ENVIRONMENT_FILE_ID = "your launch app id"
+    private let ENVIRONMENT_FILE_ID = ""
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         MobileCore.setLogLevel(.trace)
         let appState = application.applicationState
-        var extensions = [Identity.self, Analytics.self, Lifecycle.self]
+        var extensions = [Identity.self, Analytics.self, Lifecycle.self, Media.self]
 
         // MARK: TODO remove this once Assurance has tvOS support.
         #if os(iOS)
@@ -39,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         MobileCore.registerExtensions(extensions, {
             // Use the App id assigned to this application via Adobe Launch
-            MobileCore.configureWith(appId: self.LAUNCH_ENVIRONMENT_FILE_ID)
+            MobileCore.configureWith(appId: self.ENVIRONMENT_FILE_ID)
 
             if appState != .background {
                 // only start lifecycle if the application is not in the background
