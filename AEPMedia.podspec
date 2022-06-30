@@ -17,7 +17,7 @@ The Media library provides APIs that allow use of the Media Analytics product in
 
   s.pod_target_xcconfig = { 'BUILD_LIBRARY_FOR_DISTRIBUTION' => 'YES' }
 
-  s.dependency 'AEPCore'
+  s.dependency 'AEPCore', '>= 3.7.0'
 
   s.source_files          = 'AEPMedia/Sources/**/*.swift'
 
