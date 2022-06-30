@@ -72,15 +72,15 @@ class Timeout: BaseScenarioTest {
         // test
         mediaTracker.trackSessionStart(info: mediaInfoWithDefaultPreroll.toMap(), metadata: mediaMetadata)
         mediaTracker.trackPlay()
-        //wait for 24 hours
+        // wait for 24 hours
         waitFor(time: 86400000, updatePlayhead: true)
-        //wait for 20 seconds
+        // wait for 20 seconds
         waitFor(time: 20000, updatePlayhead: true)
         mediaTracker.trackComplete()
 
-        //Hits to verify
+        // Hits to verify
         let expectedHitsEventSession0: [MediaHit] = [
-            //session 0
+            // session 0
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: expectedSessionStartParams, customMetadata: mediaMetadata),
             MediaHit(eventType: EventType.PLAY, playhead: 0, ts: 0),
             MediaHit(eventType: EventType.PLAY, playhead: 1, ts: 1000),
@@ -102,7 +102,7 @@ class Timeout: BaseScenarioTest {
         let actualHitListSession0: [Int] = [0, 1, 2, 3, 8640, 8641, 8642]
         let actualHitListSession1: [Int] = [0, 1, 2, 3, 4]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHitsEventSession0, sessionId: "0", actualHitIndexList: actualHitListSession0)
         checkHits(expectedHits: expectedHitsEventSession1, sessionId: "1", actualHitIndexList: actualHitListSession1)
     }
@@ -114,15 +114,15 @@ class Timeout: BaseScenarioTest {
         // test
         mediaTracker.trackSessionStart(info: mediaInfoWithDefaultPreroll.toMap(), metadata: mediaMetadata)
         mediaTracker.trackPlay()
-        //wait for 24 hours
+        // wait for 24 hours
         waitFor(time: 86400000, updatePlayhead: true)
-        //wait for 60 seconds
+        // wait for 60 seconds
         waitFor(time: 60000, updatePlayhead: true)
         mediaTracker.trackComplete()
 
-        //Hits to verify
+        // Hits to verify
         let expectedHitsEventSession0: [MediaHit] = [
-            //session 0
+            // session 0
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: expectedDownloadSessionStartParams, customMetadata: mediaMetadata),
             MediaHit(eventType: EventType.PLAY, playhead: 0, ts: 0),
             MediaHit(eventType: EventType.PLAY, playhead: 1, ts: 1000),
@@ -132,7 +132,7 @@ class Timeout: BaseScenarioTest {
         ]
 
         let expectedHitsEventSession1: [MediaHit] = [
-            //session 1
+            // session 1
             MediaHit(eventType: EventType.SESSION_START, playhead: 86400, ts: 86400000, params: expectedDownloadSessionStartParams2, customMetadata: mediaMetadata),
             MediaHit(eventType: EventType.PLAY, playhead: 86400, ts: 86400000),
             MediaHit(eventType: EventType.PLAY, playhead: 86401, ts: 86401000),
@@ -143,7 +143,7 @@ class Timeout: BaseScenarioTest {
         let actualHitListSession0: [Int] = [0, 1, 2, 3, 1729, 1730]
         let actualHitListSession1: [Int] = [0, 1, 2, 3, 4]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHitsEventSession0, sessionId: "0", actualHitIndexList: actualHitListSession0)
         checkHits(expectedHits: expectedHitsEventSession1, sessionId: "1", actualHitIndexList: actualHitListSession1)
     }
@@ -154,10 +154,10 @@ class Timeout: BaseScenarioTest {
         mediaTracker.trackPlay()
         waitFor(time: 3000, updatePlayhead: true)
         mediaTracker.trackPause()
-        //wait for 30 mins
+        // wait for 30 mins
         waitFor(time: 1800000, updatePlayhead: false)
 
-        //Hits to verify
+        // Hits to verify
         let expectedHitsEvent: [MediaHit] = [
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: expectedSessionStartParams, customMetadata: mediaMetadata),
             MediaHit(eventType: EventType.PLAY, playhead: 0, ts: 0),
@@ -169,7 +169,7 @@ class Timeout: BaseScenarioTest {
 
         let actualHitList: [Int] = [0, 1, 2, 3, 182, 183]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHitsEvent, sessionId: "0", actualHitIndexList: actualHitList)
     }
 
@@ -182,10 +182,10 @@ class Timeout: BaseScenarioTest {
         mediaTracker.trackPlay()
         waitFor(time: 3000, updatePlayhead: true)
         mediaTracker.trackPause()
-        //wait for 30 mins
+        // wait for 30 mins
         waitFor(time: 1800000, updatePlayhead: false)
 
-        //Hits to verify
+        // Hits to verify
         let expectedHitsEvent: [MediaHit] = [
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: expectedDownloadSessionStartParams, customMetadata: mediaMetadata),
             MediaHit(eventType: EventType.PLAY, playhead: 0, ts: 0),
@@ -197,7 +197,7 @@ class Timeout: BaseScenarioTest {
 
         let actualHitList: [Int] = [0, 1, 2, 3, 38, 39]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHitsEvent, sessionId: "0", actualHitIndexList: actualHitList)
     }
 
@@ -207,7 +207,7 @@ class Timeout: BaseScenarioTest {
         mediaTracker.trackPlay()
         waitFor(time: 3000, updatePlayhead: true)
         mediaTracker.trackPause()
-        //wait for 30 mins
+        // wait for 30 mins
         waitFor(time: 600000, updatePlayhead: false)
         mediaTracker.trackEvent(event: MediaEvent.StateStart, info: standardStateCC.toMap())
         waitFor(time: 600000, updatePlayhead: false)
@@ -217,7 +217,7 @@ class Timeout: BaseScenarioTest {
         waitFor(time: 3000, updatePlayhead: false)
         mediaTracker.trackComplete()
 
-        //Hits to verify
+        // Hits to verify
         let expectedHitsEventSession0: [MediaHit] = [
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: expectedSessionStartParams, customMetadata: mediaMetadata),
             MediaHit(eventType: EventType.PLAY, playhead: 0, ts: 0),
@@ -239,7 +239,7 @@ class Timeout: BaseScenarioTest {
         let actualHitListSession0: [Int] = [0, 1, 2, 3, 64, 125, 184, 185]
         let actualHitListSession1: [Int] = [0, 1, 2, 3]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHitsEventSession0, sessionId: "0", actualHitIndexList: actualHitListSession0)
         checkHits(expectedHits: expectedHitsEventSession1, sessionId: "1", actualHitIndexList: actualHitListSession1)
     }
@@ -249,12 +249,12 @@ class Timeout: BaseScenarioTest {
         // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfoWithDefaultPreroll.toMap(), metadata: mediaMetadata)
         mediaTracker.trackPlay()
         waitFor(time: 3000, updatePlayhead: true)
         mediaTracker.trackPause()
-        //wait for 30 mins
+        // wait for 30 mins
         waitFor(time: 600000, updatePlayhead: false)
         mediaTracker.trackEvent(event: MediaEvent.StateStart, info: standardStateCC.toMap())
         waitFor(time: 600000, updatePlayhead: false)
@@ -264,7 +264,7 @@ class Timeout: BaseScenarioTest {
         waitFor(time: 3000, updatePlayhead: false)
         mediaTracker.trackComplete()
 
-        //Hits to verify
+        // Hits to verify
         let expectedHitsEventSession0: [MediaHit] = [
             MediaHit(eventType: EventType.SESSION_START, playhead: 0, ts: 0, params: expectedDownloadSessionStartParams, customMetadata: mediaMetadata),
             MediaHit(eventType: EventType.PLAY, playhead: 0, ts: 0),
@@ -286,7 +286,7 @@ class Timeout: BaseScenarioTest {
         let actualHitListSession0: [Int] = [0, 1, 2, 3, 16, 29, 40, 41]
         let actualHitListSession1: [Int] = [0, 1, 2, 3]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHitsEventSession0, sessionId: "0", actualHitIndexList: actualHitListSession0)
         checkHits(expectedHits: expectedHitsEventSession1, sessionId: "1", actualHitIndexList: actualHitListSession1)
     }

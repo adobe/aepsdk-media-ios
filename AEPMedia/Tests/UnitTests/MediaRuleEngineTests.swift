@@ -43,22 +43,22 @@ class MediaTests: XCTestCase {
     // addRule
     // ==========================================================================
     func testAddRule_Happy() {
-        //setup
+        // setup
         let ruleEngine = MediaRuleEngine()
         let testRule = MediaRule(name: 1, description: "rule1")
 
-        //test and verify
+        // test and verify
         XCTAssertTrue(ruleEngine.add(rule: testRule))
     }
 
     func testAddDuplicateRule_Fail() {
-        //setup
+        // setup
         let ruleEngine = MediaRuleEngine()
         let testRule = MediaRule(name: 1, description: "rule1")
 
-        //test and verify
+        // test and verify
         XCTAssertTrue(ruleEngine.add(rule: testRule))
-        //Should fail when trying to add same rule
+        // Should fail when trying to add same rule
         XCTAssertFalse(ruleEngine.add(rule: testRule))
     }
 
@@ -66,19 +66,19 @@ class MediaTests: XCTestCase {
     // processRule
     // ==========================================================================
     func testProcessRule_NoRuleFound_Fail() {
-        //setup
+        // setup
         let ruleEngine = MediaRuleEngine()
 
-        //test
+        // test
         let res = ruleEngine.processRule(name: 1, context: [:])
 
-        //verify
+        // verify
         XCTAssertFalse(res.0)
         XCTAssertEqual(RULE_NOT_FOUND_MSG, res.1)
     }
 
     func testProcessRule_NoPredicates() {
-        //setup
+        // setup
         let ruleEngine = MediaRuleEngine()
         let testRule = MediaRule(name: 1, description: "rule1")
         testRule.addAction { (rule, context) -> Bool in
@@ -86,37 +86,37 @@ class MediaTests: XCTestCase {
             return true
         }
 
-        //test
+        // test
         XCTAssertTrue(ruleEngine.add(rule: testRule))
         let res = ruleEngine.processRule(name: 1, context: [:])
 
-        //verify
+        // verify
         XCTAssertEqual(1, action1CalledCount)
         XCTAssertTrue(res.0)
     }
 
     func testProcessRule_NoAction() {
-        //setup
+        // setup
         let ruleEngine = MediaRuleEngine()
         let testRule = MediaRule(name: 1, description: "rule1")
         testRule.addPredicate(predicateFn: { (_, _) -> Bool in
             return true
         }, expectedValue: true, errorMsg: "test error")
 
-        //test
+        // test
         XCTAssertTrue(ruleEngine.add(rule: testRule))
         let res = ruleEngine.processRule(name: 1, context: [:])
 
-        //verify
+        // verify
         XCTAssertTrue(res.0)
     }
 
     func testProcessRule_PredicateFailure() {
-        //setup
+        // setup
         let ruleEngine = MediaRuleEngine()
         let testRule = MediaRule(name: 1, description: "rule1")
 
-        //test
+        // test
         let test1 = "Test error 1"
         testRule.addPredicate(predicateFn: { (_, _) -> Bool in
             return true
@@ -130,17 +130,17 @@ class MediaTests: XCTestCase {
         ruleEngine.add(rule: testRule)
         let res = ruleEngine.processRule(name: 1, context: [:])
 
-        //verify
+        // verify
         XCTAssertFalse(res.0)
         XCTAssertEqual(test2, res.1)
     }
 
     func testProcessRule_ExecuteAction() {
-        //setup
+        // setup
         let ruleEngine = MediaRuleEngine()
         let testRule = MediaRule(name: 1, description: "rule1")
 
-        //test
+        // test
         let test1 = "Test error 1"
         testRule.addPredicate(predicateFn: { (_, _) -> Bool in
             return true
@@ -159,17 +159,17 @@ class MediaTests: XCTestCase {
         ruleEngine.add(rule: testRule)
         let res = ruleEngine.processRule(name: 1, context: [:])
 
-        //verify
+        // verify
         XCTAssertEqual(2, action1CalledCount)
         XCTAssertTrue(res.0)
     }
 
     func testProcessRule_StopAfterFailingAction() {
-        //setup
+        // setup
         let ruleEngine = MediaRuleEngine()
         let testRule = MediaRule(name: 1, description: "rule1")
 
-        //test
+        // test
         let test1 = "Test error 1"
         testRule.addPredicate(predicateFn: { (_, _) -> Bool in
             return true
@@ -187,21 +187,21 @@ class MediaTests: XCTestCase {
 
         ruleEngine.add(rule: testRule)
 
-        //test
+        // test
         let res = ruleEngine.processRule(name: 1, context: [:])
 
-        //verify
+        // verify
         XCTAssertEqual(1, action1CalledCount)
         XCTAssertEqual(0, action2CalledCount)
         XCTAssertTrue(res.0)
     }
 
     func testProcessRule_EnterExitAction() {
-        //setup
+        // setup
         let ruleEngine = MediaRuleEngine()
         let testRule = MediaRule(name: 1, description: "rule1")
 
-        //test
+        // test
         testRule.addPredicate(predicateFn: { (_, _) -> Bool in
             return true
         }, expectedValue: true, errorMsg: "test1")
@@ -222,27 +222,27 @@ class MediaTests: XCTestCase {
             return true
         }
 
-        //test
+        // test
         let res = ruleEngine.processRule(name: 1, context: [:])
 
-        //verify
+        // verify
         XCTAssertEqual(1, action1CalledCount)
         XCTAssertEqual(1, action2CalledCount)
         XCTAssertTrue(res.0)
     }
 
     func testProcessRule_StopAfterFailingEnterAction() {
-        //setup
+        // setup
         let ruleEngine = MediaRuleEngine()
         let testRule = MediaRule(name: 1, description: "rule1")
 
-        //test
+        // test
         testRule.addPredicate(predicateFn: { (_, _) -> Bool in
             return true
         }, expectedValue: true, errorMsg: "test1")
 
         testRule.addAction { (rule, context) -> Bool in
-            //should not be called
+            // should not be called
             self.actionHelper2(rule: rule, context: context)
             return true
         }
@@ -250,33 +250,33 @@ class MediaTests: XCTestCase {
         ruleEngine.add(rule: testRule)
 
         ruleEngine.onEnterRule { (rule, context) -> Bool in
-            //should be called
+            // should be called
             self.actionHelper1(rule: rule, context: context)
             return false
         }
 
         ruleEngine.onExitRule { (rule, context) -> Bool in
-            //should not be called
+            // should not be called
             self.actionHelper2(rule: rule, context: context)
             return true
         }
 
-        //test
+        // test
         let res = ruleEngine.processRule(name: 1, context: [:])
 
-        //verify
+        // verify
         XCTAssertEqual(1, action1CalledCount)
         XCTAssertEqual(0, action2CalledCount)
         XCTAssertTrue(res.0)
     }
 
     func testProcessRule_PassContextData() {
-        //setup
+        // setup
         let ruleEngine = MediaRuleEngine()
         let testRule = MediaRule(name: 1, description: "rule1")
         let contextData: [String: Any] = ["k1": "v1"]
 
-        //test
+        // test
         let test1 = "Test error 1"
         testRule.addPredicate(predicateFn: { (_, context) -> Bool in
             XCTAssertNotNil(context["k1"])
@@ -294,7 +294,7 @@ class MediaTests: XCTestCase {
         ruleEngine.add(rule: testRule)
         let res = ruleEngine.processRule(name: 1, context: contextData)
 
-        //verify
+        // verify
         XCTAssertEqual(1, action1CalledCount)
         XCTAssertTrue(res.0)
     }

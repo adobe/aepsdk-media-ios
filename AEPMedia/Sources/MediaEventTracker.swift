@@ -106,9 +106,9 @@ class MediaEventTracker: MediaEventTracking {
 
     private static let LOG_TAG = MediaConstants.LOG_TAG
     private static let CLASS_NAME = "MediaEventTracker"
-    private static let IDLE_TIMEOUT_MS: Int64 = 1800 * 1000 //30 min
-    private static let MEDIA_SESSION_TIMEOUT_MS: Int64 = 86400 * 1000 //24 hours
-    private static let CONTENT_START_DURATION_MS: Int64 = 1 * 1000 //1 sec
+    private static let IDLE_TIMEOUT_MS: Int64 = 1800 * 1000 // 30 min
+    private static let MEDIA_SESSION_TIMEOUT_MS: Int64 = 86400 * 1000 // 24 hours
+    private static let CONTENT_START_DURATION_MS: Int64 = 1 * 1000 // 1 sec
 
     #if DEBUG
         var inPrerollInterval = false
@@ -157,7 +157,7 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     /// Handles all the track API calls.
-    ///- Parameters:
+    /// - Parameters:
     ///    - event: Event for the track API consisting of eventName, playhead, timeStamp, params and metadata.
     @discardableResult
     func track(event: Event) -> Bool {
@@ -196,7 +196,7 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     /// Processes rules through preset conditions set in the state machine
-    ///- Parameters:
+    /// - Parameters:
     ///    - rule: EventName corresponding to API call
     ///    - context: Data passed with the corresponding API call
     @discardableResult
@@ -211,7 +211,7 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     /// Setup state machine i.e. conditions and actions for each Rule
-    ///- Parameters:
+    /// - Parameters:
     ///    - rule: EventName corresponding to API call
     ///    - context: Data passed with the corresponding API call
     private func setupRules() {
@@ -742,7 +742,7 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     /// Check the duration of current session and abort if active for more than 24 hours
-    ///- Parameters:
+    /// - Parameters:
     ///    - rule: EventName corresponding to API call
     ///    - context: Data passed with the corresponding API call
     @discardableResult
@@ -766,7 +766,7 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     /// Detect if the player is idle (not in play) and abort current session if idle for more than 30 minutes
-    ///- Parameters:
+    /// - Parameters:
     ///    - rule: EventName corresponding to API call
     ///    - context: Data passed with the corresponding API call
     @discardableResult
@@ -807,7 +807,7 @@ class MediaEventTracker: MediaEventTracking {
     }
 
     /// Handle content start (play) ping. Sends 1 play ping per session after detecting the first second of main content playback
-    ///- Parameters:
+    /// - Parameters:
     ///    - rule: EventName corresponding to API call
     ///    - context: Data passed with the corresponding API call
     @discardableResult

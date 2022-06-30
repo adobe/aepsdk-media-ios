@@ -17,33 +17,33 @@ class MediaServiceTest: XCTestCase {
 
     func testInitPersistedSessions() {
 
-        //setup
+        // setup
         let persistedSessionIds: Set<String> = ["sessionId1", "sessionId2"]
         let mockDBService = MockMediaDBService()
         mockDBService.persistedSessionIds = persistedSessionIds
 
-        //Action
+        // Action
         let mediaService = MediaService(mediaDBService: mockDBService)
         mediaService.readyToProcess(dispatchFn: {_ in })
         Thread.sleep(forTimeInterval: 0.25)
 
-        //Assert
+        // Assert
         XCTAssertTrue(mockDBService.getPersistedSessionIdsCalled)
 
     }
 
     func testCreateSession() {
 
-        //setup
+        // setup
         let mockDBService = MockMediaDBService()
         let emptyConfig = [String: Any]()
 
-        //Action
+        // Action
         let mediaService: MediaService = MediaService(mediaDBService: mockDBService)
 
         let sessionId = mediaService.createSession(config: emptyConfig)
 
-        //Assert
+        // Assert
         XCTAssertNotNil(sessionId)
         XCTAssertTrue(mediaService.mediaSessions.keys.contains(sessionId!))
         XCTAssertNotNil(mediaService.mediaSessions[sessionId!])
@@ -51,13 +51,13 @@ class MediaServiceTest: XCTestCase {
     }
 
     func testProcessHit() {
-        //setup
+        // setup
         let mockDBService = MockMediaDBService()
         let eventType = "test_event"
         let mediaHit = MediaHit(eventType: eventType, playhead: 0.0, ts: 0)
         let emptyConfig = [String: Any]()
 
-        //Action
+        // Action
         let mediaService = MediaService(mediaDBService: mockDBService)
 
         let sessionId = mediaService.createSession(config: emptyConfig)
@@ -66,7 +66,7 @@ class MediaServiceTest: XCTestCase {
         mediaService.processHit(sessionId: sessionId!, hit: mediaHit)
         Thread.sleep(forTimeInterval: 0.25)
 
-        //Assert
+        // Assert
         XCTAssertTrue(mockMediaSession.hasQueueHitCalled)
         XCTAssertTrue(mockMediaSession.hits.contains { hit in
             hit.eventType == eventType
@@ -74,11 +74,11 @@ class MediaServiceTest: XCTestCase {
     }
 
     func testEndSession() {
-        //setup
+        // setup
         let mockDBService = MockMediaDBService()
         let emptyConfig = [String: Any]()
 
-        //Action
+        // Action
         let mediaService = MediaService(mediaDBService: mockDBService)
 
         let sessionId = mediaService.createSession(config: emptyConfig)
@@ -87,16 +87,16 @@ class MediaServiceTest: XCTestCase {
         mediaService.endSession(sessionId: sessionId!)
         Thread.sleep(forTimeInterval: 0.25)
 
-        //Assert
+        // Assert
         XCTAssertTrue(mockMediaSession.hasSessionEndCalled)
         XCTAssertFalse(mediaService.mediaSessions.keys.contains(sessionId!))
     }
 
     func testAbortSession() {
-        //setup
+        // setup
         let mockDBService = MockMediaDBService()
 
-        //Action
+        // Action
         let mediaService = MediaService(mediaDBService: mockDBService)
         let emptyConfig = [String: Any]()
 
@@ -115,7 +115,7 @@ class MediaServiceTest: XCTestCase {
         }
         Thread.sleep(forTimeInterval: 0.25)
 
-        //Assert
+        // Assert
         XCTAssertTrue(mockMediaSession.hasSesionAbortCalled)
         XCTAssertFalse(mediaService.mediaSessions.keys.contains(sessionId!))
     }

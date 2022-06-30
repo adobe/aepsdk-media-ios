@@ -13,7 +13,7 @@ jobs:
 
   build-and-test:
     macos:
-      xcode: 12.0.1 # Specify the Xcode version to use
+      xcode: 13.0.0 # Specify the Xcode version to use
 
     steps:
       - checkout
@@ -21,9 +21,9 @@ jobs:
       # restore pods related caches
       - restore_cache:
           keys:
-            - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
-            - cocoapods-cache-v4-{{ arch }}-{{ .Branch }}
-            - cocoapods-cache-v4
+            - cocoapods-cache-v5-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
+            - cocoapods-cache-v5-{{ arch }}-{{ .Branch }}
+            - cocoapods-cache-v5
             - 1-gems-{{ checksum "Gemfile.lock" }}
 
       # install Gemfile
@@ -37,7 +37,7 @@ jobs:
       # save pods related files
       - save_cache:
           name: Saving CocoaPods Cache
-          key: cocoapods-cache-v4-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
+          key: cocoapods-cache-v5-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
           paths:
             - ./Pods
             - ~/.cocoapods
@@ -49,28 +49,41 @@ jobs:
 
       # pre-start the simulator to prevent timeouts
       - run:
-          name: Pre-start Simulator
+          name: Pre-start iOS Simulator
           command: xcrun instruments -w "iPhone 8 (13.5) [" || true
 
       - run:
-          name: Run Tests
-          command: make test
+          name: Run iOS Tests
+          command: make test-ios
 
       # code coverage
       - run:
-          name: Upload Code Coverage Report
+          name: Download Codecov Uploader
           command: |
             curl -s https://codecov.io/bash > codecov;
-            VERSION=$(grep 'VERSION=\".*\"' codecov | cut -d'"' -f2);
-            SHAVERSION=$(shasum -v);
-            echo "Using CodeCov version '$VERSION'"
-            echo "Using shasum '$SHAVERSION'"
+            VERSION=$(grep 'VERSION=\"[0-9\.]*\"' codecov | cut -d'"' -f2);
             for i in 1 256 512
             do
               shasum -a $i -c --ignore-missing <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM") ||
-              shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | head -n 1)
+              shasum -a $i -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA${i}SUM" | grep -w "codecov")
             done
-            bash ./codecov -v -X s3 -c -D "./build/out" -J "AEPMedia"
+
+      - run:
+          name: Upload Code Coverage Report for iOS
+          command: bash ./codecov -v -X s3 -c -D "./build/out" -J "AEPMedia"
+
+      - run:
+          name: Pre-start tvOS Simulator
+          command: xcrun instruments -w "Apple TV (15.0) [" || true
+
+      - run:
+          name: Run tvOS Tests
+          command: make test-tvos
+
+      - run:
+          name: Upload Code Coverage Reports for tvOS
+          command: bash ./codecov -v -X s3 -c -D "./build/out" -J "AEPMedia tvOS"
+
 
       # verify XCFramework archive builds
       - run:

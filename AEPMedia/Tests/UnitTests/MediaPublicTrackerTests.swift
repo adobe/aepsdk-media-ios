@@ -23,7 +23,7 @@ class MediaPublicTrackerTests: XCTestCase {
         MediaConstants.MediaInfo.STREAM_TYPE: "aod",
         MediaConstants.MediaInfo.MEDIA_TYPE: "audio",
         MediaConstants.MediaInfo.RESUMED: true,
-        MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME: 2000.0, //2000 milliseconds
+        MediaConstants.MediaInfo.PREROLL_TRACKING_WAITING_TIME: 2000.0, // 2000 milliseconds
         MediaConstants.MediaInfo.GRANULAR_AD_TRACKING: true
     ]
 

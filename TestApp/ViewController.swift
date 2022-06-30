@@ -11,7 +11,11 @@
  */
 
 import UIKit
-import AEPAssurance
+
+// MARK: TODO remove this once Assurance has tvOS support.
+#if os(iOS)
+    import AEPAssurance
+#endif
 
 class ViewController: UIViewController {
     var adLabel: UILabel?
@@ -26,7 +30,7 @@ class ViewController: UIViewController {
 
         let videoUrl = URL(fileURLWithPath: video)
 
-        //For live stream, include the url in below URL
+        // For live stream, include the url in below URL
         /*guard let videoUrl: URL = URL(string: "") else {
              return
          }*/
@@ -93,9 +97,12 @@ class ViewController: UIViewController {
     @IBOutlet weak var assuranceUrl: UITextField!
 
     @IBAction func startAssuranceSession (_ sender: Any) {
-        if let url = URL(string: assuranceUrl.text ?? "") {
-            Assurance.startSession(url: url)
-        }
+        // MARK: TODO remove this once Assurance has tvOS support.
+        #if os(iOS)
+            if let url = URL(string: assuranceUrl.text ?? "") {
+                Assurance.startSession(url: url)
+            }
+        #endif
     }
 
     func reset() {
