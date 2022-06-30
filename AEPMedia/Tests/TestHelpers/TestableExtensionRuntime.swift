@@ -15,6 +15,17 @@ import Foundation
 @testable import AEPCore
 
 class TestableExtensionRuntime: ExtensionRuntime {
+    func getSharedState(extensionName: String, event: Event?, barrier: Bool, resolution: SharedStateResolution) -> SharedStateResult? {
+        return getSharedState(extensionName: extensionName, event: event, barrier: barrier)
+    }
+
+    func getXDMSharedState(extensionName: String, event: Event?, barrier: Bool, resolution: SharedStateResolution) -> SharedStateResult? {
+        return getXDMSharedState(extensionName: extensionName, event: event, barrier: barrier)
+    }
+
+    func getHistoricalEvents(_ requests: [EventHistoryRequest], enforceOrder: Bool, handler: @escaping ([EventHistoryResult]) -> Void) {
+    }
+
     var listeners: [String: EventListener] = [:]
     var dispatchedEvents: [Event] = []
     var createdSharedStates: [[String: Any]?] = []

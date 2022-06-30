@@ -74,7 +74,7 @@ class MockMediaData {
         configSharedStateOptIn = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn.rawValue]
         configSharedStateUnknown = [MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.unknown.rawValue]
 
-        //Config shared state
+        // Config shared state
         configSharedState = [
             MediaConstants.Configuration.GLOBAL_CONFIG_PRIVACY: PrivacyStatus.optedIn.rawValue,
             MediaConstants.Configuration.EXPERIENCE_CLOUD_ORGID: "org_id",
@@ -87,7 +87,7 @@ class MockMediaData {
             MediaConstants.Configuration.MEDIA_APP_VERSION: "app_version",
         ]
 
-        //Identity shared state
+        // Identity shared state
         var visitorIdList = [[String: Any]]()
         visitorIdList.append(["id": "id_type1", "value": "u111111111", "authstate": 0])
         visitorIdList.append(["id": "id_type2", "value": "1234567890", "authstate": 1])
@@ -100,7 +100,7 @@ class MockMediaData {
             MediaConstants.Identity.VISITOR_IDS_LIST: visitorIdList
         ]
 
-        //analytics shared state
+        // analytics shared state
         analyticsSharedState = [
             MediaConstants.Analytics.VISITOR_ID: "vid",
             MediaConstants.Analytics.ANALYTICS_VISITOR_ID: "aid"
@@ -112,7 +112,7 @@ class MockMediaData {
             MediaConstants.Assurance.INTEGRATION_ID: assuranceIntegrationId as Any
         ]
 
-        //setup Media State
+        // setup Media State
         var sharedState = [String: [String: Any]]()
         sharedState[MediaConstants.Configuration.SHARED_STATE_NAME] = configSharedState
         sharedState[MediaConstants.Identity.SHARED_STATE_NAME] = identitySharedState
@@ -127,7 +127,7 @@ class MockMediaData {
             MediaConstants.Identity.SHARED_STATE_NAME: identitySharedData
         ])
 
-        //Session Start
+        // Session Start
 
         sessionStartClientSessionId = "clientSessionId"
 
@@ -182,7 +182,7 @@ class MockMediaData {
         }
         """
 
-        //channel already present in media hit.
+        // channel already present in media hit.
         params["media.channel"] = "media_channel"
         sessionStartChannel = MediaHit(eventType: MediaConstants.MediaCollection.EventType.SESSION_START, playhead: 0, ts: 0, params: params, customMetadata: metadata, qoeData: qoeData)
 
@@ -378,7 +378,7 @@ class MockMediaData {
         }
         """
 
-        //AdBreak Start
+        // AdBreak Start
         let paramsAdBreak: [String: Any] = [
             "media.ad.podFriendlyName": "adbreak_name",
             "media.ad.podIndex": 1,
@@ -402,7 +402,7 @@ class MockMediaData {
         }
         """
 
-        //AdBreak Complete
+        // AdBreak Complete
         adBreakComplete = MediaHit(eventType: MediaConstants.MediaCollection.EventType.ADBREAK_COMPLETE, playhead: 10, ts: 30000, params: nil, customMetadata: nil, qoeData: nil)
 
         adBreakCompleteJson = """
@@ -415,7 +415,7 @@ class MockMediaData {
         }
         """
 
-        //Ad Start
+        // Ad Start
         let paramsAdStart: [String: Any] = [
             "media.ad.id": "ad_id",
             "media.ad.name": "ad_name",
@@ -459,7 +459,7 @@ class MockMediaData {
         }
         """
 
-        //Ad Complete
+        // Ad Complete
         adComplete = MediaHit(eventType: MediaConstants.MediaCollection.EventType.AD_COMPLETE, playhead: 10, ts: 30000, params: nil, customMetadata: nil, qoeData: nil)
 
         adCompleteJson =  """
@@ -472,7 +472,7 @@ class MockMediaData {
         }
         """
 
-        //Play
+        // Play
         play = MediaHit(eventType: MediaConstants.MediaCollection.EventType.PLAY, playhead: 0, ts: 100, params: nil, customMetadata: nil, qoeData: nil)
 
         playJson = """
@@ -485,7 +485,7 @@ class MockMediaData {
         }
         """
 
-        //Pause
+        // Pause
         pause = MediaHit(eventType: MediaConstants.MediaCollection.EventType.PAUSE_START, playhead: 0, ts: 100, params: nil, customMetadata: nil, qoeData: nil)
 
         pauseJson = """
@@ -498,7 +498,7 @@ class MockMediaData {
                         }
         """
 
-        //Ping
+        // Ping
         ping = MediaHit(eventType: MediaConstants.MediaCollection.EventType.PING, playhead: 45, ts: 65000, params: nil, customMetadata: nil, qoeData: nil)
 
         pingJson = """
@@ -511,7 +511,7 @@ class MockMediaData {
                }
         """
 
-        //Session End
+        // Session End
         forceSessionEndJson = """
         {
          "playerTime" : {
@@ -533,7 +533,7 @@ class MockMediaData {
                           }
         """
 
-        //Session End After relaunch
+        // Session End After relaunch
         forceSessionEndAfterRelaunchJson = """
         {
          "playerTime" : {
@@ -544,7 +544,7 @@ class MockMediaData {
                           }
         """
 
-        //Complete
+        // Complete
         complete = MediaHit(eventType: MediaConstants.MediaCollection.EventType.SESSION_COMPLETE, playhead: 60, ts: 80000, params: nil, customMetadata: nil, qoeData: nil)
 
         completeJson = """

@@ -25,7 +25,7 @@ coverage:
     - "./AEPMedia/Tests/.*"
     - "./Documentation"
     - "./Script"
-    - "./Samples"
+    - "./TestApp"
     - "./build"
 
 parsers:

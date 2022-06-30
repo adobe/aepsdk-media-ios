@@ -15,7 +15,7 @@ import AEPServices
 class MediaInfo: Equatable {
     private static let LOG_TAG = MediaConstants.LOG_TAG
     private static let CLASS_NAME = "MediaInfo"
-    static let DEFAULT_PREROLL_WAITING_TIME_IN_MS: Int = 250 //250 milliseconds
+    static let DEFAULT_PREROLL_WAITING_TIME_IN_MS: Int = 250 // 250 milliseconds
     let id: String
     let name: String
     let streamType: String

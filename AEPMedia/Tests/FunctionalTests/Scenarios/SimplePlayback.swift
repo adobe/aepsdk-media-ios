@@ -24,7 +24,7 @@ class SimplePlayback: BaseScenarioTest {
 
     // tests
     func testTrackSimplePlayBack_RealTimeTracker() {
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         mediaTracker.trackPlay()
         waitFor(time: 5000, updatePlayhead: true)
@@ -55,15 +55,15 @@ class SimplePlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 20, ts: 35000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testTrackSimplePlayBack_DownloadedTracker() {
-        //setup
+        // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         mediaTracker.trackPlay()
         waitFor(time: 5000, updatePlayhead: true)
@@ -92,15 +92,15 @@ class SimplePlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 20, ts: 35000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testTrackSimplePlayBack_with50SecPing_DownloadedTracker() {
-        //setup
+        // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         mediaTracker.trackPlay()
         waitFor(time: 5000, updatePlayhead: true)
@@ -131,12 +131,12 @@ class SimplePlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 60, ts: 115000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testTrackSimplePlayBack_SessionSkip_RealTimeTracker() {
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         mediaTracker.trackPlay()
         waitFor(time: 5000, updatePlayhead: true)
@@ -167,15 +167,15 @@ class SimplePlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_END, playhead: 20, ts: 35000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testTrackSimplePlayBack_SessionSkip_DownloadedTracker() {
-        //setup
+        // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         mediaTracker.trackPlay()
         waitFor(time: 5000, updatePlayhead: true)
@@ -206,13 +206,13 @@ class SimplePlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_END, playhead: 60, ts: 115000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testTrackSimplePlayBack_withBuffer_RealTimeTracker() {
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.BufferStart)
         waitFor(time: 5000, updatePlayhead: false)
@@ -247,15 +247,15 @@ class SimplePlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 20, ts: 40000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testTrackSimplePlayBack_withBuffer_DownloadedTracker() {
-        //setup
+        // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.BufferStart)
         waitFor(time: 5000, updatePlayhead: false)
@@ -290,12 +290,12 @@ class SimplePlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 60, ts: 120000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testTrackSimplePlayBack_withSeek_RealTimeTracker() {
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.SeekStart)
         waitFor(time: 5000, updatePlayhead: false)
@@ -330,15 +330,15 @@ class SimplePlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 20, ts: 40000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testTrackSimplePlayBack_withSeek_DownloadedTracker() {
-        //setup
+        // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfo.toMap(), metadata: mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.SeekStart)
         waitFor(time: 5000, updatePlayhead: false)
@@ -373,7 +373,7 @@ class SimplePlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 60, ts: 120000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 }

@@ -17,15 +17,15 @@ class MediaOfflineSession: MediaSession {
 
     private static let LOG_TAG = MediaConstants.LOG_TAG
     private static let CLASS_NAME = "MediaOfflineSession"
-    private static let MAX_ALLOWED_FAILURE = 3 //The maximun number of times SDK retries to send hit on failure, after that drop the hit.
+    private static let MAX_ALLOWED_FAILURE = 3 // The maximun number of times SDK retries to send hit on failure, after that drop the hit.
     private static let DURATION_BETWEEN_HITS_ON_FAILURE = 60 // Retry duration in case of failure
     private let mediaDBService: MediaDBService
     private var isReportingSession = false
     private var failureCount = 0
     var retryDuration = DURATION_BETWEEN_HITS_ON_FAILURE
 
-    ///Initializer for `MediaOfflineSession`
-    ///- Parameters:
+    /// Initializer for `MediaOfflineSession`
+    /// - Parameters:
     ///    - id: Unique `MediaSession id`
     ///    - state: `MediaState` object
     ///    - dispatchQueue: `DispatchQueue` used for handling response after processing `MediaHit`    
@@ -64,7 +64,7 @@ class MediaOfflineSession: MediaSession {
         }
     }
 
-    ///Create media collection report for session and send to Media Collection Server.
+    /// Create media collection report for session and send to Media Collection Server.
     private func tryReportSession() {
         guard state.privacyStatus == .optedIn else {
             Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(id)] Exiting as privacy is not opted-in.")
@@ -140,13 +140,13 @@ class MediaOfflineSession: MediaSession {
         }
     }
 
-    ///Clears the persisted session hits after session is successfully reported to Media collection server.
+    /// Clears the persisted session hits after session is successfully reported to Media collection server.
     private func onSessionReportSuccess() {
         Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] - Successfully reported media session.")
         clearSession()
     }
 
-    ///Handles the response when session reporting is failed
+    /// Handles the response when session reporting is failed
     private func onSessionReportFailure(_ deviceOffline: Bool = false) {
         if failureCount >= Self.MAX_ALLOWED_FAILURE {
             Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Exceeded maximum allowed retry count, dropping the session.")
@@ -165,7 +165,7 @@ class MediaOfflineSession: MediaSession {
         }
     }
 
-    ///Removes the persisted hits.
+    /// Removes the persisted hits.
     private func clearSession() {
         Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Clearing persisted hits for the media session.")
         mediaDBService.deleteHits(sessionId: id)

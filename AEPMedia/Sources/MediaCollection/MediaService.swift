@@ -40,7 +40,7 @@ class MediaService: MediaProcessor {
         self.mediaDBService = mediaDBService
     }
 
-    ///Read persisted offline session from DB and create `MediaSession` objects for them and initiate the reporting of `MediaSessions.`
+    /// Read persisted offline session from DB and create `MediaSession` objects for them and initiate the reporting of `MediaSessions.`
     private func initPersistedSessions() {
         let persistedSessionIds = mediaDBService.getPersistedSessionIds()
         persistedSessionIds.forEach { sessionId in
@@ -82,7 +82,7 @@ class MediaService: MediaProcessor {
     }
 
     /// Queues the `MediaHit` hit in session `sessionId`
-    ///- Parameters:
+    /// - Parameters:
     ///    - sessionId: UniqueId of session to which `MediaHit` belongs.
     ///    - hit: `Object` of type `MediaHit`
     func processHit(sessionId: String, hit: MediaHit) {

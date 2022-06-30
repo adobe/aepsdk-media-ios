@@ -20,9 +20,9 @@ class MediaCollectionReportHelper {
 
     private init() {}
 
-    ///Returns the `URL` for session start. The response contains the `sessionId`
-    ///- Parameter host: The tracking server url host component
-    ///- Returns: Session start request URL
+    /// Returns the `URL` for session start. The response contains the `sessionId`
+    /// - Parameter host: The tracking server url host component
+    /// - Returns: Session start request URL
     static func getTrackingURL(host: String) -> URL? {
         guard !host.isEmpty else {
             Log.warning(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Unable to create tracking url. Host (MediaCollectionServer) url is empty.")
@@ -36,8 +36,8 @@ class MediaCollectionReportHelper {
         return urlcomponents.url
     }
 
-    ///Returns the URL for sending `MediaHits`
-    ///- Parameters:
+    /// Returns the URL for sending `MediaHits`
+    /// - Parameters:
     /// - host: Host component of the URL
     /// - sessionId: the session id of the Media session
     /// - Returns: URL for sending media hits
@@ -54,11 +54,11 @@ class MediaCollectionReportHelper {
         return urlComponents.url
     }
 
-    ///Generates the payload for `MediaHit` in `MediaRealTimeSession`
-    ///- Parameters:
+    /// Generates the payload for `MediaHit` in `MediaRealTimeSession`
+    /// - Parameters:
     ///   - state: Current Media state
     ///   - hit: Media hit to be send
-    ///- Returns: The payload for Media hit
+    /// - Returns: The payload for Media hit
     static func generateHitReport(state: MediaState, hit: MediaHit) -> String? {
         let updatedHit = updateMediaHit(state: state, mediaHit: hit)
         if let data = try? JSONEncoder().encode(updatedHit) {
@@ -67,9 +67,9 @@ class MediaCollectionReportHelper {
         return nil
     }
 
-    ///Extracts the `session id` from the response of session start request
-    ///- Parameter sessionResponseFragment: The response of session start request
-    ///- Returns: Session id for the session
+    /// Extracts the `session id` from the response of session start request
+    /// - Parameter sessionResponseFragment: The response of session start request
+    /// - Returns: Session id for the session
     static func extractSessionID(sessionResponseFragment: String) -> String? {
 
         guard !sessionResponseFragment.isEmpty else {
@@ -123,11 +123,11 @@ class MediaCollectionReportHelper {
         return true
     }
 
-    ///Adds the additional parameters in the `MediaHit` params.
-    ///- Parameters:
+    /// Adds the additional parameters in the `MediaHit` params.
+    /// - Parameters:
     ///   - state: Current `MediaState`
     ///   - mediaHit: The MediaHit object to be updated
-    ///- Returns: Updated MediaHit object
+    /// - Returns: Updated MediaHit object
     static func updateMediaHit(state: MediaState, mediaHit: MediaHit) -> MediaHit {
 
         if mediaHit.eventType == MediaConstants.MediaCollection.EventType.SESSION_START {
@@ -196,7 +196,7 @@ class MediaCollectionReportHelper {
         return mediaHit
     }
 
-    ///Serializes the VisitorId's to required format
+    /// Serializes the VisitorId's to required format
     private static func serializeCustomerId(customerIds: [[String: Any]]) -> [String: [String: Any]] {
         var serializedCustomerIds: [String: [String: Any]] = [:]
         for customerId in customerIds {
@@ -208,11 +208,11 @@ class MediaCollectionReportHelper {
         return serializedCustomerIds
     }
 
-    ///Generates the payload for MediaOffline session tracking
-    ///- Parameters:
+    /// Generates the payload for MediaOffline session tracking
+    /// - Parameters:
     ///   - state: Current `MediaState` object
     ///   - hits: Array of `MediaHit` in offline session
-    ///- Returns: Payload for offline tracking request
+    /// - Returns: Payload for offline tracking request
     static func generateDownloadReport(state: MediaState, hits: [MediaHit]) -> String? {
         guard hits.count > 0 else {
             Log.debug(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Media Hits list is empty, will not generate report.")

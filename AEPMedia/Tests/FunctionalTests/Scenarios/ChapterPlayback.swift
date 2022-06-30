@@ -33,7 +33,7 @@ class ChapterPlayback: BaseScenarioTest {
 
     // tests
     func testChapter_RealTimeTracker() {
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfoWithDefaultPreroll.toMap(), metadata: mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.ChapterStart, info: chapterInfo.toMap())
         mediaTracker.trackPlay()
@@ -68,15 +68,15 @@ class ChapterPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 15, ts: 15000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testChapter_DownloadedTracker() {
-        //setup
+        // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfoWithDefaultPreroll.toMap(), metadata: mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.ChapterStart, info: chapterInfo.toMap())
         mediaTracker.trackPlay()
@@ -111,12 +111,12 @@ class ChapterPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 55, ts: 55000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testMultipleChapter_RealTimeTracker() {
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfoWithDefaultPreroll.toMap(), metadata: mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.ChapterStart, info: chapterInfo.toMap())
         mediaTracker.trackPlay()
@@ -165,15 +165,15 @@ class ChapterPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 30, ts: 30000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testMultipleChapter_DownloadedTracker() {
-        //setup
+        // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: mediaInfoWithDefaultPreroll.toMap(), metadata: mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.ChapterStart, info: chapterInfo.toMap())
         mediaTracker.trackPlay()
@@ -222,7 +222,7 @@ class ChapterPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 110, ts: 110000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 }

@@ -105,7 +105,7 @@ class SpecialAdPlayback: BaseScenarioTest {
 
     // tests
     func testDelayedAds_RealTimeTracker() {
-        //test
+        // test
         mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
         waitFor(time: 15000, updatePlayhead: false)
@@ -156,15 +156,15 @@ class SpecialAdPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 15, ts: 85000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testDelayedAds_DownloadedTracker() {
-        //setup
+        // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
         waitFor(time: 55000, updatePlayhead: false)
@@ -209,12 +209,12 @@ class SpecialAdPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 15, ts: 195000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testAdWithSeek_RealTimeTracker() {
-        //test
+        // test
         mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.AdBreakStart, info: Self.adBreakInfo.toMap())
         mediaTracker.trackEvent(event: MediaEvent.AdStart, info: Self.adInfo.toMap(), metadata: Self.adMetadata)
@@ -269,12 +269,12 @@ class SpecialAdPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_END, playhead: 25, ts: 37000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testAdWithBuffer_RealtimeTracker() {
-        //test
+        // test
         mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.BufferStart)
         waitFor(time: 5000, updatePlayhead: false)
@@ -313,15 +313,15 @@ class SpecialAdPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 5, ts: 40000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 
     func testAdWithBuffer_DownloadedTracker() {
-        //setup
+        // setup
         createTracker(downloaded: true)
 
-        //test
+        // test
         mediaTracker.trackSessionStart(info: Self.mediaInfoWithDefaultPreroll.toMap(), metadata: Self.mediaMetadata)
         mediaTracker.trackEvent(event: MediaEvent.BufferStart)
         waitFor(time: 5000, updatePlayhead: false)
@@ -359,7 +359,7 @@ class SpecialAdPlayback: BaseScenarioTest {
             MediaHit(eventType: EventType.SESSION_COMPLETE, playhead: 5, ts: 40000)
         ]
 
-        //verify
+        // verify
         checkHits(expectedHits: expectedHits)
     }
 }
