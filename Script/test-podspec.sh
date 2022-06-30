@@ -56,11 +56,7 @@ echo "
 platform :tvos, '10.0'
 target '$PROJECT_NAME' do
   use_frameworks!
-  pod 'AEPCore', :path => '../AEPCore.podspec'
-  pod 'AEPIdentity', :path => '../AEPIdentity.podspec'
-  pod 'AEPLifecycle', :path => '../AEPLifecycle.podspec'
-  pod 'AEPServices', :path => '../AEPServices.podspec'
-  pod 'AEPSignal', :path => '../AEPSignal.podspec'
+  pod 'AEPMedia', :path => '../AEPMedia.podspec'
 end
 " >>Podfile
 
