@@ -26,6 +26,7 @@ coverage:
     - "./Documentation"
     - "./Script"
     - "./Samples"
+    - "./TestApp"
     - "./build"
 
 parsers:
