@@ -21,7 +21,7 @@ class MediaPublicTracker: MediaTracker {
     typealias dispatchFn = (Event) -> Void
 
     let TICK_INTERVAL = TimeInterval(0.75)
-    let EVENT_TIMEOUT_MS: Int64 = 500
+    let EVENT_TIMEOUT_MS: Int64 = 1000
     private let dispatchQueue: DispatchQueue = DispatchQueue(label: LOG_TAG)
 
     var dispatch: dispatchFn?
@@ -160,7 +160,7 @@ class MediaPublicTracker: MediaTracker {
 
             let currentTs = self.getCurrentTimeStamp()
             if (currentTs - self.lastEventTs) > self.EVENT_TIMEOUT_MS {
-                // We have not got any public api call for 500 ms.
+                // We have not got any public api call for 1 second.
                 // We manually send an event to keep our internal processsing alive (idle tracking / ping processing).
                 self.trackInternal(eventName: MediaConstants.EventName.PLAYHEAD_UPDATE, params: self.lastPlayheadParams, internalEvent: true)
             }
@@ -168,11 +168,14 @@ class MediaPublicTracker: MediaTracker {
     }
 
     private func startTimer() {
-        if timer == nil {
-            timer = Timer.scheduledTimer(withTimeInterval: TICK_INTERVAL, repeats: true, block: { (_) in
-                self.tick()
-            })
-            timer?.fire()
+        guard self.timer == nil else {
+            return
+        }
+        
+        DispatchQueue.main.async {
+            self.timer = Timer.scheduledTimer(withTimeInterval: self.TICK_INTERVAL, repeats: true){ [weak self] timer in
+                self?.tick()
+            }
         }
     }
 
