@@ -3,6 +3,8 @@ PROJECT_NAME = $(EXTENSION_NAME)
 TARGET_NAME_XCFRAMEWORK = $(EXTENSION_NAME).xcframework
 SCHEME_NAME_XCFRAMEWORK = AEPMedia
 FUNCTIONAL_TEST_TARGET_NAME = AEPMediaFunctionalTests
+TEST_APP_IOS_SCHEME = TestAppiOS
+TEST_APP_TVOS_SCHEME = TestApptvOS
 
 CURR_DIR := ${CURDIR}
 IOS_SIMULATOR_ARCHIVE_PATH = $(CURR_DIR)/build/ios_simulator.xcarchive/Products/Library/Frameworks/
@@ -37,13 +39,13 @@ test-ios:
 	@echo "######################################################################"
 	@echo "### Unit & Functional Testing iOS"
 	@echo "######################################################################"
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=iOS Simulator,name=iPhone 8' -derivedDataPath build/out -enableCodeCoverage YES
+	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=iOS Simulator,name=iPhone 8' -derivedDataPath build/out -resultBundlePath iosresults.xcresult -enableCodeCoverage YES
 
 test-tvos:
 	@echo "######################################################################"
 	@echo "### Unit & Functional Testing tvOS"
 	@echo "######################################################################"
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=tvOS Simulator,name=Apple TV' -derivedDataPath build/out -enableCodeCoverage YES
+	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=tvOS Simulator,name=Apple TV' -derivedDataPath build/out -resultBundlePath tvosresults.xcresult -enableCodeCoverage YES
 
 archive: pod-update
 	xcodebuild archive -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -archivePath "./build/ios.xcarchive" -sdk iphoneos -destination="iOS" SKIP_INSTALL=NO BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
@@ -55,6 +57,17 @@ archive: pod-update
 		-framework $(IOS_ARCHIVE_PATH)$(PROJECT_NAME).framework -debug-symbols $(IOS_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM \
 		-framework $(TVOS_ARCHIVE_PATH)$(PROJECT_NAME).framework -debug-symbols $(TVOS_ARCHIVE_DSYM_PATH)$(PROJECT_NAME).framework.dSYM \
 		-output ./build/$(PROJECT_NAME).xcframework
+
+build-app: setup
+	@echo "######################################################################"
+	@echo "### Building $(TEST_APP_IOS_SCHEME)"
+	@echo "######################################################################"
+	xcodebuild clean build -workspace $(PROJECT_NAME).xcworkspace -scheme $(TEST_APP_IOS_SCHEME) -destination 'generic/platform=iOS Simulator'
+
+	@echo "######################################################################"
+	@echo "### Building $(TEST_APP_TVOS_SCHEME)"
+	@echo "######################################################################"
+	xcodebuild clean build -workspace $(PROJECT_NAME).xcworkspace -scheme $(TEST_APP_TVOS_SCHEME) -destination 'generic/platform=tvOS Simulator'
 
 zip:
 	cd build && zip -r -X $(PROJECT_NAME).xcframework.zip $(PROJECT_NAME).xcframework /
