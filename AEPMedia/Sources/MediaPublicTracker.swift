@@ -31,7 +31,7 @@ class MediaPublicTracker: MediaTracker {
     var inSession = true
     var lastEventTs: Int64 = 0
     var lastPlayheadParams: [String: Any]?
-    var timer: Timer?
+    var timer: DispatchSourceTimer?
 
     // MediaTracker Impl
     init(dispatch: dispatchFn?, config: [String: Any]?) {
@@ -171,17 +171,20 @@ class MediaPublicTracker: MediaTracker {
         guard self.timer == nil else {
             return
         }
-        
-        DispatchQueue.main.async {
-            self.timer = Timer.scheduledTimer(withTimeInterval: self.TICK_INTERVAL, repeats: true){ [weak self] timer in
-                self?.tick()
-            }
+
+        timer = DispatchSource.makeTimerSource(queue: dispatchQueue)
+        timer?.setEventHandler { [weak self] in
+            self?.tick()
         }
+        timer?.schedule(deadline: .now(), repeating: self.TICK_INTERVAL)
+        timer?.resume()
     }
 
     private func stopTimer() {
-        timer?.invalidate()
-        timer = nil
+        if let timer = timer, timer.isCancelled {
+            timer.cancel()
+            self.timer = nil
+        }
     }
 
     func getCurrentTimeStamp() -> Int64 {
