@@ -21,7 +21,7 @@ class MediaPublicTracker: MediaTracker {
     typealias dispatchFn = (Event) -> Void
 
     let TICK_INTERVAL = TimeInterval(1)
-    let EVENT_TIMEOUT_MS: Int64 = 1000
+    let EVENT_TIMEOUT_MS: Int64 = 500
     private let dispatchQueue: DispatchQueue = DispatchQueue(label: LOG_TAG)
 
     var dispatch: dispatchFn?
@@ -168,21 +168,19 @@ class MediaPublicTracker: MediaTracker {
     }
 
     private func startTimer() {
-        guard self.timer == nil else {
-            return
+        if timer == nil {
+            timer = DispatchSource.makeTimerSource(queue: dispatchQueue)
+            timer?.setEventHandler { [weak self] in
+                self?.tick()
+            }
+            timer?.schedule(deadline: .now(), repeating: self.TICK_INTERVAL)
+            timer?.resume()
         }
-
-        timer = DispatchSource.makeTimerSource(queue: dispatchQueue)
-        timer?.setEventHandler { [weak self] in
-            self?.tick()
-        }
-        timer?.schedule(deadline: .now(), repeating: self.TICK_INTERVAL)
-        timer?.resume()
     }
 
     private func stopTimer() {
-        if let timer = timer, timer.isCancelled {
-            timer.cancel()
+        if let timer = self.timer, !timer.isCancelled {
+            self.timer?.cancel()
             self.timer = nil
         }
     }
