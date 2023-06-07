@@ -33,7 +33,7 @@ end
 
 target 'TestAppiOS' do
   test_pods
-  pod 'AEPAssurance', '~> 4.0'
+  pod 'AEPAssurance'
 end
 
 target 'TestApptvOS' do
