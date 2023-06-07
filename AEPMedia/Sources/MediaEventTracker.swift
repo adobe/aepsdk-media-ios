@@ -13,6 +13,7 @@ import Foundation
 import AEPServices
 import AEPCore
 
+// swiftlint:disable type_body_length
 class MediaEventTracker: MediaEventTracking {
     // MARK: Rule Name
 
