@@ -1,4 +1,4 @@
-excluded: # paths to ignore during linting. Takes precedence over `included`.  
+excluded: # paths to ignore during linting. Takes precedence over `included`.
   - .build
   - Pods/
 
@@ -22,11 +22,9 @@ opt_in_rules: # some rules are opt-in only
 
 analyzer_rules:
 - unused_import
- 
-empty_count: 
+
+empty_count:
     severity: warning
-force_cast: warning
-force_try: warning
 identifier_name:
     allowed_symbols: "_"
     excluded:

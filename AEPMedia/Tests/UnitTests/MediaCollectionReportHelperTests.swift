@@ -112,7 +112,7 @@ class MediaCollectionReportHelperTests: XCTestCase {
         let response = MediaCollectionReportHelper.generateHitReport(state: state!, hit: hit)
 
         let mediaHitActual = try? jsonDecoder.decode(MediaHit.self, from: response!.data(using: .utf8)!)
-        let mediaHitExpected = try? jsonDecoder.decode(MediaHit.self, from: mockMediaData.sessionStartJson!.data(using: .utf8)!)
+        let mediaHitExpected = try? jsonDecoder.decode(MediaHit.self, from: mockMediaData.sessionStartJson.data(using: .utf8)!)
         let mediaHitUpdated = MediaCollectionReportHelper.updateMediaHit(state: mockMediaData.mediaState, mediaHit: mediaHitExpected!)
 
         // Assert
