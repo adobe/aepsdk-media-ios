@@ -163,7 +163,6 @@ public enum MediaEvent: Int, RawRepresentable {
         }
     }
 
-    // swiftlint:disable cyclomatic_complexity
     public init?(rawValue: RawValue) {
         switch rawValue {
         case MediaConstants.EventName.ADBREAK_START:
@@ -201,5 +200,4 @@ public enum MediaEvent: Int, RawRepresentable {
             return nil
         }
     }
-    // swiftlint:enable cyclomatic_complexity
 }

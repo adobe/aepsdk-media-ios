@@ -18,7 +18,7 @@ PODS:
 
 DEPENDENCIES:
   - AEPAnalytics
-  - AEPAssurance (~> 4.0)
+  - AEPAssurance
   - AEPCore
   - AEPIdentity
   - AEPLifecycle
@@ -47,6 +47,6 @@ SPEC CHECKSUMS:
   AEPServices: ca493988df250d84fda050124ff7549bcc43c65f
   SwiftLint: 13280e21cdda6786ad908dc6e416afe5acd1fcb7
 
-PODFILE CHECKSUM: 58061dbc88e70ef5f7ea0d7682f224c9daf38119
+PODFILE CHECKSUM: c2025f1089afce2faaadfda41c31e6b3c7c5d27e
 
 COCOAPODS: 1.11.3
