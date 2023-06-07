@@ -4,12 +4,11 @@
 version: 2.1
 
 orbs:
-  codecov: codecov/codecov@3.2.4
+  codecov: codecov/codecov@3.2.5
   macos: circleci/macos@2
 
 # Workflows orchestrate a set of jobs to be run;
 workflows:
-  version: 2
   build-test:
     jobs:
       - validate-code
@@ -55,7 +54,7 @@ commands:
       # install CocoaPods - using default CocoaPods version, not the bundle
       - run:
           name: Repo Update & Install CocoaPods
-          command: make bundle-exec-pod-install
+          command: make ci-pod-install
 
       # save pods related files
       - save_cache:
@@ -63,23 +62,26 @@ commands:
           key: cocoapods-cache-v6-{{ arch }}-{{ .Branch }}-{{ checksum "Podfile.lock" }}
           paths:
             - ./Pods
+            - ~/.cocoapods
 
   prestart_ios_simulator:
     steps:
       - macos/preboot-simulator:
           platform: "iOS"
-          device: "iPhone 8"
+          version: "16.1"
+          device: "iPhone 14"
 
   prestart_tvos_simulator:
     steps:
       - macos/preboot-simulator:
           platform: "tvOS"
+          version: "16.1"
           device: "Apple TV"
 
 jobs:
   validate-code:
     macos:
-      xcode: 13.4.0 # Specify the Xcode version to use
+      xcode: 14.1.0 # Specify the Xcode version to use
 
     steps:
       - checkout
@@ -92,14 +94,13 @@ jobs:
   
   test-ios:
     macos:
-      xcode: 13.4.0 # Specify the Xcode version to use
+      xcode: 14.1.0 # Specify the Xcode version to use
 
     steps:
       - checkout
 
       - install_dependencies
 
-      # pre-start the simulator to prevent timeouts
       - prestart_ios_simulator
 
       - run:
@@ -116,14 +117,13 @@ jobs:
 
   test-tvos:
     macos:
-      xcode: 13.4.0 # Specify the Xcode version to use
+      xcode: 14.1.0 # Specify the Xcode version to use
 
     steps:
       - checkout
       
       - install_dependencies
 
-      # pre-start the simulator to prevent timeouts
       - prestart_tvos_simulator
 
       - run:
@@ -139,7 +139,7 @@ jobs:
 
   build_xcframework_and_app:
     macos:
-      xcode: 13.4.0 # Specify the Xcode version to use
+      xcode: 14.1.0 # Specify the Xcode version to use
     
     steps:
       - checkout
@@ -147,7 +147,7 @@ jobs:
       - run:
           name: Build XCFramework
           command: |
-            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+            if [[ "${CIRCLE_BRANCH}" == "main" || "${CIRCLE_BRANCH}" == "staging" ]]; then
               make archive
             fi
 
@@ -155,6 +155,6 @@ jobs:
       - run:
           name: Build Test App
           command: |
-            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+            if [[ "${CIRCLE_BRANCH}" == "main" || "${CIRCLE_BRANCH}" == "staging" ]]; then
               make build-app
             fi
