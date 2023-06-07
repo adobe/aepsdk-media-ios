@@ -655,7 +655,6 @@
 				2EFF1B5625BF57FC00375965 /* Sources */,
 				2EFF1B5725BF57FC00375965 /* Frameworks */,
 				2EFF1B5825BF57FC00375965 /* Resources */,
-				920DFEC32A303057008DCE4E /* ShellScript */,
 				3BF1F936EAFD0DD30FCDED11 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
@@ -697,7 +696,6 @@
 				D66F0B682616929C0018E779 /* Sources */,
 				D66F0B802616929C0018E779 /* Frameworks */,
 				D66F0B832616929C0018E779 /* Resources */,
-				920DFEC42A3030BF008DCE4E /* ShellScript */,
 				0C863903FC6C4162A538011B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
@@ -911,42 +909,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n    ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/.swiftlint.yml AEPMedia/Sources\nelse\n    echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\nfi\n";
-		};
-		920DFEC32A303057008DCE4E /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ -z ${ADB_SKIP_LINT} || ${ADB_SKIP_LINT} -ne \"YES\" ]]; then\n    if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n        ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/.swiftlint.yml Tests/UnitTests Tests/TestHepers\n        echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\n    fi\nelse\n    echo \"Skipping linting build phase as ADB_SKIP_LINT flag is YES.\"\nfi\n\n";
-		};
-		920DFEC42A3030BF008DCE4E /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ -z ${ADB_SKIP_LINT} || ${ADB_SKIP_LINT} -ne \"YES\" ]]; then\n    if which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n        ${PODS_ROOT}/SwiftLint/swiftlint lint --config ${SRCROOT}/.swiftlint.yml Tests/FuntionalTests Tests/TestHepers\n        echo \"warning: SwiftLint is not installed, please run the pod install command from the project root directory.\"\n    fi\nelse\n    echo \"Skipping linting build phase as ADB_SKIP_LINT flag is YES.\"\nfi\n";
 		};
 		9213B3022A303B6600223049 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

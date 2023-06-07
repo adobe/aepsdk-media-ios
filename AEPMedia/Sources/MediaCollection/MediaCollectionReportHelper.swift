@@ -160,7 +160,7 @@ class MediaCollectionReportHelper {
                 params[MediaConstants.MediaCollection.Session.VISITOR_AAM_LOC_HINT] = locHintValue
             }
 
-            if let customerIDs = state.visitorCustomerIDs, customerIDs.count > 0 {
+            if let customerIDs = state.visitorCustomerIDs, !customerIDs.isEmpty {
                 params[MediaConstants.MediaCollection.Session.VISITOR_CUSTOMER_IDS] = serializeCustomerId(customerIds: customerIDs)
             }
 
@@ -214,7 +214,7 @@ class MediaCollectionReportHelper {
     ///   - hits: Array of `MediaHit` in offline session
     /// - Returns: Payload for offline tracking request
     static func generateDownloadReport(state: MediaState, hits: [MediaHit]) -> String? {
-        guard hits.count > 0 else {
+        guard !hits.isEmpty else {
             Log.debug(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Media Hits list is empty, will not generate report.")
             return nil
         }
