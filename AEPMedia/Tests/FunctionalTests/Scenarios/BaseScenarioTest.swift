@@ -38,7 +38,7 @@ class BaseScenarioTest: XCTestCase {
     }
 
     func checkHits(expectedHits: [MediaHit], sessionId: String = "0", actualHitIndexList: [Int] = []) {
-        if actualHitIndexList.count != 0 {
+        if !actualHitIndexList.isEmpty {
             XCTAssertEqual(expectedHits.count, actualHitIndexList.count, "No of expected hits (\(expectedHits.count)) not equal to actual hits (\(actualHitIndexList.count))")
 
             for i in 0...expectedHits.count-1 {

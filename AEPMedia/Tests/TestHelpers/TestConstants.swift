@@ -49,7 +49,8 @@ class TestConstants {
         MediaConstants.Identity.MARKETING_VISITOR_ID: "ecid",
         MediaConstants.Identity.BLOB: "blob",
         MediaConstants.Identity.LOC_HINT: "lochint",
-        MediaConstants.Identity.VISITOR_IDS_LIST: [["id_origin": "orig1", "id_type": "type1", "id": "u111111111", "authentication_state": 0], ["id_origin": "orig1", "id_type": "type2", "id": "1234567890", "authentication_state": 1], ["id_origin": "orig1", "id_type": "type3", "id": "testPushId", "authentication_state": 2]]
+        MediaConstants.Identity.VISITOR_IDS_LIST: [["id_origin": "orig1", "id_type": "type1", "id": "u111111111", "authentication_state": 0],
+                                                   ["id_origin": "orig1", "id_type": "type2", "id": "1234567890", "authentication_state": 1], ["id_origin": "orig1", "id_type": "type3", "id": "testPushId", "authentication_state": 2]]
     ]
 
     static let expectedSerializedCustomerIds = ["type1": ["id": "u111111111", "authState": 0], "type2": ["id": "1234567890", "authState": 1], "type3": ["id": "testPushId", "authState": 2]]

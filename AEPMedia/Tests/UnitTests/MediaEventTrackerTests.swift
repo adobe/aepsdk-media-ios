@@ -70,7 +70,7 @@ class MediaEventTrackerTests: XCTestCase {
         return mediaTracker.track(event: event)
     }
 
-    func compareRuleNames(list1: [(name: RuleName, context: [String: Any])], list2:[(name: RuleName, context: [String: Any])]) -> Bool {
+    func compareRuleNames(list1: [(name: RuleName, context: [String: Any])], list2: [(name: RuleName, context: [String: Any])]) -> Bool {
         if list1.count != list2.count {
             return false
         }
