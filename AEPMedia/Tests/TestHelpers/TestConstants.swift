@@ -55,7 +55,7 @@ class TestConstants {
         MediaConstants.Identity.MARKETING_VISITOR_ID: "ecid",
         MediaConstants.Identity.BLOB: "blob",
         MediaConstants.Identity.LOC_HINT: "lochint",
-        MediaConstants.Identity.VISITOR_IDS_LIST: expectedSerializedCustomerIds
+        MediaConstants.Identity.VISITOR_IDS_LIST: visitorIdList
     ]
 
     static let expectedSerializedCustomerIds: [String: [String: Any]] = [
