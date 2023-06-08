@@ -61,6 +61,7 @@ class MediaRealTimeSession: MediaSession {
     }
 
     /// Sends the first `MediaHit` from the collected hits to Media Collection Server
+    // swiftlint:disable function_body_length
     private func trySendHit() {
         guard state.privacyStatus == .optedIn else {
             Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(id)] Exiting as privacy is not opted-in")
@@ -151,6 +152,7 @@ class MediaRealTimeSession: MediaSession {
             }
         }
     }
+    // swiftlint:enable function_body_length
 
     private func extractSessionId(connection: HttpConnection) -> String? {
         guard let sessionResponseFragment = connection.responseHttpHeader(forKey: "Location") else {

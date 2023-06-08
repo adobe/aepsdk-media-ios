@@ -65,6 +65,7 @@ class MediaOfflineSession: MediaSession {
     }
 
     /// Create media collection report for session and send to Media Collection Server.
+    // swiftlint:disable function_body_length
     private func tryReportSession() {
         guard state.privacyStatus == .optedIn else {
             Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(id)] Exiting as privacy is not opted-in.")
@@ -139,6 +140,7 @@ class MediaOfflineSession: MediaSession {
             }
         }
     }
+    // swiftlint:enable function_body_length
 
     /// Clears the persisted session hits after session is successfully reported to Media collection server.
     private func onSessionReportSuccess() {

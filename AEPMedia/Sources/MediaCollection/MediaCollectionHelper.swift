@@ -75,10 +75,8 @@ class MediaCollectionHelper {
         var retDict = [String: String]()
 
         // standard metadata is removed and only custom metadata will be returned.
-        for (key, value) in metadata {
-            if standardMediaMetadataMapping[key] == nil {
+        for (key, value) in metadata where standardMediaMetadataMapping[key] == nil {
                 retDict[key] = value
-            }
         }
 
         return retDict
@@ -127,10 +125,8 @@ class MediaCollectionHelper {
         var retDict = [String: String]()
 
         // standard ad metadata is removed and only custom ad metadata will be returned.
-        for (key, value) in adMetadata {
-            if standardAdMetadataMapping[key] == nil {
+        for (key, value) in adMetadata where standardAdMetadataMapping[key] == nil {
                 retDict[key] = value
-            }
         }
 
         return retDict
