@@ -198,13 +198,11 @@ class MediaContext {
     func getActiveTrackedStates() -> [StateInfo] {
         var activeStates: [StateInfo] = []
 
-        for (name, active) in trackedStates {
-            if active {
-                if let stateInfo = StateInfo(stateName: name) {
-                    activeStates.append(stateInfo)
-                }
-            }
-        }
+        for state in trackedStates where state.value {
+                  if let stateInfo = StateInfo(stateName: state.key) {
+                      activeStates.append(stateInfo)
+                  }
+              }
 
         return activeStates
     }

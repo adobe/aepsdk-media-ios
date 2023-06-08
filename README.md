@@ -1,18 +1,17 @@
 # Adobe Experience Platform Media SDK
 
-[![Cocoapods](https://img.shields.io/cocoapods/v/AEPMedia.svg?color=orange&label=AEPMedia&logo=apple&logoColor=white)](https://cocoapods.org/pods/AEPMedia)
-
-[![SPM](https://img.shields.io/badge/SPM-Supported-orange.svg?logo=apple&logoColor=white)](https://swift.org/package-manager/)
-[![CircleCI](https://img.shields.io/circleci/project/github/adobe/aepsdk-media-ios/main.svg?logo=circleci)](https://circleci.com/gh/adobe/workflows/aepsdk-media-ios)
-[![Code Coverage](https://img.shields.io/codecov/c/github/adobe/aepsdk-media-ios/main.svg?logo=codecov)](https://codecov.io/gh/adobe/aepsdk-media-ios/branch/main)
+[![CocoaPods](https://img.shields.io/github/v/release/adobe/aepsdk-media-ios?label=CocoaPods&logo=apple&logoColor=white&color=orange)](https://cocoapods.org/pods/AEPMedia) 
+[![SPM](https://img.shields.io/github/v/release/adobe/aepsdk-media-ios?label=SPM&logo=apple&logoColor=white&color=orange)](https://github.com/adobe/aepsdk-media-ios/releases) 
+[![CircleCI](https://img.shields.io/circleci/project/github/adobe/aepsdk-media-ios/main.svg?logo=circleci&label=Build)](https://circleci.com/gh/adobe/workflows/aepsdk-media-ios) 
+[![Code Coverage](https://img.shields.io/codecov/c/github/adobe/aepsdk-media-ios/main.svg?logo=codecov&label=Coverage)](https://codecov.io/gh/adobe/aepsdk-media-ios/branch/main)
 
 ## About this project
 
 AEPMedia represents the Adobe Experience Platform SDK's Media Analytics extension that provides clients with robust measurement for audio, video and advertisements.
 
 ## Requirements
-- Xcode 11.x
-- Swift 5.x
+- Xcode 14.1.0
+- Swift 5.1
 
 ## Installation
 These are currently the supported installation options:
@@ -54,7 +53,7 @@ Alternatively, if your project has a `Package.swift` file, you can add AEPMedia 
 
 ```
 dependencies: [
-    .package(url: "https://github.com/adobe/aepsdk-media-ios.git", .upToNextMajor(from: "3.0.0"))
+    .package(url: "https://github.com/adobe/aepsdk-media-ios.git", .upToNextMajor(from: "4.0.0"))
 ]
 ```
 

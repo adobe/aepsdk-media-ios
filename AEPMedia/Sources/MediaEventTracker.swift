@@ -13,6 +13,7 @@ import Foundation
 import AEPServices
 import AEPCore
 
+// swiftlint:disable type_body_length
 class MediaEventTracker: MediaEventTracking {
     // MARK: Rule Name
 
@@ -214,6 +215,7 @@ class MediaEventTracker: MediaEventTracking {
     /// - Parameters:
     ///    - rule: EventName corresponding to API call
     ///    - context: Data passed with the corresponding API call
+    // swiftlint:disable function_body_length
     private func setupRules() {
         ruleEngine.onEnterRule(enterFn: cmdEnterAction(rule:context:))
         ruleEngine.onExitRule(exitFn: cmdExitAction(rule:context:))
@@ -382,7 +384,7 @@ class MediaEventTracker: MediaEventTracking {
         ruleEngine.add(rule: stateEnd)
 
     }
-
+    // swiftlint:enable function_body_length
     // MARK: Rule Predicates
     private func isInMedia(rule: MediaRule, context: [String: Any]) -> Bool {
         return mediaContext != nil
@@ -842,16 +844,14 @@ class MediaEventTracker: MediaEventTracking {
     // MARK: Preroll Rule Helpers
 
     // Remove the trackPlay calls before AdBreakStart for preroll ads to avoid incorrect content start on reporting side
-    func prerollReorderRules(rules: [(name: RuleName, context: [String: Any])]) ->[(name: RuleName, context: [String: Any])] {
+    func prerollReorderRules(rules: [(name: RuleName, context: [String: Any])]) -> [(name: RuleName, context: [String: Any])] {
         var reorderedRules: [(name: RuleName, context: [String: Any])] = []
-        var adBreakStart: (name: RuleName, context: [String: Any])?
+               var adBreakStart: (name: RuleName, context: [String: Any])?
 
-        for rule in rules {
-            if rule.name == RuleName.AdBreakStart {
-                adBreakStart = rule
-                break
-            }
-        }
+               for rule in rules where rule.name == RuleName.AdBreakStart {
+                   adBreakStart = rule
+                   break
+               }
 
         var dropPlay = adBreakStart != nil
         for rule in rules {
@@ -961,3 +961,4 @@ class MediaEventTracker: MediaEventTracking {
         return ts
     }
 }
+// swiftlint:enable type_body_length
