@@ -23,16 +23,18 @@ class MediaCollectionReportHelper {
     /// Returns the `URL` for session start. The response contains the `sessionId`
     /// - Parameter host: The tracking server url host component
     /// - Returns: Session start request URL
-    static func getTrackingURL(host: String) -> URL? {
-        guard !host.isEmpty else {
+    static func getTrackingURL(trackingServer: String) -> URL? {
+        guard !trackingServer.isEmpty else {
             Log.warning(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Unable to create tracking url. Host (MediaCollectionServer) url is empty.")
             return nil
         }
 
+        let serverAddress = getHostAndPath(trackingServer)
+
         var urlcomponents = URLComponents()
         urlcomponents.scheme = "https"
-        urlcomponents.host = host
-        urlcomponents.path = "/api/v1/sessions"
+        urlcomponents.host = serverAddress["host"]
+        urlcomponents.path = (serverAddress["path"] ?? "") + "/api/v1/sessions"
         return urlcomponents.url
     }
 
@@ -41,17 +43,37 @@ class MediaCollectionReportHelper {
     /// - host: Host component of the URL
     /// - sessionId: the session id of the Media session
     /// - Returns: URL for sending media hits
-    static func getTrackingURLForEvents(host: String, sessionId: String?) -> URL? {
-        guard !host.isEmpty, let sessionId = sessionId, !sessionId.isEmpty else {
+    static func getTrackingURLForEvents(trackingServer: String, sessionId: String?) -> URL? {
+        guard !trackingServer.isEmpty, let sessionId = sessionId, !sessionId.isEmpty else {
             Log.warning(label: LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Unable to create tracking url for events. Host (MediaCollectionServer) url or collection server sessionId is empty.")
             return nil
         }
 
+        let serverAddress = getHostAndPath(trackingServer)
+
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
-        urlComponents.host = host
-        urlComponents.path = "/api/v1/sessions/\(sessionId)/events"
+        urlComponents.host = serverAddress["host"]
+        urlComponents.path = (serverAddress["path"] ?? "") + "/api/v1/sessions/\(sessionId)/events"
         return urlComponents.url
+    }
+
+    static func getHostAndPath(_ trackingServer: String) -> [String: String] {
+        var ret =  [String: String]()
+        let trackingServerComponents = trackingServer.components(separatedBy: "/")
+
+        ret["host"] = trackingServerComponents[0]
+
+        var path = ""
+        if trackingServerComponents.count > 1 {
+            for i in 1...trackingServerComponents.count-1 {
+                path += "/" + trackingServerComponents[i]
+            }
+        }
+
+        ret["path"] = path
+
+        return ret
     }
 
     /// Generates the payload for `MediaHit` in `MediaRealTimeSession`
