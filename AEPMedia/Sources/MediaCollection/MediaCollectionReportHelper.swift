@@ -29,12 +29,12 @@ class MediaCollectionReportHelper {
             return nil
         }
 
-        let serverAddress = getHostAndPath(trackingServer)
+        let (host, path) = getHostAndPath(trackingServer)
 
         var urlcomponents = URLComponents()
         urlcomponents.scheme = "https"
-        urlcomponents.host = serverAddress["host"]
-        urlcomponents.path = (serverAddress["path"] ?? "") + "/api/v1/sessions"
+        urlcomponents.host = host
+        urlcomponents.path = path + "/api/v1/sessions"
         return urlcomponents.url
     }
 
@@ -49,20 +49,19 @@ class MediaCollectionReportHelper {
             return nil
         }
 
-        let serverAddress = getHostAndPath(trackingServer)
+        let (host, path) = getHostAndPath(trackingServer)
 
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
-        urlComponents.host = serverAddress["host"]
-        urlComponents.path = (serverAddress["path"] ?? "") + "/api/v1/sessions/\(sessionId)/events"
+        urlComponents.host = host
+        urlComponents.path = path + "/api/v1/sessions/\(sessionId)/events"
         return urlComponents.url
     }
 
-    static func getHostAndPath(_ trackingServer: String) -> [String: String] {
-        var ret =  [String: String]()
+    static func getHostAndPath(_ trackingServer: String) -> (String, String) {
         let trackingServerComponents = trackingServer.components(separatedBy: "/")
 
-        ret["host"] = trackingServerComponents[0]
+        let host = trackingServerComponents[0]
 
         var path = ""
         if trackingServerComponents.count > 1 {
@@ -71,9 +70,7 @@ class MediaCollectionReportHelper {
             }
         }
 
-        ret["path"] = path
-
-        return ret
+        return (host: host, path: path)
     }
 
     /// Generates the payload for `MediaHit` in `MediaRealTimeSession`

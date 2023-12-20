@@ -29,11 +29,11 @@ class MediaCollectionReportHelperTests: XCTestCase {
 
     func testGetTrackingUrl_domainContainsValidPath() {
         // Setup
-        let host = "abc.com/va/"
+        let host = "abc.com/va"
         // Action
         let url = MediaCollectionReportHelper.getTrackingURL(trackingServer: host)
         // Assert
-        XCTAssertEqual(url, URL(string: "https://\(host)/api/v1/sessions"))
+        XCTAssertEqual(url, URL(string: "https://abc.com/va/api/v1/sessions"))
     }
 
     func testGetTrackingUrl_domainContainsInvalidPath() {
@@ -42,7 +42,7 @@ class MediaCollectionReportHelperTests: XCTestCase {
         // Action
         let url = MediaCollectionReportHelper.getTrackingURL(trackingServer: host)
         // Assert
-        XCTAssertEqual(url, URL(string: "https://\(host)/api/v1/sessions"))
+        XCTAssertEqual(url, URL(string: "https:////abc.com/va///api/v1/sessions"))
     }
 
     func testGetTrackingUrlForEvents() {
