@@ -59,17 +59,9 @@ class MediaCollectionReportHelper {
     }
 
     static func getHostAndPath(_ trackingServer: String) -> (String, String) {
-        let trackingServerComponents = trackingServer.components(separatedBy: "/")
-
-        let host = trackingServerComponents[0]
-
-        var path = ""
-        if trackingServerComponents.count > 1 {
-            for i in 1...trackingServerComponents.count-1 {
-                path += "/" + trackingServerComponents[i]
-            }
-        }
-
+        var components = trackingServer.components(separatedBy: "/")
+        let host = components.removeFirst()
+        let path = components.isEmpty ? "" : "/" + components.joined(separator: "/")
         return (host: host, path: path)
     }
 
