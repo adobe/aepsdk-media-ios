@@ -21,7 +21,7 @@ class MediaCollectionReportHelper {
     private init() {}
 
     /// Returns the `URL` for session start. The response contains the `sessionId`
-    /// - Parameter host: The tracking server url host component
+    /// - Parameter trackingServer: backend server domain
     /// - Returns: Session start request URL
     static func getTrackingURL(trackingServer: String) -> URL? {
         guard !trackingServer.isEmpty else {
@@ -40,7 +40,7 @@ class MediaCollectionReportHelper {
 
     /// Returns the URL for sending `MediaHits`
     /// - Parameters:
-    /// - host: Host component of the URL
+    /// - trackingServer: backend server domain
     /// - sessionId: the session id of the Media session
     /// - Returns: URL for sending media hits
     static func getTrackingURLForEvents(trackingServer: String, sessionId: String?) -> URL? {
