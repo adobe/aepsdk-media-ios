@@ -58,7 +58,10 @@ class MediaCollectionReportHelper {
         return urlComponents.url
     }
 
-    static func getHostAndPath(_ trackingServer: String) -> (String, String) {
+    /// Extracts domain and path from the input server address
+    /// - Parameter trackingServer: backend server domain, which contains path if it's a first party domain
+    /// - Returns: Tuple values containing domain and path
+    private static func getHostAndPath(_ trackingServer: String) -> (String, String) {
         var components = trackingServer.components(separatedBy: "/")
         let host = components.removeFirst()
         let path = components.isEmpty ? "" : "/" + components.joined(separator: "/")
