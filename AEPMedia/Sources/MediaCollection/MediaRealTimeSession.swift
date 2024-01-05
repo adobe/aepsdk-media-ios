@@ -165,9 +165,9 @@ class MediaRealTimeSession: MediaSession {
     private func generateHitUrl(_ isSessionStartHit: Bool) -> URL? {
         var url: URL?
         if isSessionStartHit {
-            url = MediaCollectionReportHelper.getTrackingURL(host: state.mediaCollectionServer ?? "")
+            url = MediaCollectionReportHelper.getTrackingURL(trackingServer: state.mediaCollectionServer ?? "")
         } else {
-            url = MediaCollectionReportHelper.getTrackingURLForEvents(host: state.mediaCollectionServer ?? "", sessionId: mcSessionId)
+            url = MediaCollectionReportHelper.getTrackingURLForEvents(trackingServer: state.mediaCollectionServer ?? "", sessionId: mcSessionId)
         }
         return url
     }

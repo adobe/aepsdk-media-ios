@@ -22,9 +22,27 @@ class MediaCollectionReportHelperTests: XCTestCase {
         // Setup
         let host = "abc.com"
         // Action
-        let url = MediaCollectionReportHelper.getTrackingURL(host: host)
+        let url = MediaCollectionReportHelper.getTrackingURL(trackingServer: host)
         // Assert
         XCTAssertEqual(url, URL(string: "https://\(host)/api/v1/sessions"))
+    }
+
+    func testGetTrackingUrl_domainContainsValidPath() {
+        // Setup
+        let host = "abc.com/va"
+        // Action
+        let url = MediaCollectionReportHelper.getTrackingURL(trackingServer: host)
+        // Assert
+        XCTAssertEqual(url, URL(string: "https://abc.com/va/api/v1/sessions"))
+    }
+
+    func testGetTrackingUrl_domainContainsInvalidPath() {
+        // Setup
+        let host = "//abc.com/va//"
+        // Action
+        let url = MediaCollectionReportHelper.getTrackingURL(trackingServer: host)
+        // Assert
+        XCTAssertEqual(url, URL(string: "https:////abc.com/va///api/v1/sessions"))
     }
 
     func testGetTrackingUrlForEvents() {
@@ -32,7 +50,7 @@ class MediaCollectionReportHelperTests: XCTestCase {
         let host = "abc.com"
         let sessionId = "sessionId"
         // Action
-        let url = MediaCollectionReportHelper.getTrackingURLForEvents(host: host, sessionId: sessionId)
+        let url = MediaCollectionReportHelper.getTrackingURLForEvents(trackingServer: host, sessionId: sessionId)
         // Assert
         XCTAssertEqual(url, URL(string: "https://\(host)/api/v1/sessions/\(sessionId)/events"))
     }
