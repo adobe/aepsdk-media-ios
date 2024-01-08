@@ -82,7 +82,7 @@ class MediaOfflineSession: MediaSession {
             return
         }
 
-        guard let url = MediaCollectionReportHelper.getTrackingURL(host: state.mediaCollectionServer ?? "") else {
+        guard let url = MediaCollectionReportHelper.getTrackingURL(trackingServer: state.mediaCollectionServer ?? "") else {
             Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(id))] Exiting as it is not able to generate a valid URL.")
             return
         }
