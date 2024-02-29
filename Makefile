@@ -36,7 +36,7 @@ test-ios: clean-ios-test-files
 	@echo "######################################################################"
 	@echo "### Testing iOS"
 	@echo "######################################################################"
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=iOS Simulator,name=iPhone 14' -derivedDataPath build/out -resultBundlePath iosresults.xcresult -enableCodeCoverage YES
+	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=iOS Simulator,name=iPhone 15' -derivedDataPath build/out -resultBundlePath iosresults.xcresult -enableCodeCoverage YES
 
 test-tvos: clean-tvos-test-files
 	@echo "######################################################################"
@@ -99,7 +99,7 @@ lint-autocorrect:
 	./Pods/SwiftLint/swiftlint --fix
 
 # release checks
-# make check-version VERSION=4.0.0
+# make check-version VERSION=5.0.0
 check-version:
 	sh ./Script/version.sh $(VERSION)
 
@@ -112,7 +112,7 @@ test-podspec:
 pod-lint:
 	pod lib lint --allow-warnings --verbose --swift-version=5.1
 
-# make bump-versions from='3\.1\.0' to=3.1.1
+# make bump-versions from='5\.1\.0' to=5.1.1
 bump-versions:
 	(LC_ALL=C find . -type f -name 'project.pbxproj' -exec sed -i '' 's/$(from)/$(to)/' {} +)
 	(LC_ALL=C find . -type f -name '*.swift' -exec sed -i '' 's/$(from)/$(to)/' {} +)
