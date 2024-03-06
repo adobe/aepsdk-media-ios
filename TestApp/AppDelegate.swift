@@ -23,7 +23,6 @@ import AEPMedia
 #endif
 
 @UIApplicationMain
-@available(tvOSApplicationExtension, unavailable)
 class AppDelegate: UIResponder, UIApplicationDelegate {
     private let ENVIRONMENT_FILE_ID = ""
 
