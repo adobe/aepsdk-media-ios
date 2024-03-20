@@ -10,7 +10,7 @@
 AEPMedia represents the Adobe Experience Platform SDK's Media Analytics extension that provides clients with robust measurement for audio, video and advertisements.
 
 ## Requirements
-- Xcode 14.1.0
+- Xcode 15.0
 - Swift 5.1
 
 ## Installation
@@ -53,7 +53,7 @@ Alternatively, if your project has a `Package.swift` file, you can add AEPMedia 
 
 ```
 dependencies: [
-    .package(url: "https://github.com/adobe/aepsdk-media-ios.git", .upToNextMajor(from: "4.0.0"))
+    .package(url: "https://github.com/adobe/aepsdk-media-ios.git", .upToNextMajor(from: "5.0.0"))
 ]
 ```
 
