@@ -16,7 +16,7 @@ end
 def test_pods
   core_pods
   pod 'AEPLifecycle'
-  pod 'AEPAnalytics', :git => 'https://github.com/adobe/aepsdk-analytics-ios.git', :branch => 'staging'
+  pod 'AEPAnalytics'
 end
 
 target 'AEPMedia' do
@@ -33,7 +33,7 @@ end
 
 target 'TestAppiOS' do
   test_pods
-  pod 'AEPAssurance', :git => 'https://github.com/adobe/aepsdk-assurance-ios.git', :branch => 'staging'
+  pod 'AEPAssurance'
 end
 
 target 'TestApptvOS' do
