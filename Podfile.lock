@@ -45,7 +45,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AEPAnalytics:
-    :commit: d3f7ee7ca02019324a0a2fb5f408bfadeb2f1714
+    :commit: 9493af778f039d6ba0ab47a7089e4b7409cb8345
     :git: https://github.com/adobe/aepsdk-analytics-ios.git
   AEPAssurance:
     :commit: 6098c48a067daf4c70cb630b0000564552ad3bc7
