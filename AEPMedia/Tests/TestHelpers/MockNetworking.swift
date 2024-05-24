@@ -62,6 +62,8 @@ class MockNetworking: Networking {
         calledNetworkRequests = []
         shouldReturnRecoverableURLError = false
         shouldReturnUnrecoverableURLError = false
+        shouldReturnRecoverableHTTPError = false
+        shouldReturnUnrecoverableHTTPError = false
         shouldReturnGenericError = false
     }
 }
