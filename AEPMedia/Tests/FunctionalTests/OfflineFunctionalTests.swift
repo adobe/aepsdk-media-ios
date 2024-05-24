@@ -106,7 +106,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
 
     func testTryReportSession_ConnectionError_shouldRetryIndefinitelyUntilNetworkRequestIsSentSuccessfully() {
         // Network disconnected
-        mockNetworkService.shouldReturnConnectionError = true
+        mockNetworkService.shouldReturnRecoverableURLError = true
         mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [:]), error: nil)
 
         // test
@@ -122,7 +122,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         let failedNetworkRequestsCount = mockNetworkService.calledNetworkRequests.count
 
         // Network connected
-        mockNetworkService.shouldReturnConnectionError = false
+        mockNetworkService.shouldReturnRecoverableURLError = false
         mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [:]), error: nil)
 
         waitForProcessing()
@@ -216,7 +216,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
 
     func testHandleAbortAfterEndButNetworkInRetry_shouldNotDropTheSessionHit() {
         // setup
-        mockNetworkService.shouldReturnConnectionError = true
+        mockNetworkService.shouldReturnRecoverableURLError = true
 
         // test
         dispatchQueue.async {

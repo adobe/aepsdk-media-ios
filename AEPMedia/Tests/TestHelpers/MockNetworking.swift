@@ -17,26 +17,39 @@ class MockNetworking: Networking {
     public var connectAsyncCalledWithCompletionHandler: ((HttpConnection) -> Void)?
     public var expectedResponse: HttpConnection?
     public var calledNetworkRequests: [NetworkRequest?] = []
-    public var shouldReturnConnectionError: Bool = false
+    public var shouldReturnRecoverableURLError: Bool = false
+    public var shouldReturnUnrecoverableURLError: Bool = false
+    public var shouldReturnRecoverableHTTPError: Bool = false
+    public var shouldReturnUnrecoverableHTTPError: Bool = false
+
     public var shouldReturnGenericError: Bool = false
     private enum error: Error {
         case genericError
     }
-    private let notConnectedToInternetErrorConnection: HttpConnection = HttpConnection(data: nil, response: nil, error: URLError(URLError.notConnectedToInternet))
-    private let genericErrorConnection: HttpConnection = HttpConnection(data: nil, response: nil, error: error.genericError)
+
+    private let gatewayTimeoutHTTPError = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "test.com")!, statusCode: 504, httpVersion: nil, headerFields: nil), error: nil)
+    private let notFoundHTTPError = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "test.com")!, statusCode: 400, httpVersion: nil, headerFields: nil), error: nil)
+    private let notConnectedToInternetErrorConnection = HttpConnection(data: nil, response: nil, error: URLError(URLError.notConnectedToInternet))
+    private let badURLErrorConnection = HttpConnection(data: nil, response: nil, error: URLError(URLError.badURL))
+    private let genericErrorConnection = HttpConnection(data: nil, response: nil, error: error.genericError)
 
     func connectAsync(networkRequest: NetworkRequest, completionHandler: ((HttpConnection) -> Void)? = nil) {
         print("Do nothing \(networkRequest)")
         connectAsyncCalled = true
         connectAsyncCalledWithNetworkRequest = networkRequest
         connectAsyncCalledWithCompletionHandler = completionHandler
-        if shouldReturnConnectionError {
-            if let completionHandler = completionHandler {
-                completionHandler(notConnectedToInternetErrorConnection)
-            }
+
+        if shouldReturnRecoverableURLError {
+            completionHandler?(notConnectedToInternetErrorConnection)
+        } else if shouldReturnUnrecoverableURLError {
+            completionHandler?(badURLErrorConnection)
+        } else if shouldReturnRecoverableHTTPError {
+            completionHandler?(gatewayTimeoutHTTPError)
+        } else if shouldReturnUnrecoverableHTTPError {
+            completionHandler?(notFoundHTTPError)
         } else {
-            if let expectedResponse = expectedResponse, let completionHandler = completionHandler {
-                completionHandler(expectedResponse)
+            if let expectedResponse = expectedResponse {
+                completionHandler?(expectedResponse)
             }
         }
         calledNetworkRequests.append(networkRequest)
@@ -47,7 +60,8 @@ class MockNetworking: Networking {
         connectAsyncCalledWithNetworkRequest = nil
         connectAsyncCalledWithCompletionHandler = nil
         calledNetworkRequests = []
-        shouldReturnConnectionError = false
+        shouldReturnRecoverableURLError = false
+        shouldReturnUnrecoverableURLError = false
         shouldReturnGenericError = false
     }
 }
