@@ -15,7 +15,6 @@ DEPENDENCIES=none
 # getRepo AEPCore
 
 declare "repos_AEPCore=https:\/\/github\.com\/adobe\/aepsdk-core-ios\.git"
-declare "repos_AEPEdge=https:\/\/github\.com\/adobe\/aepsdk-edge-ios\.git"
 getRepo() {
     local extensionName=$1
     local url="repos_$extensionName"

@@ -162,7 +162,7 @@ class MediaOfflineSession: MediaSession {
         }
 
         // ideally this line should never be executed
-        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] NEtwork Request failed with unknown error. Request will be dropped.")
+        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Network Request failed with unknown error. Request will be dropped.")
         return false
     }
 
