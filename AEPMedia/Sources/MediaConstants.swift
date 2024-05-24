@@ -14,7 +14,7 @@ import Foundation
 internal extension MediaConstants {
     static let EXTENSION_NAME                           = "com.adobe.module.media"
     static let FRIENDLY_NAME                            = "Media Analytics"
-    static let EXTENSION_VERSION                        = "5.1.0"
+    static let EXTENSION_VERSION                        = "5.0.1"
     static let DATASTORE_NAME                           = EXTENSION_NAME
     static let DATABASE_NAME                            = EXTENSION_NAME
     static let LOG_TAG                                  = EXTENSION_NAME
