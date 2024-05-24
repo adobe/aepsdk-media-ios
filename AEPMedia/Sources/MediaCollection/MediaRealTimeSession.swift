@@ -219,6 +219,9 @@ class MediaRealTimeSession: MediaSession {
                 Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session(\(self.id))] \(eventType) request failed with unrecoverable URL error:(\(urlError.localizedDescription)) code:(\(urlError.errorCode)). Request will be dropped.")
                 return false
             }
+        } else if connection.error != nil {
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] \(eventType) request failed with unrecoverable error: (\(String(describing: connection.error? .localizedDescription))).")
+            return false
         }
 
         if let responseCode = connection.responseCode {
@@ -233,7 +236,7 @@ class MediaRealTimeSession: MediaSession {
         }
 
         // ideally this line should never be executed
-        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Request failed with unknown error, the request will be dropped.")
+        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Request failed with unknown error. Request will be dropped.")
 
         return false
     }
