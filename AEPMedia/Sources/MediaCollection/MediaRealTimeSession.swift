@@ -203,7 +203,8 @@ class MediaRealTimeSession: MediaSession {
         }
 
         guard let connection = connection else {
-            // should reach here when no connection (http, url) error
+            // connection is never null
+            // should reach here when no error (http, url) and L141 calls this method with null connection
             // retry for case when error occured while parsing sessionStart response for sessionId
             Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Unable to extract sessionId from sessionStart request response, the request will be retried.")
             return true
@@ -230,6 +231,9 @@ class MediaRealTimeSession: MediaSession {
                 return false
             }
         }
+
+        // ideally this line should never be executed
+        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Request failed with unknown error, the request will be dropped.")
 
         return false
     }
