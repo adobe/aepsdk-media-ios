@@ -121,26 +121,50 @@ class MediaOfflineSession: MediaSession {
 
                 self.isReportingSession = false
 
-                if let error = connection.error {
-                    Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Network Request failed with error: (\(error.localizedDescription)).")
-                    // Failed due to transport error, will retry.
-                    self.onSessionReportFailure(true)
+                let statusCode = connection.responseCode ?? -1
+
+                guard MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) else {
+                    self.onSessionReportFailure(connection: connection, deviceOffline: true)
                     return
                 }
 
-                let statusCode = connection.responseCode ?? -1
                 Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Network Request completed with status code: (\(statusCode)).")
+                self.onSessionReportSuccess()
 
-                if MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(statusCode) {
-                    // Todo :- Once backend returns session id, we should call the dispatch function
-                    self.onSessionReportSuccess()
-                } else {
-                    self.onSessionReportFailure()
-                }
             }
         }
     }
     // swiftlint:enable function_body_length
+
+    private func shouldRetry(connection: HttpConnection) -> Bool {
+        if let urlError = connection.error as? URLError {
+            if urlError.isRecoverable {
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Network Request failed with recoverable URL error: (\(urlError.localizedDescription)) code:(\(urlError.errorCode). Request will be retried.")
+                return true
+            } else {
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Network Request failed with unrecoverable URL error: (\(urlError.localizedDescription)) code:(\(urlError.errorCode). Request will be dropped.")
+                return false
+            }
+        } else if connection.error != nil {
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Network Request failed with unrecoverable error: (\(String(describing: connection.error? .localizedDescription))). Request will be dropped.")
+            return false
+        }
+
+        if let responseCode = connection.responseCode {
+            if NetworkServiceConstants.RECOVERABLE_ERROR_CODES.contains(responseCode) {
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Network Request failed with recoverable HTTP error: (\(String(describing: connection.responseMessage))) code:(\(responseCode). Request will be retried.")
+
+                return true // retry for recoverable http errors
+            } else {
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Network Request failed with unrecoverable HTTP error: (\(String(describing: connection.responseMessage))) code:(\(responseCode). Request will be dropped.")
+                return false
+            }
+        }
+
+        // ideally this line should never be executed
+        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Network Request failed with unknown error. Request will be dropped.")
+        return false
+    }
 
     /// Clears the persisted session hits after session is successfully reported to Media collection server.
     private func onSessionReportSuccess() {
@@ -149,7 +173,14 @@ class MediaOfflineSession: MediaSession {
     }
 
     /// Handles the response when session reporting is failed
-    private func onSessionReportFailure(_ deviceOffline: Bool = false) {
+    private func onSessionReportFailure(connection: HttpConnection, deviceOffline: Bool = false) {
+
+        guard shouldRetry(connection: connection) else {
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Failed with unrecoverable error, dropping the session.")
+            clearSession()
+            return
+        }
+
         if failureCount >= Self.MAX_ALLOWED_FAILURE {
             Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Exceeded maximum allowed retry count, dropping the session.")
             clearSession()
