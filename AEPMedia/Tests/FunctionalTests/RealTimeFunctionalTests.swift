@@ -102,9 +102,9 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertEqual(requests[0]?.httpHeaders[MediaConstants.Networking.HEADER_KEY_AEP_VALIDATION_TOKEN], mockMediaData.assuranceIntegrationId)
     }
 
-    func testTrySendHit_ConnectionError_fail_shouldRetry3times() {
+    func testTrySendHit_RecoverableURLError_fail_shouldRetry3times() {
         // setup
-        mockNetworkService.shouldReturnConnectionError = true
+        mockNetworkService.shouldReturnRecoverableURLError = true
 
         // test
         session.handleQueueMediaHit(hit: mockMediaData.sessionStart)
@@ -117,10 +117,55 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         XCTAssertTrue(mockNetworkService.connectAsyncCalled)
     }
 
+    func testTrySendHit_UnrecoverableURLError_fail_shouldNotRetry() {
+        // setup
+        mockNetworkService.shouldReturnUnrecoverableURLError = true
+
+        // test
+        session.handleQueueMediaHit(hit: mockMediaData.sessionStart)
+        waitForProcessing()
+
+        // verify
+        let requests = mockNetworkService.calledNetworkRequests
+        XCTAssertEqual(0, session.hits.count)
+        XCTAssertEqual(1, requests.count)
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+    }
+
+    func testTrySendHit_RecoverableHTTPError_fail_shouldRetry3times() {
+        // setup
+        mockNetworkService.shouldReturnRecoverableHTTPError = true
+
+        // test
+        session.handleQueueMediaHit(hit: mockMediaData.sessionStart)
+        waitForProcessing()
+
+        // verify
+        let requests = mockNetworkService.calledNetworkRequests
+        XCTAssertEqual(0, session.hits.count)
+        XCTAssertEqual(3, requests.count)
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+    }
+
+    func testTrySendHit_UnrecoverableHTTPError_fail_shouldNotRetry() {
+        // setup
+        mockNetworkService.shouldReturnUnrecoverableHTTPError = true
+
+        // test
+        session.handleQueueMediaHit(hit: mockMediaData.sessionStart)
+        waitForProcessing()
+
+        // verify
+        let requests = mockNetworkService.calledNetworkRequests
+        XCTAssertEqual(0, session.hits.count)
+        XCTAssertEqual(1, requests.count)
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+    }
+
     func testTrySendHit_ConnectionError_PassAfter2Retries_UnableToExtractMCSessionID_ShouldNotDeleteHitFromSession() {
         // setup
         session.retryDuration = 1
-        mockNetworkService.shouldReturnConnectionError = true
+        mockNetworkService.shouldReturnRecoverableURLError = true
 
         // test
         session.handleQueueMediaHit(hit: mockMediaData.sessionStart)
@@ -130,7 +175,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         waitForProcessing(interval: 1)
 
         // make network request pass
-        mockNetworkService.shouldReturnConnectionError = false
+        mockNetworkService.shouldReturnRecoverableURLError = false
 
         // 3rd try
         waitForProcessing(interval: 1)
@@ -145,7 +190,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
     func testTrySendHit_ConnectionError_PassAfter2Retries_ExtractMCSessionID_DeleteHitFromSession() {
         // setup
         session.retryDuration = 1
-        mockNetworkService.shouldReturnConnectionError = true
+        mockNetworkService.shouldReturnRecoverableURLError = true
         mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: ["Location": "/api/test/sessions/MediaCollectionServerSessionId"]), error: nil)
 
         // test
@@ -156,7 +201,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         waitForProcessing(interval: 1)
 
         // make network request pass
-        mockNetworkService.shouldReturnConnectionError = false
+        mockNetworkService.shouldReturnRecoverableURLError = false
 
         // 3rd try
         waitForProcessing(interval: 1)
@@ -171,7 +216,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
     func testTrySendHit_ConnectionError_ShouldNotRetryAfterMaxRetries() {
         // setup
         session.retryDuration = 1
-        mockNetworkService.shouldReturnConnectionError = true
+        mockNetworkService.shouldReturnRecoverableURLError = true
 
         // test
         session.handleQueueMediaHit(hit: mockMediaData.sessionStart)
@@ -179,7 +224,7 @@ class RealTimeFunctionalTests: MediaFunctionalTestBase {
         waitForProcessing(interval: 1)
 
         // make network request pass
-        mockNetworkService.shouldReturnConnectionError = false
+        mockNetworkService.shouldReturnRecoverableURLError = false
 
         // 2nd try
         waitForProcessing(interval: 1)

@@ -130,17 +130,18 @@ class MediaRealTimeSession: MediaSession {
 
                 let responseCode = connection.responseCode ?? -1
                 guard MediaConstants.Networking.HTTP_SUCCESS_RANGE.contains(responseCode) else {
-                    Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id)] \(eventType) Http failed with response code \(responseCode)")
-                    self.handleProcessingError(sessionStart: isSessionStartHit)
+                    self.handleProcessingError(eventType: eventType, connection: connection)
                     return
                 }
 
                 if isSessionStartHit {
                     guard let mcSessionId = self.extractSessionId(connection: connection) else {
-                        self.handleProcessingError(sessionStart: isSessionStartHit)
+                        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session(\(self.id))] Something went wrong, could not get sessionId from server response.")
+
+                        self.handleProcessingError(eventType: eventType)
                         return
                     }
-                    Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id) Created Mediacollection session \(mcSessionId)")
+                    Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session(\(self.id))] Created Mediacollection session \(mcSessionId)")
                     self.mcSessionId = mcSessionId
 
                     var eventData = debugInfo
@@ -178,18 +179,66 @@ class MediaRealTimeSession: MediaSession {
     }
 
     /// Handles if there is an error in sending hit to the Media Collection Server
-    private func handleProcessingError(sessionStart: Bool) {
-        if !sessionStart || sessionStartRetryCount >= MediaRealTimeSession.MAX_ALLOWED_FAILURE {
+    private func handleProcessingError(eventType: String, connection: HttpConnection? = nil) {
+        if !shouldRetry(eventType: eventType, connection: connection) {
             sendNextHit()
             return
         }
 
-        if sessionStartRetryCount < MediaRealTimeSession.MAX_ALLOWED_FAILURE {
-            sessionStartRetryCount += 1
-            dispatchQueue.asyncAfter(deadline: .now() + .seconds(retryDuration)) { [weak self] in
-                self?.trySendHit()
+        sessionStartRetryCount += 1
+        dispatchQueue.asyncAfter(deadline: .now() + .seconds(retryDuration)) { [weak self] in
+            self?.trySendHit()
+        }
+    }
+
+    private func shouldRetry(eventType: String, connection: HttpConnection?) -> Bool {
+        guard eventType == MediaConstants.MediaCollection.EventType.SESSION_START else {
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] \(eventType) request resulted in error and since event type is not sessionStart it will be dropped.")
+            return false
+        }
+
+        guard sessionStartRetryCount < MediaRealTimeSession.MAX_ALLOWED_FAILURE else {
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] \(eventType) request resulted in error but since it surpassed the retry limit:(\(MediaRealTimeSession.MAX_ALLOWED_FAILURE), the request will be dropped.")
+            return false
+        }
+
+        guard let connection = connection else {
+            // connection is never null
+            // should reach here when no error (http, url) and L141 calls this method with null connection
+            // retry for case when error occured while parsing sessionStart response for sessionId
+            Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Unable to extract sessionId from sessionStart request response, the request will be retried.")
+            return true
+        }
+
+        if let urlError = connection.error as? URLError {
+
+            if urlError.isRecoverable {
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session(\(self.id))] \(eventType) request failed with recoverable URL error:(\(urlError.localizedDescription)) code:(\(urlError.errorCode)). Request will be retried.")
+                return true // retry for recoverable url errors
+            } else {
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session(\(self.id))] \(eventType) request failed with unrecoverable URL error:(\(urlError.localizedDescription)) code:(\(urlError.errorCode)). Request will be dropped.")
+                return false
+            }
+        } else if connection.error != nil {
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] \(eventType) request failed with unrecoverable error: (\(String(describing: connection.error? .localizedDescription))).")
+            return false
+        }
+
+        if let responseCode = connection.responseCode {
+
+            if NetworkServiceConstants.RECOVERABLE_ERROR_CODES.contains(responseCode) {
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session(\(self.id))] \(eventType) request failed with recoverable HTTP error:(\(connection.responseMessage ?? "")) response code:(\(responseCode)). Request will be retried.")
+                return true // retry for recoverable http errors
+            } else {
+                Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session(\(self.id))] \(eventType) request failed with unrecoverable HTTP error:(\(connection.responseMessage ?? "")) response code:(\(connection.responseCode ?? -1)). Request will be dropped.")
+                return false
             }
         }
+
+        // ideally this line should never be executed
+        Log.trace(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - [Session (\(self.id))] Request failed with unknown error. Request will be dropped.")
+
+        return false
     }
 
     /// Initiates sending the next hit after a hit is successfully send OR error occurred in sending the hit, greater than or equals to MAX_ALLOWED_FAILURE times. It also handles the condition if there is not pending hit and session has been ended.

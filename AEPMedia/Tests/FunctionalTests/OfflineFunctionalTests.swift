@@ -104,10 +104,9 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: sessionRequestURLString))
     }
 
-    func testTryReportSession_ConnectionError_shouldRetryIndefinitelyUntilNetworkRequestIsSentSuccessfully() {
+    func testTryReportSession_recoverableURLError_shouldRetryIndefinitelyUntilNetworkRequestIsSentSuccessfully() {
         // Network disconnected
-        mockNetworkService.shouldReturnConnectionError = true
-        mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [:]), error: nil)
+        mockNetworkService.shouldReturnRecoverableURLError = true
 
         // test
         dispatchQueue.async {
@@ -122,7 +121,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         let failedNetworkRequestsCount = mockNetworkService.calledNetworkRequests.count
 
         // Network connected
-        mockNetworkService.shouldReturnConnectionError = false
+        mockNetworkService.shouldReturnRecoverableURLError = false
         mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [:]), error: nil)
 
         waitForProcessing()
@@ -141,6 +140,118 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
         let sessionRequestURLString = requests[requests.count-1]?.payloadAsString() ?? ""
 
         XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: sessionRequestURLString))
+    }
+
+    func testTryReportSession_unrecoverableURLError_shouldDropHit() {
+        // Network disconnected
+        mockNetworkService.shouldReturnUnrecoverableURLError = true
+
+        // test
+        dispatchQueue.async {
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.sessionStart)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.pause)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.complete)
+            self.session.end()
+        }
+        waitForProcessing()
+
+        let requests = mockNetworkService.calledNetworkRequests
+        let failedNetworkRequestsCount = mockNetworkService.calledNetworkRequests.count
+
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+        XCTAssertEqual(1, requests.count)
+        XCTAssertEqual(1, failedNetworkRequestsCount)
+
+        // reset
+        mockNetworkService.reset()
+
+        // Network connected
+        mockNetworkService.shouldReturnRecoverableURLError = false
+        mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [:]), error: nil)
+
+        waitForProcessing()
+
+        // verify
+
+        let requests2 = mockNetworkService.calledNetworkRequests
+        XCTAssertFalse(mockNetworkService.connectAsyncCalled)
+        XCTAssertEqual(0, requests2.count)
+    }
+    
+    func testTryReportSession_recoverableHTTPError_shouldRetryIndefinitelyUntilNetworkRequestIsSentSuccessfully() {
+        // Network disconnected
+        mockNetworkService.shouldReturnRecoverableHTTPError = true
+
+        // test
+        dispatchQueue.async {
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.sessionStart)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.pause)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.complete)
+            self.session.end()
+        }
+        waitForProcessing()
+
+        let failedNetworkRequestsCount = mockNetworkService.calledNetworkRequests.count
+
+        // Network connected
+        mockNetworkService.shouldReturnRecoverableHTTPError = false
+        mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [:]), error: nil)
+
+        waitForProcessing()
+
+        // verify
+        var expectedResponse = [String]()
+        expectedResponse.append(mockMediaData.sessionStartJsonWithState)
+        expectedResponse.append(mockMediaData.playJson)
+        expectedResponse.append(mockMediaData.pauseJson)
+        expectedResponse.append(mockMediaData.completeJson)
+
+        let requests = mockNetworkService.calledNetworkRequests
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+        // Get payload of succeessful network request
+        XCTAssertEqual(failedNetworkRequestsCount+1, requests.count)
+        let sessionRequestURLString = requests[requests.count-1]?.payloadAsString() ?? ""
+
+        XCTAssertTrue(compareJsonArray(expected: expectedResponse, payload: sessionRequestURLString))
+    }
+
+    func testTryReportSession_unrecoverableHTTPError_shouldDropHit() {
+        // Network disconnected
+        mockNetworkService.shouldReturnUnrecoverableHTTPError = true
+
+        // test
+        dispatchQueue.async {
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.sessionStart)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.play)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.pause)
+            self.session.handleQueueMediaHit(hit: self.mockMediaData.complete)
+            self.session.end()
+        }
+        waitForProcessing()
+
+        let requests = mockNetworkService.calledNetworkRequests
+        let failedNetworkRequestsCount = mockNetworkService.calledNetworkRequests.count
+
+        XCTAssertTrue(mockNetworkService.connectAsyncCalled)
+        XCTAssertEqual(1, requests.count)
+        XCTAssertEqual(1, failedNetworkRequestsCount)
+
+        // reset
+        mockNetworkService.reset()
+
+        // Network connected
+        mockNetworkService.shouldReturnUnrecoverableHTTPError = false
+        mockNetworkService.expectedResponse = HttpConnection(data: nil, response: HTTPURLResponse(url: URL(string: "https://www.adobe.com")!, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: [:]), error: nil)
+
+        waitForProcessing()
+
+        // verify
+
+        let requests2 = mockNetworkService.calledNetworkRequests
+        XCTAssertFalse(mockNetworkService.connectAsyncCalled)
+        XCTAssertEqual(0, requests2.count)
     }
 
     func testTryAbortSession_ShouldDropAllHitsAndSendNoNetworkRequests() {
@@ -216,7 +327,7 @@ class OfflineFunctionalTests: MediaFunctionalTestBase {
 
     func testHandleAbortAfterEndButNetworkInRetry_shouldNotDropTheSessionHit() {
         // setup
-        mockNetworkService.shouldReturnConnectionError = true
+        mockNetworkService.shouldReturnRecoverableURLError = true
 
         // test
         dispatchQueue.async {
