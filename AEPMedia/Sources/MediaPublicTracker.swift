@@ -33,6 +33,29 @@ class MediaPublicTracker: MediaTracker {
     var lastPlayheadParams: [String: Any]?
     var timer: DispatchSourceTimer?
 
+    private static func createTrackerEvent(trackerId: String, config: [String: Any]?) -> Event {
+        let eventData: [String: Any] = [
+            MediaConstants.Tracker.ID: trackerId,
+            MediaConstants.Tracker.EVENT_PARAM: config ?? [:]
+        ]
+        let event = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER,
+                          type: MediaConstants.Media.EVENT_TYPE,
+                          source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER,
+                          data: eventData)
+        return event
+    }
+
+    private static func destroyTrackerEvent(trackerId: String) -> Event {
+        let eventData: [String: Any] = [
+            MediaConstants.Tracker.ID: trackerId
+        ]
+        let event = Event(name: MediaConstants.Media.EVENT_NAME_DESTROY_TRACKER,
+                          type: MediaConstants.Media.EVENT_TYPE,
+                          source: MediaConstants.Media.EVENT_SOURCE_DESTROY_TRACKER,
+                          data: eventData)
+        return event
+    }
+
     // MediaTracker Impl
     init(dispatch: dispatchFn?, config: [String: Any]?) {
         self.dispatch = dispatch
@@ -40,20 +63,16 @@ class MediaPublicTracker: MediaTracker {
         self.trackerId = UUID().uuidString
         self.sessionId = UUID().uuidString
 
-        let eventData: [String: Any] = [
-            MediaConstants.Tracker.ID: self.trackerId,
-            MediaConstants.Tracker.EVENT_PARAM: self.config ?? [:]
-        ]
-        let event = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER,
-                          type: MediaConstants.Media.EVENT_TYPE,
-                          source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST,
-                          data: eventData)
-
-        dispatch?(event)
-        Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>]: Tracker request event was sent to event hub.")
+        let createTrackerEvent = Self.createTrackerEvent(trackerId: trackerId, config: config)
+        dispatch?(createTrackerEvent)
+        Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>]: Create tracker event was sent to event hub.")
     }
 
     deinit {
+        let destroyTrackerEvent = Self.destroyTrackerEvent(trackerId: trackerId)
+        dispatch?(destroyTrackerEvent)
+        Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>]: Destroy tracker event was sent to event hub.")
+        
         stopTimer()
     }
 

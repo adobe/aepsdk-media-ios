@@ -36,7 +36,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
             MediaConstants.Tracker.ID: "testTracker",
             MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
-        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, data: eventData)
         // test
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
@@ -53,7 +53,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
             MediaConstants.Tracker.ID: "testTracker",
             MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
-        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, data: eventData)
         // test
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
@@ -70,7 +70,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
             MediaConstants.Tracker.ID: "testTracker",
             MediaConstants.Tracker.EVENT_PARAM: [:]
         ]
-        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, data: eventData)
         // test
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
@@ -86,7 +86,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
         let eventData: [String: Any] = [
             MediaConstants.Tracker.ID: "testTracker"
         ]
-        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, data: eventData)
         // test
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
@@ -103,7 +103,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
             MediaConstants.Tracker.ID: "",
             MediaConstants.Tracker.EVENT_PARAM: [:]
         ]
-        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, data: eventData)
         // test
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
@@ -114,7 +114,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
     func testCreateTrackerWithInvalidEvent() {
         // setup
         dispatchDefaultConfigAndSharedStates()
-        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: nil)
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, data: nil)
         // test
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
@@ -129,12 +129,12 @@ class MediaExtensionTests: MediaFunctionalTestBase {
             MediaConstants.Tracker.ID: "testTracker1",
             MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
-        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, data: eventData)
         let eventData2: [String: Any] = [
             MediaConstants.Tracker.ID: "testTracker2",
             MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
-        let createTrackerEvent2 = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData2)
+        let createTrackerEvent2 = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, data: eventData2)
         // test
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
@@ -155,7 +155,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
             MediaConstants.Tracker.ID: "testTracker",
             MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
-        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, data: eventData)
         // test
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
@@ -169,6 +169,63 @@ class MediaExtensionTests: MediaFunctionalTestBase {
         // verify trackers are cleared and media service sessions aborted
         XCTAssertEqual(media.trackers.count, 0)
         XCTAssertTrue(fakeMediaService.abortAllSessionsCalled)
+    }
+        
+    func testDestroyTrackerHappyPath() {
+        // setup
+        dispatchDefaultConfigAndSharedStates()
+        let eventData: [String: Any] = [
+            MediaConstants.Tracker.ID: "testTracker",
+        ]
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, data: eventData)
+        // test
+        mockRuntime.simulateComingEvent(event: createTrackerEvent)
+        waitForProcessing()
+        
+        // verify
+        XCTAssertEqual(media.trackers.count, 1)
+        XCTAssertNotNil(media.trackers["testTracker"])
+        
+        let destroyTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_DESTROY_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_DESTROY_TRACKER, data: eventData)
+        // test
+        mockRuntime.simulateComingEvent(event: destroyTrackerEvent)
+        waitForProcessing()
+        
+        // verify
+        XCTAssertEqual(media.trackers.count, 0)
+        XCTAssertNil(media.trackers["testTracker"])
+    }
+    
+    func testDestroyTrackerWithInvalidTrackerId() {
+        // setup
+        dispatchDefaultConfigAndSharedStates()
+        media.trackers["testTracker"] = FakeMediaEventTracker(hitProcessor: media.mediaService, config: MediaExtensionTests.config)
+
+        let eventData: [String: Any] = [
+            MediaConstants.Tracker.ID: "invalidTracker",
+        ]
+        let destroyTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_DESTROY_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_DESTROY_TRACKER, data: eventData)
+        // test
+        mockRuntime.simulateComingEvent(event: destroyTrackerEvent)
+        waitForProcessing()
+
+        // verify
+        XCTAssertEqual(media.trackers.count, 1)
+        XCTAssertNotNil(media.trackers["testTracker"])
+    }
+    
+    func testDestroyTrackerWithInvalidEventData() {
+        dispatchDefaultConfigAndSharedStates()
+        media.trackers["testTracker"] = FakeMediaEventTracker(hitProcessor: media.mediaService, config: MediaExtensionTests.config)
+      
+        let destroyTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_DESTROY_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_DESTROY_TRACKER, data: nil)
+        // test
+        mockRuntime.simulateComingEvent(event: destroyTrackerEvent)
+        waitForProcessing()
+
+        // verify
+        XCTAssertEqual(media.trackers.count, 1)
+        XCTAssertNotNil(media.trackers["testTracker"])
     }
 
     // MARK: handleMediaTrack tests
@@ -242,6 +299,35 @@ class MediaExtensionTests: MediaFunctionalTestBase {
         let tracker = media.trackers["trackerId"] as! FakeMediaEventTracker
         XCTAssertFalse(tracker.trackCalled)
     }
+    
+    func testHandleMediaTrackAfterDestroy() {
+        let mediaService = media.mediaService
+        let fakeMediaTracker = FakeMediaEventTracker(hitProcessor: mediaService, config: MediaExtensionTests.config)
+        media.trackers["trackerId"] = fakeMediaTracker
+        dispatchDefaultConfigAndSharedStates()
+        
+        let eventData = [
+            MediaConstants.Tracker.ID: "trackerId"
+        ]
+        let destroyTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_DESTROY_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_DESTROY_TRACKER, data: eventData)
+        // test
+        mockRuntime.simulateComingEvent(event: destroyTrackerEvent)
+        waitForProcessing()
+        
+        let playEventData: [String: Any] = [
+            MediaConstants.Tracker.ID: "",
+            MediaConstants.Tracker.EVENT_NAME: MediaConstants.EventName.PLAY,
+            MediaConstants.Tracker.EVENT_INTERNAL: false
+        ]
+        let mediaTrackEvent = Event(name: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA, data: playEventData)
+        
+        // test
+        mockRuntime.simulateComingEvent(event: mediaTrackEvent)
+        waitForProcessing()
+        
+        // verify
+        XCTAssertFalse(fakeMediaTracker.trackCalled)
+    }
 
     // MARK: handleSharedStateUpdate tests
     func testHandleSharedStateUpdate() {
@@ -261,7 +347,7 @@ class MediaExtensionTests: MediaFunctionalTestBase {
             MediaConstants.Tracker.ID: "testTracker",
             MediaConstants.Tracker.EVENT_PARAM: ["test": "value"]
         ]
-        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, data: eventData)
+        let createTrackerEvent = Event(name: MediaConstants.Media.EVENT_NAME_CREATE_TRACKER, type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, data: eventData)
         // test
         mockRuntime.simulateComingEvent(event: createTrackerEvent)
         waitForProcessing()
