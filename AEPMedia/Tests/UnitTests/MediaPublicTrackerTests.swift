@@ -119,7 +119,7 @@ class MediaPublicTrackerTests: XCTestCase {
     // ==========================================================================
     func testCreateTracker() {
         var capturedEvent: Event?
-        _ = MediaPublicTracker(dispatch: {(event: Event) in
+        var tracker = MediaPublicTracker(dispatch: {(event: Event) in
             capturedEvent = event
         }, config: nil)
 
@@ -135,7 +135,7 @@ class MediaPublicTrackerTests: XCTestCase {
 
     func testCreateTrackerWithConfig() {
         var capturedEvent: Event?
-        _ = MediaPublicTracker(dispatch: {(event: Event) in
+        var tracker = MediaPublicTracker(dispatch: {(event: Event) in
             capturedEvent = event
         }, config: Self.testConfig)
 
@@ -176,7 +176,7 @@ class MediaPublicTrackerTests: XCTestCase {
 
     func testEventExtension_TrackerIdAndConfig() {
         var capturedEvent: Event?
-        _ = MediaPublicTracker(dispatch: {(event: Event) in
+        var tracker = MediaPublicTracker(dispatch: {(event: Event) in
             capturedEvent = event
         }, config: Self.testConfig)
 
