@@ -66,11 +66,12 @@ internal extension MediaConstants {
 
     enum Media {
         static let EVENT_TYPE = "com.adobe.eventtype.media"
-        static let EVENT_SOURCE_TRACKER_REQUEST = "com.adobe.eventsource.media.requesttracker"
-        static let EVENT_SOURCE_TRACKER_RESPONSE = "com.adobe.eventsource.media.responsetracker"
+        static let EVENT_SOURCE_REQUEST_TRACKER = "com.adobe.eventsource.media.requesttracker"
+        static let EVENT_SOURCE_DESTROY_TRACKER = "com.adobe.eventsource.media.destroytracker"
         static let EVENT_SOURCE_TRACK_MEDIA = "com.adobe.eventsource.media.trackmedia"
         static let EVENT_SOURCE_SESSION_CREATED = "com.adobe.eventsource.media.sessioncreated"
         static let EVENT_NAME_CREATE_TRACKER = "Media::CreateTrackerRequest"
+        static let EVENT_NAME_DESTROY_TRACKER = "Media::DestroyTrackerRequest"
         static let EVENT_NAME_TRACK_MEDIA = "Media::TrackMedia"
         static let EVENT_NAME_SESSION_CREATED = "Media::SessionCreated"
     }

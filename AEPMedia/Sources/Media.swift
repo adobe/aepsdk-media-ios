@@ -47,7 +47,8 @@ public class Media: NSObject, Extension {
         mediaService.readyToProcess(dispatchFn: dispathSessionCreated(eventData:))
 
         registerListener(type: EventType.configuration, source: EventSource.responseContent, listener: handleConfigurationResponseEvent)
-        registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, listener: handleMediaTrackerRequest)
+        registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, listener: handleMediaTrackerRequest)
+        registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_DESTROY_TRACKER, listener: handleMediaTrackerRequest)
         registerListener(type: MediaConstants.Media.EVENT_TYPE, source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA, listener: handleMediaTrack)
         registerListener(type: EventType.hub, source: EventSource.sharedState, listener: handleSharedStateUpdate)
         registerListener(type: EventType.genericIdentity, source: EventSource.requestReset, listener: handleResetIdentitiesEvent)
@@ -97,14 +98,17 @@ public class Media: NSObject, Extension {
     /// - Parameter event: an event containing  data for creating tracker
     private func handleMediaTrackerRequest(event: Event) {
         guard let trackerId = event.trackerId, !trackerId.isEmpty else {
-            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Public tracker ID is invalid, unable to create internal tracker.")
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Public tracker ID is invalid, unable to create/destroy internal tracker.")
             return
         }
 
-        let trackerConfig = event.trackerConfig ?? [:]
-
-        Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Creating an internal tracker with tracker id: \(trackerId).")
-        trackers[trackerId] = MediaEventTracker(hitProcessor: mediaService, config: trackerConfig)
+        if event.isCreateTracker {
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Creating an internal tracker with tracker id: \(trackerId).")
+            trackers[trackerId] = MediaEventTracker(hitProcessor: mediaService, config: event.trackerConfig ?? [:])
+        } else if event.isDestroyTracker {
+            Log.debug(label: Self.LOG_TAG, "[\(Self.CLASS_NAME)<\(#function)>] - Destroying internal tracker with tracker id: \(trackerId).")
+            trackers.removeValue(forKey: trackerId)
+        }
     }
 
     /// Handler for media track events

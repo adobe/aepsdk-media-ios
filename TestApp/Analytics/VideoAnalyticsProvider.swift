@@ -24,6 +24,14 @@ class VideoAnalyticsProvider: NSObject {
 
         _player = player
 
+        setupPlayerNotifications()
+    }
+
+    deinit {
+        destroy()
+    }
+    
+    func createTracker() {
         // Pass optional configuration when creating tracker
         /*var config: [String: Any] = [:]
          config[MediaConstants.TrackerConfig.CHANNEL] = "custom-swift-channel" // Overrides channel configured from launch
@@ -31,12 +39,6 @@ class VideoAnalyticsProvider: NSObject {
          _tracker = Media.createTrackerWith(config: config)*/
 
         _tracker = Media.createTracker()
-
-        setupPlayerNotifications()
-    }
-
-    deinit {
-        destroy()
     }
 
     @objc func updateQoE(notification: NSNotification) {
@@ -65,13 +67,15 @@ class VideoAnalyticsProvider: NSObject {
 
     func destroy() {
         NotificationCenter.default.removeObserver(self)
-
         _tracker = nil
     }
 
     @objc func onMainVideoLoaded(notification: NSNotification) {
         NSLog("\(logTag) onMainVideoLoaded()")
-
+        
+        // Create a new tracker instance for this playback session
+        createTracker()
+        
         let videoData = notification.userInfo
 
         let videoName = videoData?["name"] as? String ?? ""

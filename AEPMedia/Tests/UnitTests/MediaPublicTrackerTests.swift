@@ -119,11 +119,11 @@ class MediaPublicTrackerTests: XCTestCase {
     // ==========================================================================
     func testCreateTracker() {
         var capturedEvent: Event?
-        _ = MediaPublicTracker(dispatch: {(event: Event) in
+        var tracker = MediaPublicTracker(dispatch: {(event: Event) in
             capturedEvent = event
         }, config: nil)
 
-        XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, capturedEvent?.source)
+        XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, capturedEvent?.source)
         XCTAssertEqual(MediaConstants.Media.EVENT_TYPE, capturedEvent?.type)
 
         let data = capturedEvent?.data
@@ -135,11 +135,11 @@ class MediaPublicTrackerTests: XCTestCase {
 
     func testCreateTrackerWithConfig() {
         var capturedEvent: Event?
-        _ = MediaPublicTracker(dispatch: {(event: Event) in
+        var tracker = MediaPublicTracker(dispatch: {(event: Event) in
             capturedEvent = event
         }, config: Self.testConfig)
 
-        XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, capturedEvent?.source)
+        XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, capturedEvent?.source)
         XCTAssertEqual(MediaConstants.Media.EVENT_TYPE, capturedEvent?.type)
 
         let data = capturedEvent?.data
@@ -150,16 +150,37 @@ class MediaPublicTrackerTests: XCTestCase {
     }
 
     // ==========================================================================
+    // destroy
+    // ==========================================================================
+    func testDestroyTracker() {
+        var capturedEvent: Event?
+        var tracker: MediaTracker? = MediaPublicTracker(dispatch: {(event: Event) in
+            capturedEvent = event
+        }, config: nil)
+
+        // On deinit, should send a destroy tracker event
+        tracker = nil
+
+        XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_DESTROY_TRACKER, capturedEvent?.source)
+        XCTAssertEqual(MediaConstants.Media.EVENT_TYPE, capturedEvent?.type)
+
+        let data = capturedEvent?.data
+        XCTAssertFalse((data?[MediaConstants.Tracker.ID] as? String ?? "").isEmpty)
+        XCTAssertEqual(1, data?.count)
+    }
+    
+    
+    // ==========================================================================
     // Event extension for Media
     // ==========================================================================
 
     func testEventExtension_TrackerIdAndConfig() {
         var capturedEvent: Event?
-        _ = MediaPublicTracker(dispatch: {(event: Event) in
+        var tracker = MediaPublicTracker(dispatch: {(event: Event) in
             capturedEvent = event
         }, config: Self.testConfig)
 
-        XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_TRACKER_REQUEST, capturedEvent?.source)
+        XCTAssertEqual(MediaConstants.Media.EVENT_SOURCE_REQUEST_TRACKER, capturedEvent?.source)
         XCTAssertEqual(MediaConstants.Media.EVENT_TYPE, capturedEvent?.type)
 
         let trackerId = capturedEvent?.trackerId
