@@ -137,3 +137,19 @@ bump-versions:
 	(LC_ALL=C find . -type f -name '*.swift' -exec sed -i '' 's/$(from)/$(to)/' {} +)
 	(LC_ALL=C find . -type f -name '*.podspec' -exec sed -i '' 's/$(from)/$(to)/' {} +)
 
+# Builds the AEPMedia target in Swift 6 language mode. AEPMEDIA_SWIFT_VERSION is
+# only referenced by the AEPMedia target, so dependency pods keep their own modes.
+build-swift6:
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=iOS Simulator' AEPMEDIA_SWIFT_VERSION=6.0 ADB_SKIP_LINT=YES
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=tvOS Simulator' AEPMEDIA_SWIFT_VERSION=6.0 ADB_SKIP_LINT=YES
+
+# Compiles a Swift 6 consumer that calls the public Media APIs from @MainActor code.
+# The consumer target is built in Swift 6 language mode; AEPMedia and its dependencies
+# keep their own declared language modes, matching a real Swift 6 app's build.
+test-swift6-consumer:
+	sh ./Script/test-swift6-consumer.sh
+
+# Compile-only build on the minimum supported toolchain (Xcode 15.3+/Swift 5.10).
+build-min-toolchain:
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=iOS Simulator' ADB_SKIP_LINT=YES
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=tvOS Simulator' ADB_SKIP_LINT=YES
