@@ -14,6 +14,25 @@ TVOS_SIMULATOR_ARCHIVE_DSYM_PATH = $(CURR_DIR)/build/tvos_simulator.xcarchive/dS
 TVOS_ARCHIVE_PATH = $(CURR_DIR)/build/tvos.xcarchive/Products/Library/Frameworks/
 TVOS_ARCHIVE_DSYM_PATH = $(CURR_DIR)/build/tvos.xcarchive/dSYMs/
 
+# CI variables - using values with defaults. Set defaults to values that are most useful for local development.
+IOS_DEVICE_NAME ?= iPhone 18 Pro
+# If OS version is not specified, uses the first device name match in the list of available simulators
+IOS_VERSION ?=
+ifeq ($(strip $(IOS_VERSION)),)
+    IOS_DESTINATION = "platform=iOS Simulator,name=$(IOS_DEVICE_NAME)"
+else
+    IOS_DESTINATION = "platform=iOS Simulator,name=$(IOS_DEVICE_NAME),OS=$(IOS_VERSION)"
+endif
+
+TVOS_DEVICE_NAME ?= Apple TV 4K (3rd generation)
+# If OS version is not specified, uses the first device name match in the list of available simulators
+TVOS_VERSION ?=
+ifeq ($(strip $(TVOS_VERSION)),)
+    TVOS_DESTINATION = "platform=tvOS Simulator,name=$(TVOS_DEVICE_NAME)"
+else
+    TVOS_DESTINATION = "platform=tvOS Simulator,name=$(TVOS_DEVICE_NAME),OS=$(TVOS_VERSION)"
+endif
+
 pod-repo-update:
 	pod repo update
 
@@ -36,13 +55,13 @@ test-ios: clean-ios-test-files
 	@echo "######################################################################"
 	@echo "### Testing iOS"
 	@echo "######################################################################"
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=iOS Simulator,name=iPhone 15' -derivedDataPath build/out -resultBundlePath iosresults.xcresult -enableCodeCoverage YES
+	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination $(IOS_DESTINATION) -derivedDataPath build/out -resultBundlePath iosresults.xcresult -enableCodeCoverage YES
 
 test-tvos: clean-tvos-test-files
 	@echo "######################################################################"
 	@echo "### Testing tvOS"
 	@echo "######################################################################"
-	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'platform=tvOS Simulator,name=Apple TV' -derivedDataPath build/out -resultBundlePath tvosresults.xcresult -enableCodeCoverage YES
+	xcodebuild test -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination $(TVOS_DESTINATION) -derivedDataPath build/out -resultBundlePath tvosresults.xcresult -enableCodeCoverage YES
 
 archive: clean pod-install build-ios build-tvos
 	@echo "######################################################################"
@@ -110,10 +129,27 @@ test-podspec:
 	sh ./Script/test-podspec.sh
 
 pod-lint:
-	pod lib lint --allow-warnings --verbose --swift-version=5.1
+	pod lib lint --allow-warnings --verbose --swift-version=5.10
 
 # make bump-versions from='5\.1\.0' to=5.1.1
 bump-versions:
 	(LC_ALL=C find . -type f -name 'project.pbxproj' -exec sed -i '' 's/$(from)/$(to)/' {} +)
 	(LC_ALL=C find . -type f -name '*.swift' -exec sed -i '' 's/$(from)/$(to)/' {} +)
 	(LC_ALL=C find . -type f -name '*.podspec' -exec sed -i '' 's/$(from)/$(to)/' {} +)
+
+# Builds the AEPMedia target in Swift 6 language mode. AEPMEDIA_SWIFT_VERSION is
+# only referenced by the AEPMedia target, so dependency pods keep their own modes.
+build-swift6:
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=iOS Simulator' AEPMEDIA_SWIFT_VERSION=6.0 ADB_SKIP_LINT=YES
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=tvOS Simulator' AEPMEDIA_SWIFT_VERSION=6.0 ADB_SKIP_LINT=YES
+
+# Compiles a Swift 6 consumer that calls the public Media APIs from @MainActor code.
+# The consumer target is built in Swift 6 language mode; AEPMedia and its dependencies
+# keep their own declared language modes, matching a real Swift 6 app's build.
+test-swift6-consumer:
+	sh ./Script/test-swift6-consumer.sh
+
+# Compile-only build on the minimum supported toolchain (Xcode 15.3+/Swift 5.10).
+build-min-toolchain:
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=iOS Simulator' ADB_SKIP_LINT=YES
+	xcodebuild build -workspace $(PROJECT_NAME).xcworkspace -scheme $(PROJECT_NAME) -destination 'generic/platform=tvOS Simulator' ADB_SKIP_LINT=YES

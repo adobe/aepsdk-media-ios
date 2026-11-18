@@ -18,28 +18,29 @@ class SpecialAdPlayback: BaseScenarioTest {
     private typealias Ad = MediaConstants.MediaCollection.Ad
     private typealias Chapter = MediaConstants.MediaCollection.Chapter
 
-    static let mediaInfo = MediaInfo(id: "mediaID", name: "mediaName", streamType: "aod", mediaType: MediaType.Audio, length: 30.0, prerollWaitingTime: 0)!
-    static let mediaInfoWithDefaultPreroll = MediaInfo(id: "mediaID", name: "mediaName", streamType: "aod", mediaType: MediaType.Audio, length: 30.0)!
-    static let mediaInfoWithDefaultPrerollAndGranularTracking = MediaInfo(id: "mediaID", name: "mediaName", streamType: "aod", mediaType: MediaType.Audio, length: 30.0, granularAdTracking: true)!
+    // Swift 6 flags shared test fixtures as unsafe global state. Tests read them from one thread at a time, so they are marked nonisolated(unsafe).
+    nonisolated(unsafe) static let mediaInfo = MediaInfo(id: "mediaID", name: "mediaName", streamType: "aod", mediaType: MediaType.Audio, length: 30.0, prerollWaitingTime: 0)!
+    nonisolated(unsafe) static let mediaInfoWithDefaultPreroll = MediaInfo(id: "mediaID", name: "mediaName", streamType: "aod", mediaType: MediaType.Audio, length: 30.0)!
+    nonisolated(unsafe) static let mediaInfoWithDefaultPrerollAndGranularTracking = MediaInfo(id: "mediaID", name: "mediaName", streamType: "aod", mediaType: MediaType.Audio, length: 30.0, granularAdTracking: true)!
     static let mediaMetadata = ["media.show": "sampleshow", "key1": "value1", "key2": "мểŧẳđαţả"]
 
-    static let adBreakInfo = AdBreakInfo(name: "adBreakName", position: 1, startTime: 1.1)!
-    static let adBreakInfo2 = AdBreakInfo(name: "adBreakName2", position: 2, startTime: 2.2)!
+    nonisolated(unsafe) static let adBreakInfo = AdBreakInfo(name: "adBreakName", position: 1, startTime: 1.1)!
+    nonisolated(unsafe) static let adBreakInfo2 = AdBreakInfo(name: "adBreakName2", position: 2, startTime: 2.2)!
 
-    static let adInfo = AdInfo(id: "adID", name: "adName", position: 1, length: 15.0)!
+    nonisolated(unsafe) static let adInfo = AdInfo(id: "adID", name: "adName", position: 1, length: 15.0)!
     static let adMetadata = ["media.ad.advertiser": "sampleAdvertiser", "key1": "value1", "key2": "мểŧẳđαţả"]
 
-    static let adInfo2 = AdInfo(id: "adID2", name: "adName2", position: 2, length: 20.0)!
+    nonisolated(unsafe) static let adInfo2 = AdInfo(id: "adID2", name: "adName2", position: 2, length: 20.0)!
     static let adMetadata2 = ["media.ad.advertiser": "sampleAdvertiser2", "key2": "value2", "key3": "мểŧẳđαţả"]
 
-    static let chapterInfo = ChapterInfo(name: "chapterName", position: 1, startTime: 1.1, length: 30)!
+    nonisolated(unsafe) static let chapterInfo = ChapterInfo(name: "chapterName", position: 1, startTime: 1.1, length: 30)!
     static let chapterMetadata = ["media.artist": "sampleArtist", "key1": "value1", "key2": "мểŧẳđαţả"]
 
-    static let chapterInfo2 = ChapterInfo(name: "chapterName2", position: 2, startTime: 2.2, length: 40)!
+    nonisolated(unsafe) static let chapterInfo2 = ChapterInfo(name: "chapterName2", position: 2, startTime: 2.2, length: 40)!
     static let chapterMetadata2 = ["media.artist": "sampleArtist2", "key2": "value2", "key3": "мểŧẳđαţả"]
 
     // Expected Values
-    static let expectedSessionStartParamsRealTime: [String: Any]  = [
+    nonisolated(unsafe) static let expectedSessionStartParamsRealTime: [String: Any]  = [
         Media.ID: "mediaID",
         Media.NAME: "mediaName",
         Media.LENGTH: 30.0,
@@ -49,7 +50,7 @@ class SpecialAdPlayback: BaseScenarioTest {
         Media.DOWNLOADED: false,
     ]
 
-    static let expectedSessionStartParamsDownloaded: [String: Any]  = [
+    nonisolated(unsafe) static let expectedSessionStartParamsDownloaded: [String: Any]  = [
         Media.ID: "mediaID",
         Media.NAME: "mediaName",
         Media.LENGTH: 30.0,
@@ -59,40 +60,40 @@ class SpecialAdPlayback: BaseScenarioTest {
         Media.DOWNLOADED: true,
     ]
 
-    static let expectedAdBreakStartParams: [String: Any] = [
+    nonisolated(unsafe) static let expectedAdBreakStartParams: [String: Any] = [
         AdBreak.POD_FRIENDLY_NAME: "adBreakName",
         AdBreak.POD_INDEX: 1,
         AdBreak.POD_SECOND: 1.1
     ]
 
-    static let expectedAdBreakStartParams2: [String: Any] = [
+    nonisolated(unsafe) static let expectedAdBreakStartParams2: [String: Any] = [
         AdBreak.POD_FRIENDLY_NAME: "adBreakName2",
         AdBreak.POD_INDEX: 2,
         AdBreak.POD_SECOND: 2.2
     ]
 
-    static let expectedAdParams: [String: Any] = [
+    nonisolated(unsafe) static let expectedAdParams: [String: Any] = [
         Ad.ID: "adID",
         Ad.NAME: "adName",
         Ad.LENGTH: 15.0,
         Ad.POD_POSITION: 1
     ]
 
-    static let expectedAdParams2: [String: Any] = [
+    nonisolated(unsafe) static let expectedAdParams2: [String: Any] = [
         Ad.ID: "adID2",
         Ad.NAME: "adName2",
         Ad.LENGTH: 20.0,
         Ad.POD_POSITION: 2
     ]
 
-    static let expectedChapterStartParams: [String: Any] = [
+    nonisolated(unsafe) static let expectedChapterStartParams: [String: Any] = [
         Chapter.FRIENDLY_NAME: "chapterName",
         Chapter.INDEX: 1,
         Chapter.LENGTH: 30,
         Chapter.OFFSET: 1.1
     ]
 
-    static let expectedChapterStartParams2: [String: Any] = [
+    nonisolated(unsafe) static let expectedChapterStartParams2: [String: Any] = [
         Chapter.FRIENDLY_NAME: "chapterName2",
         Chapter.INDEX: 2,
         Chapter.LENGTH: 40,

@@ -77,7 +77,8 @@ class VideoPlayer: AVPlayer {
     var playerViewController: AVPlayerViewController = AVPlayerViewController()
     private var MediaPlayerKVOContext = 0
 
-    var timer: Timer?
+    // The timer is created and invalidated on the main run loop, and deinit can only run after it stops retaining self, so reading it from the nonisolated deinit is safe.
+    nonisolated(unsafe) var timer: Timer?
 
     func loadContentURL(url: URL) {
 

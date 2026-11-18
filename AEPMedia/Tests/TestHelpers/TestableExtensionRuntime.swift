@@ -26,6 +26,9 @@ class TestableExtensionRuntime: ExtensionRuntime {
     func getHistoricalEvents(_ requests: [EventHistoryRequest], enforceOrder: Bool, handler: @escaping ([EventHistoryResult]) -> Void) {
     }
 
+    func recordHistoricalEvent(_ event: Event, handler: ((Bool) -> Void)?) {
+    }
+
     var listeners: [String: EventListener] = [:]
     var dispatchedEvents: [Event] = []
     var createdSharedStates: [[String: Any]?] = []

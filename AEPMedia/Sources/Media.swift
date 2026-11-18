@@ -21,7 +21,8 @@ public class Media: NSObject, Extension {
     public var runtime: ExtensionRuntime
     public var name = MediaConstants.EXTENSION_NAME
     public var friendlyName = MediaConstants.FRIENDLY_NAME
-    public static var extensionVersion = MediaConstants.EXTENSION_VERSION
+    // Swift 6 flags public static vars as unsafe shared state. The value is only set once at load, so we keep the public var for ABI and mark it nonisolated(unsafe).
+    nonisolated(unsafe) public static var extensionVersion = MediaConstants.EXTENSION_VERSION
     public var metadata: [String: String]?
 
     #if DEBUG

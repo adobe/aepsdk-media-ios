@@ -15,22 +15,22 @@ import AEPCore
 
 struct MediaHit: Codable {
     /// Media Hit type
-    private (set) var eventType: String
+    private(set) var eventType: String
 
     /// Media Hit parameters
-    private (set) var params: [String: Any]?
+    private(set) var params: [String: Any]?
 
     /// Media Hit metadata
-    private (set) var metadata: [String: String]?
+    private(set) var metadata: [String: String]?
 
     /// Media Hit QoE data
-    private (set) var qoeData: [String: Any]?
+    private(set) var qoeData: [String: Any]?
 
     /// Media Hit playhead
-    private (set) var playhead: Double = 0
+    private(set) var playhead: Double = 0
 
     /// Media Hit timestamp
-    private (set) var timestamp: Int64 = 0
+    private(set) var timestamp: Int64 = 0
 
     enum CodingKeys: String, CodingKey {
         case eventType = "eventType"

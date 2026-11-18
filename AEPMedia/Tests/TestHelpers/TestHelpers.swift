@@ -33,7 +33,8 @@ extension FileManager {
 }
 
 extension MediaHit: Equatable {
-    private static let emptyDict: [String: Any] = [:]
+    // Swift 6 flags shared test fixtures as unsafe global state. Tests read them from one thread at a time, so they are marked nonisolated(unsafe).
+    nonisolated(unsafe) private static let emptyDict: [String: Any] = [:]
 
     public static func == (lhs: MediaHit, rhs: MediaHit) -> Bool {
         return lhs.eventType == rhs.eventType &&
