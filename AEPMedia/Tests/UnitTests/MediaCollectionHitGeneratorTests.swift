@@ -29,27 +29,28 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     private typealias QoE = MediaConstants.MediaCollection.QoE
     private typealias Tracker = MediaConstants.Tracker
 
-    static let validAdbreakInfo: [String: Any] = [
+    // Swift 6 flags shared test fixtures as unsafe global state. Tests read them from one thread at a time, so they are marked nonisolated(unsafe).
+    nonisolated(unsafe) static let validAdbreakInfo: [String: Any] = [
         MediaConstants.AdBreakInfo.NAME: "Adbreakname",
         MediaConstants.AdBreakInfo.POSITION: 1,
         MediaConstants.AdBreakInfo.START_TIME: 10.0
     ]
 
-    static let validAdInfo: [String: Any] = [
+    nonisolated(unsafe) static let validAdInfo: [String: Any] = [
         MediaConstants.AdInfo.ID: "AdID",
         MediaConstants.AdInfo.NAME: "AdName",
         MediaConstants.AdInfo.POSITION: 1,
         MediaConstants.AdInfo.LENGTH: 15.0
     ]
 
-    static let validChapterInfo: [String: Any] = [
+    nonisolated(unsafe) static let validChapterInfo: [String: Any] = [
         MediaConstants.ChapterInfo.NAME: "ChapterName",
         MediaConstants.ChapterInfo.POSITION: 1,
         MediaConstants.ChapterInfo.START_TIME: 10.0,
         MediaConstants.ChapterInfo.LENGTH: 30.0
     ]
 
-    static let validQoEInfo: [String: Any] = [
+    nonisolated(unsafe) static let validQoEInfo: [String: Any] = [
         MediaConstants.QoEInfo.BITRATE: 24.0,
         MediaConstants.QoEInfo.DROPPED_FRAMES: 2.0,
         MediaConstants.QoEInfo.FPS: 30.0,
@@ -57,7 +58,7 @@ class MediaCollectionHitGeneratorTests: XCTestCase {
     ]
 
     static let sessionId = "clientSessionId"
-    static let refEvent = Event(name: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA,
+    nonisolated(unsafe) static let refEvent = Event(name: MediaConstants.Media.EVENT_NAME_TRACK_MEDIA,
                                 type: MediaConstants.Media.EVENT_TYPE,
                                 source: MediaConstants.Media.EVENT_SOURCE_TRACK_MEDIA,
                                 data: [MediaConstants.Tracker.SESSION_ID: sessionId])

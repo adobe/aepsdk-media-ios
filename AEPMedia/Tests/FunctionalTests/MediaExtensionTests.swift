@@ -15,7 +15,8 @@ import AEPCore
 
 class MediaExtensionTests: MediaFunctionalTestBase {
 
-    static let config: [String: Any] = [:]
+    // Swift 6 flags shared test fixtures as unsafe global state. Tests read them from one thread at a time, so they are marked nonisolated(unsafe).
+    nonisolated(unsafe) static let config: [String: Any] = [:]
     var fakeMediaService: FakeMediaService!
 
     override func setUp() {

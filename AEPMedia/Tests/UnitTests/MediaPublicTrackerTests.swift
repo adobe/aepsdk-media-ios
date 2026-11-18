@@ -14,9 +14,10 @@ import AEPCore
 @testable import AEPMedia
 
 class MediaPublicTrackerTests: XCTestCase {
-    static let testConfig: [String: Any] = ["test": "value"]
+    // Swift 6 flags shared test fixtures as unsafe global state. Tests read them from one thread at a time, so they are marked nonisolated(unsafe).
+    nonisolated(unsafe) static let testConfig: [String: Any] = ["test": "value"]
     static let metadata: [String: String] = ["key": "value"]
-    static let validMediaInfo: [String: Any] = [
+    nonisolated(unsafe) static let validMediaInfo: [String: Any] = [
         MediaConstants.MediaInfo.ID: "testId",
         MediaConstants.MediaInfo.NAME: "testName",
         MediaConstants.MediaInfo.LENGTH: 10.0,
@@ -27,34 +28,34 @@ class MediaPublicTrackerTests: XCTestCase {
         MediaConstants.MediaInfo.GRANULAR_AD_TRACKING: true
     ]
 
-    static let validQoeInfo: [String: Any] = [
+    nonisolated(unsafe) static let validQoeInfo: [String: Any] = [
         MediaConstants.QoEInfo.BITRATE: 1.1,
         MediaConstants.QoEInfo.DROPPED_FRAMES: 2.2,
         MediaConstants.QoEInfo.FPS: 3.3,
         MediaConstants.QoEInfo.STARTUP_TIME: 4.4
     ]
 
-    static let validAdBreakInfo: [String: Any] = [
+    nonisolated(unsafe) static let validAdBreakInfo: [String: Any] = [
         MediaConstants.AdBreakInfo.NAME: "testAdBreakName",
         MediaConstants.AdBreakInfo.POSITION: 2,
         MediaConstants.AdBreakInfo.START_TIME: 1.1
     ]
 
-    static let validAdInfo: [String: Any] = [
+    nonisolated(unsafe) static let validAdInfo: [String: Any] = [
         MediaConstants.AdInfo.ID: "testAdId",
         MediaConstants.AdInfo.NAME: "testAdName",
         MediaConstants.AdInfo.POSITION: 1,
         MediaConstants.AdInfo.LENGTH: 16.0
     ]
 
-    static let validChapterInfo: [String: Any] = [
+    nonisolated(unsafe) static let validChapterInfo: [String: Any] = [
         MediaConstants.ChapterInfo.NAME: "testChapterName",
         MediaConstants.ChapterInfo.POSITION: 1,
         MediaConstants.ChapterInfo.START_TIME: 0.2,
         MediaConstants.ChapterInfo.LENGTH: 30.0
     ]
 
-    static let validStateInfo: [String: Any] = [
+    nonisolated(unsafe) static let validStateInfo: [String: Any] = [
         MediaConstants.StateInfo.STATE_NAME_KEY: "testStateName"
     ]
 
