@@ -68,20 +68,21 @@ commands:
     steps:
       - macos/preboot-simulator:
           platform: "iOS"
-          version: "17.2"
-          device: "iPhone 15"
+          version: "27.0"
+          device: "iPhone 18 Pro"
 
   prestart_tvos_simulator:
     steps:
       - macos/preboot-simulator:
           platform: "tvOS"
-          version: "17.2"
-          device: "Apple TV"
+          version: "27.0"
+          device: "Apple TV 4K (3rd generation)"
 
 jobs:
   validate-code:
+    resource_class: m4pro.medium
     macos:
-      xcode: 15.4.0 # Specify the Xcode version to use
+      xcode: 27.0.0 # Specify the Xcode version to use
 
     steps:
       - checkout
@@ -93,8 +94,13 @@ jobs:
           command: make lint
   
   test-ios:
+    resource_class: m4pro.medium
     macos:
-      xcode: 15.4.0 # Specify the Xcode version to use
+      xcode: 27.0.0 # Specify the Xcode version to use
+
+    environment:
+      IOS_DEVICE_NAME: "iPhone 18 Pro"
+      IOS_VERSION: "27.0"
 
     steps:
       - checkout
@@ -116,8 +122,13 @@ jobs:
           
 
   test-tvos:
+    resource_class: m4pro.medium
     macos:
-      xcode: 15.4.0 # Specify the Xcode version to use
+      xcode: 27.0.0 # Specify the Xcode version to use
+
+    environment:
+      TVOS_DEVICE_NAME: "Apple TV 4K (3rd generation)"
+      TVOS_VERSION: "27.0"
 
     steps:
       - checkout
@@ -138,8 +149,9 @@ jobs:
       #     xtra_args: -c -v --xc --xp tvosresults.xcresult
 
   build_xcframework_and_app:
+    resource_class: m4pro.medium
     macos:
-      xcode: 15.4.0 # Specify the Xcode version to use
+      xcode: 27.0.0 # Specify the Xcode version to use
     
     steps:
       - checkout
@@ -158,3 +170,4 @@ jobs:
             if [[ "${CIRCLE_BRANCH}" == "main" || "${CIRCLE_BRANCH}" == "staging" ]]; then
               make build-app
             fi
+
