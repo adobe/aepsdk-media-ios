@@ -15,7 +15,7 @@ import PackageDescription
 
 let package = Package(
     name: "AEPMedia",
-    platforms: [.iOS(.v12), .tvOS(.v12)],
+    platforms: [.iOS("15.0"), .tvOS("15.0")],
     products: [
         .library(name: "AEPMedia", targets: ["AEPMedia"]),
     ],
